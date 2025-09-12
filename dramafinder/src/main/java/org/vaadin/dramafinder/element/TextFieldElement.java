@@ -5,11 +5,12 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.dramafinder.element.common.HasInputFieldElement;
+import org.vaadin.dramafinder.element.common.HasPrefixAndSuffixElement;
 import org.vaadin.dramafinder.element.common.HasValidationPropertiesElement;
 
 @PlaywrightElement("vaadin-text-field")
 public class TextFieldElement extends VaadinElement
-        implements HasValidationPropertiesElement, HasInputFieldElement {
+        implements HasValidationPropertiesElement, HasInputFieldElement, HasPrefixAndSuffixElement {
 	public TextFieldElement(Locator locator) {
 		super(locator);
 	}

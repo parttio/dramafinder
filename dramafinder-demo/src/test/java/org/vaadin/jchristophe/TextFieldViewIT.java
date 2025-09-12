@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.dramafinder.element.TextFieldElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TextFieldViewIT extends SpringPlaywrightIT {
@@ -55,6 +56,19 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         // field is required
         assertThat(textfield.getLocator()).hasAttribute("invalid", "");
         assertThat(textfield.getErrorMessageLocator()).hasText("Field is required");
+    }
+
+    @Test
+    public void testPrefixAndSuffix() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
+        // Locators for prefix/suffix should exist and be visible
+        assertThat(textfield.getPrefixLocator()).isVisible();
+        assertThat(textfield.getSuffixLocator()).isVisible();
+        assertThat(textfield.getPrefixLocator()).hasText("Prefix");
+        assertThat(textfield.getSuffixLocator()).hasText("Suffix");
+        // Also verify through convenience methods
+        assertEquals("Prefix", textfield.getPrefixText());
+        assertEquals("Suffix", textfield.getSuffixText());
     }
 
 }
