@@ -73,14 +73,34 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void testValidatedFieldAttributes() {
+    public void testAllowedCharPattern() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
         assertThat(textfield.getLocator()).isVisible();
         // Attributes presence
         assertEquals("[0-8]", textfield.getAllowedCharPattern());
+        textfield.assertAllowedCharPattern("[0-8]");
+    }
+
+    @Test
+    public void testPattern() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
         assertThat(textfield.getInputLocator()).hasAttribute("pattern", "\\d{7}");
+        textfield.assertPattern("\\d{7}");
+    }
+
+    @Test
+    public void testMinLength() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
         assertThat(textfield.getInputLocator()).hasAttribute("minlength", "6");
+        textfield.assertMinLength(6);
+        assertEquals(6, textfield.getMinLength());
+    }
+    @Test
+    public void testMaxLength() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
         assertThat(textfield.getInputLocator()).hasAttribute("maxlength", "7");
+        textfield.assertMaxLength(7);
+        assertEquals(7, textfield.getMaxLength());
     }
 
     @Test
