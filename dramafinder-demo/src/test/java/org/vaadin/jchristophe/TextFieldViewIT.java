@@ -147,10 +147,10 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     public void testClearButton() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
         assertThat(textfield.getLocator()).isVisible();
-        assertThat(textfield.getClearButtonLocator()).not().isVisible();
+        textfield.assertClearButtonNotVisible();
         textfield.setValue("some value");
         textfield.assertValue("some value");
-        assertThat(textfield.getClearButtonLocator()).isVisible();
+        textfield.assertClearButtonVisible();
         textfield.clickClearButton();
         textfield.assertValue("");
     }
@@ -159,10 +159,10 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     public void testClear() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
         assertThat(textfield.getLocator()).isVisible();
-        assertThat(textfield.getClearButtonLocator()).not().isVisible();
+        textfield.assertClearButtonNotVisible();
         textfield.setValue("some value");
         textfield.assertValue("some value");
-        assertThat(textfield.getClearButtonLocator()).isVisible();
+        textfield.assertClearButtonVisible();
         textfield.clear();
         textfield.assertValue("");
     }
