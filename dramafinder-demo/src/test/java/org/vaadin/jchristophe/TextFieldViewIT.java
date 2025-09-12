@@ -71,4 +71,17 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         assertEquals("Suffix", textfield.getSuffixText());
     }
 
+    @Test
+    public void testPlaceholderAndClearButton() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
+        assertThat(textfield.getLocator()).isVisible();
+        assertThat(textfield.getLocator()).hasAttribute("placeholder", "Enter text here");
+        assertEquals("Enter text here", textfield.getPlaceholder());
+        assertThat(textfield.getClearButtonLocator()).not().isVisible();
+        textfield.setValue("some value");
+        assertThat(textfield.getClearButtonLocator()).isVisible();
+        textfield.clickClearButton();
+        assertThat(textfield.getInputLocator()).hasValue("");
+    }
+
 }
