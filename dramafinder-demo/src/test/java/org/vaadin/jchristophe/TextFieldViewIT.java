@@ -98,6 +98,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
         assertThat(textfield.getInputLocator()).hasAttribute("pattern", "\\d{7}");
         textfield.assertPattern("\\d{7}");
+        assertEquals("\\d{7}", textfield.getPattern());
     }
 
     @Test

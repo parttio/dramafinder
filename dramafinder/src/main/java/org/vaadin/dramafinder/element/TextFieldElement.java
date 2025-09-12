@@ -49,11 +49,11 @@ public class TextFieldElement extends VaadinElement
     }
 
     public String getPattern() {
-        return getLocator().getAttribute("pattern");
+        return getInputLocator().getAttribute("pattern");
     }
 
     public void setPattern(String pattern) {
-        getLocator().evaluate("(el, p) => el.pattern = p", pattern);
+        getInputLocator().evaluate("(el, p) => el.pattern = p", pattern);
     }
 
     public void assertPattern(String pattern) {
