@@ -19,20 +19,6 @@ public class TextFieldElement extends VaadinElement
         super(locator);
     }
 
-    public static TextFieldElement getByLabel(Page page, String label) {
-        return new TextFieldElement(
-                page.locator("vaadin-text-field")
-                        .filter(new Locator.FilterOptions().setHas(page.getByLabel(label))
-                        ).first());
-    }
-
-    public static TextFieldElement getByLabel(Locator locator, String label) {
-        return new TextFieldElement(
-                locator.locator("vaadin-text-field")
-                        .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label))
-                        ).first());
-    }
-
     public Integer getMinLength() {
         String v = getInputLocator().getAttribute("minLength");
         return v == null ? null : Integer.valueOf(v);
@@ -100,7 +86,7 @@ public class TextFieldElement extends VaadinElement
     }
 
     public String getValue() {
-        return locator.evaluate("el => el.value").toString();
+        return getLocator().evaluate("el => el.value").toString();
     }
 
     /**
@@ -108,7 +94,7 @@ public class TextFieldElement extends VaadinElement
      */
     public void setValue(String value) {
         getInputLocator().fill(value);
-        locator.dispatchEvent("change");
+        getLocator().dispatchEvent("change");
     }
 
     /**
@@ -120,6 +106,21 @@ public class TextFieldElement extends VaadinElement
 
     public Locator getInputLocator() {
         return getLocator().locator("*[slot=\"input\"]").first(); // slot="helper"
+    }
+
+
+    public static TextFieldElement getByLabel(Page page, String label) {
+        return new TextFieldElement(
+                page.locator("vaadin-text-field")
+                        .filter(new Locator.FilterOptions().setHas(page.getByLabel(label))
+                        ).first());
+    }
+
+    public static TextFieldElement getByLabel(Locator locator, String label) {
+        return new TextFieldElement(
+                locator.locator("vaadin-text-field")
+                        .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label))
+                        ).first());
     }
 
 }

@@ -67,9 +67,19 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         assertThat(textfield.getSuffixLocator()).isVisible();
         assertThat(textfield.getPrefixLocator()).hasText("Prefix");
         assertThat(textfield.getSuffixLocator()).hasText("Suffix");
+        textfield.assertPrefixHasText("Prefix");
+        textfield.assertSuffixHasText("Suffix");
         // Also verify through convenience methods
         assertEquals("Prefix", textfield.getPrefixText());
         assertEquals("Suffix", textfield.getSuffixText());
+    }
+
+
+    @Test
+    public void testNoPrefixAndSuffix() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
+        textfield.assertPrefixHasText(null);
+        textfield.assertSuffixHasText(null);
     }
 
     @Test
