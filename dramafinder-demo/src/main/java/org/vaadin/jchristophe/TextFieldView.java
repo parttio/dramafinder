@@ -19,7 +19,15 @@ public class TextFieldView extends Main {
     public TextFieldView() {
         createBasicExample();
         createTextFieldWithHelperExample();
+        createTextFieldWithPlaceholderAndClearButton();
 
+    }
+
+    private void createTextFieldWithPlaceholderAndClearButton() {
+        TextField textfield = new TextField("TextField with placeholder and clear button");
+        textfield.setPlaceholder("Enter text here");
+        textfield.setClearButtonVisible(true);
+        addExample("Placeholder and Clear Button Example", textfield);
     }
 
     private void createBasicExample() {

@@ -8,9 +8,12 @@ import org.vaadin.dramafinder.element.common.HasInputFieldElement;
 import org.vaadin.dramafinder.element.common.HasPrefixAndSuffixElement;
 import org.vaadin.dramafinder.element.common.HasValidationPropertiesElement;
 
+import org.vaadin.dramafinder.element.common.HasClearButtonElement;
+import org.vaadin.dramafinder.element.common.HasPlaceholderElement;
+
 @PlaywrightElement("vaadin-text-field")
 public class TextFieldElement extends VaadinElement
-        implements HasValidationPropertiesElement, HasInputFieldElement, HasPrefixAndSuffixElement {
+        implements HasValidationPropertiesElement, HasInputFieldElement, HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement {
 	public TextFieldElement(Locator locator) {
 		super(locator);
 	}
