@@ -33,6 +33,9 @@ public class TextFieldView extends Main {
                 .setMaxLengthErrorMessage("Maximum length is 18 characters")
                 .setPatternErrorMessage("Invalid phone number format"));
         textfield.setHelperText("Helper text");
+        // Add prefix and suffix content to demonstrate slot usage
+        textfield.setPrefixComponent(new Span("Prefix"));
+        textfield.setSuffixComponent(new Span("Suffix"));
         addExample("Basic Example", textfield);
     }
 
