@@ -9,7 +9,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement("vaadin-text-field")
 public class TextFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
-        HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement {
+        HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement {
     public TextFieldElement(Locator locator) {
         super(locator);
     }
@@ -48,7 +48,6 @@ public class TextFieldElement extends VaadinElement
         }
     }
 
-
     public String getPattern() {
         return getLocator().getAttribute("pattern");
     }
@@ -64,7 +63,6 @@ public class TextFieldElement extends VaadinElement
             assertThat(getInputLocator()).not().hasAttribute("pattern", "");
         }
     }
-
 
     public static TextFieldElement getByLabel(Page page, String label) {
         return new TextFieldElement(

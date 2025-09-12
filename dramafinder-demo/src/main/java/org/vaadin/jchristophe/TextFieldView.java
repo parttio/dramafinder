@@ -2,15 +2,12 @@ package org.vaadin.jchristophe;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.html.UnorderedList;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 
 @PageTitle("TextField Demo")
 @Route(value = "", layout = MainLayout.class)
@@ -21,7 +18,14 @@ public class TextFieldView extends Main {
         createTextFieldWithHelperExample();
         createTextFieldWithPlaceholderAndClearButton();
         createValidationPropertiesExample();
+        createTextFieldWithThemeExample();
 
+    }
+
+    private void createTextFieldWithThemeExample() {
+        TextField textfield = new TextField("TextField with theme");
+        textfield.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+        addExample("Theme Example", textfield);
     }
 
     private void createTextFieldWithPlaceholderAndClearButton() {

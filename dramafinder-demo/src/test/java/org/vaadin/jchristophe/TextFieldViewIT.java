@@ -167,4 +167,11 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         textfield.assertValue("");
     }
 
+    @Test
+    public void testTheme() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with theme");
+        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertTheme("small");
+    }
+
 }
