@@ -24,6 +24,8 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         assertThat(textfield.getLocator()).isVisible();
         assertThat(textfield.getLocator()).hasClass("custom-text-field");
         assertThat(textfield.getHelperTextLocator()).hasText("Helper text");
+        textfield.assertHelperHasText("Helper text");
+        assertEquals("Helper text", textfield.getHelperText());
     }
 
     @Test
@@ -31,7 +33,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
         assertThat(textfield.getLocator()).isVisible();
         assertThat(textfield.getLocator()).hasClass("custom-text-field");
-      //  assertThat(textfield.getHelperTextLocator()).not().hasText("Internal helper");
+        //  assertThat(textfield.getHelperTextLocator()).not().hasText("Internal helper");
         TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperTextLocator());
         assertThat(helperComponent.getLocator()).hasClass("custom-helper-component");
         assertThat(helperComponent.getLocator()).isVisible();
@@ -105,6 +107,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         textfield.assertMinLength(6);
         assertEquals(6, textfield.getMinLength());
     }
+
     @Test
     public void testMaxLength() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
@@ -133,16 +136,35 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void testPlaceholderAndClearButton() {
+    public void testPlaceholder() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
         assertThat(textfield.getLocator()).isVisible();
-        assertThat(textfield.getLocator()).hasAttribute("placeholder", "Enter text here");
+        textfield.assertPlaceholder("Enter text here");
         assertEquals("Enter text here", textfield.getPlaceholder());
+    }
+
+    @Test
+    public void testClearButton() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
+        assertThat(textfield.getLocator()).isVisible();
         assertThat(textfield.getClearButtonLocator()).not().isVisible();
         textfield.setValue("some value");
+        textfield.assertValue("some value");
         assertThat(textfield.getClearButtonLocator()).isVisible();
         textfield.clickClearButton();
-        assertThat(textfield.getInputLocator()).hasValue("");
+        textfield.assertValue("");
+    }
+
+    @Test
+    public void testClear() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
+        assertThat(textfield.getLocator()).isVisible();
+        assertThat(textfield.getClearButtonLocator()).not().isVisible();
+        textfield.setValue("some value");
+        textfield.assertValue("some value");
+        assertThat(textfield.getClearButtonLocator()).isVisible();
+        textfield.clear();
+        textfield.assertValue("");
     }
 
 }

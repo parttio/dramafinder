@@ -16,4 +16,8 @@ public interface HasValidationPropertiesElement extends HasLocatorElement {
     default void assertInvalid() {
         assertThat(getLocator()).hasAttribute("invalid", "");
     }
+
+    default void assertErrorMessage(String errorMessage) {
+        assertThat(getErrorMessageLocator()).hasText(errorMessage);
+    }
 }

@@ -2,19 +2,14 @@ package org.vaadin.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import org.vaadin.dramafinder.element.common.HasInputFieldElement;
-import org.vaadin.dramafinder.element.common.HasPrefixAndSuffixElement;
-import org.vaadin.dramafinder.element.common.HasValidationPropertiesElement;
-
-import org.vaadin.dramafinder.element.common.HasClearButtonElement;
-import org.vaadin.dramafinder.element.common.HasPlaceholderElement;
+import org.vaadin.dramafinder.element.common.*;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 @PlaywrightElement("vaadin-text-field")
 public class TextFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
-        HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement {
+        HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement {
     public TextFieldElement(Locator locator) {
         super(locator);
     }
@@ -53,21 +48,6 @@ public class TextFieldElement extends VaadinElement
         }
     }
 
-    public String getAllowedCharPattern() {
-        return getLocator().evaluate("el => el.allowedCharPattern").toString();
-    }
-
-    public void setAllowedCharPattern(String pattern) {
-        getLocator().evaluate("(el, p) => el.allowedCharPattern = p", pattern);
-    }
-
-    public void assertAllowedCharPattern(String pattern) {
-        if (pattern != null) {
-            assertThat(getLocator()).hasJSProperty("allowedCharPattern", pattern);
-        } else {
-            assertThat(getLocator()).not().hasAttribute("allowedCharPattern", "");
-        }
-    }
 
     public String getPattern() {
         return getLocator().getAttribute("pattern");
@@ -83,29 +63,6 @@ public class TextFieldElement extends VaadinElement
         } else {
             assertThat(getInputLocator()).not().hasAttribute("pattern", "");
         }
-    }
-
-    public String getValue() {
-        return getLocator().evaluate("el => el.value").toString();
-    }
-
-    /**
-     * Set value via JavaScript (ensures the `value-changed` event is triggered)
-     */
-    public void setValue(String value) {
-        getInputLocator().fill(value);
-        getLocator().dispatchEvent("change");
-    }
-
-    /**
-     * Clear the input field
-     */
-    public void clear() {
-        setValue("");
-    }
-
-    public Locator getInputLocator() {
-        return getLocator().locator("*[slot=\"input\"]").first(); // slot="helper"
     }
 
 
