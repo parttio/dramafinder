@@ -3,6 +3,7 @@ package org.vaadin.jchristophe;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.vaadin.dramafinder.VaadinAssertions;
 import org.vaadin.dramafinder.element.TextFieldElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -50,11 +51,11 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
         assertThat(textfield.getInputLocator()).hasValue("");
         textfield.setValue("new value");
-        assertThat(textfield.getLocator()).not().hasAttribute("invalid", "");
+        VaadinAssertions.assertValid(textfield);
         assertThat(textfield.getInputLocator()).hasValue("new value");
         textfield.setValue("");
         // field is required
-        assertThat(textfield.getLocator()).hasAttribute("invalid", "");
+        VaadinAssertions.assertInvalid(textfield);
         assertThat(textfield.getErrorMessageLocator()).hasText("Field is required");
     }
 
@@ -69,6 +70,36 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         // Also verify through convenience methods
         assertEquals("Prefix", textfield.getPrefixText());
         assertEquals("Suffix", textfield.getSuffixText());
+    }
+
+    @Test
+    public void testValidatedFieldAttributes() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
+        assertThat(textfield.getLocator()).isVisible();
+        // Attributes presence
+        assertEquals("[0-8]", textfield.getAllowedCharPattern());
+        assertThat(textfield.getInputLocator()).hasAttribute("pattern", "\\d{7}");
+        assertThat(textfield.getInputLocator()).hasAttribute("minlength", "6");
+        assertThat(textfield.getInputLocator()).hasAttribute("maxlength", "7");
+    }
+
+    @Test
+    public void testValidatedFieldBehavior() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
+        // Invalid value should mark field invalid
+        textfield.setValue("1");
+        VaadinAssertions.assertInvalid(textfield);
+        assertThat(textfield.getErrorMessageLocator()).hasText("Minimum length is 6 characters");
+
+        // Test the pattern
+        textfield.setValue("123845");
+        VaadinAssertions.assertInvalid(textfield);
+        assertThat(textfield.getErrorMessageLocator()).hasText("Invalid code format");
+        // 9 is not valid
+        textfield.setValue("991238456");
+
+        textfield.setValue("1238456");
+        VaadinAssertions.assertValid(textfield);
     }
 
     @Test

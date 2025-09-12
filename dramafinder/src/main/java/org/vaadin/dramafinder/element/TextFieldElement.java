@@ -7,20 +7,27 @@ import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.dramafinder.element.common.HasInputFieldElement;
 import org.vaadin.dramafinder.element.common.HasPrefixAndSuffixElement;
 import org.vaadin.dramafinder.element.common.HasValidationPropertiesElement;
+import org.vaadin.dramafinder.element.common.HasAllowedCharPatternElement;
+import org.vaadin.dramafinder.element.common.HasPatternElement;
+import org.vaadin.dramafinder.element.common.HasMinLengthElement;
+import org.vaadin.dramafinder.element.common.HasMaxLengthElement;
 
 import org.vaadin.dramafinder.element.common.HasClearButtonElement;
 import org.vaadin.dramafinder.element.common.HasPlaceholderElement;
 
 @PlaywrightElement("vaadin-text-field")
 public class TextFieldElement extends VaadinElement
-        implements HasValidationPropertiesElement, HasInputFieldElement, HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement {
+        implements HasValidationPropertiesElement, HasInputFieldElement,
+        HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement,
+        HasAllowedCharPatternElement, HasPatternElement, HasMinLengthElement, HasMaxLengthElement {
 	public TextFieldElement(Locator locator) {
 		super(locator);
 	}
 
 	/** Set value via JavaScript (ensures the `value-changed` event is triggered) */
 	public void setValue(String value) {
-		locator.evaluate("(el, val) => el.value = val", value);
+        getInputLocator().fill(value);
+		//locator.evaluate("(el, val) => el.value = val", value);
 		locator.dispatchEvent("change");
 	}
 

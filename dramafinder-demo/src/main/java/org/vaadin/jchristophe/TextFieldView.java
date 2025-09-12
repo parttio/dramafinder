@@ -20,6 +20,7 @@ public class TextFieldView extends Main {
         createBasicExample();
         createTextFieldWithHelperExample();
         createTextFieldWithPlaceholderAndClearButton();
+        createValidationPropertiesExample();
 
     }
 
@@ -34,6 +35,9 @@ public class TextFieldView extends Main {
         TextField textfield = new TextField("Textfield");
         textfield.addClassName("custom-text-field");
         textfield.setRequired(true);
+        // Add prefix/suffix so tests can assert them
+        textfield.setPrefixComponent(new Span("Prefix"));
+        textfield.setSuffixComponent(new Span("Suffix"));
 
         textfield.setI18n(new TextField.TextFieldI18n()
                 .setRequiredErrorMessage("Field is required")
@@ -56,6 +60,27 @@ public class TextFieldView extends Main {
         helperComponent.setHelperText("Internal helper");
         textfield.setHelperComponent(helperComponent);
         addExample("Helper Component Example", textfield);
+    }
+
+    private void createValidationPropertiesExample() {
+        TextField validated = new TextField("Validated Textfield");
+        validated.setHelperText("This field accepts only 7 numbers 0 to 8. 9 is forbidden");
+        validated.addClassName("validated-text-field");
+        validated.setRequired(true);
+        // Allowed characters are digits only
+        validated.setAllowedCharPattern("[0-8]");
+        // Expect exactly 7 digits
+        validated.setPattern("\\d{7}");
+        validated.setMinLength(6);
+        validated.setMaxLength(7);
+
+        validated.setI18n(new TextField.TextFieldI18n()
+                .setRequiredErrorMessage("Field is required")
+                .setMinLengthErrorMessage("Minimum length is 6 characters")
+                .setMaxLengthErrorMessage("Maximum length is 7 characters")
+                .setPatternErrorMessage("Invalid code format"));
+
+        addExample("Validation Properties Example", validated);
     }
 
     private void addExample(String title, Component component) {
