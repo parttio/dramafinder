@@ -37,6 +37,7 @@
 - HasAllowedCharPatternElement
 - HasAriaLabelElement
 - HasClearButtonElement
+- HasEnabledElement
 - HasHelperElement
 - HasInputFieldElement
 - HasLocatorElement
@@ -49,7 +50,6 @@
 
 ## Shared interfaces not implemented
 
-- HasEnabled
 - HasLabel
 - HasSize
 - HasStyle

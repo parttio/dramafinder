@@ -1,6 +1,7 @@
 package org.vaadin.jchristophe;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.NativeLabel;
@@ -23,6 +24,7 @@ public class TextFieldView extends Main {
         createTextFieldWithThemeExample();
         createTextFieldWithAriaLabel();
         createTextFieldWithAriaLabelledBy();
+        createEnabledDisabledExample();
     }
 
     private void createTextFieldWithThemeExample() {
@@ -109,6 +111,15 @@ public class TextFieldView extends Main {
 
     private void addExample(String title, Component component) {
         add(new H2(title), component);
+    }
+
+    private void createEnabledDisabledExample() {
+        TextField textfield = new TextField("Enabled/Disabled Field");
+        textfield.setEnabled(false);
+        Button button = new Button("Enable/Disable");
+        button.setId("enable-disable-button");
+        button.addClickListener(e -> textfield.setEnabled(!textfield.isEnabled()));
+        addExample("Enabled/Disabled Example", new HorizontalLayout(textfield, button));
     }
 
 }

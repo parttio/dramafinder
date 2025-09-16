@@ -53,17 +53,4 @@ public abstract class VaadinElement implements HasLocatorElement {
         return !isVisible();
     }
 
-    public boolean isEnabled() {
-        String disabled = getDomAttribute("disabled");
-        return disabled == null || disabled.equals("false");
-    }
-
-    public boolean isDisabled() {
-        return !isEnabled();
-    }
-
-    public String getDomAttribute(String name) {
-        return locator.getAttribute(name);
-    }
-
 }

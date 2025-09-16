@@ -10,7 +10,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class TextFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
         HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement,
-        HasThemeElement, FocusableElement, HasAriaLabelElement {
+        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-text-field";
     public static final String MAXLENGTH_ATTRIBUTE = "maxlength";
@@ -92,6 +92,11 @@ public class TextFieldElement extends VaadinElement
 
     @Override
     public Locator getAriaLabelLocator() {
+        return getInputLocator();
+    }
+
+    @Override
+    public Locator getEnabledLocator() {
         return getInputLocator();
     }
 }
