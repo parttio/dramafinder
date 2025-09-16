@@ -1,14 +1,16 @@
 package org.vaadin.dramafinder.element;
 
+import com.microsoft.playwright.Locator;
+import org.vaadin.dramafinder.element.shared.HasLocatorElement;
+
 import java.util.Map;
 
-import com.microsoft.playwright.Locator;
-import org.vaadin.dramafinder.element.common.HasLocatorElement;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public abstract class VaadinElement implements HasLocatorElement {
     protected final Locator locator;
 
-	public VaadinElement(Locator locator) {
+    public VaadinElement(Locator locator) {
         this.locator = locator;
     }
 
@@ -25,42 +27,43 @@ public abstract class VaadinElement implements HasLocatorElement {
         return locator;
     }
 
-	/** Set a DOM property (e.g. `value`, `disabled`, etc.) */
-	public void setProperty(String name, Object value) {
-		locator.evaluate("(el, args) => el[args.name] = args.value", Map.of("name", name, "value", value));
-	}
+    /** Set a DOM property (e.g. `value`, `disabled`, etc.) */
+    public void setProperty(String name, Object value) {
+        locator.evaluate("(el, args) => el[args.name] = args.value", Map.of("name", name, "value", value));
+    }
 
-	/** Optional: get a DOM property */
-	public Object getProperty(String name) {
-		return locator.evaluate("(el, args) => el[args.name]", Map.of("name", name));
-	}
+    /** Optional: get a DOM property */
+    public Object getProperty(String name) {
+        return locator.evaluate("(el, args) => el[args.name]", Map.of("name", name));
+    }
 
-	public boolean isVisible() {
-		return locator.isVisible();
-	}
+    public boolean isVisible() {
+        return locator.isVisible();
+    }
 
-	public boolean isHidden() {
-		return !isVisible();
-	}
+    public void assertVisible() {
+        assertThat(getLocator()).isVisible();
+    }
 
-	public boolean isEnabled() {
-		String disabled = getDomAttribute("disabled");
-		return disabled == null || disabled.equals("false");
-	}
+    public void assertHidden() {
+        assertThat(getLocator()).isHidden();
+    }
 
-	public boolean isDisabled() {
-		return !isEnabled();
-	}
+    public boolean isHidden() {
+        return !isVisible();
+    }
 
-	public String getDomAttribute(String name) {
-		return locator.getAttribute(name);
-	}
-	public void focus() {
-		locator.focus();
-	}
+    public boolean isEnabled() {
+        String disabled = getDomAttribute("disabled");
+        return disabled == null || disabled.equals("false");
+    }
 
-	public void blur() {
-		locator.blur();
-	}
+    public boolean isDisabled() {
+        return !isEnabled();
+    }
+
+    public String getDomAttribute(String name) {
+        return locator.getAttribute(name);
+    }
 
 }

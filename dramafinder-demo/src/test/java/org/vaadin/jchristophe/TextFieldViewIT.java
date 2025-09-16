@@ -8,6 +8,7 @@ import org.vaadin.dramafinder.element.TextFieldElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TextFieldViewIT extends SpringPlaywrightIT {
@@ -21,7 +22,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testHasHelperText() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         assertThat(textfield.getLocator()).hasClass("custom-text-field");
         assertThat(textfield.getHelperTextLocator()).hasText("Helper text");
         textfield.assertHelperHasText("Helper text");
@@ -31,12 +32,11 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testHasHelperComponent() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         assertThat(textfield.getLocator()).hasClass("custom-text-field");
-        //  assertThat(textfield.getHelperTextLocator()).not().hasText("Internal helper");
         TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperTextLocator());
         assertThat(helperComponent.getLocator()).hasClass("custom-helper-component");
-        assertThat(helperComponent.getLocator()).isVisible();
+        helperComponent.assertVisible();
         assertThat(helperComponent.getHelperTextLocator()).hasText("Internal helper");
     }
 
@@ -87,7 +87,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testAllowedCharPattern() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         // Attributes presence
         assertEquals("[0-8]", textfield.getAllowedCharPattern());
         textfield.assertAllowedCharPattern("[0-8]");
@@ -139,7 +139,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testPlaceholder() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         textfield.assertPlaceholder("Enter text here");
         assertEquals("Enter text here", textfield.getPlaceholder());
     }
@@ -147,7 +147,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testClearButton() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         textfield.assertClearButtonNotVisible();
         textfield.setValue("some value");
         textfield.assertValue("some value");
@@ -159,7 +159,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testClear() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         textfield.assertClearButtonNotVisible();
         textfield.setValue("some value");
         textfield.assertValue("some value");
@@ -171,8 +171,35 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testTheme() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with theme");
-        assertThat(textfield.getLocator()).isVisible();
+        textfield.assertVisible();
         textfield.assertTheme("small");
+    }
+
+    @Test
+    public void testFocused() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField");
+        TextFieldElement textFieldWithHelperComponent = TextFieldElement.getByLabel(page, "TextField with helper component");
+
+        assertEquals("", textfield.getLocator().getAttribute("focused"));
+        assertNull(textFieldWithHelperComponent.getLocator().getAttribute("focused"));
+        textfield.assertIsFocused();
+        textFieldWithHelperComponent.assertIsNotFocused();
+        textFieldWithHelperComponent.focus();
+        textFieldWithHelperComponent.assertIsFocused();
+    }
+
+    @Test
+    public void testAriaLabel() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Invisible label");
+        textfield.assertVisible();
+        textfield.assertAriaLabel("Invisible label");
+    }
+
+    @Test
+    public void testAriaLabelledBy() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Labelled by");
+        textfield.assertVisible();
+        textfield.assertAriaLabel(null);
     }
 
 }

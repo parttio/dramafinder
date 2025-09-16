@@ -1,4 +1,4 @@
-package org.vaadin.dramafinder.element.common;
+package org.vaadin.dramafinder.element.shared;
 
 import com.microsoft.playwright.Locator;
 
@@ -6,9 +6,9 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 /**
  * Utilities to interact with components implementing
- * Vaadin's HasPrefixAndSuffix (slot="prefix" / slot="suffix").
+ * Vaadin's HasPrefix(slot="prefix").
  */
-public interface HasPrefixAndSuffixElement extends HasLocatorElement {
+public interface HasPrefixElement extends HasLocatorElement {
 
     default Locator getPrefixLocator() {
         return getLocator().locator("*[slot=\"prefix\"]").first();
@@ -18,26 +18,11 @@ public interface HasPrefixAndSuffixElement extends HasLocatorElement {
         return getPrefixLocator().textContent();
     }
 
-    default Locator getSuffixLocator() {
-        return getLocator().locator("*[slot=\"suffix\"]").first();
-    }
-
-    default String getSuffixText() {
-        return getSuffixLocator().textContent();
-    }
-
     default void assertPrefixHasText(String text) {
         if (text != null) {
             assertThat(getPrefixLocator()).hasText(text);
         } else {
             assertThat(getPrefixLocator()).not().isVisible();
-        }
-    }
-    default void assertSuffixHasText(String text) {
-        if (text != null) {
-            assertThat(getSuffixLocator()).hasText(text);
-        } else {
-            assertThat(getSuffixLocator()).not().isVisible();
         }
     }
 }

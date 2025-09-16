@@ -1,4 +1,4 @@
-package org.vaadin.dramafinder.element.common;
+package org.vaadin.dramafinder.element.shared;
 
 import com.microsoft.playwright.Locator;
 

@@ -1,21 +1,21 @@
 package org.vaadin.dramafinder;
 
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType.LaunchOptions;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Locator.DispatchEventOptions;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType.LaunchOptions;
-import com.microsoft.playwright.Locator.DispatchEventOptions;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
-
 public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
+    private static final boolean HEADLESS = true;
     String WAIT_FOR_VAADIN_SCRIPT =
-    // @formatter:off
+            // @formatter:off
             "() => {"
             + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
             + "  var clients = window.Vaadin.Flow.clients;"
@@ -61,7 +61,7 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     public static void setup() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new LaunchOptions()
-                .setHeadless(true));
+                .setHeadless(HEADLESS));
     }
 
     protected Page getPage() {
@@ -69,7 +69,7 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     }
 
     protected void event(Locator locator, String type, Object eventInit,
-            DispatchEventOptions options) {
+                         DispatchEventOptions options) {
         locator.nth(0).dispatchEvent(type, eventInit, options);
         getPage().waitForTimeout(10);
     }

@@ -1,6 +1,6 @@
 package org.vaadin.dramafinder;
 
-import org.vaadin.dramafinder.element.common.HasValidationPropertiesElement;
+import org.vaadin.dramafinder.element.shared.HasValidationPropertiesElement;
 
 public final class VaadinAssertions {
 
@@ -11,6 +11,7 @@ public final class VaadinAssertions {
     public static void assertValid(HasValidationPropertiesElement element) {
         element.assertValid();
     }
+
     public static void assertInvalid(HasValidationPropertiesElement element) {
         element.assertInvalid();
     }

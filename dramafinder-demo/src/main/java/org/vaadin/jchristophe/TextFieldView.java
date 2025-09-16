@@ -3,7 +3,9 @@ package org.vaadin.jchristophe;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.PageTitle;
@@ -19,7 +21,8 @@ public class TextFieldView extends Main {
         createTextFieldWithPlaceholderAndClearButton();
         createValidationPropertiesExample();
         createTextFieldWithThemeExample();
-
+        createTextFieldWithAriaLabel();
+        createTextFieldWithAriaLabelledBy();
     }
 
     private void createTextFieldWithThemeExample() {
@@ -37,6 +40,7 @@ public class TextFieldView extends Main {
 
     private void createBasicExample() {
         TextField textfield = new TextField("Textfield");
+        textfield.focus();
         textfield.addClassName("custom-text-field");
         textfield.setRequired(true);
         // Add prefix/suffix so tests can assert them
@@ -86,6 +90,22 @@ public class TextFieldView extends Main {
 
         addExample("Validation Properties Example", validated);
     }
+
+    private void createTextFieldWithAriaLabel() {
+        TextField textfield = new TextField();
+        textfield.setAriaLabel("Invisible label");
+        addExample("Aria label Example", textfield);
+    }
+
+    private void createTextFieldWithAriaLabelledBy() {
+        TextField textfield = new TextField();
+        NativeLabel label = new NativeLabel("Labelled by");
+        String id = "label-id";
+        label.setId(id);
+        textfield.setAriaLabelledBy(id);
+        addExample("Aria labelled by Example", new HorizontalLayout(label, textfield));
+    }
+
 
     private void addExample(String title, Component component) {
         add(new H2(title), component);

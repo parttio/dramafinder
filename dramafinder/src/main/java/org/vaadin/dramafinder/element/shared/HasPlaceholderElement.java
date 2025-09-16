@@ -1,4 +1,4 @@
-package org.vaadin.dramafinder.element.common;
+package org.vaadin.dramafinder.element.shared;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 

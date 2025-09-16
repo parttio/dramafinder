@@ -2,20 +2,27 @@ package org.vaadin.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import org.vaadin.dramafinder.element.common.*;
+import org.vaadin.dramafinder.element.shared.*;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@PlaywrightElement("vaadin-text-field")
+@PlaywrightElement(TextFieldElement.FIELD_TAG_NAME)
 public class TextFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
-        HasPrefixAndSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement {
+        HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement,
+        HasThemeElement, FocusableElement, HasAriaLabelElement {
+
+    public static final String FIELD_TAG_NAME = "vaadin-text-field";
+    public static final String MAXLENGTH_ATTRIBUTE = "maxlength";
+    public static final String PATTERN_ATTRIBUTE = "pattern";
+    public static final String MIN_LENGTH_ATTRIBUTE = "minLength";
+
     public TextFieldElement(Locator locator) {
         super(locator);
     }
 
     public Integer getMinLength() {
-        String v = getInputLocator().getAttribute("minLength");
+        String v = getInputLocator().getAttribute(MIN_LENGTH_ATTRIBUTE);
         return v == null ? null : Integer.valueOf(v);
     }
 
@@ -25,14 +32,14 @@ public class TextFieldElement extends VaadinElement
 
     public void assertMinLength(Integer min) {
         if (min != null) {
-            assertThat(getInputLocator()).hasAttribute("minlength", min + "");
+            assertThat(getInputLocator()).hasAttribute(MIN_LENGTH_ATTRIBUTE, min + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("minlength", "");
+            assertThat(getInputLocator()).not().hasAttribute(MIN_LENGTH_ATTRIBUTE, "");
         }
     }
 
     public Integer getMaxLength() {
-        String v = getInputLocator().getAttribute("maxlength");
+        String v = getInputLocator().getAttribute(MAXLENGTH_ATTRIBUTE);
         return v == null ? null : Integer.valueOf(v);
     }
 
@@ -42,14 +49,14 @@ public class TextFieldElement extends VaadinElement
 
     public void assertMaxLength(Integer max) {
         if (max != null) {
-            assertThat(getInputLocator()).hasAttribute("maxlength", max + "");
+            assertThat(getInputLocator()).hasAttribute(MAXLENGTH_ATTRIBUTE, max + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("maxlength", "");
+            assertThat(getInputLocator()).not().hasAttribute(MAXLENGTH_ATTRIBUTE, "");
         }
     }
 
     public String getPattern() {
-        return getInputLocator().getAttribute("pattern");
+        return getInputLocator().getAttribute(PATTERN_ATTRIBUTE);
     }
 
     public void setPattern(String pattern) {
@@ -58,24 +65,33 @@ public class TextFieldElement extends VaadinElement
 
     public void assertPattern(String pattern) {
         if (pattern != null) {
-            assertThat(getInputLocator()).hasAttribute("pattern", pattern);
+            assertThat(getInputLocator()).hasAttribute(PATTERN_ATTRIBUTE, pattern);
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("pattern", "");
+            assertThat(getInputLocator()).not().hasAttribute(PATTERN_ATTRIBUTE, "");
         }
     }
 
     public static TextFieldElement getByLabel(Page page, String label) {
         return new TextFieldElement(
-                page.locator("vaadin-text-field")
+                page.locator(FIELD_TAG_NAME)
                         .filter(new Locator.FilterOptions().setHas(page.getByLabel(label))
                         ).first());
     }
 
     public static TextFieldElement getByLabel(Locator locator, String label) {
         return new TextFieldElement(
-                locator.locator("vaadin-text-field")
+                locator.locator(FIELD_TAG_NAME)
                         .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label))
                         ).first());
     }
 
+    @Override
+    public Locator getFocusLocator() {
+        return getInputLocator();
+    }
+
+    @Override
+    public Locator getAriaLabelLocator() {
+        return getInputLocator();
+    }
 }
