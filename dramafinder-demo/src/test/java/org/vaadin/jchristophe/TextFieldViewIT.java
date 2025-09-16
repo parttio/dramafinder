@@ -3,7 +3,6 @@ package org.vaadin.jchristophe;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.vaadin.dramafinder.VaadinAssertions;
 import org.vaadin.dramafinder.element.TextFieldElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -32,7 +31,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         textfield.assertVisible();
         textfield.assertCssClass("custom-text-field");
         assertThat(textfield.getLocator()).hasClass("custom-text-field");
-        assertThat(textfield.getHelperTextLocator()).hasText("Helper text");
+        assertThat(textfield.getHelperLocator()).hasText("Helper text");
         textfield.assertHelperHasText("Helper text");
         assertEquals("Helper text", textfield.getHelperText());
     }
@@ -42,10 +41,11 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
         textfield.assertVisible();
         textfield.assertCssClass("custom-text-field");
-        TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperTextLocator());
+        TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperLocator());
         helperComponent.assertCssClass("custom-helper-component");
         helperComponent.assertVisible();
-        assertThat(helperComponent.getHelperTextLocator()).hasText("Internal helper");
+        assertThat(helperComponent.getHelperLocator()).hasText("Internal helper");
+        helperComponent.assertHelperHasText("Internal helper");
     }
 
     @Test
@@ -61,11 +61,11 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
         assertThat(textfield.getInputLocator()).hasValue("");
         textfield.setValue("new value");
-        VaadinAssertions.assertValid(textfield);
+        textfield.assertValid();
         assertThat(textfield.getInputLocator()).hasValue("new value");
         textfield.setValue("");
         // field is required
-        VaadinAssertions.assertInvalid(textfield);
+        textfield.assertInvalid();
         assertThat(textfield.getErrorMessageLocator()).hasText("Field is required");
     }
 
@@ -130,18 +130,18 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Validated Textfield");
         // Invalid value should mark field invalid
         textfield.setValue("1");
-        VaadinAssertions.assertInvalid(textfield);
-        assertThat(textfield.getErrorMessageLocator()).hasText("Minimum length is 6 characters");
+        textfield.assertInvalid();
+        textfield.assertErrorMessage("Minimum length is 6 characters");
 
         // Test the pattern
         textfield.setValue("123845");
-        VaadinAssertions.assertInvalid(textfield);
+        textfield.assertInvalid();
         assertThat(textfield.getErrorMessageLocator()).hasText("Invalid code format");
         // 9 is not valid
         textfield.setValue("991238456");
 
         textfield.setValue("1238456");
-        VaadinAssertions.assertValid(textfield);
+        textfield.assertValid();
     }
 
     @Test
