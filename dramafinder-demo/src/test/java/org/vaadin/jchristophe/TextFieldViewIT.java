@@ -229,4 +229,11 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         textfield.assertVisible();
         textfield.assertLabel(null);
     }
+
+    @Test
+    public void testTooltip() {
+        TextFieldElement textfieldWithLabel = TextFieldElement.getByLabel(page, "Textfield");
+        textfieldWithLabel.assertVisible();
+        textfieldWithLabel.assertTooltipHasText("Tooltip for textfield");
+    }
 }

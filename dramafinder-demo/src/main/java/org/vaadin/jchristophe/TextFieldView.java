@@ -42,6 +42,7 @@ public class TextFieldView extends Main {
 
     private void createBasicExample() {
         TextField textfield = new TextField("Textfield");
+        textfield.setTooltipText("Tooltip for textfield");
         textfield.focus();
         textfield.addClassName("custom-text-field");
         textfield.setRequired(true);

@@ -10,7 +10,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class TextFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
         HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement,
-        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement {
+        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-text-field";
     public static final String MAXLENGTH_ATTRIBUTE = "maxlength";
