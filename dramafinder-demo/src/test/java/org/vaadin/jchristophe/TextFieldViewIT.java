@@ -220,4 +220,13 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         textfield.assertEnabled();
     }
 
+    @Test
+    public void testLabel() {
+        TextFieldElement textfieldWithLabel = TextFieldElement.getByLabel(page, "Textfield");
+        textfieldWithLabel.assertVisible();
+        textfieldWithLabel.assertLabel("Textfield");
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Invisible label");
+        textfield.assertVisible();
+        textfield.assertLabel(null);
+    }
 }
