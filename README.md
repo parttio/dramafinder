@@ -2,13 +2,12 @@
 
 Drama Finder is a set of helper classes to test a Vaadin application using Playwright
 
-
 ## Usage
-
 
 ## Development instructions
 
 Starting the test/demo server:
+
 ```
 mvn spring-boot:run
 ```
@@ -21,7 +20,7 @@ The demo is only here to run the test
 To run the unit tests, execute the following command:
 
 ```
-mvn clean install
+mvn test
 ```
 
 ## Integration tests
@@ -33,5 +32,5 @@ The tests are run with the `maven-failsafe-plugin` when the `it` profile is acti
 To run the integration tests, execute the following command:
 
 ```
-mvn verify -Pit
+mvn -Pit verify
 ```

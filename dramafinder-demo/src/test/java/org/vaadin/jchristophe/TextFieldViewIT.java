@@ -202,4 +202,14 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         textfield.assertAriaLabel(null);
     }
 
+    @Test
+    public void testEnabledDisabled() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Enabled/Disabled Field");
+        textfield.assertDisabled();
+
+        page.locator("#enable-disable-button").click();
+
+        textfield.assertEnabled();
+    }
+
 }
