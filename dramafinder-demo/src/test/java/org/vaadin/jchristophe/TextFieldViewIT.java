@@ -20,9 +20,17 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testHasClass() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
+        textfield.assertCssClass("custom-text-field");
+        assertThat(textfield.getLocator()).hasClass("custom-text-field");
+    }
+
+    @Test
     public void testHasHelperText() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
         textfield.assertVisible();
+        textfield.assertCssClass("custom-text-field");
         assertThat(textfield.getLocator()).hasClass("custom-text-field");
         assertThat(textfield.getHelperTextLocator()).hasText("Helper text");
         textfield.assertHelperHasText("Helper text");
@@ -33,9 +41,9 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     public void testHasHelperComponent() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
         textfield.assertVisible();
-        assertThat(textfield.getLocator()).hasClass("custom-text-field");
+        textfield.assertCssClass("custom-text-field");
         TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperTextLocator());
-        assertThat(helperComponent.getLocator()).hasClass("custom-helper-component");
+        helperComponent.assertCssClass("custom-helper-component");
         helperComponent.assertVisible();
         assertThat(helperComponent.getHelperTextLocator()).hasText("Internal helper");
     }
