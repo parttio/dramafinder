@@ -6,15 +6,15 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 public interface HasHelperElement extends HasLocatorElement {
 
-    default Locator getHelperTextLocator() {
+    default Locator getHelperLocator() {
         return getLocator().locator("*[slot=\"helper\"]").first(); // slot="helper"
     }
 
     default String getHelperText() {
-        return getHelperTextLocator().textContent(); // slot="helper"
+        return getHelperLocator().textContent(); // slot="helper"
     }
 
     default void assertHelperHasText(String helperText) {
-        assertThat(getHelperTextLocator()).hasText(helperText);
+        assertThat(getHelperLocator()).hasText(helperText);
     }
 }

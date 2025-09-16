@@ -40,19 +40,19 @@
 - HasEnabledElement
 - HasHelperElement
 - HasInputFieldElement
+- HasLabelElement
 - HasLocatorElement
 - HasPlaceholderElement
 - HasPrefixElement
 - HasSuffixElement
 - HasStyleElement
 - HasThemeElement
+- HasTooltipElement
 - HasValidationPropertiesElement
 - HasValueElement
 
 ## Shared interfaces not implemented
 
-- HasLabel
 - HasSize
-- HasTooltip
 
 ## Known issues
