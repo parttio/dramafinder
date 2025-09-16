@@ -44,6 +44,7 @@
 - HasPlaceholderElement
 - HasPrefixElement
 - HasSuffixElement
+- HasStyleElement
 - HasThemeElement
 - HasValidationPropertiesElement
 - HasValueElement
@@ -52,7 +53,6 @@
 
 - HasLabel
 - HasSize
-- HasStyle
 - HasTooltip
 
 ## Known issues
