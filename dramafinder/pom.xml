@@ -74,7 +74,7 @@
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
-            <version>1.50.0</version>
+            <version>1.55.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
@@ -100,7 +100,8 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>false</addClasspath>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultImplementationEntries>true
+                            </addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
                             <Vaadin-Package-Version>1</Vaadin-Package-Version>
