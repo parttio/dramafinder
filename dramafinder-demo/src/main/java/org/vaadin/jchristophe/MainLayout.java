@@ -21,10 +21,12 @@ public class MainLayout extends AppLayout {
         viewTitle.addClassName(LumoUtility.FontSize.LARGE);
 
         final SideNavItem textFieldItem = new SideNavItem("TextField", TextFieldView.class);
+        final SideNavItem buttonItem = new SideNavItem("Button", ButtonView.class);
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
+        menuLayout.addItem(buttonItem);
         addToDrawer(menuLayout);
-        addToNavbar(true,drawerToggle, new Header(viewTitle));
+        addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
 
     @Override

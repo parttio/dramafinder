@@ -16,14 +16,24 @@ public class ButtonElement extends VaadinElement
         super(locator);
     }
 
-    public static ButtonElement get(Page page, String text) {
-        return new ButtonElement(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName(text)));
+    /**
+     * Get by label or text
+     *
+     * @param page
+     * @param text
+     * @return
+     */
+    public static ButtonElement getByText(Page page, String text) {
+        return new ButtonElement(
+                page.getByRole(
+                        AriaRole.BUTTON,
+                        new Page.GetByRoleOptions().setName(text)
+                ).and(page.locator(FIELD_TAG_NAME))
+        );
     }
 
-    public static ButtonElement getByLabel(Page page, String label) {
-        return new ButtonElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHas(page.getByText(label))
-                        ).first());
+    public static ButtonElement getByLabel(Page page, String text) {
+        return getByText(page, text);
     }
+
 }

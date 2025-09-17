@@ -2,6 +2,7 @@ package org.vaadin.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.dramafinder.element.shared.*;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -74,7 +75,9 @@ public class TextFieldElement extends VaadinElement
     public static TextFieldElement getByLabel(Page page, String label) {
         return new TextFieldElement(
                 page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHas(page.getByLabel(label))
+                        .filter(new Locator.FilterOptions()
+                                .setHas(page.getByRole(AriaRole.TEXTBOX,
+                                        new Page.GetByRoleOptions().setName(label)))
                         ).first());
     }
 
