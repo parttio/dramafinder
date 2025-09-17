@@ -25,12 +25,14 @@ public class MainLayout extends AppLayout {
         final SideNavItem emailItem = new SideNavItem("EmailField", EmailFieldView.class);
         final SideNavItem integerItem = new SideNavItem("IntegerField", IntegerFieldView.class);
         final SideNavItem numberItem = new SideNavItem("NumberField", NumberFieldView.class);
+        final SideNavItem bigDecimalItem = new SideNavItem("BigDecimalField", BigDecimalFieldView.class);
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
         menuLayout.addItem(buttonItem);
         menuLayout.addItem(emailItem);
         menuLayout.addItem(integerItem);
         menuLayout.addItem(numberItem);
+        menuLayout.addItem(bigDecimalItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
