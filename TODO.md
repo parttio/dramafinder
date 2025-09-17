@@ -2,8 +2,10 @@
 
 ## Components implemented
 
+- Big Decimal Field
 - Button
 - Email Field
+- Integer Field
 - TextField
 
 ## Components not implemented
@@ -22,7 +24,6 @@
 - Form Layout
 - Grid
 - Horizontal Layout
-- Integer Field
 - Menu Bar
 - Notification
 - Radio Button
