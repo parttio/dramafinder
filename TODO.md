@@ -2,6 +2,7 @@
 
 ## Components implemented
 
+- Button
 - TextField
 
 ## Components not implemented
@@ -9,7 +10,6 @@
 - Accordion
 - App Layout
 - Avatar
-- Button
 - Card
 - Charts
 - Checkbox
