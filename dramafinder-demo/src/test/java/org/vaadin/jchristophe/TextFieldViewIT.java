@@ -51,18 +51,18 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     @Test
     public void testValue() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-        assertThat(textfield.getInputLocator()).hasValue("");
+        textfield.assertValue("");
         textfield.setValue("new value");
-        assertThat(textfield.getInputLocator()).hasValue("new value");
+        textfield.assertValue("new value");
     }
 
     @Test
     public void testInvalid() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-        assertThat(textfield.getInputLocator()).hasValue("");
+        textfield.assertValue("");
         textfield.setValue("new value");
         textfield.assertValid();
-        assertThat(textfield.getInputLocator()).hasValue("new value");
+        textfield.assertValue("new value");
         textfield.setValue("");
         // field is required
         textfield.assertInvalid();
