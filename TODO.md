@@ -3,6 +3,7 @@
 ## Components implemented
 
 - Button
+- Email Field
 - TextField
 
 ## Components not implemented
@@ -18,7 +19,6 @@
 - Date Picker
 - Details
 - Dialog
-- Email Field
 - Form Layout
 - Grid
 - Horizontal Layout
