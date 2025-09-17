@@ -22,9 +22,11 @@ public class MainLayout extends AppLayout {
 
         final SideNavItem textFieldItem = new SideNavItem("TextField", TextFieldView.class);
         final SideNavItem buttonItem = new SideNavItem("Button", ButtonView.class);
+        final SideNavItem emailItem = new SideNavItem("EmailField", EmailFieldView.class);
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
         menuLayout.addItem(buttonItem);
+        menuLayout.addItem(emailItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
