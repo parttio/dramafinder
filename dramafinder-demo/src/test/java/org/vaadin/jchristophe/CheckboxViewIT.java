@@ -73,17 +73,9 @@ public class CheckboxViewIT extends SpringPlaywrightIT {
     @Test
     public void testAriaLabel() {
         CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Aria label");
-        checkbox.assertAriaLabel("Default Checkbox");
+        checkbox.assertAriaLabel("Aria label");
         checkbox.assertLabel(null);
     }
-
-    @Test
-    public void testFocus() {
-        CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Aria label");
-        checkbox.assertAriaLabel("Default Checkbox");
-        checkbox.assertLabel(null);
-    }
-
 
     @Test
     public void testFocused() {
