@@ -27,6 +27,7 @@ public class MainLayout extends AppLayout {
         final SideNavItem numberItem = new SideNavItem("NumberField", NumberFieldView.class);
         final SideNavItem bigDecimalItem = new SideNavItem("BigDecimalField", BigDecimalFieldView.class);
         final SideNavItem checkboxItem = new SideNavItem("Checkbox", CheckboxView.class);
+        final SideNavItem radioButtonItem = new SideNavItem("RadioButton", RadioButtonGroupView.class);
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
         menuLayout.addItem(buttonItem);
@@ -35,6 +36,7 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(numberItem);
         menuLayout.addItem(bigDecimalItem);
         menuLayout.addItem(checkboxItem);
+        menuLayout.addItem(radioButtonItem);
         final SideNavItem datePickerItem = new SideNavItem("DatePicker", DatePickerView.class);
         menuLayout.addItem(datePickerItem);
         final SideNavItem timePickerItem = new SideNavItem("TimePicker", TimePickerView.class);
