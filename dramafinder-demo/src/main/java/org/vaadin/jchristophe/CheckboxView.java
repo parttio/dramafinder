@@ -17,6 +17,7 @@ public class CheckboxView extends Main {
         createIndeterminateExample();
         createDisabledExample();
         createAriaLabelExample();
+        createRequiredExample();
     }
 
     private void createBasicExample() {
@@ -47,6 +48,13 @@ public class CheckboxView extends Main {
         Checkbox checkbox = new Checkbox();
         checkbox.setAriaLabel("Aria label");
         addExample("Aria label Checkbox", checkbox);
+    }
+
+    private void createRequiredExample() {
+        Checkbox checkbox = new Checkbox("Required Checkbox");
+        checkbox.setRequiredIndicatorVisible(true);
+        checkbox.setI18n(new Checkbox.CheckboxI18n().setRequiredErrorMessage("Required Message"));
+        addExample("Required Checkbox", checkbox);
     }
 
     private void addExample(String title, Component component) {

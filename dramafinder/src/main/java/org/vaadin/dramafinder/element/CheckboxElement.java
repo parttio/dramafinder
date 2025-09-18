@@ -9,6 +9,7 @@ import org.vaadin.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.dramafinder.element.shared.HasHelperElement;
 import org.vaadin.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.dramafinder.element.shared.HasStyleElement;
+import org.vaadin.dramafinder.element.shared.HasValidationPropertiesElement;
 import org.vaadin.dramafinder.element.shared.HasValueElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -16,7 +17,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(CheckboxElement.FIELD_TAG_NAME)
 public class CheckboxElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
-        HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement {
+        HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-checkbox";
 

@@ -89,4 +89,15 @@ public class CheckboxViewIT extends SpringPlaywrightIT {
         secondCheckbox.focus();
         secondCheckbox.assertIsFocused();
     }
+
+    @Test
+    public void testRequired() {
+        CheckboxElement checkboxElement = CheckboxElement.getByLabel(page, "Required Checkbox");
+        checkboxElement.assertValid();
+        checkboxElement.check();
+        checkboxElement.assertValid();
+        checkboxElement.uncheck();
+        checkboxElement.assertInvalid();
+        checkboxElement.assertErrorMessage("Required Message");
+    }
 }
