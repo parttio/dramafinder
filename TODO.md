@@ -4,6 +4,7 @@
 
 - Big Decimal Field
 - Button
+- Checkbox
 - Email Field
 - Integer Field
 - TextField
@@ -14,16 +15,14 @@
 - App Layout
 - Avatar
 - Card
-- Charts
-- Checkbox
 - Combo Box
 - Context Menu
 - Date Picker
+- Date Time Picker
 - Details
 - Dialog
 - Form Layout
 - Grid
-- Horizontal Layout
 - Menu Bar
 - Notification
 - Radio Button

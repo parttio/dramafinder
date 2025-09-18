@@ -26,6 +26,7 @@ public class MainLayout extends AppLayout {
         final SideNavItem integerItem = new SideNavItem("IntegerField", IntegerFieldView.class);
         final SideNavItem numberItem = new SideNavItem("NumberField", NumberFieldView.class);
         final SideNavItem bigDecimalItem = new SideNavItem("BigDecimalField", BigDecimalFieldView.class);
+        final SideNavItem checkboxItem = new SideNavItem("Checkbox", CheckboxView.class);
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
         menuLayout.addItem(buttonItem);
@@ -33,6 +34,7 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(integerItem);
         menuLayout.addItem(numberItem);
         menuLayout.addItem(bigDecimalItem);
+        menuLayout.addItem(checkboxItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
