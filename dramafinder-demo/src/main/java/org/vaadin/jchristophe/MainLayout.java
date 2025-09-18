@@ -35,6 +35,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(numberItem);
         menuLayout.addItem(bigDecimalItem);
         menuLayout.addItem(checkboxItem);
+        final SideNavItem datePickerItem = new SideNavItem("DatePicker", DatePickerView.class);
+        menuLayout.addItem(datePickerItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
