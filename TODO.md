@@ -9,6 +9,7 @@
 - Email Field
 - Integer Field
 - TextField
+- Time Picker
 
 ## Components not implemented
 
@@ -28,7 +29,6 @@
 - Radio Button
 - Split Layout
 - Tabs
-- Time Picker
 - Upload
 
 ## Shared interfaces implemented
