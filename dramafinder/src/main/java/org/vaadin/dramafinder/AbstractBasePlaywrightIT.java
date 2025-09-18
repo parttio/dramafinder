@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
-    private static final boolean HEADLESS = true;
     String WAIT_FOR_VAADIN_SCRIPT =
             // @formatter:off
             "() => {"
@@ -61,7 +60,7 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     public static void setup() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new LaunchOptions()
-                .setHeadless(HEADLESS));
+                .setHeadless(isHeadless()));
     }
 
     protected Page getPage() {
@@ -103,5 +102,9 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
     protected void select(Locator locator, String val) {
         fill(locator, val);
+    }
+
+    protected static boolean isHeadless() {
+        return false;
     }
 }

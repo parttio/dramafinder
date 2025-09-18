@@ -7,7 +7,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public interface HasValidationPropertiesElement extends HasLocatorElement {
 
     default Locator getErrorMessageLocator() {
-        return getLocator().locator("*[slot=\"error-message\"]").first(); // slot="helper"
+        return getLocator().locator("> [slot=\"error-message\"]").first(); // slot="helper"
     }
 
     default void assertValid() {

@@ -6,6 +6,7 @@
 - Button
 - Checkbox
 - Date Picker
+- Date Time Picker
 - Email Field
 - Integer Field
 - TextField
@@ -19,7 +20,6 @@
 - Card
 - Combo Box
 - Context Menu
-- Date Time Picker
 - Details
 - Dialog
 - Form Layout
