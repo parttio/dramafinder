@@ -39,6 +39,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(datePickerItem);
         final SideNavItem timePickerItem = new SideNavItem("TimePicker", TimePickerView.class);
         menuLayout.addItem(timePickerItem);
+        final SideNavItem dateTimePickerItem = new SideNavItem("DateTimePicker", DateTimePickerView.class);
+        menuLayout.addItem(dateTimePickerItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
