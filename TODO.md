@@ -5,6 +5,7 @@
 - Big Decimal Field
 - Button
 - Checkbox
+- Date Picker
 - Email Field
 - Integer Field
 - TextField
@@ -17,7 +18,6 @@
 - Card
 - Combo Box
 - Context Menu
-- Date Picker
 - Date Time Picker
 - Details
 - Dialog

@@ -109,11 +109,6 @@ public class TextFieldView extends Main {
         addExample("Aria labelled by Example", new HorizontalLayout(label, textfield));
     }
 
-
-    private void addExample(String title, Component component) {
-        add(new H2(title), component);
-    }
-
     private void createEnabledDisabledExample() {
         TextField textfield = new TextField("Enabled/Disabled Field");
         textfield.setEnabled(false);
@@ -122,5 +117,10 @@ public class TextFieldView extends Main {
         button.addClickListener(e -> textfield.setEnabled(!textfield.isEnabled()));
         addExample("Enabled/Disabled Example", new HorizontalLayout(textfield, button));
     }
+
+    private void addExample(String title, Component component) {
+        add(new H2(title), component);
+    }
+
 
 }
