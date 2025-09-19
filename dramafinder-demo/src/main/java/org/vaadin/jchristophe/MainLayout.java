@@ -28,6 +28,11 @@ public class MainLayout extends AppLayout {
         final SideNavItem bigDecimalItem = new SideNavItem("BigDecimalField", BigDecimalFieldView.class);
         final SideNavItem checkboxItem = new SideNavItem("Checkbox", CheckboxView.class);
         final SideNavItem radioButtonItem = new SideNavItem("RadioButton", RadioButtonGroupView.class);
+        final SideNavItem passwordItem = new SideNavItem("PasswordField", PasswordFieldView.class);
+        final SideNavItem datePickerItem = new SideNavItem("DatePicker", DatePickerView.class);
+        final SideNavItem timePickerItem = new SideNavItem("TimePicker", TimePickerView.class);
+        final SideNavItem dateTimePickerItem = new SideNavItem("DateTimePicker", DateTimePickerView.class);
+        
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
         menuLayout.addItem(buttonItem);
@@ -37,12 +42,10 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(bigDecimalItem);
         menuLayout.addItem(checkboxItem);
         menuLayout.addItem(radioButtonItem);
-        final SideNavItem datePickerItem = new SideNavItem("DatePicker", DatePickerView.class);
-        menuLayout.addItem(datePickerItem);
-        final SideNavItem timePickerItem = new SideNavItem("TimePicker", TimePickerView.class);
-        menuLayout.addItem(timePickerItem);
-        final SideNavItem dateTimePickerItem = new SideNavItem("DateTimePicker", DateTimePickerView.class);
         menuLayout.addItem(dateTimePickerItem);
+        menuLayout.addItem(passwordItem);
+        menuLayout.addItem(datePickerItem);
+        menuLayout.addItem(timePickerItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
