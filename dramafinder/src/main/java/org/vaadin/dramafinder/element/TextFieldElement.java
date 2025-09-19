@@ -1,9 +1,22 @@
 package org.vaadin.dramafinder.element;
 
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-import org.vaadin.dramafinder.element.shared.*;
+import org.vaadin.dramafinder.element.shared.FocusableElement;
+import org.vaadin.dramafinder.element.shared.HasAllowedCharPatternElement;
+import org.vaadin.dramafinder.element.shared.HasAriaLabelElement;
+import org.vaadin.dramafinder.element.shared.HasClearButtonElement;
+import org.vaadin.dramafinder.element.shared.HasEnabledElement;
+import org.vaadin.dramafinder.element.shared.HasInputFieldElement;
+import org.vaadin.dramafinder.element.shared.HasPlaceholderElement;
+import org.vaadin.dramafinder.element.shared.HasPrefixElement;
+import org.vaadin.dramafinder.element.shared.HasSuffixElement;
+import org.vaadin.dramafinder.element.shared.HasThemeElement;
+import org.vaadin.dramafinder.element.shared.HasTooltipElement;
+import org.vaadin.dramafinder.element.shared.HasValidationPropertiesElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -35,7 +48,7 @@ public class TextFieldElement extends VaadinElement
         if (min != null) {
             assertThat(getInputLocator()).hasAttribute(MIN_LENGTH_ATTRIBUTE, min + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute(MIN_LENGTH_ATTRIBUTE, "");
+            assertThat(getInputLocator()).not().hasAttribute(MIN_LENGTH_ATTRIBUTE, Pattern.compile(".*"));
         }
     }
 
@@ -52,7 +65,7 @@ public class TextFieldElement extends VaadinElement
         if (max != null) {
             assertThat(getInputLocator()).hasAttribute(MAXLENGTH_ATTRIBUTE, max + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute(MAXLENGTH_ATTRIBUTE, "");
+            assertThat(getInputLocator()).not().hasAttribute(MAXLENGTH_ATTRIBUTE, Pattern.compile(".*"));
         }
     }
 
@@ -68,7 +81,7 @@ public class TextFieldElement extends VaadinElement
         if (pattern != null) {
             assertThat(getInputLocator()).hasAttribute(PATTERN_ATTRIBUTE, pattern);
         } else {
-            assertThat(getInputLocator()).not().hasAttribute(PATTERN_ATTRIBUTE, "");
+            assertThat(getInputLocator()).not().hasAttribute(PATTERN_ATTRIBUTE, Pattern.compile(".*"));
         }
     }
 

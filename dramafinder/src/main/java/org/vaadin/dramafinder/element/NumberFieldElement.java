@@ -1,5 +1,7 @@
 package org.vaadin.dramafinder.element;
 
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
@@ -28,7 +30,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
         if (step != null) {
             assertThat(getInputLocator()).hasAttribute("step", step + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("step", "");
+            assertThat(getInputLocator()).not().hasAttribute("step", Pattern.compile(".*"));
         }
     }
 
@@ -45,7 +47,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
         if (min != null) {
             assertThat(getInputLocator()).hasAttribute("min", min + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("min", "");
+            assertThat(getInputLocator()).not().hasAttribute("min", Pattern.compile(".*"));
         }
     }
 
@@ -62,10 +64,10 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
         if (max != null) {
             assertThat(getInputLocator()).hasAttribute("max", max + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("max", "");
+            assertThat(getInputLocator()).not().hasAttribute("max", Pattern.compile(".*"));
         }
     }
-    
+
     public static NumberFieldElement getByLabel(Page page, String label) {
         return new NumberFieldElement(
                 page.locator(FIELD_TAG_NAME)
