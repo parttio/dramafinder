@@ -32,7 +32,8 @@ public class MainLayout extends AppLayout {
         final SideNavItem datePickerItem = new SideNavItem("DatePicker", DatePickerView.class);
         final SideNavItem timePickerItem = new SideNavItem("TimePicker", TimePickerView.class);
         final SideNavItem dateTimePickerItem = new SideNavItem("DateTimePicker", DateTimePickerView.class);
-        
+        final SideNavItem selectItem = new SideNavItem("Select", SelectView.class);
+
         final SideNav menuLayout = new SideNav();
         menuLayout.addItem(textFieldItem);
         menuLayout.addItem(buttonItem);
@@ -50,6 +51,7 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(progressBarItem);
         menuLayout.addItem(datePickerItem);
         menuLayout.addItem(timePickerItem);
+        menuLayout.addItem(selectItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }

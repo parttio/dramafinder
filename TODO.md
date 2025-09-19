@@ -10,7 +10,9 @@
 - Email Field
 - Integer Field
 - Password Field
+- Progress bar
 - Radio Button
+- Select
 - TextArea
 - TextField
 - Time Picker
@@ -36,8 +38,6 @@
 - Multi-Select Combobox
 - Notification
 - Popover
-- Progress bar
-- Select
 - Side navigation
 - Split Layout
 - Tabs
