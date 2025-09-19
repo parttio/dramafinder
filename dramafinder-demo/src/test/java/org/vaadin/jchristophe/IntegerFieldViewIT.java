@@ -28,6 +28,9 @@ public class IntegerFieldViewIT extends SpringPlaywrightIT {
         integerField.assertHelperHasText("Enter the number of items");
         integerField.setValue("123");
         integerField.assertValue("123");
+
+        integerField.assertAriaLabel(null);
+        integerField.assertMax(null);
     }
 
     @Test
