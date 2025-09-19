@@ -28,7 +28,7 @@ public class NumberFieldView extends Main {
         numberField.setHelperText("Value between 0.5 and 10.5, in steps of 0.5");
         numberField.setValue(1.5);
         numberField.setMin(0.5);
-        numberField.setMax(10.5);
+        numberField.setMax(10);
         numberField.setStep(0.5);
         addExample("Min, Max, and Step", numberField);
     }

@@ -3,6 +3,7 @@ package org.vaadin.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.dramafinder.element.utils.NumberUtils;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -26,7 +27,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
 
     public void assertStep(Double step) {
         if (step != null) {
-            assertThat(getInputLocator()).hasAttribute("step", step + "");
+            assertThat(getInputLocator()).hasAttribute("step", NumberUtils.formatDouble(step));
         } else {
             assertThat(getInputLocator()).not().hasAttribute("step", "any");
         }
@@ -43,7 +44,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
 
     public void assertMin(Double min) {
         if (min != null) {
-            assertThat(getInputLocator()).hasAttribute("min", min + "");
+            assertThat(getInputLocator()).hasAttribute("min", NumberUtils.formatDouble(min));
         } else {
             assertThat(getInputLocator()).not().hasAttribute("min", "undefined");
         }
@@ -60,7 +61,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
 
     public void assertMax(Double max) {
         if (max != null) {
-            assertThat(getInputLocator()).hasAttribute("max", max + "");
+            assertThat(getInputLocator()).hasAttribute("max", NumberUtils.formatDouble(max));
         } else {
             assertThat(getInputLocator()).not().hasAttribute("max", "undefined");
         }
