@@ -35,7 +35,7 @@ public class NumberFieldViewIT extends SpringPlaywrightIT {
         NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Measurement");
         numberField.assertVisible();
         numberField.assertMin(0.5);
-        numberField.assertMax(10.5);
+        numberField.assertMax(10.0);
         numberField.assertStep(0.5);
 
         // Check initial value

@@ -46,6 +46,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(passwordItem);
         final SideNavItem textAreaItem = new SideNavItem("TextArea", TextAreaView.class);
         menuLayout.addItem(textAreaItem);
+        final SideNavItem progressBarItem = new SideNavItem("ProgressBar", ProgressBarView.class);
+        menuLayout.addItem(progressBarItem);
         menuLayout.addItem(datePickerItem);
         menuLayout.addItem(timePickerItem);
         addToDrawer(menuLayout);
