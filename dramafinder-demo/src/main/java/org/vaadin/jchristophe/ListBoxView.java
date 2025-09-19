@@ -22,8 +22,8 @@ public class ListBoxView extends Main {
 
     private void createBasicExample() {
         ListBox<String> listBox = new ListBox<>();
-        listBox.setTooltipText("Tooltip for listbox");
         listBox.setItems("Most recent first", "Rating: high to low", "Rating: low to high");
+        listBox.setTooltipText("Tooltip for listbox");
         listBox.addClassName("list-box");
         listBox.setAriaLabel("Invisible label");
         listBox.setValue("Most recent first");
