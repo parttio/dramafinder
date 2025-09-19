@@ -109,8 +109,7 @@ public class SelectElement extends VaadinElement
                 .filter(new Locator.FilterOptions()
                         .setHasText(label)).first();
     }
-
-
+    
     public static SelectElement getByLabel(Page page, String label) {
         return new SelectElement(
                 page.locator(FIELD_TAG_NAME)

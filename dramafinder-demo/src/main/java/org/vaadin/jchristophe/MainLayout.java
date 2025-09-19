@@ -52,6 +52,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(datePickerItem);
         menuLayout.addItem(timePickerItem);
         menuLayout.addItem(selectItem);
+        final SideNavItem listBoxItem = new SideNavItem("ListBox", ListBoxView.class);
+        menuLayout.addItem(listBoxItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
