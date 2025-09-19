@@ -44,6 +44,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(radioButtonItem);
         menuLayout.addItem(dateTimePickerItem);
         menuLayout.addItem(passwordItem);
+        final SideNavItem textAreaItem = new SideNavItem("TextArea", TextAreaView.class);
+        menuLayout.addItem(textAreaItem);
         menuLayout.addItem(datePickerItem);
         menuLayout.addItem(timePickerItem);
         addToDrawer(menuLayout);
