@@ -1,5 +1,7 @@
 package org.vaadin.dramafinder.element.shared;
 
+import java.util.regex.Pattern;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public interface HasAllowedCharPatternElement extends HasLocatorElement {
@@ -16,7 +18,7 @@ public interface HasAllowedCharPatternElement extends HasLocatorElement {
         if (pattern != null) {
             assertThat(getLocator()).hasJSProperty("allowedCharPattern", pattern);
         } else {
-            assertThat(getLocator()).not().hasAttribute("allowedCharPattern", "");
+            assertThat(getLocator()).not().hasAttribute("allowedCharPattern", Pattern.compile(".*"));
         }
     }
 }

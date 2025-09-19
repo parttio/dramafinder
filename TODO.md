@@ -9,7 +9,9 @@
 - Date Time Picker
 - Email Field
 - Integer Field
+- Password Field
 - Radio Button
+- TextArea
 - TextField
 - Time Picker
 
@@ -33,14 +35,12 @@
 - Message List
 - Multi-Select Combobox
 - Notification
-- Password Field
 - Popover
 - Progress bar
 - Select
 - Side navigation
 - Split Layout
 - Tabs
-- TextArea
 - Upload
 - Virtual List
 

@@ -28,7 +28,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
         if (step != null) {
             assertThat(getInputLocator()).hasAttribute("step", step + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("step", "");
+            assertThat(getInputLocator()).not().hasAttribute("step", "any");
         }
     }
 
@@ -45,7 +45,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
         if (min != null) {
             assertThat(getInputLocator()).hasAttribute("min", min + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("min", "");
+            assertThat(getInputLocator()).not().hasAttribute("min", "undefined");
         }
     }
 
@@ -62,10 +62,10 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
         if (max != null) {
             assertThat(getInputLocator()).hasAttribute("max", max + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("max", "");
+            assertThat(getInputLocator()).not().hasAttribute("max", "undefined");
         }
     }
-    
+
     public static NumberFieldElement getByLabel(Page page, String label) {
         return new NumberFieldElement(
                 page.locator(FIELD_TAG_NAME)

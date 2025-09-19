@@ -28,7 +28,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement {
         if (step != null) {
             assertThat(getInputLocator()).hasAttribute("step", step + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("step", "");
+            assertThat(getInputLocator()).not().hasAttribute("step", "any");
         }
     }
 
@@ -45,7 +45,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement {
         if (min != null) {
             assertThat(getInputLocator()).hasAttribute("min", min + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("min", "");
+            assertThat(getInputLocator()).not().hasAttribute("min", "undefined");
         }
     }
 
@@ -62,7 +62,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement {
         if (max != null) {
             assertThat(getInputLocator()).hasAttribute("max", max + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("max", "");
+            assertThat(getInputLocator()).hasAttribute("max", "undefined");
         }
     }
 
