@@ -3,7 +3,14 @@ package org.vaadin.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-import org.vaadin.dramafinder.element.shared.*;
+import org.vaadin.dramafinder.element.shared.FocusableElement;
+import org.vaadin.dramafinder.element.shared.HasAriaLabelElement;
+import org.vaadin.dramafinder.element.shared.HasEnabledElement;
+import org.vaadin.dramafinder.element.shared.HasPrefixElement;
+import org.vaadin.dramafinder.element.shared.HasStyleElement;
+import org.vaadin.dramafinder.element.shared.HasSuffixElement;
+import org.vaadin.dramafinder.element.shared.HasThemeElement;
+import org.vaadin.dramafinder.element.shared.HasTooltipElement;
 
 @PlaywrightElement(ButtonElement.FIELD_TAG_NAME)
 public class ButtonElement extends VaadinElement
@@ -29,6 +36,15 @@ public class ButtonElement extends VaadinElement
                         AriaRole.BUTTON,
                         new Page.GetByRoleOptions().setName(text)
                 ).and(page.locator(FIELD_TAG_NAME))
+        );
+    }
+
+    public static ButtonElement getByText(Locator locator, String text) {
+        return new ButtonElement(
+                locator.getByRole(
+                        AriaRole.BUTTON,
+                        new Locator.GetByRoleOptions().setName(text)
+                ).and(locator.page().locator(FIELD_TAG_NAME))
         );
     }
 

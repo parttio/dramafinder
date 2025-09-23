@@ -54,6 +54,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(selectItem);
         final SideNavItem listBoxItem = new SideNavItem("ListBox", ListBoxView.class);
         menuLayout.addItem(listBoxItem);
+        final SideNavItem detailsItem = new SideNavItem("Details", DetailsView.class);
+        menuLayout.addItem(detailsItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
