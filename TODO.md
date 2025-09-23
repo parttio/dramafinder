@@ -21,7 +21,6 @@
 
 ## Components not implemented
 
-- Accordion
 - App Layout
 - Avatar
 - Card
@@ -30,7 +29,6 @@
 - Context Menu
 - Custom Field ?
 - Dialog
-- Form Layout
 - Grid
 - Menu Bar
 - Message Input

@@ -56,6 +56,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(listBoxItem);
         final SideNavItem detailsItem = new SideNavItem("Details", DetailsView.class);
         menuLayout.addItem(detailsItem);
+        final SideNavItem accordionItem = new SideNavItem("Accordion", AccordionView.class);
+        menuLayout.addItem(accordionItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
