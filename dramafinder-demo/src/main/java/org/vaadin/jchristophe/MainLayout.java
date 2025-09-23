@@ -58,6 +58,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(detailsItem);
         final SideNavItem accordionItem = new SideNavItem("Accordion", AccordionView.class);
         menuLayout.addItem(accordionItem);
+        final SideNavItem tabsItem = new SideNavItem("Tabs", TabSheetView.class);
+        menuLayout.addItem(tabsItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
