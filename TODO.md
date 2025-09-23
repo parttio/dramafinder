@@ -15,6 +15,7 @@
 - Progress bar
 - Radio Button
 - Select
+- Tabs
 - TextArea
 - TextField
 - Time Picker
@@ -38,7 +39,6 @@
 - Popover
 - Side navigation
 - Split Layout
-- Tabs
 - Upload
 - Virtual List
 
