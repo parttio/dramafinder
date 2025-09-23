@@ -1,12 +1,19 @@
 package org.vaadin.jchristophe;
 
+import java.util.List;
+import java.util.Set;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -18,6 +25,8 @@ public class ListBoxView extends Main {
         createBasicExample();
         createAriaLabelledBy();
         createEnabledDisabledExample();
+        createMultipleList();
+        createMultipleListDataBean();
     }
 
     private void createBasicExample() {
@@ -51,6 +60,30 @@ public class ListBoxView extends Main {
         button.setId("enable-disable-button");
         button.addClickListener(e -> listBox.setEnabled(!listBox.isEnabled()));
         addExample("Enabled/Disabled Example", new HorizontalLayout(listBox, button));
+    }
+
+    private void createMultipleList() {
+        MultiSelectListBox<String> listBox = new MultiSelectListBox<>();
+        listBox.setAriaLabel("Multiple list");
+        listBox.setItems("Most recent first", "Rating: high to low", "Rating: low to high");
+        listBox.setValue(Set.of("Most recent first"));
+        add(listBox);
+        addExample("Multiple list", listBox);
+    }
+
+    private void createMultipleListDataBean() {
+        MultiSelectListBox<DataBean> listBox = new MultiSelectListBox<>();
+        listBox.setRenderer(new ComponentRenderer<Component, DataBean>(data -> new Div(new Span(data.name), new Span(data.surname))));
+        listBox.setAriaLabel("Multiple databean");
+        List<DataBean> dataBeans = List.of(
+                new DataBean("name", "surname"),
+                new DataBean("John", "Doe"));
+        listBox.setItems(dataBeans);
+        add(listBox);
+        addExample("Multiple list", listBox);
+    }
+
+    public record DataBean(String name, String surname) {
     }
 
     private void addExample(String title, Component component) {

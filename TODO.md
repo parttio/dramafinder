@@ -9,7 +9,7 @@
 - Date Time Picker
 - Email Field
 - Integer Field
-- ListBox
+- ListBox (multiple and single)
 - Password Field
 - Progress bar
 - Radio Button
@@ -35,7 +35,6 @@
 - Menu Bar
 - Message Input
 - Message List
-- Multi ListBox
 - Multi-Select Combobox
 - Notification
 - Popover
