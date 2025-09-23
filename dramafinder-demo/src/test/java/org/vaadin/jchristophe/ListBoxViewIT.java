@@ -85,4 +85,15 @@ public class ListBoxViewIT extends SpringPlaywrightIT {
         listBox.selectItem("Most recent first");
         listBox.assertSelectedValue();
     }
+
+    @Test
+    public void testMultipleValueData() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple data");
+        listBox.assertVisible();
+        listBox.assertSelectedValue();
+        listBox.selectItem("JohnDoe");
+        listBox.assertSelectedValue("Johndoe");
+        listBox.selectItem("name");
+        listBox.assertSelectedValue("John", "namesurname");
+    }
 }
