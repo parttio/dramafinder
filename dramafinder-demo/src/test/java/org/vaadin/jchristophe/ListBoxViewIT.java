@@ -27,6 +27,9 @@ public class ListBoxViewIT extends SpringPlaywrightIT {
         listBox.assertSelectedValue("Most recent first");
         listBox.selectItem("Rating: high to low");
         listBox.assertSelectedValue("Rating: high to low");
+        // doesn't unselect the item in single mode
+        listBox.selectItem("Rating: high to low");
+        listBox.assertSelectedValue("Rating: high to low");
     }
 
     @Test
@@ -68,5 +71,18 @@ public class ListBoxViewIT extends SpringPlaywrightIT {
         ListBoxElement listBoxElement = ListBoxElement.getByLabel(page, "Invisible label");
         listBoxElement.assertVisible();
         listBoxElement.assertTooltipHasText("Tooltip for listbox");
+    }
+
+    @Test
+    public void testMultipleValue() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        listBox.assertVisible();
+        listBox.assertSelectedValue("Most recent first");
+        listBox.selectItem("Rating: high to low");
+        listBox.assertSelectedValue("Most recent first", "Rating: high to low");
+        listBox.selectItem("Rating: high to low");
+        listBox.assertSelectedValue("Most recent first");
+        listBox.selectItem("Most recent first");
+        listBox.assertSelectedValue();
     }
 }
