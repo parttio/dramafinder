@@ -7,6 +7,7 @@
 - Checkbox
 - Date Picker
 - Date Time Picker
+- Details
 - Email Field
 - Integer Field
 - ListBox (multiple and single)
@@ -28,7 +29,6 @@
 - Confirm Dialog
 - Context Menu
 - Custom Field ?
-- Details
 - Dialog
 - Form Layout
 - Grid
