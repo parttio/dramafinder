@@ -96,4 +96,22 @@ public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
 
         dialog.assertClosed();
     }
+
+
+    @Test
+    public void testHasClass() {
+        ButtonElement openDialogButton = ButtonElement.getByText(page, "Open dialog with header component");
+        openDialogButton.click();
+        DialogElement dialog = DialogElement.getByHeaderText(page, "Header title");
+        dialog.assertCssClass("custom-dialog");
+    }
+
+    @Test
+    public void testTheme() {
+        ButtonElement openDialogButton = ButtonElement.getByText(page, "Open dialog with header component");
+        openDialogButton.click();
+        DialogElement dialog = DialogElement.getByHeaderText(page, "Header title");
+        dialog.assertTheme("no-padding");
+    }
+
 }

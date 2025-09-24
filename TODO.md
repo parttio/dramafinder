@@ -8,6 +8,7 @@
 - Date Picker
 - Date Time Picker
 - Details
+- Dialog
 - Email Field
 - Integer Field
 - ListBox (multiple and single)
@@ -29,7 +30,6 @@
 - Confirm Dialog
 - Context Menu
 - Custom Field ?
-- Dialog
 - Grid
 - Menu Bar
 - Message Input

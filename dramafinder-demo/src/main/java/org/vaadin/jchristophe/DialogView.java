@@ -3,6 +3,7 @@ package org.vaadin.jchristophe;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
@@ -44,6 +45,8 @@ public class DialogView extends Main {
 
     private void createDialogWithHeaderComponent() {
         Dialog dialog = new Dialog();
+        dialog.addClassName("custom-dialog");
+        dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
         dialog.setHeaderTitle("Header title");
         dialog.getHeader().add(new Span("This is the header of the dialog."));
         dialog.add(new Span("This is the content of the dialog."));

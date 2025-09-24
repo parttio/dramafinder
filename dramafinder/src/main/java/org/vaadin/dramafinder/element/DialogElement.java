@@ -3,10 +3,12 @@ package org.vaadin.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.dramafinder.element.shared.HasStyleElement;
+import org.vaadin.dramafinder.element.shared.HasThemeElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-public class DialogElement extends VaadinElement {
+public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-dialog-overlay";
 
