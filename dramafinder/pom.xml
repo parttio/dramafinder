@@ -13,7 +13,7 @@
     <description>Playwright utility classes for Vaadin</description>
 
     <properties>
-        <vaadin.version>24.8.7</vaadin.version>
+        <vaadin.version>24.9.0</vaadin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8
         </project.reporting.outputEncoding>
@@ -42,14 +42,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <!-- Repository used by many Vaadin add-ons -->
-        <repository>
-            <id>Vaadin Directory</id>
-            <url>https://maven.vaadin.com/vaadin-addons</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -60,12 +52,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>vaadin-prereleases</id>
-            <url>
-                https://maven.vaadin.com/vaadin-prereleases/
-            </url>
         </pluginRepository>
     </pluginRepositories>
 
