@@ -46,16 +46,24 @@ public class DialogElement extends VaadinElement {
         assertThat(getLocator()).isHidden();
     }
 
-    public Locator getHeaderText() {
-        return getLocator().locator("> [slot='title']");
+    public String getHeaderText() {
+        return getLocator().locator("> [slot='title']").textContent();
     }
 
-    public Locator getContent() {
+    public void assertHeaderText(String headerText) {
+        assertThat(getLocator().locator("> [slot='title']")).hasText(headerText);
+    }
+
+    public Locator getHeaderLocator() {
+        return getLocator().locator("> [slot='header-content']");
+    }
+
+    public Locator getContentLocator() {
         // using xpath to not pierce the shadow dom
         return getLocator().locator("xpath=./*[not(@slot)][1]");
     }
 
-    public Locator getFooter() {
+    public Locator getFooterLocator() {
         return getLocator().locator("> [slot='footer']");
     }
 

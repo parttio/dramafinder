@@ -31,19 +31,27 @@ public class ButtonElement extends VaadinElement
      * @return
      */
     public static ButtonElement getByText(Page page, String text) {
+        return getByText(page, new Page.GetByRoleOptions().setName(text));
+    }
+
+    public static ButtonElement getByText(Page page, Page.GetByRoleOptions options) {
         return new ButtonElement(
                 page.getByRole(
                         AriaRole.BUTTON,
-                        new Page.GetByRoleOptions().setName(text)
+                        options
                 ).and(page.locator(FIELD_TAG_NAME))
         );
     }
 
     public static ButtonElement getByText(Locator locator, String text) {
+        return getByText(locator, new Locator.GetByRoleOptions().setName(text));
+    }
+
+    public static ButtonElement getByText(Locator locator, Locator.GetByRoleOptions options) {
         return new ButtonElement(
                 locator.getByRole(
                         AriaRole.BUTTON,
-                        new Locator.GetByRoleOptions().setName(text)
+                        options
                 ).and(locator.page().locator(FIELD_TAG_NAME))
         );
     }

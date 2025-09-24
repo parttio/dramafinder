@@ -18,6 +18,7 @@ public class DialogView extends Main {
     public DialogView() {
         createModalDialog();
         createNonModalDialogs();
+        createDialogWithHeaderComponent();
     }
 
     private void createModalDialog() {
@@ -39,6 +40,18 @@ public class DialogView extends Main {
         Button openDialogButton2 = new Button("Open non-modal 2",
                 e -> dialog2.open());
         addExample("Dialog example", new HorizontalLayout(openDialogButton1, openDialogButton2));
+    }
+
+    private void createDialogWithHeaderComponent() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Header title");
+        dialog.getHeader().add(new Span("This is the header of the dialog."));
+        dialog.add(new Span("This is the content of the dialog."));
+        Button closeButton = new Button("Close", e -> dialog.close());
+        dialog.getFooter().add(closeButton);
+        Button openDialogButton = new Button("Open dialog with header component",
+                e -> dialog.open());
+        addExample("Dialog with header component example", openDialogButton);
     }
 
     private Dialog createDialog(String title, boolean modal, Component content) {
