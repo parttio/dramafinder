@@ -60,6 +60,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(accordionItem);
         final SideNavItem tabsItem = new SideNavItem("Tabs", TabSheetView.class);
         menuLayout.addItem(tabsItem);
+        final SideNavItem dialogItem = new SideNavItem("Dialog", DialogView.class);
+        menuLayout.addItem(dialogItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
