@@ -7,6 +7,7 @@ import org.vaadin.dramafinder.HasTestView;
 import org.vaadin.dramafinder.element.AccordionElement;
 import org.vaadin.dramafinder.element.AccordionPanelElement;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -46,5 +47,16 @@ public class AccordionViewIT extends SpringPlaywrightIT implements HasTestView {
     public void testHasClass() {
         AccordionElement accordion = new AccordionElement(page.locator(".custom-css"));
         accordion.assertCssClass("custom-css");
+    }
+
+
+    @Test
+    public void testContent() {
+        AccordionElement accordion = new AccordionElement(page.locator(".custom-css"));
+
+        AccordionPanelElement panel1 = accordion.getPanel("Panel 1");
+        panel1.assertOpened();
+        panel1.assertContentVisible();
+        assertThat(panel1.getContentLocator()).hasText("Content 1");
     }
 }

@@ -42,7 +42,7 @@ public class AccordionPanelElement extends VaadinElement {
     }
 
     public Locator getContentLocator() {
-        return getLocator().locator("> [part='content']");
+        return getLocator().locator("xpath=./*[not(@slot)][1]");
     }
 
     public void assertContentVisible() {
