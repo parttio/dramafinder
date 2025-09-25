@@ -6,7 +6,7 @@
 
     <groupId>org.vaadin.jchristophe</groupId>
     <artifactId>dramafinder-test-reporting</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>Aggregate Report</name>
 
