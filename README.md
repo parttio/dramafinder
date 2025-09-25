@@ -2,8 +2,10 @@
 
 ## Usage
 
-Drama Finder is a set of helper classes to test a Vaadin application using Playwright.
-It gives you access to a list of assertions and actions you can do for our components.
+Drama Finder is a set of helper classes to test a Vaadin application using
+Playwright.
+It gives you access to a list of assertions and actions you can do for our
+components.
 
 For example:
 
@@ -40,12 +42,15 @@ public void testHelper() {
 
 ## Note
 
-The API is in early stage of development and a lot of components are not yet covered.
+The API is in early stage of development and a lot of components are not yet
+covered.
 
 If you notice something missing please create a ticket or a Pull Request.
 
-The tests in the demo application is not meant to be a best practice since it's primarly here to test the API.
-For example it will test the getter like `getMinLength` without waiting which is a bad practice.
+The tests in the demo application is not meant to be a best practice since it's
+primarly here to test the API.
+For example it will test the getter like `getMinLength` without waiting which is
+a bad practice.
 
 ```java
 
@@ -80,8 +85,10 @@ mvn test
 ## Integration tests
 
 The integration tests are built using Spring Boot, Playwright, and Axe-core.
-The tests are located in files ending with `IT.java` in the `sortable-layout-demo` module.
-The tests are run with the `maven-failsafe-plugin` when the `it` profile is activated.
+The tests are located in files ending with `IT.java` in the
+`sortable-layout-demo` module.
+The tests are run with the `maven-failsafe-plugin` when the `it` profile is
+activated.
 
 To run the integration tests, execute the following command:
 
@@ -103,7 +110,8 @@ Add the addon as a test dependency.
 </dependency>
 ```
 
-With Spring Boot you can copy the `SpringPlaywrightIT` then create a simple test:
+With Spring Boot you can copy the `SpringPlaywrightIT` then create a simple
+test:
 
 ```java
 
@@ -118,4 +126,21 @@ public class SimpleExampleViewIT extends SpringPlaywrightIT {
 }
 ```
 
+## Cutting a release
 
+Before cutting a release, make sure the build passes properly locally and in
+GitHub Actions based verification build.
+
+To tag a release and increment versions, issue:
+
+```bash
+mvn release:prepare release:clean
+```
+
+Answer questions, defaults most often fine. Note that release:perform is not
+needed as there is a GitHub Action is set up build and to push release to Maven
+Central automatically.
+
+Directory will automatically pick up new releases within about half an hour, but
+if browser or Vaadin version support change, be sure to adjust the metadata in
+Vaadin Directory UI.
