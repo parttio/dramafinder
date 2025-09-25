@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.vaadin.jchristophe</groupId>
+    <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder-demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
 
     <name>Drama Finder Demo</name>
     <packaging>jar</packaging>
@@ -57,9 +57,9 @@
             <artifactId>vaadin-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.vaadin.jchristophe</groupId>
+            <groupId>org.vaadin.addons</groupId>
             <artifactId>dramafinder</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -91,12 +91,6 @@
             <groupId>com.deque.html.axe-core</groupId>
             <artifactId>playwright</artifactId>
             <version>4.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.vaadin.jchristophe</groupId>
-            <artifactId>dramafinder</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
