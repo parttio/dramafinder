@@ -36,3 +36,5 @@ package.json
 webpack.config.js
 webpack.generated.js
 /dramafinder-demo/frontend/generated/
+/dramafinder-demo/src/main/frontend/generated/
+/src/main/frontend/generated/

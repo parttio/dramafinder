@@ -12,7 +12,9 @@
 - Email Field
 - Integer Field
 - ListBox (multiple and single)
+- Notification
 - Password Field
+- Popover
 - Progress bar
 - Radio Button
 - Select
@@ -35,8 +37,6 @@
 - Message Input
 - Message List
 - Multi-Select Combobox
-- Notification
-- Popover
 - Side navigation
 - Split Layout
 - Upload
