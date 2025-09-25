@@ -44,8 +44,8 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
     }
 
     public void setValue(LocalDateTime date) {
-        String formattedDate = date.format(ISO_LOCAL_DATE_TIME);
-        setProperty("value", formattedDate);
+        datePickerElement.setValue(date.toLocalDate());
+        timePickerElement.setValue(date.toLocalTime());
         getLocator().dispatchEvent("change");
     }
 
