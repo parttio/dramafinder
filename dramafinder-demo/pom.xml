@@ -6,7 +6,7 @@
 
     <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder-demo</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
 
     <name>Drama Finder Demo</name>
     <packaging>jar</packaging>
