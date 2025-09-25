@@ -12,7 +12,7 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
     public static final String FIELD_TAG_NAME = "vaadin-menu-bar-list-box";
 
     public MenuElement(Page page) {
-        super(page.locator(FIELD_TAG_NAME).last());
+        super(page.locator(FIELD_TAG_NAME));
     }
 
     public MenuElement(Locator locator) {
