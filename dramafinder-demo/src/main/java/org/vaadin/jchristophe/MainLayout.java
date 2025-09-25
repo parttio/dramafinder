@@ -66,6 +66,8 @@ public class MainLayout extends AppLayout {
         menuLayout.addItem(notificationItem);
         final SideNavItem popoverItem = new SideNavItem("Popover", PopoverView.class);
         menuLayout.addItem(popoverItem);
+        final SideNavItem menubarItem = new SideNavItem("MenuBar", MenuBarView.class);
+        menuLayout.addItem(menubarItem);
         addToDrawer(menuLayout);
         addToNavbar(true, drawerToggle, new Header(viewTitle));
     }
