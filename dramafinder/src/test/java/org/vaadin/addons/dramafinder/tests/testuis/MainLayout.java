@@ -1,21 +1,33 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class MainLayout extends AppLayout {
 
+    private final H1 viewTitle;
+
     MainLayout() {
+        final DrawerToggle drawerToggle = new DrawerToggle();
+        drawerToggle.setAriaLabel("Menu toggle");
+        viewTitle = new H1();
+        viewTitle.addClassName(LumoUtility.FontSize.LARGE);
+
+        addToNavbar(true, drawerToggle, new Header(viewTitle));
+
         setPrimarySection(Section.DRAWER);
         addToDrawer(createHeader(), new Scroller(createSideNav()));
     }
@@ -50,6 +62,18 @@ public class MainLayout extends AppLayout {
         } else {
             return new SideNavItem(menuEntry.title(), menuEntry.path());
         }
+    }
+
+
+    @Override
+    protected void afterNavigation() {
+        super.afterNavigation();
+        viewTitle.setText(getCurrentPageTitle());
+    }
+
+    private String getCurrentPageTitle() {
+        PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
+        return title == null ? "" : title.value();
     }
 
 }

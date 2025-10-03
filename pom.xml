@@ -11,7 +11,7 @@
     <modules>
         <module>dramafinder</module>
     </modules>
-    <name>Drama Finder</name>
+    <name>Drama Finder Parent</name>
     <description>Playwright utility classes for Vaadin</description>
 
     <properties>

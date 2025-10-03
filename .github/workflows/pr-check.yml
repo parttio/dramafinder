@@ -31,7 +31,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn -Pit -B verify --file pom.xml
+        run: mvn -B verify --file pom.xml
       - name: JaCoCo Report
         uses: Madrapps/jacoco-report@v1.7.2
         with:
