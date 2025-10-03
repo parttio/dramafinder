@@ -38,3 +38,4 @@ webpack.generated.js
 /dramafinder-demo/frontend/generated/
 /dramafinder-demo/src/main/frontend/generated/
 /src/main/frontend/generated/
+dramafinder/src/main/frontend

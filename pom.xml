@@ -10,8 +10,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>dramafinder</module>
-        <module>dramafinder-demo</module>
-        <module>dramafinder-test-reporting</module>
     </modules>
     <name>Drama Finder</name>
     <description>Playwright utility classes for Vaadin</description>
