@@ -103,7 +103,7 @@ Add the addon as a test dependency.
 ```xml
 
 <dependency>
-    <groupId>org.vaadin.addonsorg.vaadin.addons</groupId>
+    <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <scope>test</scope>
