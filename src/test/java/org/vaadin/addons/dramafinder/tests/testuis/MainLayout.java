@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Div;
@@ -49,10 +50,10 @@ public class MainLayout extends AppLayout {
         var nav = new SideNav();
         nav.addClassNames(LumoUtility.Margin.Horizontal.MEDIUM);
         RouteConfiguration.forApplicationScope().getAvailableRoutes()
-                        .forEach(route -> {
-                            MenuEntry menuEntry = new MenuEntry(route.getTemplate(), route.getNavigationTarget().getSimpleName(), null,null, route.getNavigationTarget());
-                            nav.addItem(createSideNavItem(menuEntry));
-                        });
+                .forEach(route -> {
+                    MenuEntry menuEntry = new MenuEntry(route.getTemplate(), route.getNavigationTarget().getSimpleName(), null, null, route.getNavigationTarget());
+                    nav.addItem(createSideNavItem(menuEntry));
+                });
         return nav;
     }
 
@@ -64,10 +65,9 @@ public class MainLayout extends AppLayout {
         }
     }
 
-
     @Override
-    protected void afterNavigation() {
-        super.afterNavigation();
+    public void setContent(Component content) {
+        super.setContent(content);
         viewTitle.setText(getCurrentPageTitle());
     }
 

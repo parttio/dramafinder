@@ -14,12 +14,13 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class PopoverElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement {
 
-    public static final String FIELD_TAG_NAME = "vaadin-popover-overlay";
+    public static final String FIELD_TAG_NAME = "vaadin-popover";
 
     /** Create a {@code PopoverElement} by resolving the dialog with ARIA role. */
     public PopoverElement(Page page) {
-        // use xpath to exclude the shadow dom
-        super(page.locator("//" + FIELD_TAG_NAME));
+        super(
+                page.getByRole(AriaRole.DIALOG)
+                        .and(page.locator(FIELD_TAG_NAME)));
     }
 
     /** Create a {@code PopoverElement} from an existing locator. */

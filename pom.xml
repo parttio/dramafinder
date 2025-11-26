@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vaadin.addons</groupId>
@@ -12,16 +14,16 @@
     <description>Playwright utility classes for Vaadin</description>
 
     <properties>
-        <vaadin.version>24.9.0</vaadin.version>
+        <vaadin.version>25.0.0-beta7</vaadin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8
         </project.reporting.outputEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <github.account>parttio</github.account>
         <github.project>dramafinder</github.project>
         <!-- used for testing -->
-        <spring.boot.version>3.5.6</spring.boot.version>
+        <spring.boot.version>4.0.0</spring.boot.version>
     </properties>
 
     <organization>
@@ -57,7 +59,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- The add-on itself does not depend on Spring Boot or vaaddin.
+            <!-- The add-on itself does not depend on Spring Boot or vaadin.
                  This is to simplify testing setup only, to get compatible deps
                  needed for testing/development. -->
             <dependency>
@@ -87,7 +89,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.13.4</version>
+            <version>6.0.1</version>
             <scope>provided</scope>
         </dependency>
 
