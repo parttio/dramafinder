@@ -14,6 +14,9 @@ import org.vaadin.addons.dramafinder.element.shared.HasValueElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+/**
+ * PlaywrightElement for {@code <vaadin-radio-button>} (package-private).
+ */
 @PlaywrightElement(RadioButtonElement.FIELD_TAG_NAME)
 class RadioButtonElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
@@ -21,6 +24,9 @@ class RadioButtonElement extends VaadinElement
 
     public static final String FIELD_TAG_NAME = "vaadin-radio-button";
 
+    /**
+     * Create a new {@code RadioButtonElement}.
+     */
     public RadioButtonElement(Locator locator) {
         super(locator);
     }
@@ -40,22 +46,27 @@ class RadioButtonElement extends VaadinElement
         return getInputLocator();
     }
 
+    /** Whether the radio is checked. */
     boolean isChecked() {
         return getInputLocator().isChecked();
     }
 
+    /** Assert that the radio is checked. */
     void assertChecked() {
         assertThat(getInputLocator()).isChecked();
     }
 
+    /** Assert that the radio is not checked. */
     void assertNotChecked() {
         assertThat(getInputLocator()).not().isChecked();
     }
 
+    /** Check the radio. */
     void check() {
         getInputLocator().check();
     }
 
+    /** Get a radio by its label within a given scope. */
     static RadioButtonElement getByLabel(Locator locator, String label) {
         return new RadioButtonElement(
                 locator.locator(FIELD_TAG_NAME)

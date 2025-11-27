@@ -20,6 +20,11 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+/**
+ * PlaywrightElement for {@code <vaadin-date-picker>}.
+ * <p>
+ * Adds convenience methods for {@link LocalDate} values and lookup by label.
+ */
 @PlaywrightElement(DatePickerElement.FIELD_TAG_NAME)
 public class DatePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
@@ -27,15 +32,30 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
 
     public static final String FIELD_TAG_NAME = "vaadin-date-picker";
 
+    /**
+     * Create a new {@code DatePickerElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-date-picker>} element
+     */
     public DatePickerElement(Locator locator) {
         super(locator);
     }
 
+    /**
+     * Set the value using a {@link LocalDate} formatted as ISO-8601.
+     *
+     * @param date the date to set
+     */
     public void setValue(LocalDate date) {
         String formattedDate = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
         setProperty("value", formattedDate);
     }
 
+    /**
+     * Get the current value as a {@link LocalDate}.
+     *
+     * @return the parsed date or {@code null} when empty
+     */
     public LocalDate getValueAsLocalDate() {
         String value = getValue();
         if (value == null || value.isEmpty()) {
@@ -72,7 +92,7 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
 
 
     /**
-     * Check if the input value equals to the parameter
+     * Assert that the input value equals the provided string.
      *
      * @param value formatted as in the view dd/mm/yyyy.
      */
@@ -82,9 +102,9 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
     }
 
     /**
-     * Check if the value equals to the parameter
+     * Assert that the value equals the provided date.
      *
-     * @param value
+     * @param value expected {@link LocalDate} or {@code null} for empty
      */
     public void assertValue(LocalDate value) {
         if (value != null) {
@@ -95,6 +115,13 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
     }
 
 
+    /**
+     * Get the {@code DatePickerElement} by its label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the field
+     * @return the matching {@code DatePickerElement}
+     */
     public static DatePickerElement getByLabel(Page page, String label) {
         return new DatePickerElement(
                 page.locator(FIELD_TAG_NAME)
@@ -104,6 +131,13 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
                         ).first());
     }
 
+    /**
+     * Get the {@code DatePickerElement} by its label within a given scope.
+     *
+     * @param locator the locator to search within
+     * @param label   the accessible label of the field
+     * @return the matching {@code DatePickerElement}
+     */
     public static DatePickerElement getByLabel(Locator locator, String label) {
         return new DatePickerElement(
                 locator.locator(FIELD_TAG_NAME)

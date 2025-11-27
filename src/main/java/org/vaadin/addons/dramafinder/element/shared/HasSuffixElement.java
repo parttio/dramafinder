@@ -10,14 +10,17 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasSuffixElement extends HasLocatorElement {
 
+    /** Locator for the suffix slot content. */
     default Locator getSuffixLocator() {
         return getLocator().locator("*[slot=\"suffix\"]").first();
     }
 
+    /** Text content of the suffix slot. */
     default String getSuffixText() {
         return getSuffixLocator().textContent();
     }
 
+    /** Assert that the suffix slot has the expected text, or is hidden when null. */
     default void assertSuffixHasText(String text) {
         if (text != null) {
             assertThat(getSuffixLocator()).hasText(text);
@@ -26,4 +29,3 @@ public interface HasSuffixElement extends HasLocatorElement {
         }
     }
 }
-

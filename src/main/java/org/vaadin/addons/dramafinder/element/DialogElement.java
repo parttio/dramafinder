@@ -8,67 +8,89 @@ import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+/**
+ * PlaywrightElement for {@code <vaadin-dialog>}.
+ * <p>
+ * Provides access to header/content/footer slots, modal flags and open state.
+ */
 public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-dialog-overlay";
 
+    /**
+     * Create a {@code DialogElement} by resolving the dialog with ARIA role.
+     */
     public DialogElement(Page page) {
         super(page.locator(FIELD_TAG_NAME));
     }
 
+    /** Create a {@code DialogElement} from an existing locator. */
     public DialogElement(Locator locator) {
         super(locator);
     }
 
+    /** Close the dialog using the Escape key. */
     public void closeWithEscape() {
         getLocator().press("Escape");
     }
 
+    /** Whether the dialog is open (visible). */
     public boolean isOpen() {
         return getLocator().isVisible();
     }
 
+    /** Assert that the dialog is open. */
     public void assertOpen() {
         assertThat(getLocator()).hasAttribute("opened", "");
     }
 
+    /** Whether the dialog is modal (i.e. not modeless). */
     public boolean isModal() {
         return getLocator().getAttribute("modeless") == null;
     }
 
+    /** Assert that the dialog is modal. */
     public void assertModal() {
         assertThat(getLocator()).not().hasAttribute("modeless", "");
     }
 
+    /** Assert that the dialog is modeless. */
     public void assertModeless() {
         assertThat(getLocator()).hasAttribute("modeless", "");
     }
 
+    /** Assert that the dialog is closed (hidden). */
     public void assertClosed() {
         assertThat(getLocator()).isHidden();
     }
 
+    /** Get the header text from the title slot. */
     public String getHeaderText() {
         return getLocator().locator("> [slot='title']").textContent();
     }
 
+    /** Assert the header text matches. */
     public void assertHeaderText(String headerText) {
         assertThat(getLocator().locator("> [slot='title']")).hasText(headerText);
     }
 
+    /** Locator for the header content slot. */
     public Locator getHeaderLocator() {
         return getLocator().locator("> [slot='header-content']");
     }
 
+    /** Locator for the dialog content (first non-slotted child). */
     public Locator getContentLocator() {
         // using xpath to not pierce the shadow dom
         return getLocator().locator("xpath=./*[not(@slot)][1]");
     }
 
+    /** Locator for the footer slot. */
     public Locator getFooterLocator() {
         return getLocator().locator("> [slot='footer']");
     }
 
+    /** Get a dialog by its header text (accessible name). */
     public static DialogElement getByHeaderText(Page page, String summary) {
         return new DialogElement(
                 page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(summary))
