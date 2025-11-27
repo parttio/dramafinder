@@ -74,6 +74,15 @@ mvn spring-boot:run
 This deploys demo at http://localhost:8080
 The demo is only here to run the test
 
+### Javadoc
+
+Public APIs in the `dramafinder` module are documented with concise Javadoc:
+- Element classes include a short summary referencing the underlying Vaadin
+  tag (e.g., `vaadin-text-field`) and any noteworthy behaviors.
+- Public methods document parameters, return values, and null semantics.
+- Factory helpers (e.g., `getByLabel`) note the ARIA role used to locate the
+  element.
+
 ## Running tests
 
 To run the unit tests, execute the following command:
