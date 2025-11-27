@@ -11,10 +11,12 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasTooltipElement extends HasLocatorElement {
 
+    /** Locator for the tooltip content (role=tooltip). */
     default Locator getTooltipLocator() {
         return getLocator().locator("*[slot=\"tooltip\"]").first();
     }
 
+    /** Tooltip text content. */
     default String getTooltipText() {
         return getTooltipLocator().textContent();
     }
@@ -27,4 +29,3 @@ public interface HasTooltipElement extends HasLocatorElement {
         }
     }
 }
-

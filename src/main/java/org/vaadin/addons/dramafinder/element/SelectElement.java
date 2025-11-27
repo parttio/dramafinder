@@ -17,6 +17,12 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+/**
+ * PlaywrightElement for {@code <vaadin-select>}.
+ * <p>
+ * Provides helpers to open the overlay and pick items by visible text,
+ * along with aria/placeholder/validation mixins.
+ */
 @PlaywrightElement(SelectElement.FIELD_TAG_NAME)
 public class SelectElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasInputFieldElement,
@@ -32,12 +38,17 @@ public class SelectElement extends VaadinElement
         return getLocator().locator("*[slot=\"value\"]").first();
     }
 
+    /**
+     * Create a new {@code SelectElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-select>} element
+     */
     public SelectElement(Locator locator) {
         super(locator);
     }
 
     /**
-     * Select the item by label
+     * Select an item by its visible label.
      *
      * @param item label of the item
      */
@@ -47,6 +58,7 @@ public class SelectElement extends VaadinElement
     }
 
     /**
+     * Get the selected value label for single-select.
      *
      * @return the label of the value
      */
@@ -96,8 +108,9 @@ public class SelectElement extends VaadinElement
     }
 
     /**
+     * Assert the selected value label equals the expected string.
      *
-     * @param expected
+     * @param expected expected label or empty for no selection
      */
     @Override
     public void assertValue(String expected) {
@@ -110,6 +123,13 @@ public class SelectElement extends VaadinElement
                         .setHasText(label)).first();
     }
 
+    /**
+     * Get the {@code SelectElement} by its label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the field
+     * @return the matching {@code SelectElement}
+     */
     public static SelectElement getByLabel(Page page, String label) {
         return new SelectElement(
                 page.locator(FIELD_TAG_NAME)

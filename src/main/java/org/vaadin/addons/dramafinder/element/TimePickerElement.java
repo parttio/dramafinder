@@ -20,6 +20,11 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+/**
+ * PlaywrightElement for {@code <vaadin-time-picker>}.
+ * <p>
+ * Adds convenience methods for {@link LocalTime} values and lookup by label.
+ */
 @PlaywrightElement(TimePickerElement.FIELD_TAG_NAME)
 public class TimePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
@@ -28,15 +33,30 @@ public class TimePickerElement extends VaadinElement implements HasInputFieldEle
     public static final String FIELD_TAG_NAME = "vaadin-time-picker";
     public static final DateTimeFormatter LOCAL_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
+    /**
+     * Create a new {@code TimePickerElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-time-picker>} element
+     */
     public TimePickerElement(Locator locator) {
         super(locator);
     }
 
+    /**
+     * Set the value using a {@link LocalTime} formatted as HH:mm.
+     *
+     * @param time the time to set
+     */
     public void setValue(LocalTime time) {
         String formattedTime = time.format(LOCAL_TIME);
         setProperty("value", formattedTime);
     }
 
+    /**
+     * Get the current value as a {@link LocalTime}.
+     *
+     * @return the parsed time or {@code null} when empty
+     */
     public LocalTime getValueAsLocalTime() {
         String value = getValue();
         if (value == null || value.isEmpty()) {
@@ -61,9 +81,9 @@ public class TimePickerElement extends VaadinElement implements HasInputFieldEle
     }
 
     /**
-     * Check if the value equals to the parameter
+     * Assert that the value equals the provided time.
      *
-     * @param value
+     * @param value expected {@link LocalTime} or {@code null} for empty
      */
     public void assertValue(LocalTime value) {
         if (value != null) {
@@ -73,6 +93,13 @@ public class TimePickerElement extends VaadinElement implements HasInputFieldEle
         }
     }
 
+    /**
+     * Get the {@code TimePickerElement} by its label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the field
+     * @return the matching {@code TimePickerElement}
+     */
     public static TimePickerElement getByLabel(Page page, String label) {
         return new TimePickerElement(
                 page.locator(FIELD_TAG_NAME)
@@ -82,6 +109,13 @@ public class TimePickerElement extends VaadinElement implements HasInputFieldEle
                         ).first());
     }
 
+    /**
+     * Get the {@code TimePickerElement} by its label within a given scope.
+     *
+     * @param locator the locator to search within
+     * @param label   the accessible label of the field
+     * @return the matching {@code TimePickerElement}
+     */
     public static TimePickerElement getByLabel(Locator locator, String label) {
         return new TimePickerElement(
                 locator.locator(FIELD_TAG_NAME)

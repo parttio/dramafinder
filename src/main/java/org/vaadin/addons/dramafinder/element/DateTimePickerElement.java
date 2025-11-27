@@ -22,6 +22,12 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
+/**
+ * PlaywrightElement for {@code <vaadin-date-time-picker>}.
+ * <p>
+ * Composes a {@link DatePickerElement} and {@link TimePickerElement} and exposes
+ * helpers to interact using {@link LocalDateTime}.
+ */
 @PlaywrightElement(DateTimePickerElement.FIELD_TAG_NAME)
 public class DateTimePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
@@ -37,18 +43,33 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
             .append(TimePickerElement.LOCAL_TIME)
             .toFormatter();
 
+    /**
+     * Create a new {@code DateTimePickerElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-date-time-picker>} element
+     */
     public DateTimePickerElement(Locator locator) {
         super(locator);
         datePickerElement = new DatePickerElement(locator.locator(DatePickerElement.FIELD_TAG_NAME));
         timePickerElement = new TimePickerElement(locator.locator(TimePickerElement.FIELD_TAG_NAME));
     }
 
+    /**
+     * Set the value using a {@link LocalDateTime}.
+     *
+     * @param date the date-time to set
+     */
     public void setValue(LocalDateTime date) {
         datePickerElement.setValue(date.toLocalDate());
         timePickerElement.setValue(date.toLocalTime());
         getLocator().dispatchEvent("change");
     }
 
+    /**
+     * Get the current value as a {@link LocalDateTime}.
+     *
+     * @return the parsed value or {@code null} when empty
+     */
     public LocalDateTime getValueAsLocalDateTime() {
         String value = getValue();
         if (value == null || value.isEmpty()) {
@@ -102,7 +123,7 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
 
 
     /**
-     * Check if the input value equals to the parameter
+     * Assert that the input value equals the provided string.
      *
      * @param value formatted as in the view dd/mm/yyyy hh:mm.
      */
@@ -112,9 +133,9 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
     }
 
     /**
-     * Check if the value equals to the parameter
+     * Assert that the value equals the provided date-time.
      *
-     * @param value
+     * @param value expected {@link LocalDateTime} or {@code null} for empty
      */
     public void assertValue(LocalDateTime value) {
         if (value != null) {
@@ -125,6 +146,13 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
     }
 
 
+    /**
+     * Get the {@code DateTimePickerElement} by its label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the field
+     * @return the matching {@code DateTimePickerElement}
+     */
     public static DateTimePickerElement getByLabel(Page page, String label) {
         return new DateTimePickerElement(
                 page.locator(FIELD_TAG_NAME)
@@ -134,6 +162,13 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
                         ).first());
     }
 
+    /**
+     * Get the {@code DateTimePickerElement} by its label within a given scope.
+     *
+     * @param locator the locator to search within
+     * @param label   the accessible label of the field
+     * @return the matching {@code DateTimePickerElement}
+     */
     public static DateTimePickerElement getByLabel(Locator locator, String label) {
         return new DateTimePickerElement(
                 locator.locator(FIELD_TAG_NAME)
@@ -141,22 +176,34 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
                         .first());
     }
 
+    /**
+     * Set only the date part (string input) and dispatch change events.
+     */
     public void setDate(String date) {
         datePickerElement.setValue(date);
         getLocator().page().keyboard().press("Enter");
         getLocator().dispatchEvent("change");
     }
 
+    /**
+     * Set only the time part (string input) and dispatch change events.
+     */
     public void setTime(String date) {
         timePickerElement.setValue(date);
         getLocator().page().keyboard().press("Enter");
         getLocator().dispatchEvent("change");
     }
 
+    /**
+     * Assert the date sub-field value equals the expected string.
+     */
     public void assertDateValue(String date) {
         datePickerElement.assertValue(date);
     }
 
+    /**
+     * Assert the time sub-field value equals the expected string.
+     */
     public void assertTimeValue(String time) {
         timePickerElement.assertValue(time);
     }
