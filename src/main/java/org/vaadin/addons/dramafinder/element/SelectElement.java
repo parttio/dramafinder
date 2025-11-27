@@ -31,7 +31,7 @@ public class SelectElement extends VaadinElement
 
     public static final String FIELD_TAG_NAME = "vaadin-select";
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-select-item";
-    public static final String FIELD_OVERLAY_TAG_NAME = "vaadin-select-overlay";
+    public static final String FIELD_OVERLAY_TAG_NAME = "vaadin-select-list-box";
 
     @Override
     public Locator getInputLocator() {
@@ -54,7 +54,7 @@ public class SelectElement extends VaadinElement
      */
     public void selectItem(String item) {
         getLocator().click();
-        getSelectItem(getLocator().page().locator(FIELD_OVERLAY_TAG_NAME + "[opened]"), item).click();
+        getSelectItem(getLocator().getByRole(AriaRole.LISTBOX), item).click();
     }
 
     /**

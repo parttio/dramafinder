@@ -15,13 +15,15 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
-    public static final String FIELD_TAG_NAME = "vaadin-dialog-overlay";
+    public static final String FIELD_TAG_NAME = "vaadin-dialog";
 
     /**
      * Create a {@code DialogElement} by resolving the dialog with ARIA role.
      */
     public DialogElement(Page page) {
-        super(page.locator(FIELD_TAG_NAME));
+        super(
+                page.getByRole(AriaRole.DIALOG)
+                        .and(page.locator(FIELD_TAG_NAME)));
     }
 
     /** Create a {@code DialogElement} from an existing locator. */

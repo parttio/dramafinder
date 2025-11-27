@@ -48,7 +48,7 @@ public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
         // the main part is aria-hidden so it's not accessible anymore
         ButtonElement openDialog2Button = ButtonElement.getByText(page,
                 new Page.GetByRoleOptions()
-                        .setName("Open non-modal 2").setIncludeHidden(true));
+                        .setName("Open non-modal 2"));
         openDialog2Button.assertVisible();
         DialogElement dialog1Element = DialogElement.getByHeaderText(page, "My non-modal Dialog 1");
         dialog1Element.assertOpen();

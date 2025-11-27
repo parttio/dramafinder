@@ -65,14 +65,14 @@ public abstract class AbstractNumberFieldElement extends VaadinElement
      * Click the increase button.
      */
     public void clickIncreaseButton() {
-        getLocator().locator("[part='increase-button']").click();
+        getLocator().locator("[part~='increase-button']").click();
     }
 
     /**
      * Click the decrease button.
      */
     public void clickDecreaseButton() {
-        getLocator().locator("[part='decrease-button']").click();
+        getLocator().locator("[part~='decrease-button']").click();
     }
 
 }

@@ -11,7 +11,7 @@ public interface HasClearButtonElement extends HasLocatorElement {
 
     /** Locator for the clear button ({@code part~=clear-button}). */
     default Locator getClearButtonLocator() {
-        return getLocator().locator("[part=\"clear-button\"]");
+        return getLocator().locator("[part~=\"clear-button\"]");
     }
 
     /** Click the clear button. */
