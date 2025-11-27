@@ -13,6 +13,12 @@ import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
+/**
+ * PlaywrightElement for {@code <vaadin-list-box>}.
+ * <p>
+ * Supports single and multiple selection, item-level enablement assertions,
+ * and label-based lookup.
+ */
 @PlaywrightElement(ListBoxElement.FIELD_TAG_NAME)
 public class ListBoxElement extends VaadinElement
         implements HasAriaLabelElement, HasStyleElement, HasTooltipElement,
@@ -22,24 +28,35 @@ public class ListBoxElement extends VaadinElement
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-item";
     public static final String MULTIPLE_ATTRIBUTE = "multiple";
 
+    /**
+     * Create a new {@code ListBoxElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-list-box>} element
+     */
     public ListBoxElement(Locator locator) {
         super(locator);
     }
 
     /**
-     * select the item based on the text.
-     * In multiple mode, if the item is already selected unselect it
+     * Select the item based on its text.
+     * In multiple mode, toggles selection state when already selected.
      *
-     * @param item
+     * @param item visible label of the item
      */
     public void selectItem(String item) {
         getItem(item).click();
     }
 
+    /**
+     * Get the selected value for single-select list boxes.
+     */
     public String getSingleSelectedValue() {
         return getLocatorValue().innerText();
     }
 
+    /**
+     * Get all selected values for multi-select list boxes.
+     */
     public List<String> getSelectedValue() {
         return getLocatorValue().allTextContents();
     }
@@ -48,6 +65,9 @@ public class ListBoxElement extends VaadinElement
         return getLocator().locator("vaadin-item[selected]");
     }
 
+    /**
+     * Assert that the selected values match the expected labels.
+     */
     public void assertSelectedValue(String... expected) {
         int length = expected.length;
         assertThat(getLocatorValue()).hasCount(length);
@@ -72,10 +92,16 @@ public class ListBoxElement extends VaadinElement
         assertThat(getLocator()).hasAttribute("disabled", "");
     }
 
+    /**
+     * Assert that a specific item is enabled.
+     */
     public void assertItemEnabled(String item) {
         assertThat(getItem(item)).isEnabled();
     }
 
+    /**
+     * Assert that a specific item is disabled.
+     */
     public void assertItemDisabled(String item) {
         assertThat(getItem(item)).isDisabled();
     }
@@ -84,10 +110,16 @@ public class ListBoxElement extends VaadinElement
         return getLocator().getAttribute(MULTIPLE_ATTRIBUTE) != null;
     }
 
+    /**
+     * Assert that multiple selection is enabled.
+     */
     public void assertMultiple() {
         assertThat(getLocator()).hasAttribute(MULTIPLE_ATTRIBUTE, "");
     }
 
+    /**
+     * Assert that single selection mode is enabled.
+     */
     public void assertSingle() {
         assertThat(getLocator()).not().hasAttribute(MULTIPLE_ATTRIBUTE, "");
     }
@@ -99,6 +131,9 @@ public class ListBoxElement extends VaadinElement
     }
 
 
+    /**
+     * Get the {@code ListBoxElement} by its label.
+     */
     public static ListBoxElement getByLabel(Page page, String label) {
         return new ListBoxElement(
                 page.locator(FIELD_TAG_NAME)

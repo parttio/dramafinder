@@ -4,15 +4,30 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+/**
+ * PlaywrightElement for {@code <vaadin-password-field>}.
+ */
 @PlaywrightElement(PasswordFieldElement.FIELD_TAG_NAME)
 public class PasswordFieldElement extends TextFieldElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-password-field";
 
+    /**
+     * Create a new {@code PasswordFieldElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-password-field>} element
+     */
     public PasswordFieldElement(Locator locator) {
         super(locator);
     }
 
+    /**
+     * Get the {@code PasswordFieldElement} by its label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the field
+     * @return the matching {@code PasswordFieldElement}
+     */
     public static PasswordFieldElement getByLabel(Page page, String label) {
         return new PasswordFieldElement(
                 page.locator(FIELD_TAG_NAME)
