@@ -64,7 +64,7 @@ public class ButtonElement extends VaadinElement
     /**
      * Get a {@code ButtonElement} by its accessible name or visible text within a scope.
      *
-     * @param locator the scope to search within
+     * @param locator the scope containing the button (not the button itself)
      * @param text    the button's accessible name or text content
      * @return the matching {@code ButtonElement}
      */
