@@ -78,12 +78,12 @@ public class SplitLayoutElement extends VaadinElement implements HasStyleElement
         if (box == null) {
             return;
         }
-        double startX = box.x + box.width / 2;
-        double startY = box.y + box.height / 2;
+        double startX = box.x;
+        double startY = box.y;
         Page page = splitter.page();
         page.mouse().move(startX, startY);
         page.mouse().down();
-        page.mouse().move(startX + deltaX, startY + deltaY);
+        page.mouse().move(box.x + (box.width / 2) + deltaX, box.y + (box.height / 2) + deltaY);
         page.mouse().up();
     }
 

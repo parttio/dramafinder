@@ -43,11 +43,26 @@ public class SplitLayoutViewIT extends SpringPlaywrightIT implements HasTestView
         Locator positionedHost = page.locator(SplitLayoutElement.FIELD_TAG_NAME).nth(2);
         SplitLayoutElement splitLayoutElement = new SplitLayoutElement(positionedHost);
         assertThat(splitLayoutElement.getLocator()).isVisible();
-        assertWidth(splitLayoutElement.getPrimaryLocator(), 945, 5);
+        double initialWidth = splitLayoutElement.getPrimaryLocator().boundingBox().width;
+        assertWidth(splitLayoutElement.getPrimaryLocator(), initialWidth, 2);
         splitLayoutElement.dragSplitterBy(-100, 0);
-        assertWidth(splitLayoutElement.getPrimaryLocator(), 845, 5);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), initialWidth - 100, 5);
         splitLayoutElement.dragSplitterBy(-100, 0);
-        assertWidth(splitLayoutElement.getPrimaryLocator(), 745, 5);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), initialWidth - 200, 5);
+    }
+
+    @Test
+    public void testSplitterPositionSet2() {
+        page.setViewportSize(1600, 1400);
+        Locator positionedHost = page.locator(SplitLayoutElement.FIELD_TAG_NAME).nth(2);
+        SplitLayoutElement splitLayoutElement = new SplitLayoutElement(positionedHost);
+        assertThat(splitLayoutElement.getLocator()).isVisible();
+        double initialWidth = splitLayoutElement.getPrimaryLocator().boundingBox().width;
+        assertWidth(splitLayoutElement.getPrimaryLocator(), initialWidth, 2);
+        splitLayoutElement.dragSplitterBy(100, 0);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), initialWidth + 100, 5);
+        splitLayoutElement.dragSplitterBy(100, 0);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), initialWidth + 200, 5);
     }
 
     private static void assertWidth(Locator locator, double expectedWidth, double tolerance) {
