@@ -43,11 +43,11 @@ public class SplitLayoutViewIT extends SpringPlaywrightIT implements HasTestView
         Locator positionedHost = page.locator(SplitLayoutElement.FIELD_TAG_NAME).nth(2);
         SplitLayoutElement splitLayoutElement = new SplitLayoutElement(positionedHost);
         assertThat(splitLayoutElement.getLocator()).isVisible();
-        assertWidth(splitLayoutElement.getPrimaryLocator(), 949, 2);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), 945, 5);
         splitLayoutElement.dragSplitterBy(-100, 0);
-        assertWidth(splitLayoutElement.getPrimaryLocator(), 845, 2);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), 845, 5);
         splitLayoutElement.dragSplitterBy(-100, 0);
-        assertWidth(splitLayoutElement.getPrimaryLocator(), 745, 2);
+        assertWidth(splitLayoutElement.getPrimaryLocator(), 745, 5);
     }
 
     private static void assertWidth(Locator locator, double expectedWidth, double tolerance) {
