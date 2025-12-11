@@ -14,6 +14,7 @@ public class SideNavigationElementView extends Main {
 
     public SideNavigationElementView() {
         SideNav nav = new SideNav("My App");
+        nav.setCollapsible(true);
         nav.setId("default-nav");
 
         SideNavItem dashboard = new SideNavItem("Dashboard");
@@ -21,7 +22,7 @@ public class SideNavigationElementView extends Main {
         nav.addItem(dashboard);
 
         SideNavItem messages = new SideNavItem("Messages");
-        messages.setPath("messages");
+        messages.setPath("side-navigation-element-view");
         nav.addItem(messages);
 
         SideNavItem admin = new SideNavItem("Admin");

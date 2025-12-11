@@ -46,11 +46,26 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
     }
 
     /**
+     * Asserts that the side nav is collapsible.
+     */
+    public void assertCollapsible() {
+        assertThat(getLocator()).hasAttribute("collapsible", "");
+    }
+
+    /**
+     * Asserts that the side nav is not collapsible.
+     */
+    public void assertNotCollapsible() {
+        assertThat(getLocator()).not().hasAttribute("collapsible", "");
+    }
+
+    /**
      * Gets a SideNavigationItemElement by its label text.
      * This searches for a direct or nested vaadin-side-nav-item with the given
      * text.
      * Note: This strictly searches for the item that contains the text.
      * Use care if multiple items have the same text.
+     * Your navigation item has to be visible, you'll need to open manually the parent.
      *
      * @param label The label of the item.
      * @return The SideNavigationItemElement.
@@ -90,5 +105,12 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
                 page.getByRole(AriaRole.NAVIGATION,
                         new Page.GetByRoleOptions().setName(label)
                 ).and(page.locator(FIELD_TAG_NAME)).first());
+    }
+
+    /**
+     * Toggles the expansion state of the item.
+     */
+    public void toggle() {
+        getLocator().locator("[slot='label']").first().click();
     }
 }

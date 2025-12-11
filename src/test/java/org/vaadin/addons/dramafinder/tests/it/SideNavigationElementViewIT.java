@@ -19,6 +19,18 @@ public class SideNavigationElementViewIT extends SpringPlaywrightIT implements H
     }
 
     @Test
+    public void testSideNavCollapsible() {
+        SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
+        nav.assertVisible();
+        nav.assertCollapsible();
+        nav.assertExpanded();
+        nav.toggle();
+        nav.assertCollapsed();
+        nav.toggle();
+        nav.assertExpanded();
+    }
+
+    @Test
     public void testSideNavStructure() {
         SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
         nav.assertVisible();
@@ -63,6 +75,15 @@ public class SideNavigationElementViewIT extends SpringPlaywrightIT implements H
         SideNavigationItemElement reports = nav.getItem("Reports");
         reports.assertVisible();
         reports.assertDisabled();
+    }
+
+    @Test
+    public void testItemCurrentState() {
+        SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
+        SideNavigationItemElement messages = nav.getItem("Messages");
+        messages.assertCurrent();
+        SideNavigationItemElement reports = nav.getItem("Reports");
+        reports.assertNotCurrent();
     }
 
     @Test

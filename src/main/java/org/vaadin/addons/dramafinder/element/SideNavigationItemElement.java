@@ -59,6 +59,21 @@ public class SideNavigationItemElement extends VaadinElement implements HasEnabl
     }
 
     /**
+     * Asserts that the item is current.
+     */
+    public void assertCurrent() {
+        assertThat(getLocator()).hasAttribute("current", "");
+    }
+
+    /**
+     * Asserts that the item is not current.
+     */
+    public void assertNotCurrent() {
+        assertThat(getLocator()).not().hasAttribute("current", "");
+    }
+
+
+    /**
      * Toggles the expansion state of the item.
      * This relies on the toggle button inside the item.
      */
