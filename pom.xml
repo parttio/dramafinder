@@ -14,7 +14,7 @@
     <description>Playwright utility classes for Vaadin</description>
 
     <properties>
-        <vaadin.version>25.0.0-beta7</vaadin.version>
+        <vaadin.version>25.0.0-rc1</vaadin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8
         </project.reporting.outputEncoding>
