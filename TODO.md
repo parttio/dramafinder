@@ -4,6 +4,7 @@
 
 - Big Decimal Field
 - Button
+- Card
 - Checkbox
 - Date Picker
 - Date Time Picker
@@ -18,6 +19,7 @@
 - Progress bar
 - Radio Button
 - Select
+- Split Layout
 - Tabs
 - TextArea
 - TextField
@@ -27,7 +29,6 @@
 
 - App Layout
 - Avatar
-- Card
 - Combo Box
 - Confirm Dialog
 - Context Menu
@@ -38,7 +39,6 @@
 - Message List
 - Multi-Select Combobox
 - Side navigation
-- Split Layout
 - Upload
 - Virtual List
 
