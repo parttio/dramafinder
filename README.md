@@ -105,6 +105,17 @@ To run the integration tests, execute the following command:
 mvn -Pit verify
 ```
 
+To debug the UI with a visible browser, disable headless mode using either the
+`headless` property or the `debug-ui` profile:
+
+```bash
+# system property
+mvn -Dit.test=ContextMenuViewIT -Dheadless=false verify
+
+# convenient profile
+mvn -Pdebug-ui -Dit.test=ContextMenuViewIT verify
+```
+
 ## How to use it
 
 Add the addon as a test dependency.
