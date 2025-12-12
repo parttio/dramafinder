@@ -105,6 +105,13 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     }
 
     protected static boolean isHeadless() {
-        return true;
+        String propertyValue = System.getProperty("headless");
+        if (propertyValue == null || propertyValue.isBlank()) {
+            propertyValue = System.getenv("HEADLESS");
+        }
+        if (propertyValue == null || propertyValue.isBlank()) {
+            return true;
+        }
+        return Boolean.parseBoolean(propertyValue);
     }
 }
