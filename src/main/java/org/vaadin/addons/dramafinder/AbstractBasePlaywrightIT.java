@@ -105,6 +105,6 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     }
 
     protected static boolean isHeadless() {
-        return false;
+        return true;
     }
 }
