@@ -147,10 +147,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <headless>${headless}</headless>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -165,6 +171,9 @@
                     </includes>
                     <trimStackTrace>false</trimStackTrace>
                     <enableAssertions>true</enableAssertions>
+                    <systemPropertyVariables>
+                        <headless>${headless}</headless>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -190,6 +199,12 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>debug-ui</id>
+            <properties>
+                <headless>false</headless>
+            </properties>
+        </profile>
         <profile>
             <id>release</id>
             <build>
