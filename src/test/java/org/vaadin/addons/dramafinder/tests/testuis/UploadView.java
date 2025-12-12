@@ -8,9 +8,9 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.UploadI18N;
-import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.streams.UploadHandler;
 
 @PageTitle("Upload Demo")
 @Route(value = "upload", layout = MainLayout.class)
@@ -22,23 +22,29 @@ public class UploadView extends Main {
     }
 
     private void createSingleUpload() {
-        MemoryBuffer buffer = new MemoryBuffer();
-        Upload upload = new Upload(buffer);
+        Span status = new Span("Waiting for file");
+        status.setId("single-upload-status");
+        Upload upload = new Upload(
+                UploadHandler.inMemory((metadata, data) -> {
+                            // No-op handler, demo asserts component behavior only.
+                        })
+                        .whenComplete((result, error) -> status.setText(result.fileName())));
         upload.setMaxFiles(1);
         upload.setDropLabel(new Span("Drop a single file"));
         upload.setUploadButton(new Button("Select single file"));
-
-        Span status = new Span("Waiting for file");
-        status.setId("single-upload-status");
-        upload.addSucceededListener(event -> status.setText(event.getFileName()));
         upload.addFileRejectedListener(event -> status.setText("Rejected: " + event.getErrorMessage()));
 
         addExample("Single upload", new Div(upload, status));
     }
 
     private void createMultiUpload() {
-        MemoryBuffer buffer = new MemoryBuffer();
-        Upload upload = new Upload(buffer);
+        Span status = new Span("No uploads yet");
+        status.setId("multi-upload-status");
+        Upload upload = new Upload(
+                UploadHandler.inMemory((metadata, data) -> {
+                            // No-op handler, demo asserts component behavior only.
+                        })
+                        .whenComplete((result, error) -> status.setText("Uploaded " + result.fileName())));
         upload.setMaxFiles(3);
         upload.setMaxFileSize(1000000);
         upload.setDropLabel(new Span("Drop multiple files"));
@@ -46,9 +52,6 @@ public class UploadView extends Main {
         upload.setAcceptedFileTypes("text/plain");
 
         upload.setI18n(new UploadI18N().setError(new UploadI18N.Error().setFileIsTooBig("File is too big")));
-        Span status = new Span("No uploads yet");
-        status.setId("multi-upload-status");
-        upload.addSucceededListener(event -> status.setText("Uploaded " + event.getFileName()));
         upload.addFileRejectedListener(event -> status.setText("Rejected: " + event.getErrorMessage()));
 
         Button clear = new Button("Clear uploads", event -> upload.clearFileList());
