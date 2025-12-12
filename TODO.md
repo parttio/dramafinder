@@ -6,6 +6,7 @@
 - Button
 - Card
 - Checkbox
+- Context Menu
 - Date Picker
 - Date Time Picker
 - Details
@@ -13,12 +14,14 @@
 - Email Field
 - Integer Field
 - ListBox (multiple and single)
+- Menu Bar
 - Notification
 - Password Field
 - Popover
 - Progress bar
 - Radio Button
 - Select
+- Side navigation
 - Split Layout
 - Tabs
 - TextArea
@@ -31,14 +34,11 @@
 - Avatar
 - Combo Box
 - Confirm Dialog
-- Context Menu
 - Custom Field ?
 - Grid
-- Menu Bar
 - Message Input
 - Message List
 - Multi-Select Combobox
-- Side navigation
 - Upload
 - Virtual List
 
