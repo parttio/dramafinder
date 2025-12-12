@@ -4,7 +4,7 @@
 
     <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
     <url>https://github.com/parttio/dramafinder</url>
 
@@ -41,7 +41,7 @@
         <developerConnection>
             scm:git:ssh://git@github.com:/${github.account}/${github.project}.git
         </developerConnection>
-        <tag>dramafinder-1.0.0-beta1</tag>
+        <tag>dramafinder-1.0.2</tag>
     </scm>
 
     <issueManagement>
