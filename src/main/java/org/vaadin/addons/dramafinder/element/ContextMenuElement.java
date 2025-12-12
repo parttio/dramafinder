@@ -17,8 +17,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class ContextMenuElement extends VaadinElement implements HasStyleElement {
 
-    public static final String FIELD_TAG_NAME = "vaadin-context-menu";
-    public static final String FIELD_LIST_BOX_TAG_NAME = "vaadin-context-menu-list-box";
+    public static final String FIELD_TAG_NAME = "vaadin-context-menu-overlay";
 
     /**
      * Create a {@code ContextMenuElement} from the page overlay.
@@ -66,7 +65,7 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
      */
     public ContextMenuElement openSubMenu(String itemLabel) {
         getItemLocator(itemLabel).hover();
-        return new ContextMenuElement(getLocator().locator(FIELD_TAG_NAME + "[slot=\"submenu\"][opened]").first());
+        return new ContextMenuElement(getLocator().locator(FIELD_TAG_NAME + "[opened]"));
     }
 
     /**
@@ -97,15 +96,6 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
     }
 
     /**
-     * Locator for the context menu list box.
-     *
-     * @return locator for {@code <vaadin-context-menu-list-box>}
-     */
-    public Locator getListBoxLocator() {
-        return getLocator().locator(FIELD_LIST_BOX_TAG_NAME).first();
-    }
-
-    /**
      * Assert that a checkable menu item is checked.
      *
      * @param itemLabel visible label of the menu item
@@ -127,8 +117,8 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
     }
 
     private Locator getItemLocator(String itemLabel) {
-        return getListBoxLocator()
-                .getByRole(AriaRole.MENUITEM, new Locator.GetByRoleOptions().setName(itemLabel))
+        return getLocator().page()
+                .getByRole(AriaRole.MENUITEM, new Page.GetByRoleOptions().setName(itemLabel))
                 .first();
     }
 

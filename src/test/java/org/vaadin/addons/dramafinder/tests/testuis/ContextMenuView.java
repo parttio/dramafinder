@@ -33,6 +33,7 @@ public class ContextMenuView extends Main {
 
         ContextMenu contextMenu = new ContextMenu(target);
         contextMenu.addClassName("file-context-menu");
+        contextMenu.setOverlayClassName("file-context-menu");
         contextMenu.addItem("Open", e -> selection.setText("Open"));
         contextMenu.addItem("Rename", e -> selection.setText("Rename"));
         contextMenu.addItem("Delete", e -> selection.setText("Delete"));
@@ -78,7 +79,7 @@ public class ContextMenuView extends Main {
             item.setCheckable(true);
             item.addClickListener(event -> updateCheckedSelection(selection, checkableMenu));
         });
-        alerts.getFirst().setChecked(true);
+        alerts.get(0).setChecked(true);
         updateCheckedSelection(selection, checkableMenu);
 
         add(new H2("Checkable context menu"), target, selection);
