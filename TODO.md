@@ -27,6 +27,7 @@
 - TextArea
 - TextField
 - Time Picker
+- Upload
 
 ## Components not implemented
 
@@ -39,7 +40,6 @@
 - Message Input
 - Message List
 - Multi-Select Combobox
-- Upload
 - Virtual List
 
 ## Shared interfaces implemented
