@@ -35,3 +35,7 @@ package-lock.json
 package.json
 /src/main/frontend/generated/
 /src/main/frontend/generated/
+
+/.DS_Store
+/pom.xml.releaseBackup
+/release.properties
