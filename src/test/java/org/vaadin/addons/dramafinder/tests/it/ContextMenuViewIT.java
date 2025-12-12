@@ -58,4 +58,24 @@ public class ContextMenuViewIT extends SpringPlaywrightIT implements HasTestView
         assertThat(page.locator("#file-selection")).hasText("Copy link");
         shareMenu.assertClosed();
     }
+
+    @Test
+    public void canToggleCheckableItems() {
+        ContextMenuElement contextMenu = new ContextMenuElement(page);
+        ContextMenuElement.openOn(page.locator("#checkable-target"));
+
+        contextMenu.assertItemChecked("Project news");
+        contextMenu.assertItemNotChecked("Security alerts");
+
+        contextMenu.selectItem("Security alerts");
+        assertThat(page.locator("#checkable-selection")).hasText("Project news, Security alerts");
+
+        ContextMenuElement.openOn(page.locator("#checkable-target"));
+        contextMenu.assertItemChecked("Security alerts");
+        contextMenu.selectItem("Project news");
+        assertThat(page.locator("#checkable-selection")).hasText("Security alerts");
+
+        ContextMenuElement.openOn(page.locator("#checkable-target"));
+        contextMenu.assertItemNotChecked("Project news");
+    }
 }

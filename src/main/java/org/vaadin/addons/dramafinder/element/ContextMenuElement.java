@@ -105,6 +105,27 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
         return getLocator().locator(FIELD_LIST_BOX_TAG_NAME).first();
     }
 
+    /**
+     * Assert that a checkable menu item is checked.
+     *
+     * @param itemLabel visible label of the menu item
+     */
+    public void assertItemChecked(String itemLabel) {
+        assertThat(getItemLocator(itemLabel))
+                .hasAttribute("menu-item-checked", "");
+    }
+
+    /**
+     * Assert that a checkable menu item is not checked.
+     *
+     * @param itemLabel visible label of the menu item
+     */
+    public void assertItemNotChecked(String itemLabel) {
+        assertThat(getItemLocator(itemLabel))
+                .not()
+                .hasAttribute("menu-item-checked", "");
+    }
+
     private Locator getItemLocator(String itemLabel) {
         return getListBoxLocator()
                 .getByRole(AriaRole.MENUITEM, new Locator.GetByRoleOptions().setName(itemLabel))

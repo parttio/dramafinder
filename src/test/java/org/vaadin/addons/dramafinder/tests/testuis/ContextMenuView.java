@@ -1,5 +1,8 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -17,6 +20,7 @@ public class ContextMenuView extends Main {
     public ContextMenuView() {
         addFileContextMenu();
         addStatusContextMenu();
+        addCheckableContextMenu();
     }
 
     private void addFileContextMenu() {
@@ -54,5 +58,37 @@ public class ContextMenuView extends Main {
         disabledAction.setEnabled(false);
 
         add(new H2("Status context menu"), target, status);
+    }
+
+    private void addCheckableContextMenu() {
+        Div target = new Div(new Text("Right click to toggle alerts"));
+        target.setId("checkable-target");
+        target.getStyle().set("padding", "var(--lumo-space-m)").set("border", "1px dashed var(--lumo-contrast-50pct)");
+
+        Span selection = new Span();
+        selection.setId("checkable-selection");
+
+        ContextMenu checkableMenu = new ContextMenu(target);
+        List<MenuItem> alerts = List.of(
+                checkableMenu.addItem("Project news"),
+                checkableMenu.addItem("Product updates"),
+                checkableMenu.addItem("Security alerts")
+        );
+        alerts.forEach(item -> {
+            item.setCheckable(true);
+            item.addClickListener(event -> updateCheckedSelection(selection, checkableMenu));
+        });
+        alerts.getFirst().setChecked(true);
+        updateCheckedSelection(selection, checkableMenu);
+
+        add(new H2("Checkable context menu"), target, selection);
+    }
+
+    private void updateCheckedSelection(Span selection, ContextMenu menu) {
+        String enabledAlerts = menu.getItems().stream()
+                .filter(MenuItem::isChecked)
+                .map(MenuItem::getText)
+                .collect(Collectors.joining(", "));
+        selection.setText(enabledAlerts.isEmpty() ? "No alerts enabled" : enabledAlerts);
     }
 }
