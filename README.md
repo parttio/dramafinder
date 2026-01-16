@@ -77,6 +77,7 @@ The demo is only here to run the test
 ### Javadoc
 
 Public APIs in the `dramafinder` module are documented with concise Javadoc:
+
 - Element classes include a short summary referencing the underlying Vaadin
   tag (e.g., `vaadin-text-field`) and any noteworthy behaviors.
 - Public methods document parameters, return values, and null semantics.
@@ -116,6 +117,19 @@ mvn -Dit.test=ContextMenuViewIT -Dheadless=false verify
 mvn -Pdebug-ui -Dit.test=ContextMenuViewIT verify
 ```
 
+You will need to add the profile in your pom.xml:
+
+```xml
+
+<profile>
+    <id>debug-ui</id>
+    <properties>
+        <headless>false</headless>
+    </properties>
+</profile>
+
+```
+
 ## How to use it
 
 Add the addon as a test dependency.
@@ -130,13 +144,21 @@ Add the addon as a test dependency.
 </dependency>
 ```
 
-With Spring Boot you can copy the `SpringPlaywrightIT` then create a simple
-test:
+With Spring Boot you can create a simple test:
 
 ```java
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class SimpleExampleViewIT extends SpringPlaywrightIT {
+public class SimpleExampleViewIT extends AbstractBasePlaywrightIT {
+
+    @LocalServerPort
+    private int port;
+
+    @Override
+    public String getUrl() {
+        return String.format("http://localhost:%d/", port);
+    }
+
     @Test
     public void testTooltip() {
         TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
