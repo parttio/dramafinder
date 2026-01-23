@@ -35,7 +35,9 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
 
     private final DatePickerElement datePickerElement;
     private final TimePickerElement timePickerElement;
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-date-time-picker";
+    /** The date-time formatter for ISO local date-time format. */
     public static final DateTimeFormatter ISO_LOCAL_DATE_TIME = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .append(ISO_LOCAL_DATE)
@@ -178,6 +180,8 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
 
     /**
      * Set only the date part (string input) and dispatch change events.
+     *
+     * @param date the date value formatted as dd/mm/yyyy
      */
     public void setDate(String date) {
         datePickerElement.setValue(date);
@@ -187,6 +191,8 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
 
     /**
      * Set only the time part (string input) and dispatch change events.
+     *
+     * @param date the time value formatted as HH:mm
      */
     public void setTime(String date) {
         timePickerElement.setValue(date);
@@ -196,6 +202,8 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
 
     /**
      * Assert the date sub-field value equals the expected string.
+     *
+     * @param date the expected date value
      */
     public void assertDateValue(String date) {
         datePickerElement.assertValue(date);
@@ -203,6 +211,8 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
 
     /**
      * Assert the time sub-field value equals the expected string.
+     *
+     * @param time the expected time value
      */
     public void assertTimeValue(String time) {
         timePickerElement.assertValue(time);

@@ -12,35 +12,65 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class NotificationElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-notification-card";
 
-    /** Create a {@code NotificationElement} from the page. */
+    /**
+     * Create a {@code NotificationElement} from the page.
+     *
+     * @param page the Playwright page
+     */
     public NotificationElement(Page page) {
         super(page.locator(FIELD_TAG_NAME));
     }
 
-    /** Create a {@code NotificationElement} from an existing locator. */
+    /**
+     * Create a {@code NotificationElement} from an existing locator.
+     *
+     * @param locator the locator for the notification element
+     */
     public NotificationElement(Locator locator) {
         super(locator);
     }
 
-    /** Whether the notification is open (visible). */
+    /**
+     * Whether the notification is open (visible).
+     *
+     * @return {@code true} if the notification is visible
+     */
     public boolean isOpen() {
         return getLocator().isVisible();
     }
 
-    /** Assert that the notification is open. */
+    /**
+     * Assert that the notification is open.
+     */
     public void assertOpen() {
         assertThat(getLocator()).isVisible();
     }
 
-    /** Assert that the notification is closed. */
+    /**
+     * Assert that the notification is closed.
+     */
     public void assertClosed() {
         assertThat(getLocator()).isHidden();
     }
 
-    /** Locator for the notification content. */
+    /**
+     * Locator for the notification content.
+     *
+     * @return the content locator
+     */
     public Locator getContentLocator() {
         return getLocator();
+    }
+
+    /**
+     * Assert that the notification is containing exactly this content
+     *
+     * @param content content of the notification
+     */
+    public void assertContent(String content) {
+        assertThat(getContentLocator()).hasText(content);
     }
 }

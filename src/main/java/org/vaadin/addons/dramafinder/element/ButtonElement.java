@@ -23,6 +23,7 @@ public class ButtonElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
         HasPrefixElement, HasStyleElement, HasSuffixElement, HasThemeElement, HasTooltipElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-button";
 
     /**

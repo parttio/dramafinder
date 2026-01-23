@@ -22,10 +22,13 @@ class RadioButtonElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
         HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-radio-button";
 
     /**
      * Create a new {@code RadioButtonElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-radio-button>} element
      */
     public RadioButtonElement(Locator locator) {
         super(locator);
@@ -46,27 +49,43 @@ class RadioButtonElement extends VaadinElement
         return getInputLocator();
     }
 
-    /** Whether the radio is checked. */
+    /**
+     * Whether the radio is checked.
+     *
+     * @return {@code true} if the radio is checked
+     */
     boolean isChecked() {
         return getInputLocator().isChecked();
     }
 
-    /** Assert that the radio is checked. */
+    /**
+     * Assert that the radio is checked.
+     */
     void assertChecked() {
         assertThat(getInputLocator()).isChecked();
     }
 
-    /** Assert that the radio is not checked. */
+    /**
+     * Assert that the radio is not checked.
+     */
     void assertNotChecked() {
         assertThat(getInputLocator()).not().isChecked();
     }
 
-    /** Check the radio. */
+    /**
+     * Check the radio.
+     */
     void check() {
         getInputLocator().check();
     }
 
-    /** Get a radio by its label within a given scope. */
+    /**
+     * Get a radio by its label within a given scope.
+     *
+     * @param locator the scope to search within
+     * @param label   the accessible label of the radio button
+     * @return the matching {@code RadioButtonElement}
+     */
     static RadioButtonElement getByLabel(Locator locator, String label) {
         return new RadioButtonElement(
                 locator.locator(FIELD_TAG_NAME)

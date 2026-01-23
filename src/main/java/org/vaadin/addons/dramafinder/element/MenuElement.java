@@ -12,24 +12,43 @@ import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
  */
 public class MenuElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-menu-bar-list-box";
 
-    /** Create a {@code MenuElement} from the page. */
+    /**
+     * Create a {@code MenuElement} from the page.
+     *
+     * @param page the Playwright page
+     */
     public MenuElement(Page page) {
         super(page.locator(FIELD_TAG_NAME));
     }
 
-    /** Create a {@code MenuElement} from an existing locator. */
+    /**
+     * Create a {@code MenuElement} from an existing locator.
+     *
+     * @param locator the locator for the menu overlay
+     */
     public MenuElement(Locator locator) {
         super(locator);
     }
 
-    /** Get a menu item by its visible label within this menu. */
+    /**
+     * Get a menu item by its visible label within this menu.
+     *
+     * @param name the visible label of the menu item
+     * @return the matching {@code MenuItemElement}
+     */
     public MenuItemElement getMenuItemElement(String name) {
         return MenuItemElement.getByLabel(getLocator(), name);
     }
 
-    /** Click a menu item to open its submenu and return the next overlay. */
+    /**
+     * Click a menu item to open its submenu and return the next overlay.
+     *
+     * @param name the visible label of the menu item to click
+     * @return the opened {@code MenuElement} submenu overlay
+     */
     public MenuElement openSubMenu(String name) {
         MenuItemElement menuItemElement = getMenuItemElement(name);
         menuItemElement.click();
@@ -38,7 +57,13 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
     }
 
 
-    /** Get a menu overlay by its accessible label. */
+    /**
+     * Get a menu overlay by its accessible label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the menu
+     * @return the matching {@code MenuElement}
+     */
     public static MenuElement getByLabel(Page page, String label) {
         return new MenuElement(
                 page.getByRole(AriaRole.MENU, new Page.GetByRoleOptions().setName(label))

@@ -17,9 +17,14 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class DetailsElement extends VaadinElement implements HasStyleElement, HasThemeElement,
         HasTooltipElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-details";
 
-    /** Create a new {@code DetailsElement}. */
+    /**
+     * Create a new {@code DetailsElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-details>} element
+     */
     public DetailsElement(Locator locator) {
         super(locator);
     }
@@ -44,35 +49,61 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
         assertThat(getLocator()).not().hasAttribute("opened", "");
     }
 
-    /** Whether the details is opened. */
+    /**
+     * Whether the details is opened.
+     *
+     * @return {@code true} if the details is open
+     */
     public boolean isOpen() {
         return getLocator().getAttribute("opened") != null;
     }
 
-    /** Set the opened state by clicking the summary when necessary. */
+    /**
+     * Set the opened state by clicking the summary when necessary.
+     *
+     * @param open {@code true} to open, {@code false} to close
+     */
     public void setOpen(boolean open) {
         if (isOpen() != open) {
             getSummaryLocator().click();
         }
     }
 
-    /** Locator for the summary element. */
+    /**
+     * Locator for the summary element.
+     *
+     * @return the summary locator
+     */
     public Locator getSummaryLocator() {
         return getLocator().locator("vaadin-details-summary");
     }
 
-    /** Text of the summary element. */
+    /**
+     * Text of the summary element.
+     *
+     * @return the summary text
+     */
     public String getSummaryText() {
         return getSummaryLocator().textContent();
     }
 
 
-    /** Locator for the currently visible content container. */
+    /**
+     * Locator for the currently visible content container.
+     *
+     * @return the content locator
+     */
     public Locator getContentLocator() {
         return getLocator().locator("> div[aria-hidden='false']");
     }
 
-    /** Get a details component by its summary text. */
+    /**
+     * Get a details component by its summary text.
+     *
+     * @param page    the Playwright page
+     * @param summary the summary text to match
+     * @return the matching {@code DetailsElement}
+     */
     public static DetailsElement getBySummaryText(Page page, String summary) {
         return new DetailsElement(
                 page.locator(FIELD_TAG_NAME).filter(

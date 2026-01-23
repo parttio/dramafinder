@@ -16,6 +16,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(IntegerFieldElement.FIELD_TAG_NAME)
 public class IntegerFieldElement extends AbstractNumberFieldElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-integer-field";
 
     /**

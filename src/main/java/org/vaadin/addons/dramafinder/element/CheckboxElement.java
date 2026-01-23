@@ -25,6 +25,7 @@ public class CheckboxElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
         HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-checkbox";
 
     /**

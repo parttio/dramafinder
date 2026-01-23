@@ -15,10 +15,13 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-dialog";
 
     /**
      * Create a {@code DialogElement} by resolving the dialog with ARIA role.
+     *
+     * @param page the Playwright page
      */
     public DialogElement(Page page) {
         super(
@@ -26,17 +29,27 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
                         .and(page.locator(FIELD_TAG_NAME)));
     }
 
-    /** Create a {@code DialogElement} from an existing locator. */
+    /**
+     * Create a {@code DialogElement} from an existing locator.
+     *
+     * @param locator the locator for the dialog element
+     */
     public DialogElement(Locator locator) {
         super(locator);
     }
 
-    /** Close the dialog using the Escape key. */
+    /**
+     * Close the dialog using the Escape key.
+     */
     public void closeWithEscape() {
         getLocator().press("Escape");
     }
 
-    /** Whether the dialog is open (visible). */
+    /**
+     * Whether the dialog is open (visible).
+     *
+     * @return {@code true} if the dialog is visible
+     */
     public boolean isOpen() {
         return getLocator().isVisible();
     }
@@ -46,7 +59,11 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         assertThat(getLocator()).hasAttribute("opened", "");
     }
 
-    /** Whether the dialog is modal (i.e. not modeless). */
+    /**
+     * Whether the dialog is modal (i.e. not modeless).
+     *
+     * @return {@code true} if the dialog is modal
+     */
     public boolean isModal() {
         return getLocator().getAttribute("modeless") == null;
     }
@@ -66,33 +83,59 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         assertThat(getLocator()).isHidden();
     }
 
-    /** Get the header text from the title slot. */
+    /**
+     * Get the header text from the title slot.
+     *
+     * @return the header text content
+     */
     public String getHeaderText() {
         return getLocator().locator("> [slot='title']").textContent();
     }
 
-    /** Assert the header text matches. */
+    /**
+     * Assert the header text matches.
+     *
+     * @param headerText the expected header text
+     */
     public void assertHeaderText(String headerText) {
         assertThat(getLocator().locator("> [slot='title']")).hasText(headerText);
     }
 
-    /** Locator for the header content slot. */
+    /**
+     * Locator for the header content slot.
+     *
+     * @return the header content locator
+     */
     public Locator getHeaderLocator() {
         return getLocator().locator("> [slot='header-content']");
     }
 
-    /** Locator for the dialog content (first non-slotted child). */
+    /**
+     * Locator for the dialog content (first non-slotted child).
+     *
+     * @return the content locator
+     */
     public Locator getContentLocator() {
         // using xpath to not pierce the shadow dom
         return getLocator().locator("xpath=./*[not(@slot)][1]");
     }
 
-    /** Locator for the footer slot. */
+    /**
+     * Locator for the footer slot.
+     *
+     * @return the footer locator
+     */
     public Locator getFooterLocator() {
         return getLocator().locator("> [slot='footer']");
     }
 
-    /** Get a dialog by its header text (accessible name). */
+    /**
+     * Get a dialog by its header text (accessible name).
+     *
+     * @param page    the Playwright page
+     * @param summary the accessible name of the dialog
+     * @return the matching {@code DialogElement}
+     */
     public static DialogElement getByHeaderText(Page page, String summary) {
         return new DialogElement(
                 page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(summary))

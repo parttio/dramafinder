@@ -9,22 +9,34 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasEnabledElement extends HasLocatorElement {
 
-    /** Locator used to check enablement. Defaults to root. */
+    /**
+     * Locator used to check enablement. Defaults to root.
+     *
+     * @return the enabled locator
+     */
     default Locator getEnabledLocator() {
         return getLocator();
     }
 
-    /** Whether the component is enabled. */
+    /**
+     * Whether the component is enabled.
+     *
+     * @return {@code true} if the component is enabled
+     */
     default boolean isEnabled() {
         return getEnabledLocator().isEnabled();
     }
 
-    /** Assert that the component is enabled. */
+    /**
+     * Assert that the component is enabled.
+     */
     default void assertEnabled() {
         assertThat(getEnabledLocator()).isEnabled();
     }
 
-    /** Assert that the component is disabled. */
+    /**
+     * Assert that the component is disabled.
+     */
     default void assertDisabled() {
         assertThat(getEnabledLocator()).isDisabled();
     }

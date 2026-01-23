@@ -10,17 +10,29 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasPrefixElement extends HasLocatorElement {
 
-    /** Locator for the prefix slot content. */
+    /**
+     * Locator for the prefix slot content.
+     *
+     * @return the prefix locator
+     */
     default Locator getPrefixLocator() {
         return getLocator().locator("*[slot=\"prefix\"]").first();
     }
 
-    /** Text content of the prefix slot. */
+    /**
+     * Text content of the prefix slot.
+     *
+     * @return the prefix text content
+     */
     default String getPrefixText() {
         return getPrefixLocator().textContent();
     }
 
-    /** Assert that the prefix slot has the expected text, or is hidden when null. */
+    /**
+     * Assert that the prefix slot has the expected text, or is hidden when null.
+     *
+     * @param text the expected text, or {@code null} to assert hidden
+     */
     default void assertPrefixHasText(String text) {
         if (text != null) {
             assertThat(getPrefixLocator()).hasText(text);

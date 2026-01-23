@@ -26,6 +26,7 @@ public class NotificationViewIT extends SpringPlaywrightIT implements HasTestVie
         notification.assertOpen();
 
         assertThat(notification.getContentLocator()).hasText("This is a notification.");
+        notification.assertContent("This is a notification.");
         notification.assertClosed();
     }
 

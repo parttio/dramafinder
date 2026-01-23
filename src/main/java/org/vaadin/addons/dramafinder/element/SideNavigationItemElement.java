@@ -15,14 +15,22 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(SideNavigationItemElement.FIELD_TAG_NAME)
 public class SideNavigationItemElement extends VaadinElement implements HasEnabledElement, HasPrefixElement, HasSuffixElement, HasLabelElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-side-nav-item";
 
+    /**
+     * Create a new {@code SideNavigationItemElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-side-nav-item>} element
+     */
     public SideNavigationItemElement(Locator locator) {
         super(locator);
     }
 
     /**
-     * Checks if the item is expanded.
+     * Checks if the item is expanded (showing child items).
+     *
+     * @return {@code true} if the item is expanded
      */
     public boolean isExpanded() {
         return getLocator().getAttribute("expanded") != null;
@@ -86,6 +94,10 @@ public class SideNavigationItemElement extends VaadinElement implements HasEnabl
         return getLocator();
     }
 
+    /**
+     * Navigate to this item by clicking its link.
+     * This triggers navigation to the item's path.
+     */
     public void navigate() {
         getLocator().getByRole(AriaRole.LINK).first().click();
     }

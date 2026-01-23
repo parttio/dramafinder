@@ -17,12 +17,16 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class ContextMenuElement extends VaadinElement implements HasStyleElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-context-menu";
+    /** The HTML tag name for the context menu list box. */
     public static final String FIELD_LIST_BOX_TAG_NAME = "vaadin-context-menu-list-box";
 
     /**
      * Create a {@code ContextMenuElement} from the page overlay.
-     * Get the first opened context menu
+     * Gets the first opened context menu.
+     *
+     * @param page the Playwright page
      */
     public ContextMenuElement(Page page) {
         super(page.locator(FIELD_TAG_NAME + "[opened]"));
@@ -30,6 +34,8 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
 
     /**
      * Create a {@code ContextMenuElement} from an existing locator.
+     *
+     * @param locator the locator for the context menu element
      */
     public ContextMenuElement(Locator locator) {
         super(locator);

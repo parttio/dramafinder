@@ -13,8 +13,14 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(SideNavigationElement.FIELD_TAG_NAME)
 public class SideNavigationElement extends VaadinElement implements HasLabelElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-side-nav";
 
+    /**
+     * Create a new {@code SideNavigationElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-side-nav>} element
+     */
     public SideNavigationElement(Locator locator) {
         super(locator);
     }
@@ -26,6 +32,8 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
 
     /**
      * Checks if the side nav is collapsed.
+     *
+     * @return {@code true} if the navigation is collapsed
      */
     public boolean isCollapsed() {
         return getLocator().getAttribute("collapsed") != null;
@@ -108,7 +116,8 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
     }
 
     /**
-     * Toggles the expansion state of the item.
+     * Toggles the collapsed/expanded state of the navigation.
+     * Clicks the label slot to trigger the toggle.
      */
     public void toggle() {
         getLocator().locator("[slot='label']").first().click();

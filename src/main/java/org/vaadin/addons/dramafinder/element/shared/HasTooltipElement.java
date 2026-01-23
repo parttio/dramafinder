@@ -12,18 +12,31 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasTooltipElement extends HasLocatorElement {
 
-    /** Locator for the tooltip content (role=tooltip). */
+    /**
+     * Locator for the tooltip content (role=tooltip).
+     *
+     * @return the tooltip locator
+     */
     default Locator getTooltipLocator() {
         return getLocator().getByRole(AriaRole.TOOLTIP,
                 new Locator.GetByRoleOptions()
                         .setIncludeHidden(true)).first();
     }
 
-    /** Tooltip text content. */
+    /**
+     * Tooltip text content.
+     *
+     * @return the tooltip text content
+     */
     default String getTooltipText() {
         return getTooltipLocator().textContent();
     }
 
+    /**
+     * Assert that the tooltip has the expected text, or is hidden when null.
+     *
+     * @param text the expected tooltip text, or {@code null} to assert hidden
+     */
     default void assertTooltipHasText(String text) {
         if (text != null) {
             assertThat(getTooltipLocator()).hasText(text, new LocatorAssertions.HasTextOptions().setUseInnerText(true));

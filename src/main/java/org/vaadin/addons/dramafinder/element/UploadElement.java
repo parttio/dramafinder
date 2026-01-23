@@ -25,7 +25,9 @@ public class UploadElement extends VaadinElement
         implements HasEnabledElement,
         HasValidationPropertiesElement, HasThemeElement, FocusableElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-upload";
+    /** The HTML tag name for file row items. */
     public static final String FILE_ITEM_TAG_NAME = "vaadin-upload-file";
 
     /**
@@ -138,6 +140,10 @@ public class UploadElement extends VaadinElement
         assertThat(getFileItemLocator(fileName)).hasAttribute("complete", "");
     }
 
+    /**
+     * Assert that the maximum number of files has been reached.
+     * The upload button will typically be disabled in this state.
+     */
     public void assertMaxFilesReached() {
         assertThat(getLocator()).hasAttribute("max-files-reached", "");
     }

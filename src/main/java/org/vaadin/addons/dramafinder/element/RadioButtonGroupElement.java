@@ -19,6 +19,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class RadioButtonGroupElement extends VaadinElement
         implements HasLabelElement, HasEnabledElement, HasHelperElement, HasValidationPropertiesElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-radio-group";
 
     /**
@@ -32,6 +33,8 @@ public class RadioButtonGroupElement extends VaadinElement
 
     /**
      * Select a radio by its label text.
+     *
+     * @param label the label text of the radio to select
      */
     public void selectByLabel(String label) {
         getRadioButtonByLabel(label).check();
@@ -39,6 +42,8 @@ public class RadioButtonGroupElement extends VaadinElement
 
     /**
      * Select a radio by its value.
+     *
+     * @param value the value of the radio to select
      */
     public void selectByValue(String value) {
         getLocator().evaluate("(el, value) => el.value = value", value);
@@ -46,6 +51,9 @@ public class RadioButtonGroupElement extends VaadinElement
 
     /**
      * Get a specific radio by its label within the group.
+     *
+     * @param label the label text of the radio
+     * @return the matching {@code RadioButtonElement}
      */
     public RadioButtonElement getRadioButtonByLabel(String label) {
         return RadioButtonElement.getByLabel(getLocator(), label);
@@ -53,6 +61,10 @@ public class RadioButtonGroupElement extends VaadinElement
 
     /**
      * Get the group by its accessible label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the radio group
+     * @return the matching {@code RadioButtonGroupElement}
      */
     public static RadioButtonGroupElement getByLabel(Page page, String label) {
         return new RadioButtonGroupElement(
@@ -64,6 +76,8 @@ public class RadioButtonGroupElement extends VaadinElement
 
     /**
      * Set the selected value by label.
+     *
+     * @param value the label text of the radio to select
      */
     public void setValue(String value) {
         RadioButtonElement.getByLabel(getLocator(), value).check();
@@ -71,6 +85,8 @@ public class RadioButtonGroupElement extends VaadinElement
 
     /**
      * Assert the selected value by label.
+     *
+     * @param value the expected selected label, or empty/null for no selection
      */
     public void assertValue(String value) {
         if (value != null && !value.isEmpty()) {
