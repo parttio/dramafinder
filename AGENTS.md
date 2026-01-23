@@ -62,8 +62,187 @@
 - Prefer configuration via `application.properties` in each module’s
   `src/main/resources`.
 
+## Pitfalls & Patterns
+
+### Common Pitfalls
+
+#### 1. Locator Specificity
+- **Pitfall**: Using overly broad locators that match multiple elements.
+- **Solution**: Always use `.first()` when expecting a single element, or filter
+  with `Locator.FilterOptions` to narrow results.
+```java
+// Bad: May match multiple elements
+page.locator("vaadin-button");
+
+// Good: Specific by accessible name
+ButtonElement.getByText(page, "Save");
+```
+
+#### 2. Shadow DOM Piercing
+- **Pitfall**: Using XPath or CSS selectors that don't pierce shadow DOM.
+- **Solution**: Playwright auto-pierces shadow DOM with CSS selectors. Use
+  `xpath=./*` prefix only for direct children to avoid piercing.
+```java
+// Pierces shadow DOM (default)
+getLocator().locator("[slot='input']");
+
+// Does NOT pierce shadow DOM (explicit xpath)
+getLocator().locator("xpath=./*[not(@slot)][1]");
+```
+
+#### 3. Input vs Component Locator
+- **Pitfall**: Calling methods on the wrong locator (component root vs input).
+- **Solution**: Use `getInputLocator()` for value/focus operations,
+  `getLocator()` for component-level attributes.
+```java
+// Component-level attribute
+getLocator().getAttribute("opened");
+
+// Input-level attribute
+getInputLocator().getAttribute("value");
+```
+
+#### 4. Async State Changes
+- **Pitfall**: Asserting state immediately after an action without waiting.
+- **Solution**: Use Playwright assertions which auto-retry. Avoid raw
+  `getAttribute()` checks in assertions.
+```java
+// Bad: No retry, may flake
+assertTrue(getLocator().getAttribute("opened") != null);
+
+// Good: Auto-retries until timeout
+assertThat(getLocator()).hasAttribute("opened", "");
+```
+
+#### 5. Attribute vs Property
+- **Pitfall**: Confusing HTML attributes with DOM properties.
+- **Solution**: Use `getAttribute()` for HTML attributes, `evaluate()` or
+  `hasJSProperty()` for DOM properties.
+```java
+// HTML attribute
+getInputLocator().getAttribute("maxlength");
+
+// DOM property (set via JavaScript)
+getLocator().evaluate("(el, v) => el.maxLength = v", max);
+assertThat(getLocator()).hasJSProperty("value", expectedValue);
+```
+
+#### 6. Null Handling in Assertions
+- **Pitfall**: Not handling `null` values in assertion helpers.
+- **Solution**: Always check for `null` and assert absence of attribute.
+```java
+public void assertMinLength(Integer min) {
+    if (min != null) {
+        assertThat(getInputLocator()).hasAttribute("minLength", min + "");
+    } else {
+        // Assert attribute is absent
+        assertThat(getInputLocator()).not().hasAttribute("minLength", Pattern.compile(".*"));
+    }
+}
+```
+
+#### 7. ARIA Role Mismatch
+- **Pitfall**: Using wrong ARIA role in `getByRole()` lookups.
+- **Solution**: Check the actual role of the internal element:
+  - Text inputs: `TEXTBOX`
+  - Number inputs: `SPINBUTTON`
+  - Date/time pickers: `COMBOBOX`
+  - Buttons: `BUTTON`
+  - Checkboxes: `CHECKBOX`
+  - Radio buttons: `RADIO`
+
+### Design Patterns
+
+#### 1. Factory Method Pattern
+All element classes provide static factory methods for lookup by accessible name:
+```java
+public static TextFieldElement getByLabel(Page page, String label) {
+    return new TextFieldElement(
+        page.locator(FIELD_TAG_NAME)
+            .filter(new Locator.FilterOptions()
+                .setHas(page.getByRole(AriaRole.TEXTBOX,
+                    new Page.GetByRoleOptions().setName(label)))
+            ).first());
+}
+```
+
+#### 2. Mixin Interfaces (Composition)
+Shared behavior is extracted into interfaces with default implementations:
+```java
+public interface HasClearButtonElement extends HasLocatorElement {
+    default void clickClearButton() {
+        getLocator().locator("[part~='clear-button']").click();
+    }
+}
+```
+
+#### 3. Locator Delegation Pattern
+Elements delegate to specific internal locators for different operations:
+```java
+@Override
+public Locator getFocusLocator() {
+    return getInputLocator();  // Focus goes to input, not wrapper
+}
+
+@Override
+public Locator getEnabledLocator() {
+    return getInputLocator();  // Disabled state is on input
+}
+```
+
+#### 4. Composite Element Pattern
+Complex components compose simpler elements internally:
+```java
+public class DateTimePickerElement extends VaadinElement {
+    private final DatePickerElement datePickerElement;
+    private final TimePickerElement timePickerElement;
+
+    public DateTimePickerElement(Locator locator) {
+        super(locator);
+        datePickerElement = new DatePickerElement(locator.locator(DatePickerElement.FIELD_TAG_NAME));
+        timePickerElement = new TimePickerElement(locator.locator(TimePickerElement.FIELD_TAG_NAME));
+    }
+}
+```
+
+#### 5. Assertion Symmetry Pattern
+For each state getter, provide matching `assert` methods:
+```java
+public boolean isOpen() { ... }
+public void assertOpen() { ... }
+public void assertClosed() { ... }
+
+public boolean isChecked() { ... }
+public void assertChecked() { ... }
+public void assertNotChecked() { ... }
+```
+
+#### 6. Scoped Lookup Pattern
+Factory methods support both page-level and scoped lookups:
+```java
+// Page-level lookup
+public static ButtonElement getByText(Page page, String text) { ... }
+
+// Scoped lookup (within a container)
+public static ButtonElement getByText(Locator locator, String text) { ... }
+```
+
+### Best Practices
+
+1. **Prefer ARIA roles over tag names** for element lookup when possible.
+2. **Use `part` selectors** for internal component parts (e.g., `[part~='input']`).
+3. **Chain filters** rather than complex XPath for readability.
+4. **Document null semantics** in assertion method Javadocs.
+5. **Dispatch events** after programmatic value changes if needed:
+   ```java
+   getLocator().dispatchEvent("change");
+   ```
+6. **Use constants** for tag names and attribute names to avoid typos.
+7. **Inherit behavior** by extending base elements (e.g., `EmailFieldElement extends TextFieldElement`).
+
 ## Agent-Specific Instructions
 
-- Follow this file’s conventions for any edits. Keep patches minimal and
+- Follow this file's conventions for any edits. Keep patches minimal and
   focused.
 - Use `*IT.java` only for end-to-end tests executed by Failsafe.
+- Refer to `docs/specifications/` for detailed element API documentation.
