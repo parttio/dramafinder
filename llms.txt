@@ -1,0 +1,132 @@
+# DramaFinder
+
+> Playwright element wrappers for Vaadin web components
+
+DramaFinder provides typed Java wrappers around Vaadin web components for use with Playwright testing. Each wrapper exposes component-specific APIs for interaction and assertion, following accessibility-first lookup patterns using ARIA roles.
+
+## Quick Start
+
+```java
+// Find elements by accessible label
+TextFieldElement username = TextFieldElement.getByLabel(page, "Username");
+ButtonElement submit = ButtonElement.getByText(page, "Submit");
+
+// Interact and assert
+username.setValue("john.doe");
+username.assertValue("john.doe");
+submit.click();
+```
+
+## Documentation
+
+- [AGENTS.md](AGENTS.md) - Repository guidelines, coding conventions, pitfalls & patterns
+- [TESTING.md](TESTING.md) - Testing guide and instructions
+- [README.md](README.md) - Project overview and setup
+
+## Element Specifications
+
+Detailed API documentation for each element wrapper:
+
+- [VaadinElement](docs/specifications/VaadinElement.md) - Base class for all elements
+- [TextFieldElement](docs/specifications/TextFieldElement.md) - Text input
+- [TextAreaElement](docs/specifications/TextAreaElement.md) - Multi-line text
+- [EmailFieldElement](docs/specifications/EmailFieldElement.md) - Email input
+- [PasswordFieldElement](docs/specifications/PasswordFieldElement.md) - Password input
+- [NumberFieldElement](docs/specifications/NumberFieldElement.md) - Decimal numbers
+- [IntegerFieldElement](docs/specifications/IntegerFieldElement.md) - Integer numbers
+- [BigDecimalFieldElement](docs/specifications/BigDecimalFieldElement.md) - BigDecimal numbers
+- [DatePickerElement](docs/specifications/DatePickerElement.md) - Date selection
+- [TimePickerElement](docs/specifications/TimePickerElement.md) - Time selection
+- [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Date and time
+- [CheckboxElement](docs/specifications/CheckboxElement.md) - Checkbox input
+- [RadioButtonGroupElement](docs/specifications/RadioButtonGroupElement.md) - Radio group
+- [SelectElement](docs/specifications/SelectElement.md) - Dropdown select
+- [ListBoxElement](docs/specifications/ListBoxElement.md) - List selection
+- [ButtonElement](docs/specifications/ButtonElement.md) - Buttons
+- [DialogElement](docs/specifications/DialogElement.md) - Modal dialogs
+- [NotificationElement](docs/specifications/NotificationElement.md) - Toast notifications
+- [PopoverElement](docs/specifications/PopoverElement.md) - Popover overlays
+- [AccordionElement](docs/specifications/AccordionElement.md) - Accordion container
+- [AccordionPanelElement](docs/specifications/AccordionPanelElement.md) - Accordion panel
+- [DetailsElement](docs/specifications/DetailsElement.md) - Collapsible details
+- [TabSheetElement](docs/specifications/TabSheetElement.md) - Tab container
+- [TabElement](docs/specifications/TabElement.md) - Individual tab
+- [CardElement](docs/specifications/CardElement.md) - Card layout
+- [MenuBarElement](docs/specifications/MenuBarElement.md) - Menu bar
+- [MenuElement](docs/specifications/MenuElement.md) - Menu overlay
+- [MenuItemElement](docs/specifications/MenuItemElement.md) - Menu item
+- [ContextMenuElement](docs/specifications/ContextMenuElement.md) - Context menu
+- [SideNavigationElement](docs/specifications/SideNavigationElement.md) - Side navigation
+- [SideNavigationItemElement](docs/specifications/SideNavigationItemElement.md) - Navigation item
+- [UploadElement](docs/specifications/UploadElement.md) - File upload
+- [ProgressBarElement](docs/specifications/ProgressBarElement.md) - Progress indicator
+- [AbstractNumberFieldElement](docs/specifications/AbstractNumberFieldElement.md) - Number field base
+
+## Key Patterns
+
+### Element Lookup
+Elements are found using accessible names via ARIA roles:
+```java
+// By label (most common)
+TextFieldElement.getByLabel(page, "Email")
+ButtonElement.getByText(page, "Save")
+SelectElement.getByLabel(page, "Country")
+
+// Scoped lookup within container
+TextFieldElement.getByLabel(formLocator, "Name")
+```
+
+### ARIA Roles by Component
+- Text fields: `AriaRole.TEXTBOX`
+- Number fields: `AriaRole.SPINBUTTON`
+- Date/time pickers: `AriaRole.COMBOBOX`
+- Buttons: `AriaRole.BUTTON`
+- Checkboxes: `AriaRole.CHECKBOX`
+- Radio buttons: `AriaRole.RADIO`
+- Dialogs: `AriaRole.DIALOG`
+- List boxes: `AriaRole.LISTBOX`
+- Menus: `AriaRole.MENU`, `AriaRole.MENUITEM`
+
+### Assertion Methods
+Each element provides assertion methods that auto-retry:
+```java
+field.assertValue("expected");
+field.assertEnabled();
+field.assertDisabled();
+field.assertRequired();
+field.assertInvalid();
+dialog.assertOpen();
+dialog.assertClosed();
+```
+
+### Mixin Interfaces
+Common behaviors are provided via interfaces:
+- `HasInputFieldElement` - value get/set
+- `HasValidationPropertiesElement` - required, invalid, error message
+- `HasEnabledElement` - enabled/disabled state
+- `FocusableElement` - focus/blur operations
+- `HasThemeElement` - theme variant assertions
+- `HasClearButtonElement` - clear button click
+- `HasPlaceholderElement` - placeholder text
+- `HasTooltipElement` - tooltip content
+- `HasLabelElement` - label text
+- `HasHelperElement` - helper text
+
+## Build Commands
+
+```bash
+# Build with tests
+./mvnw clean install
+
+# Run integration tests
+./mvnw -B verify --file pom.xml
+
+# Run single IT test
+./mvnw -Dit.test=MyViewIT -Pit verify
+```
+
+## Source Code
+
+- Main elements: `src/main/java/org/vaadin/addons/dramafinder/element/`
+- Shared mixins: `src/main/java/org/vaadin/addons/dramafinder/element/shared/`
+- Integration tests: `src/test/java/**/*IT.java`
