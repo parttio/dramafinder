@@ -13,6 +13,7 @@ services:
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
     volumes:
       - ./test-results:/app/test-results
+      - ../docs/specifications:/app/specifications:ro
     networks:
       - test-network
     healthcheck:

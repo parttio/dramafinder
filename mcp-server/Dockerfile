@@ -25,8 +25,9 @@ WORKDIR /app
 # Copy application
 COPY target/dramafinder-mcp-server.jar app.jar
 
-# Copy element specifications if available
-COPY --chown=appuser:appgroup docs/specifications /app/specifications 2>/dev/null || true
+# Create specifications directory
+# Mount or copy specs at runtime: -v ./docs/specifications:/app/specifications
+RUN mkdir -p /app/specifications
 
 # Set ownership
 RUN chown -R appuser:appgroup /app

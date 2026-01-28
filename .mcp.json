@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "vaadin": {
+      "type": "http",
+      "url": "https://mcp.vaadin.com/docs"
+    },
+    "dramafinder": {
+      "type": "sse",
+      "url": "http://localhost:8080/mcp/sse"
+    }
+  }
+}
