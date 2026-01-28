@@ -1,3 +1,9 @@
+---
+name: vaadin-testing
+description: Write Playwright integration tests for Vaadin applications using the DramaFinder library. Use when creating *IT.java tests, testing Vaadin web components, or debugging UI test failures.
+allowed-tools: Read, Grep, Glob, Bash(mvn *)
+---
+
 # Vaadin Testing with DramaFinder
 
 Use this skill when writing Playwright integration tests for Vaadin applications using the DramaFinder library.
