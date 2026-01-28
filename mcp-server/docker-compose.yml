@@ -1,0 +1,33 @@
+services:
+  dramafinder-mcp:
+    build: .
+    image: dramafinder-mcp-server:latest
+    container_name: dramafinder-mcp
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MCP_TRANSPORT=sse
+      - PLAYWRIGHT_HEADLESS=true
+      - PLAYWRIGHT_BROWSER=chromium
+      - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+    volumes:
+      - ./test-results:/app/test-results
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+networks:
+  test-network:
+    driver: bridge

@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: dramafinder-mcp-server
+  ai:
+    mcp:
+      server:
+        name: dramafinder
+        version: 1.0.0
+
+server:
+  port: 8080
+
+playwright:
+  headless: ${PLAYWRIGHT_HEADLESS:true}
+  browser: ${PLAYWRIGHT_BROWSER:chromium}
+  timeout:
+    default: ${PLAYWRIGHT_TIMEOUT:30000}
+    assertion: 5000
+  viewport:
+    width: 1280
+    height: 720
+
+dramafinder:
+  specifications:
+    path: ${SPECS_PATH:classpath:specifications/}
+  session:
+    max-elements: 100
+    element-ttl: 300000
+    cleanup-interval: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.vaadin.addons.dramafinder.mcp: INFO
+    io.modelcontextprotocol: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+playwright:
+  headless: true
