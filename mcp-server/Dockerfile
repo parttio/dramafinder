@@ -8,6 +8,7 @@ WORKDIR /build
 # Copy parent dramafinder project and install the library
 COPY pom.xml ./pom.xml
 COPY src ./src
+COPY docs ./docs
 
 RUN mvn install -Dmaven.test.skip=true -q
 
@@ -39,11 +40,7 @@ WORKDIR /app
 # Copy application from build stage
 COPY --from=build /build/target/dramafinder-mcp-server.jar app.jar
 
-# Create specifications directory
-# Mount or copy specs at runtime: -v ./docs/specifications:/app/specifications
-RUN mkdir -p /app/specifications
-
-COPY docs/specifications /app/specifications
+COPY --from=build /build/docs/ .
 
 # Set ownership
 RUN chown -R appuser:appgroup /app
