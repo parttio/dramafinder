@@ -1,3 +1,17 @@
+# Stage 1: Build the dramafinder library and MCP server
+FROM eclipse-temurin:21-jdk-alpine AS build
+
+RUN apk add --no-cache maven
+
+WORKDIR /build
+
+# Copy parent dramafinder project and install the library
+COPY pom.xml ./pom.xml
+COPY src ./src
+
+RUN mvn install -Dmaven.test.skip=true -q
+
+# Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
 
 # Install Playwright dependencies
@@ -22,12 +36,14 @@ RUN addgroup -g 1001 -S appgroup && \
 # Create app directory
 WORKDIR /app
 
-# Copy application
-COPY target/dramafinder-mcp-server.jar app.jar
+# Copy application from build stage
+COPY --from=build /build/target/dramafinder-mcp-server.jar app.jar
 
 # Create specifications directory
 # Mount or copy specs at runtime: -v ./docs/specifications:/app/specifications
 RUN mkdir -p /app/specifications
+
+COPY docs/specifications /app/specifications
 
 # Set ownership
 RUN chown -R appuser:appgroup /app

@@ -17,14 +17,15 @@
     <packaging>jar</packaging>
 
     <name>Drama Finder MCP Server</name>
-    <description>MCP Server for AI-assisted Vaadin application testing using Drama Finder</description>
+    <description>MCP Server for AI-assisted Vaadin application testing using
+        Drama Finder
+    </description>
 
     <properties>
         <java.version>21</java.version>
-        <mcp-sdk.version>0.13.1</mcp-sdk.version>
-        <spring-ai.version>1.1.0-M1-PLATFORM-2</spring-ai.version>
+        <spring-ai.version>2.0.0-M2</spring-ai.version>
         <playwright.version>1.55.0</playwright.version>
-        <dramafinder.version>1.0.3-SNAPSHOT</dramafinder.version>
+        <dramafinder.version>1.0.2</dramafinder.version>
     </properties>
 
     <repositories>
@@ -89,7 +90,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.vaadin.addons.dramafinder.mcp.DramaFinderMcpApplication</mainClass>
+                    <mainClass>
+                        org.vaadin.addons.dramafinder.mcp.DramaFinderMcpApplication
+                    </mainClass>
                 </configuration>
             </plugin>
         </plugins>

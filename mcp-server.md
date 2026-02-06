@@ -2,11 +2,15 @@
 
 ## Overview
 
-This document specifies an MCP (Model Context Protocol) server that enables AI assistants to interact with and test Vaadin applications using the Drama Finder library. The server will be implemented as a Spring Boot application and distributed as a Docker container.
+This document specifies an MCP (Model Context Protocol) server that enables AI
+assistants to interact with and test Vaadin applications using the Drama Finder
+library. The server will be implemented as a Spring Boot application and
+distributed as a Docker container.
 
 ## Purpose
 
 The MCP server provides AI assistants with:
+
 1. **Tools** to execute Playwright-based UI tests on Vaadin applications
 2. **Resources** to access component documentation and specifications
 3. **Prompts** to guide test creation and debugging workflows
@@ -38,51 +42,60 @@ The MCP server provides AI assistants with:
 
 ## Technology Stack
 
-| Component | Technology | Version |
-|-----------|------------|---------|
-| Runtime | Java | 21+ |
-| Framework | Spring Boot | 4.0.x |
-| MCP SDK | mcp-spring-sdk | latest |
-| Browser Automation | Playwright | 1.55.0 |
-| Build System | Maven | 3.9+ |
-| Container | Docker | 24+ |
-| Base Image | eclipse-temurin:21-jre-alpine | latest |
+| Component          | Technology                    | Version |
+|--------------------|-------------------------------|---------|
+| Runtime            | Java                          | 21+     |
+| Framework          | Spring Boot                   | 4.0.x   |
+| MCP SDK            | mcp-spring-sdk                | latest  |
+| Browser Automation | Playwright                    | 1.55.0  |
+| Build System       | Maven                         | 3.9+    |
+| Container          | Docker                        | 24+     |
+| Base Image         | eclipse-temurin:21-jre-alpine | latest  |
 
 ## MCP Capabilities
 
 ### Tools
 
 #### 1. `vaadin_navigate`
+
 Navigate to a Vaadin application URL.
 
 **Parameters:**
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | url | string | yes | The URL of the Vaadin application to test |
-| waitForVaadin | boolean | no | Wait for Vaadin to finish loading (default: true) |
+| waitForVaadin | boolean | no | Wait for Vaadin to finish loading (default:
+true) |
 
 **Returns:** `{ success: boolean, title: string, url: string }`
 
 ---
 
 #### 2. `vaadin_find_element`
+
 Find a Vaadin component on the page using accessibility-first locators.
 
 **Parameters:**
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| elementType | string | yes | The Drama Finder element type (e.g., "TextField", "Button", "Select") |
-| locatorType | string | yes | Locator strategy: "label", "text", "placeholder", "testId" |
+| elementType | string | yes | The Drama Finder element type (e.g., "
+TextField", "Button", "Select") |
+| locatorType | string | yes | Locator strategy: "label", "text", "
+placeholder", "testId" |
 | locatorValue | string | yes | The value to search for |
 | scopeSelector | string | no | Optional CSS selector to scope the search |
 
 **Returns:** `{ found: boolean, elementId: string, properties: object }`
 
 **Supported Element Types:**
-- Input: `TextField`, `TextArea`, `EmailField`, `PasswordField`, `NumberField`, `IntegerField`, `BigDecimalField`
+
+- Input: `TextField`, `TextArea`, `EmailField`, `PasswordField`, `NumberField`,
+  `IntegerField`, `BigDecimalField`
 - Date/Time: `DatePicker`, `TimePicker`, `DateTimePicker`
-- Selection: `Checkbox`, `RadioButton`, `RadioButtonGroup`, `Select`, `ListBox`, `ComboBox`, `MultiSelectComboBox`
-- Navigation: `MenuBar`, `Menu`, `MenuItem`, `ContextMenu`, `SideNavigation`, `SideNavigationItem`
+- Selection: `Checkbox`, `RadioButton`, `RadioButtonGroup`, `Select`, `ListBox`,
+  `ComboBox`, `MultiSelectComboBox`
+- Navigation: `MenuBar`, `Menu`, `MenuItem`, `ContextMenu`, `SideNavigation`,
+  `SideNavigationItem`
 - Layout: `Card`, `Accordion`, `AccordionPanel`, `Details`, `TabSheet`, `Tab`
 - Overlays: `Dialog`, `Notification`, `Popover`
 - Other: `Button`, `Upload`, `ProgressBar`, `Grid`, `Avatar`
@@ -90,12 +103,13 @@ Find a Vaadin component on the page using accessibility-first locators.
 ---
 
 #### 3. `vaadin_interact`
+
 Perform an action on a previously found element.
 
 **Parameters:**
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| elementId | string | yes | The element ID returned from `vaadin_find_element` |
+| elementId | string | yes | The element ID returned from`vaadin_find_element` |
 | action | string | yes | The action to perform |
 | value | string | no | Value for actions that require input |
 
@@ -117,6 +131,7 @@ Perform an action on a previously found element.
 ---
 
 #### 4. `vaadin_assert`
+
 Perform an assertion on an element.
 
 **Parameters:**
@@ -151,6 +166,7 @@ Perform an assertion on an element.
 ---
 
 #### 5. `vaadin_get_property`
+
 Get a property value from an element.
 
 **Parameters:**
@@ -164,6 +180,7 @@ Get a property value from an element.
 ---
 
 #### 6. `vaadin_screenshot`
+
 Take a screenshot of the current page or a specific element.
 
 **Parameters:**
@@ -177,6 +194,7 @@ Take a screenshot of the current page or a specific element.
 ---
 
 #### 7. `vaadin_execute_test`
+
 Execute a complete test scenario defined as a sequence of steps.
 
 **Parameters:**
@@ -186,18 +204,23 @@ Execute a complete test scenario defined as a sequence of steps.
 | steps | array | yes | Array of test step objects |
 
 **Step Object Schema:**
+
 ```json
 {
   "action": "navigate|find|interact|assert|wait",
-  "params": { /* action-specific parameters */ }
+  "params": {
+    /* action-specific parameters */
+  }
 }
 ```
 
-**Returns:** `{ passed: boolean, stepsExecuted: number, failedStep?: number, error?: string }`
+**Returns:**
+`{ passed: boolean, stepsExecuted: number, failedStep?: number, error?: string }`
 
 ---
 
 #### 8. `vaadin_browser_control`
+
 Control the browser instance lifecycle.
 
 **Parameters:**
@@ -205,7 +228,8 @@ Control the browser instance lifecycle.
 |------|------|----------|-------------|
 | action | string | yes | "start", "stop", "restart", "status" |
 | headless | boolean | no | Run in headless mode (default: true) |
-| browserType | string | no | "chromium", "firefox", "webkit" (default: "chromium") |
+| browserType | string | no | "chromium", "firefox", "webkit" (default: "
+chromium") |
 
 **Returns:** `{ status: string, browserType: string, headless: boolean }`
 
@@ -214,6 +238,7 @@ Control the browser instance lifecycle.
 ### Resources
 
 #### 1. `dramafinder://elements`
+
 List all available Drama Finder element types with brief descriptions.
 
 **URI Template:** `dramafinder://elements`
@@ -223,6 +248,7 @@ List all available Drama Finder element types with brief descriptions.
 ---
 
 #### 2. `dramafinder://element/{elementType}`
+
 Get detailed specification for a specific element type.
 
 **URI Template:** `dramafinder://element/{elementType}`
@@ -233,6 +259,7 @@ Get detailed specification for a specific element type.
 | elementType | string | The element type name (e.g., "TextField") |
 
 **Returns:** Markdown documentation including:
+
 - ARIA roles used
 - Available factory methods
 - Supported actions
@@ -242,11 +269,13 @@ Get detailed specification for a specific element type.
 ---
 
 #### 3. `dramafinder://patterns`
+
 Common testing patterns and best practices.
 
 **URI Template:** `dramafinder://patterns`
 
 **Returns:** Documentation on:
+
 - Form testing patterns
 - Navigation testing
 - Dialog/overlay handling
@@ -257,11 +286,13 @@ Common testing patterns and best practices.
 ---
 
 #### 4. `dramafinder://session`
+
 Get current browser session state.
 
 **URI Template:** `dramafinder://session`
 
 **Returns:**
+
 ```json
 {
   "active": true,
@@ -278,6 +309,7 @@ Get current browser session state.
 ### Prompts
 
 #### 1. `create_test`
+
 Guide the AI to create a test for a specific user flow.
 
 **Arguments:**
@@ -287,6 +319,7 @@ Guide the AI to create a test for a specific user flow.
 | userFlow | string | yes | Description of the user flow to test |
 
 **Returns:** A structured prompt that guides test creation including:
+
 - Navigation setup
 - Element discovery strategy
 - Interaction sequence
@@ -295,6 +328,7 @@ Guide the AI to create a test for a specific user flow.
 ---
 
 #### 2. `debug_test`
+
 Help diagnose why a test is failing.
 
 **Arguments:**
@@ -304,6 +338,7 @@ Help diagnose why a test is failing.
 | lastAction | string | no | The last action attempted |
 
 **Returns:** Debugging guidance including:
+
 - Common causes for the error
 - Diagnostic steps to try
 - Alternative locator strategies
@@ -311,6 +346,7 @@ Help diagnose why a test is failing.
 ---
 
 #### 3. `element_discovery`
+
 Help find the right element on a page.
 
 **Arguments:**
@@ -320,6 +356,7 @@ Help find the right element on a page.
 | pageContext | string | no | Context about the current page |
 
 **Returns:** Suggestions for:
+
 - Appropriate element type
 - Locator strategies to try
 - How to verify the element was found
@@ -428,13 +465,13 @@ dramafinder:
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MCP_TRANSPORT` | Transport type: `stdio` or `sse` | `stdio` |
-| `PLAYWRIGHT_HEADLESS` | Run browser in headless mode | `true` |
-| `PLAYWRIGHT_BROWSER` | Browser type | `chromium` |
-| `PLAYWRIGHT_TIMEOUT` | Default timeout in ms | `30000` |
-| `SPECS_PATH` | Path to element specifications | `classpath:specifications/` |
+| Variable              | Description                      | Default                     |
+|-----------------------|----------------------------------|-----------------------------|
+| `MCP_TRANSPORT`       | Transport type: `stdio` or `sse` | `stdio`                     |
+| `PLAYWRIGHT_HEADLESS` | Run browser in headless mode     | `true`                      |
+| `PLAYWRIGHT_BROWSER`  | Browser type                     | `chromium`                  |
+| `PLAYWRIGHT_TIMEOUT`  | Default timeout in ms            | `30000`                     |
+| `SPECS_PATH`          | Path to element specifications   | `classpath:specifications/` |
 
 ---
 
@@ -448,8 +485,11 @@ dramafinder:
     "dramafinder": {
       "command": "docker",
       "args": [
-        "run", "-i", "--rm",
-        "--network", "host",
+        "run",
+        "-i",
+        "--rm",
+        "--network",
+        "host",
         "dramafinder-mcp-server:latest"
       ]
     }
@@ -463,7 +503,7 @@ dramafinder:
 {
   "mcpServers": {
     "dramafinder": {
-      "url": "http://localhost:8080/mcp/sse",
+      "url": "http://localhost:8080/sse",
       "transport": "sse"
     }
   }
@@ -474,11 +514,15 @@ dramafinder:
 
 ## Security Considerations
 
-1. **Network Isolation**: The MCP server should only connect to trusted Vaadin applications
-2. **No Arbitrary Code Execution**: Tests are defined declaratively, not as arbitrary code
+1. **Network Isolation**: The MCP server should only connect to trusted Vaadin
+   applications
+2. **No Arbitrary Code Execution**: Tests are defined declaratively, not as
+   arbitrary code
 3. **Resource Limits**: Browser instances have memory and CPU limits
-4. **Session Cleanup**: Browser sessions are automatically cleaned up after inactivity
-5. **URL Allowlist**: Optional configuration to restrict which URLs can be tested
+4. **Session Cleanup**: Browser sessions are automatically cleaned up after
+   inactivity
+5. **URL Allowlist**: Optional configuration to restrict which URLs can be
+   tested
 
 ---
 
@@ -499,44 +543,49 @@ All tools return structured error responses:
 
 ### Error Codes
 
-| Code | Description |
-|------|-------------|
-| `BROWSER_NOT_STARTED` | Browser session not active |
-| `NAVIGATION_FAILED` | Failed to navigate to URL |
-| `ELEMENT_NOT_FOUND` | Element could not be located |
+| Code                       | Description                                 |
+|----------------------------|---------------------------------------------|
+| `BROWSER_NOT_STARTED`      | Browser session not active                  |
+| `NAVIGATION_FAILED`        | Failed to navigate to URL                   |
+| `ELEMENT_NOT_FOUND`        | Element could not be located                |
 | `ELEMENT_NOT_INTERACTABLE` | Element found but cannot be interacted with |
-| `ASSERTION_FAILED` | Assertion did not pass |
-| `TIMEOUT` | Operation timed out |
-| `INVALID_PARAMETER` | Invalid parameter value |
-| `SESSION_EXPIRED` | Element reference expired |
+| `ASSERTION_FAILED`         | Assertion did not pass                      |
+| `TIMEOUT`                  | Operation timed out                         |
+| `INVALID_PARAMETER`        | Invalid parameter value                     |
+| `SESSION_EXPIRED`          | Element reference expired                   |
 
 ---
 
 ## Implementation Phases
 
 ### Phase 1: Core Infrastructure
+
 - [ ] Spring Boot application setup with MCP SDK
 - [ ] Playwright integration and browser lifecycle management
 - [ ] Basic tool implementations: `vaadin_navigate`, `vaadin_browser_control`
 - [ ] Docker container setup
 
 ### Phase 2: Element Interaction
+
 - [ ] `vaadin_find_element` with all element types
 - [ ] `vaadin_interact` with common actions
 - [ ] `vaadin_get_property`
 - [ ] Element reference management
 
 ### Phase 3: Assertions & Testing
+
 - [ ] `vaadin_assert` with all assertion types
 - [ ] `vaadin_screenshot`
 - [ ] `vaadin_execute_test` for batch execution
 
 ### Phase 4: Resources & Prompts
+
 - [ ] Resource endpoints for documentation
 - [ ] Prompt templates
 - [ ] Session state resource
 
 ### Phase 5: Polish & Documentation
+
 - [ ] Error handling improvements
 - [ ] Performance optimization
 - [ ] Usage documentation

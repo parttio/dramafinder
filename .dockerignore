@@ -1,0 +1,9 @@
+target/
+mcp-server/target/
+node_modules/
+.git/
+docs/
+*.md
+.mvn/
+mvnw
+mvnw.cmd
