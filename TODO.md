@@ -28,6 +28,7 @@
 - TextField
 - Time Picker
 - Upload
+- Virtual List
 
 ## Components not implemented
 
@@ -40,7 +41,6 @@
 - Message Input
 - Message List
 - Multi-Select Combobox
-- Virtual List
 
 ## Shared interfaces implemented
 
