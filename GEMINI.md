@@ -47,6 +47,117 @@ Integration tests are located in `src/test/java/.../it/` and are run with the `i
 mvn -Pit verify
 ```
 
+## Available Element Classes
+
+Each element class wraps a Playwright `Locator` and provides typed helpers (getters, actions, assertions) for a specific Vaadin component. They all extend `VaadinElement` and are annotated with `@PlaywrightElement`.
+
+| Element | Vaadin Component | Tag |
+|---------|-----------------|-----|
+| `AccordionElement` | Accordion | `vaadin-accordion` |
+| `AccordionPanelElement` | AccordionPanel | `vaadin-accordion-panel` |
+| `BigDecimalFieldElement` | BigDecimalField | `vaadin-big-decimal-field` |
+| `ButtonElement` | Button | `vaadin-button` |
+| `CardElement` | Card | `vaadin-card` |
+| `CheckboxElement` | Checkbox | `vaadin-checkbox` |
+| `ContextMenuElement` | ContextMenu | `vaadin-context-menu` |
+| `DatePickerElement` | DatePicker | `vaadin-date-picker` |
+| `DateTimePickerElement` | DateTimePicker | `vaadin-date-time-picker` |
+| `DetailsElement` | Details | `vaadin-details` |
+| `DialogElement` | Dialog | `vaadin-dialog` |
+| `EmailFieldElement` | EmailField | `vaadin-email-field` |
+| `IntegerFieldElement` | IntegerField | `vaadin-integer-field` |
+| `ListBoxElement` | ListBox | `vaadin-list-box` |
+| `MenuBarElement` | MenuBar | `vaadin-menu-bar` |
+| `NotificationElement` | Notification | `vaadin-notification-card` |
+| `NumberFieldElement` | NumberField | `vaadin-number-field` |
+| `PasswordFieldElement` | PasswordField | `vaadin-password-field` |
+| `PopoverElement` | Popover | `vaadin-popover` |
+| `ProgressBarElement` | ProgressBar | `vaadin-progress-bar` |
+| `RadioButtonGroupElement` | RadioButtonGroup | `vaadin-radio-group` |
+| `SelectElement` | Select | `vaadin-select` |
+| `SideNavigationElement` | SideNav | `vaadin-side-nav` |
+| `TabSheetElement` | TabSheet | `vaadin-tabsheet` |
+| `TextAreaElement` | TextArea | `vaadin-text-area` |
+| `TextFieldElement` | TextField | `vaadin-text-field` |
+| `TimePickerElement` | TimePicker | `vaadin-time-picker` |
+| `UploadElement` | Upload | `vaadin-upload` |
+| `VirtualListElement` | VirtualList | `vaadin-virtual-list` |
+
+### VirtualListElement
+
+`VirtualListElement` wraps `<vaadin-virtual-list>`, a virtualized scrollable list that lazily renders items. It implements `FocusableElement` and `HasStyleElement`.
+
+**Scrolling:**
+
+```java
+VirtualListElement list = new VirtualListElement(page.locator("#my-list"));
+list.scrollToRow(50);       // scroll to index 50
+list.scrollToStart();       // scroll to the top
+list.scrollToEnd();         // scroll to the bottom
+```
+
+**Querying items:**
+
+```java
+list.getRowCount();                    // total item count (including non-rendered)
+list.getFirstVisibleRowIndex();        // first visible row index
+list.getLastVisibleRowIndex();         // last visible row index
+list.getVisibleRowCount();             // number of visible rows
+list.isRowInView(50);                  // true if row 50 is visible
+
+list.getRenderedItems();               // Locator for all rendered child elements
+list.getItemByIndex(0);                // Locator for item at virtual index
+list.getItemByText("Item 1");          // Locator for item containing text
+```
+
+**Getting typed components inside items:**
+
+```java
+// Get a ButtonElement from item at index 0
+ButtonElement btn = list.getItemComponent(0, ButtonElement.class);
+
+// Get a ButtonElement from item matching text
+ButtonElement btn = list.getItemComponentByText("Row 1", ButtonElement.class);
+
+// Get the first ButtonElement in any rendered item
+ButtonElement btn = list.getComponent(ButtonElement.class);
+```
+
+These methods read the tag from the `@PlaywrightElement` annotation and work with any element class.
+
+**Assertions (all auto-retry via Playwright):**
+
+```java
+list.assertRowCount(100);              // total items
+list.assertEmpty();                    // zero items
+list.assertRowInView(0);              // row is visible
+list.assertRowNotInView(99);          // row is not visible
+list.assertFirstVisibleRow(0);        // first visible index (hasJSProperty)
+list.assertLastVisibleRow(10);        // last visible index (hasJSProperty)
+list.assertItemRendered("Item 1");    // text is visible in DOM
+```
+
+### Shared Mixins
+
+Element classes implement shared interfaces for cross-cutting concerns:
+
+| Interface | Provides |
+|-----------|----------|
+| `FocusableElement` | `focus()`, `blur()`, `getTabIndex()`, `assertIsFocused()` |
+| `HasAriaLabelElement` | `getAriaLabel()`, `assertAriaLabel()` |
+| `HasClearButtonElement` | `assertClearButton()` |
+| `HasEnabledElement` | `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
+| `HasHelperElement` | `getHelper()`, `assertHelper()` |
+| `HasLabelElement` | `getLabel()`, `assertLabel()` |
+| `HasPlaceholderElement` | `assertPlaceholder()` |
+| `HasPrefixElement` | `getPrefixLocator()` |
+| `HasStyleElement` | `getCssClass()`, `assertCssClass()` |
+| `HasSuffixElement` | `getSuffixLocator()` |
+| `HasThemeElement` | `getTheme()`, `assertTheme()` |
+| `HasTooltipElement` | `assertTooltipHasText()` |
+| `HasValidationPropertiesElement` | `assertRequired()`, `assertErrorMessage()` |
+| `HasValueElement` | `getValue()`, `assertValue()` |
+
 ## How to Use Drama Finder
 
 To incorporate Drama Finder into a Vaadin project, add it as a test dependency in your `pom.xml`:
