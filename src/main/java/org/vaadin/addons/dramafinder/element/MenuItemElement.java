@@ -13,14 +13,25 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class MenuItemElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-menu-bar-button";
 
-    /** Create a {@code MenuItemElement} from an existing locator. */
+    /**
+     * Create a {@code MenuItemElement} from an existing locator.
+     *
+     * @param locator the locator for the menu item
+     */
     public MenuItemElement(Locator locator) {
         super(locator);
     }
 
-    /** Get a menu item by its accessible label within a scope. */
+    /**
+     * Get a menu item by its accessible label within a scope.
+     *
+     * @param locator the scope to search within
+     * @param label   the accessible label of the menu item
+     * @return the matching {@code MenuItemElement}
+     */
     public static MenuItemElement getByLabel(Locator locator, String label) {
         return new MenuItemElement(
                 locator.getByRole(AriaRole.MENUITEM, new Locator.GetByRoleOptions().setName(label))

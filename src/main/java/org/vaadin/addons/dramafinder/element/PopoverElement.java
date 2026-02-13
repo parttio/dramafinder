@@ -14,21 +14,34 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public class PopoverElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-popover";
 
-    /** Create a {@code PopoverElement} by resolving the dialog with ARIA role. */
+    /**
+     * Create a {@code PopoverElement} by resolving the dialog with ARIA role.
+     *
+     * @param page the Playwright page
+     */
     public PopoverElement(Page page) {
         super(
                 page.getByRole(AriaRole.DIALOG)
                         .and(page.locator(FIELD_TAG_NAME)));
     }
 
-    /** Create a {@code PopoverElement} from an existing locator. */
+    /**
+     * Create a {@code PopoverElement} from an existing locator.
+     *
+     * @param locator the locator for the popover element
+     */
     public PopoverElement(Locator locator) {
         super(locator);
     }
 
-    /** Whether the popover is open (visible). */
+    /**
+     * Whether the popover is open (visible).
+     *
+     * @return {@code true} if the popover is visible
+     */
     public boolean isOpen() {
         return getLocator().isVisible();
     }
@@ -43,13 +56,23 @@ public class PopoverElement extends VaadinElement implements HasThemeElement, Ha
         assertThat(getLocator()).isHidden();
     }
 
-    /** Locator for the popover content. */
+    /**
+     * Locator for the popover content.
+     *
+     * @return the content locator
+     */
     public Locator getContentLocator() {
         return getLocator();
     }
 
 
-    /** Get a popover by its accessible label. */
+    /**
+     * Get a popover by its accessible label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the popover
+     * @return the matching {@code PopoverElement}
+     */
     public static PopoverElement getByLabel(Page page, String label) {
         return new PopoverElement(
                 page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(label))

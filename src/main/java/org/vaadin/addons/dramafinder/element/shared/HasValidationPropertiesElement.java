@@ -9,22 +9,34 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasValidationPropertiesElement extends HasLocatorElement {
 
-    /** Locator for the error message slot. */
+    /**
+     * Locator for the error message slot.
+     *
+     * @return the error message locator
+     */
     default Locator getErrorMessageLocator() {
         return getLocator().locator("> [slot=\"error-message\"]").first(); // slot="helper"
     }
 
-    /** Assert that the component is valid (not {@code invalid}). */
+    /**
+     * Assert that the component is valid (not {@code invalid}).
+     */
     default void assertValid() {
         assertThat(getLocator()).not().hasAttribute("invalid", "");
     }
 
-    /** Assert that the component is invalid. */
+    /**
+     * Assert that the component is invalid.
+     */
     default void assertInvalid() {
         assertThat(getLocator()).hasAttribute("invalid", "");
     }
 
-    /** Assert that the error message equals the expected text. */
+    /**
+     * Assert that the error message equals the expected text.
+     *
+     * @param errorMessage the expected error message text
+     */
     default void assertErrorMessage(String errorMessage) {
         assertThat(getErrorMessageLocator()).hasText(errorMessage);
     }

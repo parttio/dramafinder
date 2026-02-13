@@ -11,6 +11,8 @@ public interface FocusableElement extends HasLocatorElement {
 
     /**
      * The locator to focus/blur. Defaults to the component root.
+     *
+     * @return the focusable locator
      */
     default Locator getFocusLocator() {
         return getLocator();
@@ -32,6 +34,8 @@ public interface FocusableElement extends HasLocatorElement {
 
     /**
      * Current tab index as string (from {@code tabIndex} attribute).
+     *
+     * @return the tab index value
      */
     default String getTabIndex() {
         return getFocusLocator().getAttribute("tabIndex");

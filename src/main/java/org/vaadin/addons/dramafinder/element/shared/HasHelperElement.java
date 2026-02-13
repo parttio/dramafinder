@@ -9,17 +9,29 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasHelperElement extends HasLocatorElement {
 
-    /** Locator for the helper slot content. */
+    /**
+     * Locator for the helper slot content.
+     *
+     * @return the helper locator
+     */
     default Locator getHelperLocator() {
         return getLocator().locator("*[slot=\"helper\"]").first(); // slot="helper"
     }
 
-    /** Text content of the helper slot. */
+    /**
+     * Text content of the helper slot.
+     *
+     * @return the helper text content
+     */
     default String getHelperText() {
         return getHelperLocator().textContent(); // slot="helper"
     }
 
-    /** Assert that the helper slot has the expected text. */
+    /**
+     * Assert that the helper slot has the expected text.
+     *
+     * @param helperText the expected helper text
+     */
     default void assertHelperHasText(String helperText) {
         assertThat(getHelperLocator()).hasText(helperText);
     }

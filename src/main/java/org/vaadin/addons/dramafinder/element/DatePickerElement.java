@@ -30,6 +30,7 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
         HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-date-picker";
 
     /**

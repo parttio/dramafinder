@@ -29,9 +29,13 @@ public class TextFieldElement extends VaadinElement
         HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement,
         HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-text-field";
+    /** The HTML attribute name for maximum length. */
     public static final String MAXLENGTH_ATTRIBUTE = "maxlength";
+    /** The HTML attribute name for validation pattern. */
     public static final String PATTERN_ATTRIBUTE = "pattern";
+    /** The HTML attribute name for minimum length. */
     public static final String MIN_LENGTH_ATTRIBUTE = "minLength";
 
     /**

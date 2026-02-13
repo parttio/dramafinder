@@ -16,6 +16,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(CardElement.FIELD_TAG_NAME)
 public class CardElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-card";
 
     /**
@@ -61,6 +62,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the title slot.
+     *
+     * @return the title locator
      */
     public Locator getTitleLocator() {
         return getLocator().locator("> [slot='title']");
@@ -68,6 +71,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the subtitle slot.
+     *
+     * @return the subtitle locator
      */
     public Locator getSubtitleLocator() {
         return getLocator().locator("> [slot='subtitle']");
@@ -75,6 +80,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the header slot.
+     *
+     * @return the header locator
      */
     public Locator getHeaderLocator() {
         return getLocator().locator("> [slot='header']");
@@ -82,6 +89,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the header prefix slot.
+     *
+     * @return the header prefix locator
      */
     public Locator getHeaderPrefixLocator() {
         return getLocator().locator("> [slot='header-prefix']");
@@ -89,6 +98,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the header suffix slot.
+     *
+     * @return the header suffix locator
      */
     public Locator getHeaderSuffixLocator() {
         return getLocator().locator("> [slot='header-suffix']");
@@ -96,6 +107,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the media slot.
+     *
+     * @return the media locator
      */
     public Locator getMediaLocator() {
         return getLocator().locator("> [slot='media']");
@@ -103,6 +116,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the footer slot.
+     *
+     * @return the footer locator
      */
     public Locator getFooterLocator() {
         return getLocator().locator(" > [slot='footer']");
@@ -110,6 +125,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Locator for the default (content) slot.
+     *
+     * @return the content locator
      */
     public Locator getContentLocator() {
         return getLocator().locator("xpath=./*[not(@slot)][1]");
@@ -117,6 +134,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Assert the card title text, or absence when {@code null}.
+     *
+     * @param title the expected title text, or {@code null} to assert absence
      */
     public void assertTitle(String title) {
         if (title != null) {
@@ -128,6 +147,8 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Assert the card subtitle text, or absence when {@code null}.
+     *
+     * @param subtitle the expected subtitle text, or {@code null} to assert absence
      */
     public void assertSubtitle(String subtitle) {
         if (subtitle != null) {

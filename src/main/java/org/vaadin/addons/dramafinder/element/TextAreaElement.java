@@ -12,6 +12,7 @@ import com.microsoft.playwright.options.AriaRole;
 @PlaywrightElement(TextAreaElement.FIELD_TAG_NAME)
 public class TextAreaElement extends TextFieldElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-text-area";
 
     /**
@@ -24,10 +25,16 @@ public class TextAreaElement extends TextFieldElement {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the locator for the textarea input element.
+     * <p>
+     * Overrides the parent to target the {@code slot="textarea"} element
+     * instead of the standard input slot.
+     *
+     * @return the locator for the textarea input
      */
+    @Override
     public Locator getInputLocator() {
-        return getLocator().locator("*[slot=\"textarea\"]").first(); // slot="helper"
+        return getLocator().locator("*[slot=\"textarea\"]").first();
     }
 
     /**

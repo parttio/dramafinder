@@ -29,10 +29,16 @@ public class SelectElement extends VaadinElement
         HasPrefixElement, HasThemeElement, HasPlaceholderElement,
         HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-select";
+    /** The HTML tag name for select items. */
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-select-item";
+    /** The HTML tag name for the select overlay list box. */
     public static final String FIELD_OVERLAY_TAG_NAME = "vaadin-select-list-box";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Locator getInputLocator() {
         return getLocator().locator("*[slot=\"value\"]").first();

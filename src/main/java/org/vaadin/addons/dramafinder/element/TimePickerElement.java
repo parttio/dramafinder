@@ -30,7 +30,9 @@ public class TimePickerElement extends VaadinElement implements HasInputFieldEle
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
         HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-time-picker";
+    /** The time formatter for HH:mm format. */
     public static final DateTimeFormatter LOCAL_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
     /**

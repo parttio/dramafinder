@@ -9,17 +9,27 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasClearButtonElement extends HasLocatorElement {
 
-    /** Locator for the clear button ({@code part~=clear-button}). */
+    /**
+     * Locator for the clear button ({@code part~=clear-button}).
+     *
+     * @return the clear button locator
+     */
     default Locator getClearButtonLocator() {
         return getLocator().locator("[part~=\"clear-button\"]");
     }
 
-    /** Click the clear button. */
+    /**
+     * Click the clear button.
+     */
     default void clickClearButton() {
         getClearButtonLocator().click();
     }
 
-    /** Whether the clear button is visible. */
+    /**
+     * Whether the clear button is visible.
+     *
+     * @return {@code true} if the clear button is visible
+     */
     default boolean isClearButtonVisible() {
         return getClearButtonLocator().isVisible();
     }

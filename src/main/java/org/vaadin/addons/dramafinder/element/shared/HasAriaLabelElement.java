@@ -11,18 +11,28 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasAriaLabelElement extends HasLocatorElement {
 
-    /** Locator where the {@code aria-label} is applied. Defaults to root. */
+    /**
+     * Locator where the {@code aria-label} is applied. Defaults to root.
+     *
+     * @return the aria-label locator
+     */
     default Locator getAriaLabelLocator() {
         return getLocator();
     }
 
-    /** Get the current {@code aria-label} value. */
+    /**
+     * Get the current {@code aria-label} value.
+     *
+     * @return the aria-label attribute value
+     */
     default String getAriaLabel() {
         return getAriaLabelLocator().getAttribute("aria-label");
     }
 
     /**
      * Assert that the {@code aria-label} matches the expected text, or is absent when null.
+     *
+     * @param ariaLabel the expected aria-label, or {@code null} to assert absence
      */
     default void assertAriaLabel(String ariaLabel) {
         if (ariaLabel != null) {

@@ -10,6 +10,7 @@ import com.microsoft.playwright.options.AriaRole;
 @PlaywrightElement(EmailFieldElement.FIELD_TAG_NAME)
 public class EmailFieldElement extends TextFieldElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-email-field";
 
     /**

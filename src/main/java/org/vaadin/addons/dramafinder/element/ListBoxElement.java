@@ -24,8 +24,11 @@ public class ListBoxElement extends VaadinElement
         implements HasAriaLabelElement, HasStyleElement, HasTooltipElement,
         HasEnabledElement {
 
+    /** The HTML tag name for this Vaadin component. */
     public static final String FIELD_TAG_NAME = "vaadin-list-box";
+    /** The HTML tag name for list box items. */
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-item";
+    /** The HTML attribute name for multiple selection mode. */
     public static final String MULTIPLE_ATTRIBUTE = "multiple";
 
     /**
@@ -49,6 +52,8 @@ public class ListBoxElement extends VaadinElement
 
     /**
      * Get the selected value for single-select list boxes.
+     *
+     * @return the text content of the selected item
      */
     public String getSingleSelectedValue() {
         return getLocatorValue().innerText();
@@ -56,6 +61,8 @@ public class ListBoxElement extends VaadinElement
 
     /**
      * Get all selected values for multi-select list boxes.
+     *
+     * @return list of text contents of all selected items
      */
     public List<String> getSelectedValue() {
         return getLocatorValue().allTextContents();
@@ -67,6 +74,8 @@ public class ListBoxElement extends VaadinElement
 
     /**
      * Assert that the selected values match the expected labels.
+     *
+     * @param expected the expected selected item labels
      */
     public void assertSelectedValue(String... expected) {
         int length = expected.length;
@@ -94,6 +103,8 @@ public class ListBoxElement extends VaadinElement
 
     /**
      * Assert that a specific item is enabled.
+     *
+     * @param item the visible label of the item
      */
     public void assertItemEnabled(String item) {
         assertThat(getItem(item)).isEnabled();
@@ -101,11 +112,18 @@ public class ListBoxElement extends VaadinElement
 
     /**
      * Assert that a specific item is disabled.
+     *
+     * @param item the visible label of the item
      */
     public void assertItemDisabled(String item) {
         assertThat(getItem(item)).isDisabled();
     }
 
+    /**
+     * Whether multiple selection mode is enabled.
+     *
+     * @return {@code true} if multiple selection is enabled
+     */
     public boolean isMultiple() {
         return getLocator().getAttribute(MULTIPLE_ATTRIBUTE) != null;
     }
@@ -133,6 +151,10 @@ public class ListBoxElement extends VaadinElement
 
     /**
      * Get the {@code ListBoxElement} by its label.
+     *
+     * @param page  the Playwright page
+     * @param label the accessible label of the list box
+     * @return the matching {@code ListBoxElement}
      */
     public static ListBoxElement getByLabel(Page page, String label) {
         return new ListBoxElement(
