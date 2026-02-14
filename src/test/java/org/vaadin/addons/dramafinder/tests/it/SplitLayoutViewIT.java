@@ -40,6 +40,7 @@ public class SplitLayoutViewIT extends SpringPlaywrightIT implements HasTestView
     @Test
     public void testSplitterPositionSet() {
         page.setViewportSize(1600, 1400);
+        page.waitForTimeout(200);
         Locator positionedHost = page.locator(SplitLayoutElement.FIELD_TAG_NAME).nth(2);
         SplitLayoutElement splitLayoutElement = new SplitLayoutElement(positionedHost);
         assertThat(splitLayoutElement.getLocator()).isVisible();
@@ -54,6 +55,7 @@ public class SplitLayoutViewIT extends SpringPlaywrightIT implements HasTestView
     @Test
     public void testSplitterPositionSet2() {
         page.setViewportSize(1600, 1400);
+        page.waitForTimeout(200);
         Locator positionedHost = page.locator(SplitLayoutElement.FIELD_TAG_NAME).nth(2);
         SplitLayoutElement splitLayoutElement = new SplitLayoutElement(positionedHost);
         assertThat(splitLayoutElement.getLocator()).isVisible();

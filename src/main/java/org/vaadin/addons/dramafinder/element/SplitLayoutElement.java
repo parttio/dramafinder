@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Mouse;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
@@ -78,12 +79,13 @@ public class SplitLayoutElement extends VaadinElement implements HasStyleElement
         if (box == null) {
             return;
         }
-        double startX = box.x;
-        double startY = box.y;
+        double centerX = box.x + box.width / 2;
+        double centerY = box.y + box.height / 2;
         Page page = splitter.page();
-        page.mouse().move(startX, startY);
+        page.mouse().move(centerX, centerY);
         page.mouse().down();
-        page.mouse().move(box.x + (box.width / 2) + deltaX, box.y + (box.height / 2) + deltaY);
+        page.mouse().move(centerX + deltaX, centerY + deltaY,
+                new Mouse.MoveOptions().setSteps(10));
         page.mouse().up();
     }
 
