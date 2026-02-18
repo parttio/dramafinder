@@ -59,16 +59,7 @@ public interface HasGridSelectionElement extends HasLocatorElement {
      * Toggle the select-all checkbox in the header (multi-select grids).
      */
     default void toggleSelectAll() {
-        getLocator().evaluate(
-                "el => {"
-                        + "  const headerRows = el.$.header.children;"
-                        + "  for (const row of headerRows) {"
-                        + "    for (const cell of row.children) {"
-                        + "      const checkbox = cell._content.querySelector('vaadin-checkbox');"
-                        + "      if (checkbox) { checkbox.click(); return; }"
-                        + "    }"
-                        + "  }"
-                        + "}");
+        getLocator().locator("vaadin-checkbox.vaadin-grid-select-all-checkbox").click();
     }
 
     /**

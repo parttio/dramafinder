@@ -216,6 +216,48 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         grid.assertCellContent(9000, 0, "First9001");
     }
 
+    // ── Undefined Size Lazy Grid ─────────────────────────────────────
+
+    @Test
+    public void testUndefinedSizeLazyGridHasRows() {
+        GridElement grid = GridElement.getById(page, "undefined-size-grid");
+        assertTrue(grid.getRowCount() > 0,
+                "Grid with unknown item count should have an estimated row count");
+    }
+
+    @Test
+    public void testUndefinedSizeLazyGridCellContent() {
+        GridElement grid = GridElement.getById(page, "undefined-size-grid");
+        grid.assertCellContent(0, 0, "First1");
+    }
+
+    @Test
+    public void testUndefinedSizeLazyGridScroll() {
+        GridElement grid = GridElement.getById(page, "undefined-size-grid");
+        int initialCount = grid.getRowCount();
+        assertTrue(initialCount > 0,
+                "Grid with unknown item count should have an estimated row count");
+
+        // Scroll near the end to trigger the estimate to grow
+        grid.scrollToRow(initialCount - 1);
+        grid.assertRowInView(initialCount - 1);
+
+        // The estimate grows asynchronously after server round-trip
+        page.waitForCondition(() -> grid.getRowCount() > initialCount);
+        assertTrue(grid.getRowCount() > initialCount,
+                "Estimated row count should grow after scrolling near the end");
+    }
+
+    @Test
+    public void testUndefinedSizeLazyGridScrollToEnd() {
+        GridElement grid = GridElement.getById(page, "undefined-size-grid");
+
+        grid.scrollToEnd();
+
+        int lastRow = grid.getRowCount() - 1;
+        grid.assertRowInView(lastRow);
+    }
+
     // ── CSS Class ──────────────────────────────────────────────────────
 
     @Test

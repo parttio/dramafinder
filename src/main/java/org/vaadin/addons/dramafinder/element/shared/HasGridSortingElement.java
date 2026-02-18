@@ -1,5 +1,9 @@
 package org.vaadin.addons.dramafinder.element.shared;
 
+import com.microsoft.playwright.Locator;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 /**
  * Mixin for grid components that support column sorting.
  */
@@ -14,20 +18,22 @@ public interface HasGridSortingElement extends HasLocatorElement {
     int resolveColumnIndex(String headerText);
 
     /**
+     * Get a locator for the {@code <vaadin-grid-sorter>} at the given column index.
+     *
+     * @param colIndex 0-based visible column index
+     * @return locator for the sorter element
+     */
+    default Locator getSorterLocator(int colIndex) {
+        return getLocator().locator("vaadin-grid-sorter").nth(colIndex);
+    }
+
+    /**
      * Click the sorter element in the header cell at the given column index.
      *
      * @param colIndex 0-based visible column index
      */
     default void clickHeaderToSort(int colIndex) {
-        getLocator().evaluate(
-                "(el, colIdx) => {"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  const col = cols[colIdx];"
-                        + "  const headerCell = col._headerCell;"
-                        + "  const content = headerCell._content;"
-                        + "  const sorter = content.querySelector('vaadin-grid-sorter');"
-                        + "  if (sorter) sorter.click();"
-                        + "}", colIndex);
+        getSorterLocator(colIndex).click();
     }
 
     /**
@@ -46,18 +52,7 @@ public interface HasGridSortingElement extends HasLocatorElement {
      * @return {@code "asc"}, {@code "desc"}, or {@code null} if unsorted
      */
     default String getSortDirection(int colIndex) {
-        Object result = getLocator().evaluate(
-                "(el, colIdx) => {"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  const col = cols[colIdx];"
-                        + "  const headerCell = col._headerCell;"
-                        + "  const content = headerCell._content;"
-                        + "  const sorter = content.querySelector('vaadin-grid-sorter');"
-                        + "  if (!sorter) return null;"
-                        + "  const dir = sorter.getAttribute('direction');"
-                        + "  return dir || null;"
-                        + "}", colIndex);
-        return result == null ? null : result.toString();
+        return getSorterLocator(colIndex).getAttribute("direction");
     }
 
     /**
@@ -77,10 +72,13 @@ public interface HasGridSortingElement extends HasLocatorElement {
      * @param direction expected direction ({@code "asc"}, {@code "desc"}, or {@code null})
      */
     default void assertSortDirection(int colIndex, String direction) {
-        getLocator().page().waitForCondition(() -> {
-            String actual = getSortDirection(colIndex);
-            return direction == null ? actual == null : direction.equals(actual);
-        });
+        Locator sorter = getSorterLocator(colIndex);
+        if (direction == null) {
+            sorter.page().waitForCondition(
+                    () -> sorter.getAttribute("direction") == null);
+        } else {
+            assertThat(sorter).hasAttribute("direction", direction);
+        }
     }
 
     /**

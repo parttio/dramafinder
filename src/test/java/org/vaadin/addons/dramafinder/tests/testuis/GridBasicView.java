@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.dataview.GridLazyDataView;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.data.provider.CallbackDataProvider;
@@ -20,6 +21,7 @@ public class GridBasicView extends Main {
         createEmptyGrid();
         createAllRowsVisibleGrid();
         createLazyGrid();
+        createUndefinedSizeLazyGrid();
     }
 
     private void createBasicGrid() {
@@ -71,6 +73,22 @@ public class GridBasicView extends Main {
         );
         grid.setDataProvider(dataProvider);
         add(new H2("Lazy Grid"), grid);
+    }
+
+    private void createUndefinedSizeLazyGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("undefined-size-grid");
+        grid.setHeight("400px");
+        grid.addColumn(GridPerson::firstName).setHeader("First Name");
+        grid.addColumn(GridPerson::lastName).setHeader("Last Name");
+        grid.addColumn(GridPerson::email).setHeader("Email");
+        GridLazyDataView<GridPerson> dataView = grid.setItems(query ->
+                IntStream.rangeClosed(
+                                query.getOffset() + 1,
+                                query.getOffset() + query.getLimit())
+                        .mapToObj(i -> new GridPerson("First" + i, "Last" + i, "person" + i + "@example.com")));
+        dataView.setItemCountUnknown();
+        add(new H2("Undefined Size Lazy Grid"), grid);
     }
 
     static List<GridPerson> generatePersons(int count) {

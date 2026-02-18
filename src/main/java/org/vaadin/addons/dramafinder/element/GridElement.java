@@ -80,8 +80,8 @@ public class GridElement extends VaadinElement
      * @return total item count
      */
     public int getRowCount() {
-        return ((Number) locator.evaluate(
-                "el => el._effectiveSize ?? el.size ?? 0")).intValue();
+        Object value = getProperty("size");
+        return value == null ? 0 : ((Number) value).intValue();
     }
 
     /**
@@ -142,7 +142,7 @@ public class GridElement extends VaadinElement
      * @return {@code true} if all rows are visible (no vertical scroll)
      */
     public boolean isAllRowsVisible() {
-        return Boolean.TRUE.equals(locator.evaluate("el => el.allRowsVisible"));
+        return Boolean.TRUE.equals(getProperty("allRowsVisible"));
     }
 
     /**
@@ -151,7 +151,7 @@ public class GridElement extends VaadinElement
      * @return {@code true} if multi-sort is enabled
      */
     public boolean isMultiSort() {
-        return Boolean.TRUE.equals(locator.evaluate("el => el.multiSort"));
+        return Boolean.TRUE.equals(getProperty("multiSort"));
     }
 
     /**
@@ -160,7 +160,7 @@ public class GridElement extends VaadinElement
      * @return {@code true} if column reordering is allowed
      */
     public boolean isColumnReorderingAllowed() {
-        return Boolean.TRUE.equals(locator.evaluate("el => el.columnReorderingAllowed"));
+        return Boolean.TRUE.equals(getProperty("columnReorderingAllowed"));
     }
 
     // ── Header Access ──────────────────────────────────────────────────
@@ -346,8 +346,7 @@ public class GridElement extends VaadinElement
     public void scrollToEnd() {
         locator.evaluate(
                 "el => {"
-                        + "  const size = el._effectiveSize || el.size || 0;"
-                        + "  if (size > 0) el.scrollToIndex(size - 1);"
+                        + "  if (el.size > 0) el.scrollToIndex(el.size - 1);"
                         + "}");
     }
 
@@ -359,7 +358,7 @@ public class GridElement extends VaadinElement
      * @param expected expected row count
      */
     public void assertRowCount(int expected) {
-        locator.page().waitForCondition(() -> getRowCount() == expected);
+        assertThat(locator).hasJSProperty("size", expected);
     }
 
     /**
@@ -402,7 +401,7 @@ public class GridElement extends VaadinElement
      * @param expected expected first visible row index
      */
     public void assertFirstVisibleRow(int expected) {
-        locator.page().waitForCondition(() -> getFirstVisibleRowIndex() == expected);
+        assertThat(locator).hasJSProperty("_firstVisibleIndex", expected);
     }
 
     /**
@@ -411,7 +410,7 @@ public class GridElement extends VaadinElement
      * @param expected expected last visible row index
      */
     public void assertLastVisibleRow(int expected) {
-        locator.page().waitForCondition(() -> getLastVisibleRowIndex() == expected);
+        assertThat(locator).hasJSProperty("_lastVisibleIndex", expected);
     }
 
     /**
@@ -453,14 +452,14 @@ public class GridElement extends VaadinElement
      * Assert the grid has {@code allRowsVisible} enabled.
      */
     public void assertAllRowsVisible() {
-        locator.page().waitForCondition(this::isAllRowsVisible);
+        assertThat(locator).hasJSProperty("allRowsVisible", true);
     }
 
     /**
      * Assert the grid does NOT have {@code allRowsVisible} enabled.
      */
     public void assertNotAllRowsVisible() {
-        locator.page().waitForCondition(() -> !isAllRowsVisible());
+        assertThat(locator).not().hasJSProperty("allRowsVisible", true);
     }
 
     // ── Internal ───────────────────────────────────────────────────────
