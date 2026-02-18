@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.GridElement;
-
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -50,5 +49,32 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
                 cellContent.locator("vaadin-button"));
         button.assertVisible();
         assertThat(button.getLocator()).hasText("Click First2");
+    }
+
+    // ── Component Header ──────────────────────────────────────────────
+
+    @Test
+    public void testHeaderCellLocatorWithComponent() {
+        GridElement grid = GridElement.getById(page, "component-header-grid");
+        Locator header = grid.getHeaderCellLocator(2);
+        Locator filter = header.locator("vaadin-text-field");
+        assertThat(filter).isVisible();
+        assertThat(filter).hasAttribute("placeholder", "Filter email...");
+    }
+
+    @Test
+    public void testHeaderCellLocatorByText() {
+        GridElement grid = GridElement.getById(page, "component-header-grid");
+        Locator header = grid.getHeaderCellLocator("First Name");
+        assertThat(header).hasText("First Name");
+    }
+
+    @Test
+    public void testInteractWithComponentHeader() {
+        GridElement grid = GridElement.getById(page, "component-header-grid");
+        Locator header = grid.getHeaderCellLocator(2);
+        Locator filter = header.locator("vaadin-text-field");
+        filter.locator("input").fill("test");
+        assertThat(filter.locator("input")).hasValue("test");
     }
 }

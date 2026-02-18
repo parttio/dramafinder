@@ -172,14 +172,7 @@ public class GridElement extends VaadinElement
      * @return the header cell text content
      */
     public String getHeaderCellContent(int colIndex) {
-        return (String) locator.evaluate(
-                "(el, colIdx) => {"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  const col = cols[colIdx];"
-                        + "  const headerCell = col._headerCell;"
-                        + "  const content = headerCell._content;"
-                        + "  return content.textContent.trim();"
-                        + "}", colIndex);
+        return getHeaderCellLocator(colIndex).textContent().trim();
     }
 
     /**
@@ -187,21 +180,11 @@ public class GridElement extends VaadinElement
      *
      * @return list of header cell text contents
      */
-    @SuppressWarnings("unchecked")
     public List<String> getHeaderCellContents() {
-        Object result = locator.evaluate(
-                "el => {"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  return cols.map(col => {"
-                        + "    const headerCell = col._headerCell;"
-                        + "    const content = headerCell._content;"
-                        + "    return content.textContent.trim();"
-                        + "  });"
-                        + "}");
-        List<?> rawList = (List<?>) result;
-        List<String> headers = new ArrayList<>(rawList.size());
-        for (Object item : rawList) {
-            headers.add(item.toString());
+        int count = getColumnCount();
+        List<String> headers = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            headers.add(getHeaderCellContent(i));
         }
         return headers;
     }
@@ -213,10 +196,22 @@ public class GridElement extends VaadinElement
      * @return locator for the header cell content element
      */
     public Locator getHeaderCellLocator(int colIndex) {
-        return locator.locator("vaadin-grid-cell-content")
-                .filter(new Locator.FilterOptions().setHas(
-                        locator.page().locator("xpath=ancestor::tr[contains(@part,'header')]")))
-                .nth(colIndex);
+        String slot = (String) locator.evaluate(
+                "(el, colIdx) => {"
+                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
+                        + "  return cols[colIdx]._headerCell._content.getAttribute('slot');"
+                        + "}", colIndex);
+        return locator.locator("vaadin-grid-cell-content[slot='" + slot + "']");
+    }
+
+    /**
+     * Get a Playwright locator for the header cell content matching the given header text.
+     *
+     * @param headerText the header text to match
+     * @return locator for the header cell content element
+     */
+    public Locator getHeaderCellLocator(String headerText) {
+        return getHeaderCellLocator(resolveColumnIndex(headerText));
     }
 
     // ── Cell Content Access ────────────────────────────────────────────
@@ -444,8 +439,7 @@ public class GridElement extends VaadinElement
      * @param expected expected header text
      */
     public void assertHeaderCellContent(int colIndex, String expected) {
-        locator.page().waitForCondition(
-                () -> expected.equals(getHeaderCellContent(colIndex)));
+        assertThat(getHeaderCellLocator(colIndex)).hasText(expected);
     }
 
     /**
