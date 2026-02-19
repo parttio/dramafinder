@@ -2,18 +2,16 @@ package org.vaadin.addons.dramafinder.element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
-import org.vaadin.addons.dramafinder.element.shared.HasGridDetailsElement;
-import org.vaadin.addons.dramafinder.element.shared.HasGridSelectionElement;
-import org.vaadin.addons.dramafinder.element.shared.HasGridSortingElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 
 /**
  * PlaywrightElement for {@code <vaadin-grid>}.
@@ -25,8 +23,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(GridElement.FIELD_TAG_NAME)
 public class GridElement extends VaadinElement
-        implements FocusableElement, HasStyleElement, HasThemeElement, HasEnabledElement,
-        HasGridSelectionElement, HasGridSortingElement, HasGridDetailsElement {
+        implements FocusableElement, HasStyleElement, HasThemeElement, HasEnabledElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-grid";
 
@@ -75,13 +72,22 @@ public class GridElement extends VaadinElement
     // ── Properties / Getters ───────────────────────────────────────────
 
     /**
+     * Get the number of rows currently rendered in the DOM.
+     * This may be less than the total row count due to virtualization.
+     *
+     * @return count of rows currently rendered in the DOM
+     */
+    public int getRenderedRowCount() {
+        return (Integer) locator.elementHandle().evaluate("e => e._getRenderedRows().length");
+    }
+
+    /**
      * Get the total number of rows (data items) in the grid.
      *
      * @return total item count
      */
-    public int getRowCount() {
-        Object value = getProperty("size");
-        return value == null ? 0 : ((Number) value).intValue();
+    public int getTotalRowCount() {
+        return (int) locator.elementHandle().evaluate("e => e._flatSize");
     }
 
     /**
@@ -89,51 +95,10 @@ public class GridElement extends VaadinElement
      *
      * @return visible column count
      */
+    // TODO not verified
     public int getColumnCount() {
         return ((Number) locator.evaluate(
                 "el => el._getColumns().filter(c => !c.hidden).length")).intValue();
-    }
-
-    /**
-     * Get the index of the first row that is at least partially visible.
-     *
-     * @return 0-based index of the first visible row
-     */
-    public int getFirstVisibleRowIndex() {
-        return ((Number) locator.evaluate(
-                "el => el._firstVisibleIndex")).intValue();
-    }
-
-    /**
-     * Get the index of the last row that is at least partially visible.
-     *
-     * @return 0-based index of the last visible row
-     */
-    public int getLastVisibleRowIndex() {
-        return ((Number) locator.evaluate(
-                "el => el._lastVisibleIndex")).intValue();
-    }
-
-    /**
-     * Get the number of currently visible rows.
-     *
-     * @return count of rows visible in the viewport
-     */
-    public int getVisibleRowCount() {
-        return ((Number) locator.evaluate(
-                "el => el._lastVisibleIndex - el._firstVisibleIndex + 1")).intValue();
-    }
-
-    /**
-     * Whether the given row index is currently visible in the viewport.
-     *
-     * @param rowIndex the 0-based row index to check
-     * @return {@code true} if the row is between first and last visible index
-     */
-    public boolean isRowInView(int rowIndex) {
-        return (boolean) locator.evaluate(
-                "(el, idx) => el._firstVisibleIndex <= idx && idx <= el._lastVisibleIndex",
-                rowIndex);
     }
 
     /**
@@ -165,14 +130,98 @@ public class GridElement extends VaadinElement
 
     // ── Header Access ──────────────────────────────────────────────────
 
+
     /**
-     * Get the text content of a header cell by column index.
+     * Get the number of header rows. Usually 1, but can be more if there are column groups.
      *
-     * @param colIndex 0-based visible column index
-     * @return the header cell text content
+     * @return header row count
      */
-    public String getHeaderCellContent(int colIndex) {
-        return getHeaderCellLocator(colIndex).textContent().trim();
+    protected int getHeaderRowCount() {
+        int rowCount = 0;
+        var lastHeaderRow = locator.locator("thead tr.last-header-row").first();
+        if (lastHeaderRow.count() > 0) {
+            var headerRowIndex = lastHeaderRow.getAttribute("aria-rowIndex");
+            if (headerRowIndex != null) {
+                rowCount = Integer.parseInt(headerRowIndex);
+            }
+        }
+        return rowCount;
+    }
+
+    /**
+     * Find a header cell by column index.
+     * Uses first header row. 
+     * @param columnIndex 0-based visible column index
+     * @return optional header cell element. Empty if no header cell exists at the given column index.
+     */
+    public Optional<HeaderCellElement> findHeaderCell(int columnIndex) {
+        return findHeaderCell(0, columnIndex);
+    }
+
+    /**
+     * Find a header cell by header row index and column index.
+     * @param headerRowIndex 0-based header row index. Use 0 for the first header row, 1 for the second, etc.
+     * @param columnIndex 0-based visible column index. 
+     * @return optional header cell element. Empty if no header cell exists at the given header row and column index.
+     */
+    public Optional<HeaderCellElement> findHeaderCell(int headerRowIndex, int columnIndex) {
+        if (columnIndex < 0) {
+            throw new IllegalArgumentException("Column index must be non-negative");
+        } else if (headerRowIndex < 0) {
+            throw new IllegalArgumentException("Header row index must be non-negative");
+        }
+
+        var lastHeaderRow = locator.locator("thead tr").nth(headerRowIndex);
+        if (lastHeaderRow.count() == 0) {
+            return Optional.empty();
+        }
+
+        var headerCell = lastHeaderRow.locator("th").nth(columnIndex);
+        if (headerCell.count() > 0) {
+            headerCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            return Optional.of(new HeaderCellElement(headerCell, columnIndex));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Find a header cell by its text content.
+     * Uses first header row.
+     *
+     * @param text the header text to find
+     * @return optional header cell element. Empty if no header cell with the given text is found.
+     */
+    public Optional<HeaderCellElement> findHeaderCellByText(String text) {
+        return findHeaderCellByText(0, text);
+    }
+
+    /**
+     * Find a header cell by header row index and text content.
+     *
+     * @param headerRowIndex 0-based header row index. Use 0 for the first header row, 1 for the second, etc.
+     * @param text           the header text to find
+     * @return optional header cell element. Empty if no header cell with the given text is found in the given header row.
+     */
+    public Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("Text must not be null or empty");
+        }
+        var lastHeaderRow = locator.locator("thead tr").nth(headerRowIndex);
+        if (lastHeaderRow.count() == 0) {
+            return Optional.empty();
+        }
+
+        var allHeaderCells = lastHeaderRow.locator("th").all();
+        for (int i = 0; i < allHeaderCells.size(); i++) {
+            var cell = new HeaderCellElement(allHeaderCells.get(i), i);
+            cell.getTableCell().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            if (matchesHeaderCell(cell, text)) {
+                return Optional.of(cell);
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -184,127 +233,200 @@ public class GridElement extends VaadinElement
         int count = getColumnCount();
         List<String> headers = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            headers.add(getHeaderCellContent(i));
+            var headerCell = findHeaderCell(i);
+            if (!headerCell.isPresent()) {
+                throw new IllegalStateException("No header cell found at column index " + i);
+            }
+            headers.add(headerCell.get().getCellContent().innerText());
         }
         return headers;
     }
 
-    /**
-     * Get a Playwright locator for the header cell content at the given column index.
-     *
-     * @param colIndex 0-based visible column index
-     * @return locator for the header cell content element
+    /** 
+     * Determine if a header cell matches the given text. By default, compares the trimmed innerText of the cell content.
+     * Can be overridden for custom matching logic (e.g. ignoring case, or matching only a part of the text).
+     * @param cell the header cell to check
+     * @param text the header text to match
+     * @return {@code true} if the cell matches the text, {@code false} otherwise
      */
-    public Locator getHeaderCellLocator(int colIndex) {
-        String slot = (String) locator.evaluate(
-                "(el, colIdx) => {"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  return cols[colIdx]._headerCell._content.getAttribute('slot');"
-                        + "}", colIndex);
-        return locator.locator("vaadin-grid-cell-content[slot='" + slot + "']");
-    }
-
-    /**
-     * Get a Playwright locator for the header cell content matching the given header text.
-     *
-     * @param headerText the header text to match
-     * @return locator for the header cell content element
-     */
-    public Locator getHeaderCellLocator(String headerText) {
-        return getHeaderCellLocator(resolveColumnIndex(headerText));
+    protected boolean matchesHeaderCell(CellElement cell, String text) {
+        return Objects.equals(cell.getCellContent().innerText(), text);
     }
 
     // ── Cell Content Access ────────────────────────────────────────────
 
     /**
-     * Get the text content of a body cell by row and column index.
-     * The row must be in view (scrolled to).
-     *
-     * @param rowIndex 0-based data row index
-     * @param colIndex 0-based visible column index
-     * @return the cell text content
+     * Find a body cell by row index and column index.
+     * @param row row index, starting from 0.
+     * @param column column index, starting from 0.
+     * @return optional cell element. Empty if no cell exists at the given row and column index.
      */
-    public String getCellContent(int rowIndex, int colIndex) {
-        return (String) locator.evaluate(
-                "(el, args) => {"
-                        + "  const rowIdx = args[0];"
-                        + "  const colIdx = args[1];"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  const col = cols[colIdx];"
-                        + "  const rows = el.$.items.children;"
-                        + "  for (let i = 0; i < rows.length; i++) {"
-                        + "    const row = rows[i];"
-                        + "    if (row.index === rowIdx) {"
-                        + "      const cells = [...row.children];"
-                        + "      for (const cell of cells) {"
-                        + "        if (cell._column === col) {"
-                        + "          return cell._content.textContent.trim();"
-                        + "        }"
-                        + "      }"
-                        + "    }"
-                        + "  }"
-                        + "  return null;"
-                        + "}", List.of(rowIndex, colIndex));
+    public Optional<CellElement> findCell(int row, int column) {
+        if (row < 0 || column < 0) {
+            throw new IllegalArgumentException("Row and column must be non-negative");
+        }
+
+        var rowLocatorOptional = findRow(row);
+        if (!rowLocatorOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(rowLocatorOptional.get().getCell(column));
     }
 
     /**
-     * Get the text content of a body cell by row index and header text.
-     * The row must be in view (scrolled to).
-     *
-     * @param rowIndex   0-based data row index
-     * @param headerText the header text to match
-     * @return the cell text content
+     * Find a body cell by row index and column header text.
+     * @param row row index, starting from 0.
+     * @param columnHeaderText the header text of the column to find.
+     * @return optional cell element. Empty if no cell exists at the given row and column header text.
      */
-    public String getCellContent(int rowIndex, String headerText) {
-        return getCellContent(rowIndex, resolveColumnIndex(headerText));
+    public Optional<CellElement> findCell(int row, String columnHeaderText) {
+        if (row < 0) {
+            throw new IllegalArgumentException("Row and column must be non-negative");
+        }
+        var foundHeaderCell = findHeaderCellByText(columnHeaderText);
+        if (!foundHeaderCell.isPresent()) {
+            return Optional.empty();
+        }
+
+        var rowLocatorOptional = findRow(row);
+        if (!rowLocatorOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        return findCell(row, foundHeaderCell.get().getColumnIndex());
     }
 
     /**
-     * Get a Playwright locator for the body cell content at the given row and column index.
-     * The row must be in view (scrolled to). Useful for interacting with
-     * component renderers.
-     *
-     * @param rowIndex 0-based data row index
-     * @param colIndex 0-based visible column index
-     * @return locator for the cell content element
+     * Find row indexes where the cell in the given column has the given text.
+     * @param columnIndex the column index to check the cell content in, starting from 0.
+     * @param text the text to match in the cell content.
+     * @return list of row indexes where the cell in the given column matches the given text. Empty list if no match is found.
      */
-    public Locator getCellContentLocator(int rowIndex, int colIndex) {
-        // Tag the target cell content with a unique data attribute, then locate it
-        String markerId = "gc-" + rowIndex + "-" + colIndex + "-" + System.nanoTime();
-        String js = "(el, args) => {"
-                + "  const rowIdx = args[0];"
-                + "  const colIdx = args[1];"
-                + "  const marker = args[2];"
-                + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                + "  const col = cols[colIdx];"
-                + "  const rows = el.$.items.children;"
-                + "  for (let i = 0; i < rows.length; i++) {"
-                + "    const row = rows[i];"
-                + "    if (row.index === rowIdx) {"
-                + "      const cells = [...row.children];"
-                + "      for (const cell of cells) {"
-                + "        if (cell._column === col) {"
-                + "          cell._content.setAttribute('data-grid-cell-id', marker);"
-                + "          return true;"
-                + "        }"
-                + "      }"
-                + "    }"
-                + "  }"
-                + "  return false;"
-                + "}";
-        locator.evaluate(js, List.of(rowIndex, colIndex, markerId));
-        return locator.page().locator("[data-grid-cell-id='" + markerId + "']");
+    public List<Integer> findRowIndexesWithColumnText(int columnIndex, String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("Text must not be null");
+        }
+
+        var headerRowCount = getHeaderRowCount();
+        var matchingRows = new ArrayList<Integer>();
+        int totalRowCount = getTotalRowCount();
+        for (int i = 0; i < totalRowCount; i++) {
+            var rowOptional = findRow(i, headerRowCount);
+
+            rowOptional.ifPresent(row -> {
+                var cell = row.getCell(columnIndex);
+                if (matchesCellContent(cell, text)) {
+                    matchingRows.add(row.getRowIndex());
+                }
+            });
+        }
+
+        return matchingRows;
     }
 
     /**
-     * Get a Playwright locator for the body cell content by row index and header text.
-     *
-     * @param rowIndex   0-based data row index
-     * @param headerText the header text to match
-     * @return locator for the cell content element
+     * Find a row by its index. 
+     * Scrolls the grid if necessary to find the row. 
+     * @param rowIndex row index, starting from 0.
+     * @return optional row element. Empty if no row exists at the given index.
      */
-    public Locator getCellContentLocator(int rowIndex, String headerText) {
-        return getCellContentLocator(rowIndex, resolveColumnIndex(headerText));
+    public Optional<RowElement> findRow(int rowIndex) {
+        if (rowIndex < 0) {
+            throw new IllegalArgumentException("Row index must be non-negative");
+        }
+
+        return findRow(rowIndex, getHeaderRowCount());
+    }
+
+    /**
+     * Find a row by its index, given the number of header rows.
+     * @param rowIndex row index, starting from 0.
+     * @param headerRowCount number of header rows in the grid, used to calculate the aria-rowIndex for finding the row.
+     * @return optional row element. Empty if no row exists at the given index.
+     */
+    protected Optional<RowElement> findRow(int rowIndex, int headerRowCount) {
+        var ariaRowIndex = rowIndex + 1 + headerRowCount;
+        // Attempt to find the row directly
+        var foundRow = locator.locator("tbody tr[aria-rowIndex=\"" + ariaRowIndex + "\"]").first();
+        if (foundRow.count() == 0) {
+            // Row not found, try scrolling to it
+            var foundRowByScrolling = findRowByScrolling(locator, ariaRowIndex);
+            if (foundRowByScrolling.isEmpty()) {
+                return Optional.empty();
+            } else {
+                foundRow = foundRowByScrolling.get();
+            }
+        } else {
+            foundRow.scrollIntoViewIfNeeded();
+            waitForGridToStopLoading();
+        }
+
+        return Optional.of(new RowElement(foundRow, rowIndex));
+    }
+
+    private Optional<Locator> findRowByScrolling(Locator grid, int ariaRowIndex) {
+        return findRowByScrolling(grid, null, ariaRowIndex);
+    }
+
+    private Optional<Locator> findRowByScrolling(Locator grid, RowRangeData previousRowRangeData, int ariaRowIndex) {
+        var visibleRows = grid.locator("tbody tr").all();
+        if (visibleRows.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var rowRangeData = new RowRangeData(visibleRows);
+
+        if (!areNewRowsLoaded(previousRowRangeData, rowRangeData, ariaRowIndex)) {
+            return Optional.empty();
+        }
+
+        if (ariaRowIndex < rowRangeData.getMin()) {
+            // Scroll up
+            rowRangeData.getMinRow().evaluate("el => el.scrollIntoView({ block: 'end', inline: 'nearest' })");
+        } else {
+            // Scroll down
+            rowRangeData.getMaxRow().evaluate("el => el.scrollIntoView({ block: 'start', inline: 'nearest' })");
+        }
+
+        waitForGridToStopLoading();
+
+        // Attempt to find the required row after scrolling
+        var foundRow = grid.locator("tbody tr[aria-rowIndex=\"" + ariaRowIndex + "\"]").first();
+        if (foundRow.count() == 0) {
+            // Keep scrolling
+            return findRowByScrolling(grid, rowRangeData, ariaRowIndex);
+        } else {
+            foundRow.scrollIntoViewIfNeeded();
+            waitForGridToStopLoading();
+        }
+ 
+        return Optional.of(foundRow);
+    }
+
+    private static boolean areNewRowsLoaded(RowRangeData previousRowRangeData, RowRangeData currentRowRangeData, int targetAriaRowIndex) {
+        if (previousRowRangeData == null) {
+            return true;
+        }
+
+        // Check if the current row range has expanded in the direction of the target row index
+        if (targetAriaRowIndex < previousRowRangeData.getMin()) {
+            return currentRowRangeData.getMin() < previousRowRangeData.getMin();
+        } else {
+            return currentRowRangeData.getMax() > previousRowRangeData.getMax();
+        }
+    }
+
+    /**
+     * Determine if a body cell matches the given text. By default, compares the trimmed innerText of the cell content.
+     * Can be overridden for custom matching logic (e.g. ignoring case, or matching only a part of the text).
+     * @param cell the body cell to check
+     * @param text the text to match in the cell content
+     * @return {@code true} if the cell matches the text, {@code false} otherwise
+     */
+    protected boolean matchesCellContent(CellElement cell, String text) {
+        cell.getCellContent().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+        return Objects.equals(cell.getCellContent().innerText(), text);
     }
 
     // ── Scroll Actions ─────────────────────────────────────────────────
@@ -316,16 +438,11 @@ public class GridElement extends VaadinElement
      * @param rowIndex the 0-based row index to scroll to
      */
     public void scrollToRow(int rowIndex) {
-        locator.evaluate("(el, idx) => el.scrollToIndex(idx)", rowIndex);
-        // Wait until the target row is actually rendered in the DOM with correct index
-        locator.page().waitForCondition(() -> (boolean) locator.evaluate(
-                "(el, idx) => {"
-                        + "  const rows = el.$.items.children;"
-                        + "  for (let i = 0; i < rows.length; i++) {"
-                        + "    if (rows[i].index === idx) return true;"
-                        + "  }"
-                        + "  return false;"
-                        + "}", rowIndex));
+        var row = findRow(rowIndex);
+        if (row.isPresent()) {
+            row.get().getRow().scrollIntoViewIfNeeded();
+            waitForGridToStopLoading();
+        }
     }
 
     /**
@@ -339,148 +456,441 @@ public class GridElement extends VaadinElement
      * Scroll to the very end of the grid.
      */
     public void scrollToEnd() {
-        locator.evaluate(
-                "el => {"
-                        + "  if (el.size > 0) el.scrollToIndex(el.size - 1);"
-                        + "}");
+        var row = findRow(getTotalRowCount() - 1);
+        if (row.isPresent()) {
+            row.get().getRow().scrollIntoViewIfNeeded();
+            waitForGridToStopLoading();
+        }
     }
 
-    // ── Assertions ─────────────────────────────────────────────────────
+    /**
+     * Select a row by id.
+     * @param rowIndex index of the row to select, starting from 0.
+     */
+    public void select(int rowIndex) {
+        var rowOptional = findRow(rowIndex);
+        rowOptional.ifPresent(this::select);
+    }
 
     /**
-     * Assert the total number of rows matches the expected count.
+     * Select the row.
+     * You can override this method to implement custom selection logic, 
+     * for example if you want to select by clicking some other cell than the first one, 
+     * or if you want to use some modifier keys for selection.
+     * @param row row to select.
+     */
+    protected void select(RowElement row) {
+        if (!row.isSelected()) {
+            clickCellForSelection(row.getCell(0));
+        }
+    }
+
+    /**
+     * Deselect a row by id.
+     * @param rowIndex index of the row to deselect, starting from 0.
+     */
+    public void deselect(int rowIndex) {
+        var rowOptional = findRow(rowIndex);
+        rowOptional.ifPresent(this::deselect);
+    }
+
+    /**
+     * Deselect the row.
+     * You can override this method to implement custom selection logic, 
+     * for example if you want to deselect by clicking some other cell than the first one, 
+     * or if you want to use some modifier keys for deselection.
+     * @param row row to deselect.
+     */
+    protected void deselect(RowElement row) {
+        if (row.isSelected()) {
+            clickCellForSelection(row.getCell(0));
+        }
+    }
+
+    /**
+     * You can override this method to implement custom selection logic for given cell.
+     */
+    protected void clickCellForSelection(CellElement cell) {
+        var checkbox = cell.getCellContent().locator("vaadin-checkbox");
+        if (checkbox.count() > 0) {
+            checkbox.click();
+        } else {
+            cell.click();
+        }
+    }
+
+    /**
+     * Get the number of currently selected items.
      *
-     * @param expected expected row count
+     * @return selected item count
      */
-    public void assertRowCount(int expected) {
-        assertThat(locator).hasJSProperty("size", expected);
+    // TODO not tested
+    public int getSelectedItemCount() {
+        return ((Number) getLocator().evaluate(
+                "el => el.selectedItems ? el.selectedItems.length : 0")).intValue();
     }
 
     /**
-     * Assert the grid has zero rows.
+     * Get the select-all checkbox element.
+     * @return the select-all checkbox element
      */
-    public void assertEmpty() {
-        assertRowCount(0);
+    public CheckboxElement getSelectAllCheckbox() {
+        var checkboxLocator = getLocator().locator("vaadin-checkbox.vaadin-grid-select-all-checkbox");
+        if (checkboxLocator.count() == 0) {
+            throw new IllegalStateException("Select-all checkbox not found in the grid header");
+        }
+        return new CheckboxElement(checkboxLocator.first());
+    }
+
+
+    /**
+     * Open details for a row by id.
+     * Override this method if you need to control how the details are opened, 
+     * for example by clicking some other cell than the first one.
+     * @param row row for which to open details
+     */
+    protected void openDetails(RowElement row) {
+        if (row.isDetailsOpen()) {
+            return;
+        }
+
+        row.getCell(1).click();
+        waitForGridToStopLoading();
     }
 
     /**
-     * Assert the number of visible columns matches the expected count.
-     *
-     * @param expected expected column count
+     * Close details for a row by id.
+     * Override this method if you need to control how the details are closed, 
+     * for example by clicking some other cell than the first one.
+     * @param row row for which to close details
      */
-    public void assertColumnCount(int expected) {
-        locator.page().waitForCondition(() -> getColumnCount() == expected);
-    }
+    protected void closeDetails(RowElement row) {
+        if (!row.isDetailsOpen()) {
+            return;
+        }
 
-    /**
-     * Assert that the given row index is currently visible.
-     *
-     * @param rowIndex the 0-based row index
-     */
-    public void assertRowInView(int rowIndex) {
-        locator.page().waitForCondition(() -> isRowInView(rowIndex));
-    }
-
-    /**
-     * Assert that the given row index is NOT currently visible.
-     *
-     * @param rowIndex the 0-based row index
-     */
-    public void assertRowNotInView(int rowIndex) {
-        locator.page().waitForCondition(() -> !isRowInView(rowIndex));
-    }
-
-    /**
-     * Assert that the first visible row index equals the expected value.
-     *
-     * @param expected expected first visible row index
-     */
-    public void assertFirstVisibleRow(int expected) {
-        assertThat(locator).hasJSProperty("_firstVisibleIndex", expected);
-    }
-
-    /**
-     * Assert that the last visible row index equals the expected value.
-     *
-     * @param expected expected last visible row index
-     */
-    public void assertLastVisibleRow(int expected) {
-        assertThat(locator).hasJSProperty("_lastVisibleIndex", expected);
-    }
-
-    /**
-     * Assert the text content of a body cell matches the expected value.
-     *
-     * @param rowIndex 0-based data row index
-     * @param colIndex 0-based visible column index
-     * @param expected expected text content
-     */
-    public void assertCellContent(int rowIndex, int colIndex, String expected) {
-        locator.page().waitForCondition(
-                () -> expected.equals(getCellContent(rowIndex, colIndex)));
-    }
-
-    /**
-     * Assert the text content of a body cell (by header text) matches the expected value.
-     *
-     * @param rowIndex   0-based data row index
-     * @param headerText the header text to match
-     * @param expected   expected text content
-     */
-    public void assertCellContent(int rowIndex, String headerText, String expected) {
-        locator.page().waitForCondition(
-                () -> expected.equals(getCellContent(rowIndex, headerText)));
-    }
-
-    /**
-     * Assert the text content of a header cell matches the expected value.
-     *
-     * @param colIndex 0-based visible column index
-     * @param expected expected header text
-     */
-    public void assertHeaderCellContent(int colIndex, String expected) {
-        assertThat(getHeaderCellLocator(colIndex)).hasText(expected);
-    }
-
-    /**
-     * Assert the grid has {@code allRowsVisible} enabled.
-     */
-    public void assertAllRowsVisible() {
-        assertThat(locator).hasJSProperty("allRowsVisible", true);
-    }
-
-    /**
-     * Assert the grid does NOT have {@code allRowsVisible} enabled.
-     */
-    public void assertNotAllRowsVisible() {
-        assertThat(locator).not().hasJSProperty("allRowsVisible", true);
+        row.getCell(1).click();
+        waitForGridToStopLoading();
     }
 
     // ── Internal ───────────────────────────────────────────────────────
 
-    /**
-     * Resolve a header text to its visible column index.
-     *
-     * @param headerText the header text to find
-     * @return the 0-based column index
-     * @throws IllegalArgumentException if no column with that header text is found
-     */
-    public int resolveColumnIndex(String headerText) {
-        Object result = locator.evaluate(
-                "(el, text) => {"
-                        + "  const cols = el._getColumns().filter(c => !c.hidden);"
-                        + "  for (let i = 0; i < cols.length; i++) {"
-                        + "    const headerCell = cols[i]._headerCell;"
-                        + "    const content = headerCell._content;"
-                        + "    if (content.textContent.trim() === text) return i;"
-                        + "  }"
-                        + "  return -1;"
-                        + "}", headerText);
-        int index = ((Number) result).intValue();
-        if (index < 0) {
-            throw new IllegalArgumentException(
-                    "No column found with header text: " + headerText);
+    private void waitForGridToStopLoading() {
+        locator.page().waitForFunction("g => !g.hasAttribute('loading')", locator.elementHandle());
+        locator.evaluate("g => g.updateComplete.then(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))");
+    }
+
+
+    private class RowRangeData {
+        Integer min;
+        Locator minRow;
+        Integer max;
+        Locator maxRow;
+
+        public RowRangeData(List<Locator> rows) {
+            for (var row : rows) {
+                var rowIndexStr = row.getAttribute("aria-rowIndex");
+                if (rowIndexStr != null && !rowIndexStr.isEmpty()) {
+                    int rowIndex = Integer.parseInt(rowIndexStr);
+                    if (min == null || rowIndex < min) {
+                        min = rowIndex;
+                        minRow = row;
+                    }
+                    if (max == null || rowIndex > max) {
+                        max = rowIndex;
+                        maxRow = row;
+                    }
+                }
+            }
         }
-        return index;
+
+        public Integer getMin() {
+            return min;
+        }
+
+        public Integer getMax() {
+            return max;
+        }
+
+        public Locator getMinRow() {
+            return minRow;
+        }
+        
+        public Locator getMaxRow() {
+            return maxRow;
+        }
+    }
+
+    /**
+     * Represents a cell in the grid, providing access to the table cell (td or th), 
+     * the cell content (vaadin-grid-cell-content) and the column index.
+     */
+    public class CellElement {
+        private final Locator tableCell;
+        private final int columnIndex;
+        private final Locator cellContent;
+        private final String contentSlotName;
+
+        public CellElement(Locator tableCell, int columnIndex) {
+            this.tableCell = tableCell;
+            this.columnIndex = columnIndex;
+            
+            if (tableCell.count() == 0) {
+                throw new IllegalArgumentException("Table cell locator is empty");
+            }
+
+            this.contentSlotName = tableCell.locator("slot").first().getAttribute("name");
+            this.cellContent = locator.locator("vaadin-grid-cell-content[slot=\"" + contentSlotName + "\"]").first();
+        }
+
+        /**
+         * Get the locator for the table cell (td or th).
+         * @return the locator for the table cell
+         */
+        public Locator getTableCell() {
+            return tableCell;
+        }
+
+        /**
+         * Get the column index (0-based) of this cell. 
+         * Returns -1 for details cells.
+         * @return the column index
+         */
+        public int getColumnIndex() {
+            return columnIndex;
+        }
+
+        /**
+         * Get the locator for the cell content (vaadin-grid-cell-content) assigned to this cell.
+         * @return the locator for the cell content
+         */
+        public Locator getCellContent() {
+            return cellContent;
+        }
+
+        /**
+         * Get the name of the slot used for the cell content. This is used for accessing the cell content in the grid's shadow DOM.
+         * @return the slot name
+         */
+        public String getContentSlotName() {
+            return contentSlotName;
+        }
+
+        /**
+         * Click the cell content.
+         */
+        public void click() {
+            cellContent.click();
+        }
+    }
+
+    /**
+     * Represents a header cell in the grid, providing access to the table cell (th), 
+     * the cell content and sorting.
+     */
+    public class HeaderCellElement extends CellElement {
+        public HeaderCellElement(Locator tableCell, int columnIndex) {
+            super(tableCell, columnIndex);
+        }
+
+        /**
+         * Whether the header cell supports sorting.
+         * @return {@code true} if the header cell supports sorting, {@code false} otherwise
+         */
+        public boolean isSortable() {
+            var sorterLocator = getCellContent().locator("vaadin-grid-sorter");
+            return sorterLocator.count() > 0;
+        }
+
+        /**
+         * Click the header cell sorter to sort the column. 
+         * If the column is not currently sorted, it will be sorted in ascending order.
+         */
+        public void clickSort() {
+            var sorterLocator = getSorter();
+            if (sorterLocator.count() == 0) {
+                throw new IllegalStateException("Header cell at column index " + getColumnIndex() + " is not sortable");
+            }
+            sorterLocator.first().click();
+            waitForGridToStopLoading();
+        }
+
+        /**
+         * Whether the column is currently sorted in ascending order.
+         * @return {@code true} if the column is sorted in ascending order, {@code false} otherwise
+         */
+        public boolean isSortAscending() {
+            return "asc".equals(getSortDirection());
+        }
+
+        /**
+         * Whether the column is currently sorted in descending order.
+         * @return {@code true} if the column is sorted in descending order, {@code false} otherwise
+         */
+        public boolean isSortDescending() {
+            return "desc".equals(getSortDirection());
+        }
+
+        /**
+         * Whether the column is currently not sorted.
+         * @return {@code true} if the column is not sorted, {@code false} otherwise
+         */
+        public boolean isNotSorted() {
+            var sortDirection = getSortDirection();
+            return sortDirection == null || sortDirection.isEmpty();
+        }
+
+        /**
+         * Get the current sort direction of the column. 
+         * Returns "asc" for ascending, "desc" for descending, and null or empty string for not sorted.
+         * @return the sort direction, or null/empty if not sorted
+         */
+        private String getSortDirection() {
+            var sorterLocator = getSorter();
+            if (sorterLocator.count() == 0) {
+                throw new IllegalStateException("Header cell at column index " + getColumnIndex() + " is not sortable");
+            }
+            return sorterLocator.first().getAttribute("direction");
+        }
+
+        /**
+         * Get the locator for the vaadin-grid-sorter element in this header cell, if it exists.
+         * @return the locator for the vaadin-grid-sorter element, or an empty locator if it doesn't exist
+         */
+        private Locator getSorter() {
+            return getCellContent().locator("vaadin-grid-sorter");
+        }
+    }
+
+    /**
+     * Represents a row in the grid, providing access to the row locator, 
+     * row index, and methods for accessing cells and interacting with the row (selection, details).
+     */
+    public class RowElement { 
+        private final Locator row;
+        private final int rowIndex;
+
+        public RowElement(Locator rowLocator, int rowIndex) {
+            if (rowIndex < 0) {
+                throw new IllegalArgumentException("Row index must be non-negative");
+            }
+
+            this.row = rowLocator;
+            this.rowIndex = rowIndex;
+        }
+
+        /**
+         * Get the locator for the row (tr).
+         * @return the locator for the row
+         */
+        public Locator getRow() {
+            return row;
+        }
+
+        /**
+         * Get the row index (0-based) of this row.
+         * @return the row index
+         */
+        public int getRowIndex() {
+            return rowIndex;
+        }
+
+        /**
+         * Get the cell element for the given column index in this row.
+         * @param columnIndex the column index (0-based) of the cell to get
+         * @return the cell element for the given column index
+         */
+        public CellElement getCell(int columnIndex) {
+            if (columnIndex < 0) {
+                throw new IllegalArgumentException("Column index must be non-negative");
+            }
+
+            var column = row.locator("td").nth(columnIndex);
+            if (column.count() == 0) {
+                throw new IllegalArgumentException("Column with index " + columnIndex + " does not exist in the row " + rowIndex);
+            }
+
+            column.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            return new CellElement(column, columnIndex);
+        }
+
+        /**
+         * Get the cell element for the given column header text in this row.
+         * @param columnHeaderText the text of the column header
+         * @return the cell element for the given column header text
+         */
+        public CellElement getCell(String columnHeaderText) {
+            if (columnHeaderText == null || columnHeaderText.isEmpty()) {
+                throw new IllegalArgumentException("Column header text must not be null or empty");
+            }
+            var foundHeaderCell = findHeaderCellByText(columnHeaderText);
+            if (!foundHeaderCell.isPresent()) {
+                throw new IllegalArgumentException("Column with header text '" + columnHeaderText + "' does not exist");
+            }
+
+            return getCell(foundHeaderCell.get().getColumnIndex());
+        }
+
+        /**
+         * Get the cell element for the details column in this row.
+         * @return the cell element for the details column.
+         */
+        public CellElement getDetailsCell() {
+            var detailsCell = row.locator("td.details-cell").first();
+            if (detailsCell.count() == 0) {
+                throw new IllegalArgumentException("Details cell does not exist in the row " + rowIndex);
+            }
+
+            detailsCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            return new CellElement(detailsCell, -1);
+        }
+
+        /**
+         * Whether this row is selected.
+         * @return true if the row is selected, false otherwise
+         */
+        public boolean isSelected() {
+            return row.getAttribute("selected") != null;
+        }
+
+        /**
+         * Select this row.
+         */
+        public void select() {
+            GridElement.this.select(this);
+        }
+
+        /**
+         * Deselect this row.
+         */
+        public void deselect() {
+            GridElement.this.deselect(this);
+        }
+
+        /**
+         * Whether the details for this row are open.
+         * If you need to use a custom way to open the details, 
+         * override the {@link GridElement#openDetails(GridElement.Row)} method.
+         */
+        public void openDetails() {
+            GridElement.this.openDetails(this);
+        }
+
+        /**
+         * Close the details for this row.
+         * If you need to use a custom way to close the details, 
+         * override the {@link GridElement#closeDetails(GridElement.Row)} method.
+         */
+        public void closeDetails() {
+            GridElement.this.closeDetails(this);
+        }
+
+        /**
+         * Whether the details for this row are open.
+         * @return true if the details are open, false otherwise
+         */
+        public boolean isDetailsOpen() {
+            return getRow().getAttribute("details-opened") != null;
+        }
     }
 }

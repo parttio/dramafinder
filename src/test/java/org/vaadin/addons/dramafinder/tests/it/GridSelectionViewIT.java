@@ -1,13 +1,12 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.GridElement;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridSelectionViewIT extends SpringPlaywrightIT {
@@ -22,11 +21,11 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
     @Test
     public void testSingleSelectRow() {
         GridElement grid = GridElement.getById(page, "single-select-grid");
-        grid.assertRowNotSelected(0);
+        var row = grid.findRow(0).get();
+        assertFalse(row.isSelected());
+        row.select();
+        assertTrue(row.isSelected());
 
-        grid.selectRow(0);
-
-        grid.assertRowSelected(0);
         assertEquals(1, grid.getSelectedItemCount());
     }
 
@@ -34,83 +33,78 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
     public void testSingleSelectChangeSelection() {
         GridElement grid = GridElement.getById(page, "single-select-grid");
 
-        grid.selectRow(0);
-        grid.assertRowSelected(0);
+        var row = grid.findRow(0).get();
+        assertFalse(row.isSelected());
+        row.select();
+        assertTrue(row.isSelected());
 
-        grid.selectRow(1);
-        grid.assertRowSelected(1);
-        grid.assertRowNotSelected(0);
+        var row2 = grid.findRow(1).get();
+        row2.select();
+        assertTrue(row2.isSelected());
+        assertFalse(row.isSelected());
         assertEquals(1, grid.getSelectedItemCount());
-    }
-
-    @Test
-    public void testSingleSelectDeselectAll() {
-        GridElement grid = GridElement.getById(page, "single-select-grid");
-
-        grid.selectRow(0);
-        grid.assertRowSelected(0);
-
-        grid.deselectAll();
-        grid.assertRowNotSelected(0);
-        grid.assertSelectedItemCount(0);
     }
 
     // ── Multi Selection ────────────────────────────────────────────────
 
     @Test
-    public void testMultiSelectToggleRow() {
-        GridElement grid = GridElement.getById(page, "multi-select-grid");
-
-        grid.toggleRowSelection(0);
-        grid.assertRowSelected(0);
-        grid.assertSelectedItemCount(1);
-
-        grid.toggleRowSelection(1);
-        grid.assertRowSelected(1);
-        grid.assertSelectedItemCount(2);
-    }
-
-    @Test
-    public void testMultiSelectDeselectRow() {
-        GridElement grid = GridElement.getById(page, "multi-select-grid");
-
-        grid.toggleRowSelection(0);
-        grid.assertRowSelected(0);
-
-        grid.toggleRowSelection(0);
-        grid.assertRowNotSelected(0);
-        grid.assertSelectedItemCount(0);
-    }
-
-    @Test
     public void testMultiSelectSelectAll() {
         GridElement grid = GridElement.getById(page, "multi-select-grid");
 
-        grid.toggleSelectAll();
-        grid.assertSelectedItemCount(20);
-        assertTrue(grid.isRowSelected(0));
-        assertTrue(grid.isRowSelected(1));
+        var row1 = grid.findRow(0).get();
+        var row2 = grid.findRow(1).get();
+        var row3 = grid.findRow(2).get();
+        row1.select();
+        assertTrue(row1.isSelected());
+        assertFalse(row2.isSelected());
+        assertFalse(row3.isSelected());
+        assertEquals(1, grid.getSelectedItemCount());
+
+        var selectAllCheckbox = grid.getSelectAllCheckbox();
+        selectAllCheckbox.check();
+
+        assertTrue(row1.isSelected());
+        assertTrue(row2.isSelected());
+        assertTrue(row3.isSelected());
+        assertEquals(20, grid.getSelectedItemCount());
     }
 
     @Test
     public void testMultiSelectDeselectAll() {
         GridElement grid = GridElement.getById(page, "multi-select-grid");
 
-        grid.toggleSelectAll();
-        grid.assertSelectedItemCount(20);
+        var row1 = grid.findRow(0).get();
+        var row2 = grid.findRow(1).get();
+        var row3 = grid.findRow(2).get();
+        row1.select();
+        assertTrue(row1.isSelected());
+        assertFalse(row2.isSelected());
+        assertFalse(row3.isSelected());
+        assertEquals(1, grid.getSelectedItemCount());
 
-        grid.deselectAll();
-        grid.assertSelectedItemCount(0);
-        assertFalse(grid.isRowSelected(0));
+        var selectAllCheckbox = grid.getSelectAllCheckbox();
+        selectAllCheckbox.check();
+        selectAllCheckbox.uncheck();
+
+        assertFalse(row1.isSelected());
+        assertFalse(row2.isSelected());
+        assertFalse(row3.isSelected());
+        assertEquals(0, grid.getSelectedItemCount());
     }
 
     @Test
     public void testIsRowSelected() {
         GridElement grid = GridElement.getById(page, "multi-select-grid");
-        assertFalse(grid.isRowSelected(0));
 
-        grid.toggleRowSelection(0);
-        assertTrue(grid.isRowSelected(0));
-        assertFalse(grid.isRowSelected(1));
+        var row1 = grid.findRow(0).get();
+        var row2 = grid.findRow(1).get();
+        var row3 = grid.findRow(2).get();
+
+        row1.select();
+        row2.select();
+        
+        assertTrue(row1.isSelected());
+        assertTrue(row2.isSelected());
+        assertFalse(row3.isSelected());
     }
 }

@@ -1,12 +1,12 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.GridElement;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridSortingViewIT extends SpringPlaywrightIT {
@@ -19,58 +19,54 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
     @Test
     public void testInitiallyUnsorted() {
         GridElement grid = GridElement.getById(page, "sortable-grid");
-        assertNull(grid.getSortDirection(0));
-        grid.assertNotSorted(0);
+        var headerCell = grid.findHeaderCell(0);
+        
+        assertFalse(headerCell.isEmpty());
+        assertTrue(headerCell.get().isNotSorted());
     }
 
     @Test
     public void testClickHeaderToSortByIndex() {
         GridElement grid = GridElement.getById(page, "sortable-grid");
+        var headerCellO = grid.findHeaderCell(0);
 
-        grid.clickHeaderToSort(0);
-        grid.assertSortDirection(0, "asc");
+        assertFalse(headerCellO.isEmpty());
+        var headerCell = headerCellO.get();
 
-        grid.clickHeaderToSort(0);
-        grid.assertSortDirection(0, "desc");
+        headerCell.clickSort();
+        assertTrue(headerCell.isSortAscending());
+        assertFalse(headerCell.isSortDescending());
+        assertFalse(headerCell.isNotSorted());
 
-        grid.clickHeaderToSort(0);
-        grid.assertNotSorted(0);
-    }
+        headerCell.clickSort();
+        assertTrue(headerCell.isSortDescending());
+        assertFalse(headerCell.isSortAscending());
+        assertFalse(headerCell.isNotSorted());
 
-    @Test
-    public void testClickHeaderToSortByText() {
-        GridElement grid = GridElement.getById(page, "sortable-grid");
-
-        grid.clickHeaderToSort("Last Name");
-        grid.assertSortDirection("Last Name", "asc");
-
-        grid.clickHeaderToSort("Last Name");
-        grid.assertSortDirection("Last Name", "desc");
-
-        grid.clickHeaderToSort("Last Name");
-        grid.assertNotSorted(1);
-    }
-
-    @Test
-    public void testGetSortDirectionByText() {
-        GridElement grid = GridElement.getById(page, "sortable-grid");
-        assertNull(grid.getSortDirection("First Name"));
-
-        grid.clickHeaderToSort("First Name");
-        assertEquals("asc", grid.getSortDirection("First Name"));
+        headerCell.clickSort();
+        assertTrue(headerCell.isNotSorted());
+        assertFalse(headerCell.isSortDescending());
+        assertFalse(headerCell.isSortAscending());
     }
 
     @Test
     public void testMultiSort() {
         GridElement grid = GridElement.getById(page, "sortable-grid");
+        var headerCellO1 = grid.findHeaderCell(0);
+        var headerCellO2 = grid.findHeaderCell(1);
 
-        grid.clickHeaderToSort(0);
-        grid.assertSortDirection(0, "asc");
+        assertFalse(headerCellO1.isEmpty());
+        var headerCell1 = headerCellO1.get();
 
-        grid.clickHeaderToSort(1);
-        grid.assertSortDirection(1, "asc");
-        // First column should still be sorted in multi-sort mode
-        grid.assertSortDirection(0, "asc");
+        assertFalse(headerCellO2.isEmpty());
+        var headerCell2 = headerCellO2.get();
+
+
+        headerCell1.clickSort();
+        headerCell2.clickSort();
+
+        assertTrue(headerCell1.isSortAscending());
+        assertTrue(headerCell2.isSortAscending());
     }
 
     @Test
