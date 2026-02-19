@@ -95,7 +95,6 @@ public class GridElement extends VaadinElement
      *
      * @return visible column count
      */
-    // TODO not verified
     public int getColumnCount() {
         return ((Number) locator.evaluate(
                 "el => el._getColumns().filter(c => !c.hidden).length")).intValue();
@@ -517,6 +516,7 @@ public class GridElement extends VaadinElement
         } else {
             cell.click();
         }
+        waitForGridToStopLoading();
     }
 
     /**
@@ -524,22 +524,71 @@ public class GridElement extends VaadinElement
      *
      * @return selected item count
      */
-    // TODO not tested
     public int getSelectedItemCount() {
         return ((Number) getLocator().evaluate(
                 "el => el.selectedItems ? el.selectedItems.length : 0")).intValue();
     }
 
     /**
+     * Check if the select-all checkbox is checked.
+     * @return {@code true} if the select-all checkbox is checked (and not indeterminate), {@code false} otherwise
+     */
+    public boolean isSelectAllChecked() {
+        var checkbox = getSelectAllCheckbox();
+        return checkbox.getAttribute("checked") != null 
+        && checkbox.getAttribute("indeterminate") == null;
+    }
+
+    /**
+     * Check if the select-all checkbox is indeterminate.
+     * @return {@code true} if the select-all checkbox is indeterminate, {@code false} otherwise
+     */
+    public boolean isSelectAllIndeterminate() {
+        return getSelectAllCheckbox().getAttribute("indeterminate") != null;
+    }
+
+    /**
+     * Check if the select-all checkbox is unchecked.
+     * @return {@code true} if the select-all checkbox is unchecked, {@code false} otherwise
+     */
+    public boolean isSelectAllUnchecked() {
+        return getSelectAllCheckbox().getAttribute("checked") == null;
+    }
+
+    /**
+     * Check the select-all checkbox.
+     * Does nothing if the select-all checkbox is already checked.
+     */
+    public void checkSelectAll() {
+        if (isSelectAllChecked()) {
+            return;
+        }
+        getSelectAllCheckbox().click();
+        waitForGridToStopLoading();
+    }
+
+    /**
+     * Uncheck the select-all checkbox.
+     * Does nothing if the select-all checkbox is already unchecked.
+     */
+    public void uncheckSelectAll() {
+        if (isSelectAllUnchecked()) {
+            return;
+        }
+        getSelectAllCheckbox().click();
+        waitForGridToStopLoading();
+    }
+
+    /**
      * Get the select-all checkbox element.
      * @return the select-all checkbox element
      */
-    public CheckboxElement getSelectAllCheckbox() {
+    private Locator getSelectAllCheckbox() {
         var checkboxLocator = getLocator().locator("vaadin-checkbox.vaadin-grid-select-all-checkbox");
         if (checkboxLocator.count() == 0) {
             throw new IllegalStateException("Select-all checkbox not found in the grid header");
         }
-        return new CheckboxElement(checkboxLocator.first());
+        return checkboxLocator.first();
     }
 
 
@@ -573,9 +622,10 @@ public class GridElement extends VaadinElement
         waitForGridToStopLoading();
     }
 
-    // ── Internal ───────────────────────────────────────────────────────
-
-    private void waitForGridToStopLoading() {
+    /**
+     * Wait for the grid to finish loading after a scroll or other action that triggers loading of new rows.
+     */
+    public void waitForGridToStopLoading() {
         locator.page().waitForFunction("g => !g.hasAttribute('loading')", locator.elementHandle());
         locator.evaluate("g => g.updateComplete.then(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))");
     }

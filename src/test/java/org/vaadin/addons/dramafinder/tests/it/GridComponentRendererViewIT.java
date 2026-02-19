@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,12 +50,12 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
     @Test
     public void testButtonElementInCell() {
         GridElement grid = GridElement.getById(page, "component-grid");
-        var cell = grid.findCell(0, "Action");
+        var cell = grid.findCell(1, "Action");
         assertTrue(cell.isPresent());
         ButtonElement button = new ButtonElement(
                 cell.get().getCellContent().locator("vaadin-button"));
         button.assertVisible();
-        assertThat(button.getLocator()).hasText("Click First2");
+        assertEquals("Click First2", button.getText());
     }
 
     // ── Component Header ──────────────────────────────────────────────

@@ -59,7 +59,7 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
     @Test
     public void testEmptyGrid() {
         GridElement grid = GridElement.getById(page, "empty-grid");
-        assertEquals(100, grid.getTotalRowCount());
+        assertEquals(0, grid.getTotalRowCount());
     }
 
     // ── Column Count ───────────────────────────────────────────────────

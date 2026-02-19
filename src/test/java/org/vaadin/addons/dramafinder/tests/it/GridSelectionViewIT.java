@@ -60,8 +60,7 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
         assertFalse(row3.isSelected());
         assertEquals(1, grid.getSelectedItemCount());
 
-        var selectAllCheckbox = grid.getSelectAllCheckbox();
-        selectAllCheckbox.check();
+        grid.checkSelectAll();
 
         assertTrue(row1.isSelected());
         assertTrue(row2.isSelected());
@@ -82,9 +81,8 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
         assertFalse(row3.isSelected());
         assertEquals(1, grid.getSelectedItemCount());
 
-        var selectAllCheckbox = grid.getSelectAllCheckbox();
-        selectAllCheckbox.check();
-        selectAllCheckbox.uncheck();
+        grid.checkSelectAll();
+        grid.uncheckSelectAll();
 
         assertFalse(row1.isSelected());
         assertFalse(row2.isSelected());
