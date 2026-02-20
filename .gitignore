@@ -39,3 +39,6 @@ package.json
 /.DS_Store
 /pom.xml.releaseBackup
 /release.properties
+
+.vscode/.copilot-plugin
+.vscode/launch.json
