@@ -61,6 +61,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libnspr4 \
   libxrandr2 \
   libgbm1 \
   libxkbcommon0 \
+  libcups2 \
   && rm -rf /var/lib/apt/lists/*
 
 # Ensure default node user has access to /usr/local/share
@@ -124,6 +125,6 @@ RUN npm install -g @openai/codex@latest
 COPY init-firewall.sh /usr/local/bin/
 USER root
 RUN chmod +x /usr/local/bin/init-firewall.sh && \
-  echo "node ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall && \
+  echo "node ALL=(root) NOPASSWD: /susr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall && \
   chmod 0440 /etc/sudoers.d/node-firewall
 USER node

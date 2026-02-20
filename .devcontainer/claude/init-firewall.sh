@@ -64,6 +64,11 @@ while read -r cidr; do
 done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 
 # Resolve and add other allowed domains
+# "d2xrhe97vsfxuc.cloudfront.net" is redirect for jetbrains cache, required for extensions to work
+# # Shows redirects + final URL hostnames
+#curl -vIL https://download.jetbrains.com 2>&1 | sed -n '1,120p'
+# Try a real JBR path (this domain often redirects)
+#curl -vIL https://cache-redirector.jetbrains.com/intellij-jbr/ 2>&1 | sed -n '1,160p'
 for domain in \
     "registry.npmjs.org" \
     "api.anthropic.com" \
@@ -78,6 +83,12 @@ for domain in \
     "maven.vaadin.com" \
     "repo.maven.apache.org" \
     "playwright.azureedge.net" \
+    "download.jetbrains.com" \
+    "cache-redirector.jetbrains.com" \
+    "download-cdn.jetbrains.com" \
+    "data.services.jetbrains.com" \
+    "d2xrhe97vsfxuc.cloudfront.net" \
+    "playwright.download.prss.microsoft.com" \
     "javadocs.dev"; do
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
@@ -92,7 +103,7 @@ for domain in \
             exit 1
         fi
         echo "Adding $ip for $domain"
-        ipset add allowed-domains "$ip"
+        ipset add allowed-domains "$ip" -exist
     done < <(echo "$ips")
 done
 

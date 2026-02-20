@@ -16,6 +16,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "vscjava.vscode-java-pack",
+        "vaadin.vaadin-vscode",
         "anthropic.claude-code",
         "openai.chatgpt",
         "dbaeumer.vscode-eslint",
@@ -70,7 +72,7 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  //"postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
   "waitFor": "postStartCommand",
   "postCreateCommand": "mkdir -p /home/node/.codex && test -f /home/node/.codex/config.toml || printf '[mcp_servers.vaadin]\\nurl = \"https://mcp.vaadin.com/docs\"\\n[mcp_servers.dramafinder]\\nurl = \"http://localhost:8080/sse\"\\n[mcp_servers.javadoc]\\nurl = \"https://www.javadocs.dev/mcp\"\\n' > /home/node/.codex/config.toml"
   
