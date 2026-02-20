@@ -75,9 +75,9 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
     @Test
     public void testHeaderCellContent() {
         GridElement grid = GridElement.getById(page, "basic-grid");
-        assertEquals("First Name", grid.findHeaderCell(0).get().getCellContent().innerText());
-        assertEquals("Last Name", grid.findHeaderCell(1).get().getCellContent().innerText());
-        assertEquals("Email", grid.findHeaderCell(2).get().getCellContent().innerText());
+        assertThat(grid.findHeaderCell(0).get().getCellContent()).hasText("First Name");
+        assertThat(grid.findHeaderCell(1).get().getCellContent()).hasText("Last Name");
+        assertThat(grid.findHeaderCell(2).get().getCellContent()).hasText("Email");
     }
 
     @Test
@@ -101,9 +101,9 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         assertTrue(secondCell.isPresent());
         assertTrue(thirdCell.isPresent());
 
-        assertEquals("First1", firstCell.get().getCellContent().innerText());
-        assertEquals("Last1", secondCell.get().getCellContent().innerText());
-        assertEquals("person1@example.com", thirdCell.get().getCellContent().innerText());
+        assertThat(firstCell.get().getCellContent()).hasText("First1");
+        assertThat(secondCell.get().getCellContent()).hasText("Last1");
+        assertThat(thirdCell.get().getCellContent()).hasText("person1@example.com");
     }
 
     @Test
@@ -118,9 +118,9 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         assertTrue(secondCell.isPresent());
         assertTrue(thirdCell.isPresent());
 
-        assertEquals("First1", firstCell.get().getCellContent().innerText());
-        assertEquals("Last1", secondCell.get().getCellContent().innerText());
-        assertEquals("person1@example.com", thirdCell.get().getCellContent().innerText());
+        assertThat(firstCell.get().getCellContent()).hasText("First1");
+        assertThat(secondCell.get().getCellContent()).hasText("Last1");
+        assertThat(thirdCell.get().getCellContent()).hasText("person1@example.com");
     }
 
     @Test
@@ -160,7 +160,7 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "lazy-grid");
         var row = grid.findRow(9000);
         assertTrue(row.isPresent());
-        assertEquals("First9001", row.get().getCell(0).getCellContent().innerText());
+        assertThat(row.get().getCell(0).getCellContent()).hasText("First9001");
     }
 
     // ── CSS Class ──────────────────────────────────────────────────────

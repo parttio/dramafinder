@@ -2,7 +2,9 @@
 
 ## Overview
 
-`GridElement` is a Playwright element wrapper for the `<vaadin-grid>` web component. It provides helpers for scrolling, querying visible rows, accessing cell content by row/column index or header text, and interacting with the grid's selection, sorting, and row details features. Cell access uses JavaScript evaluation on the grid's internal APIs since body cells live in shadow DOM and are virtualized.
+`GridElement` is a Playwright element wrapper for the `<vaadin-grid>` web component. It provides helpers for querying rows and cells, accessing cell content by row/column index or header text, and interacting with the grid's selection, sorting, and row details features. Row and cell access methods **auto-scroll** the grid as needed to bring virtualized rows into view. 
+
+Results are returned as `Optional` wrappers or inner-class elements (`RowElement`, `CellElement`, `HeaderCellElement`) so callers can interact with rows and cells directly rather than going back through the grid. Please note, that you should interact with these elements before searching for another row which may lead to scrolling and possibly hiding / removing element that is referenced. 
 
 ## Tag Name
 
@@ -25,9 +27,6 @@ VaadinElement
 | `HasStyleElement` | CSS class support |
 | `HasThemeElement` | Theme attribute support |
 | `HasEnabledElement` | Enabled/disabled state |
-| `HasGridSelectionElement` | Single/multi row selection |
-| `HasGridSortingElement` | Column sorting |
-| `HasGridDetailsElement` | Row details panel |
 
 ## Constants
 
@@ -75,93 +74,105 @@ GridElement grid = GridElement.getById(page, "my-grid");
 
 | Method | Description |
 |--------|-------------|
-| `getRowCount()` | Total number of data items |
+| `getTotalRowCount()` | Total number of data items |
+| `getRenderedRowCount()` | Number of rows currently rendered in the DOM |
 | `getColumnCount()` | Number of visible (non-hidden) columns |
-| `getFirstVisibleRowIndex()` | 0-based index of the first visible row |
-| `getLastVisibleRowIndex()` | 0-based index of the last visible row |
-| `getVisibleRowCount()` | Count of rows visible in the viewport |
-| `isRowInView(int rowIndex)` | Whether the given row is between first and last visible index |
 | `isAllRowsVisible()` | Whether `allRowsVisible` is enabled (no vertical scroll) |
 | `isMultiSort()` | Whether multi-sort is enabled |
 | `isColumnReorderingAllowed()` | Whether column reordering is allowed |
 
 ### Header Access Methods
 
+All `findHeaderCell*` methods return `Optional<HeaderCellElement>`.
+
 | Method | Description |
 |--------|-------------|
-| `getHeaderCellContent(int colIndex)` | Text content of a header cell by column index |
+| `findHeaderCell(int colIndex)` | Header cell by column index in the first header row |
+| `findHeaderCell(int headerRowIndex, int colIndex)` | Header cell by header row index and column index |
+| `findHeaderCellByText(String text)` | Header cell by text content in the first header row |
+| `findHeaderCellByText(int headerRowIndex, String text)` | Header cell by header row index and text content |
 | `getHeaderCellContents()` | Text content of all visible header cells |
-| `getHeaderCellLocator(int colIndex)` | Locator for a header cell content element |
 
-### Cell Content Access Methods
+### Row Access Methods
 
-| Method | Description |
-|--------|-------------|
-| `getCellContent(int rowIndex, int colIndex)` | Text content of a body cell (row must be in view) |
-| `getCellContent(int rowIndex, String headerText)` | Text content by row index and header text |
-| `getCellContentLocator(int rowIndex, int colIndex)` | Locator for body cell content (for component renderers) |
-| `getCellContentLocator(int rowIndex, String headerText)` | Locator by row index and header text |
-| `resolveColumnIndex(String headerText)` | Resolve header text to its visible column index |
+| Method | Return Type | Description |
+|--------|-------------|-------------|
+| `findRow(int rowIndex)` | `Optional<RowElement>` | Find row by index; **auto-scrolls** if the row is not yet in view |
+| `findRowIndexesWithColumnText(int columnIndex, String text)` | `List<Integer>` | Row indexes where the given column cell matches the given text |
 
-### Scroll Actions
+### Cell Access Methods
+
+Both methods return `Optional<CellElement>` and **auto-scroll** the grid if the target row is not yet in view.
 
 | Method | Description |
 |--------|-------------|
-| `scrollToRow(int rowIndex)` | Scroll so the given row index becomes visible |
-| `scrollToStart()` | Scroll to the very beginning |
-| `scrollToEnd()` | Scroll to the very end |
+| `findCell(int row, int column)` | Body cell by row and column index |
+| `findCell(int row, String columnHeaderText)` | Body cell by row index and column header text |
 
-### Selection Methods (HasGridSelectionElement)
+### Selection Methods
 
 | Method | Description |
 |--------|-------------|
 | `getSelectedItemCount()` | Number of currently selected items |
-| `selectRow(int rowIndex)` | Click a row to select it (single-select) |
-| `toggleRowSelection(int rowIndex)` | Toggle the selection checkbox (multi-select) |
-| `toggleSelectAll()` | Toggle the select-all header checkbox |
-| `deselectAll()` | Deselect all items programmatically |
-| `isRowSelected(int rowIndex)` | Whether a row is currently selected |
+| `select(int rowIndex)` | Select row by index |
+| `deselect(int rowIndex)` | Deselect row by index |
+| `isSelectAllChecked()` | Whether the select-all checkbox is checked |
+| `isSelectAllIndeterminate()` | Whether the select-all checkbox is indeterminate |
+| `isSelectAllUnchecked()` | Whether the select-all checkbox is unchecked |
+| `checkSelectAll()` | Check the select-all checkbox (no-op if already checked) |
+| `uncheckSelectAll()` | Uncheck the select-all checkbox (no-op if already unchecked) |
 
-### Sorting Methods (HasGridSortingElement)
-
-| Method | Description |
-|--------|-------------|
-| `clickHeaderToSort(int colIndex)` | Click the sorter element to cycle sort direction |
-| `clickHeaderToSort(String headerText)` | Click sorter by header text |
-| `getSortDirection(int colIndex)` | Get sort direction: `"asc"`, `"desc"`, or `null` |
-| `getSortDirection(String headerText)` | Get sort direction by header text |
-
-### Row Details Methods (HasGridDetailsElement)
+### Utility Methods
 
 | Method | Description |
 |--------|-------------|
-| `openDetails(int rowIndex)` | Click a row to toggle its details panel |
-| `isDetailsOpen(int rowIndex)` | Whether a row's details panel is open |
+| `waitForGridToStopLoading()` | Wait for the grid to finish loading after a scroll or action that triggers row loading |
 
-### Assertions
+## Inner Classes
+
+### CellElement
+
+Wraps a single grid cell (`<td>`).
 
 | Method | Description |
 |--------|-------------|
-| `assertRowCount(int expected)` | Assert total row count (auto-retry) |
-| `assertEmpty()` | Assert zero rows |
-| `assertColumnCount(int expected)` | Assert visible column count (auto-retry) |
-| `assertRowInView(int rowIndex)` | Assert row is visible (auto-retry) |
-| `assertRowNotInView(int rowIndex)` | Assert row is NOT visible (auto-retry) |
-| `assertFirstVisibleRow(int expected)` | Assert first visible row index (auto-retry) |
-| `assertLastVisibleRow(int expected)` | Assert last visible row index (auto-retry) |
-| `assertCellContent(int row, int col, String expected)` | Assert cell text content |
-| `assertCellContent(int row, String header, String expected)` | Assert cell text by header |
-| `assertHeaderCellContent(int col, String expected)` | Assert header cell text |
-| `assertAllRowsVisible()` | Assert allRowsVisible is enabled |
-| `assertNotAllRowsVisible()` | Assert allRowsVisible is disabled |
-| `assertSelectedItemCount(int expected)` | Assert selected item count |
-| `assertRowSelected(int rowIndex)` | Assert row is selected |
-| `assertRowNotSelected(int rowIndex)` | Assert row is NOT selected |
-| `assertSortDirection(int colIndex, String direction)` | Assert sort direction |
-| `assertSortDirection(String headerText, String direction)` | Assert sort direction by header |
-| `assertNotSorted(int colIndex)` | Assert column is unsorted |
-| `assertDetailsOpen(int rowIndex)` | Assert details panel is open |
-| `assertDetailsClosed(int rowIndex)` | Assert details panel is closed |
+| `getTableCell()` | Locator for the table cell element (`<td>`) |
+| `getColumnIndex()` | 0-based column index; `-1` for details cells |
+| `getCellContent()` | Locator for the `<vaadin-grid-cell-content>` slot element |
+| `getContentSlotName()` | Name of the slot used for cell content |
+| `click()` | Click the cell content |
+
+### HeaderCellElement extends CellElement
+
+Wraps a single grid header cell (`<th>`).
+
+Extends `CellElement` with sorting support.
+
+| Method | Description |
+|--------|-------------|
+| `isSortable()` | Whether the column supports sorting |
+| `clickSort()` | Click the sorter to cycle sort direction |
+| `isSortAscending()` | Whether the column is sorted ascending |
+| `isSortDescending()` | Whether the column is sorted descending |
+| `isNotSorted()` | Whether the column is not sorted |
+
+### RowElement
+
+Wraps a single grid row (`<tr>`).
+
+| Method | Description |
+|--------|-------------|
+| `getRow()` | Locator for the row element `<tr>` |
+| `getRowIndex()` | 0-based row index |
+| `getCell(int columnIndex)` | Cell for the given column index |
+| `getCell(String columnHeaderText)` | Cell for the given header text |
+| `getDetailsCell()` | Cell element for the details column |
+| `isSelected()` | Whether the row is selected |
+| `select()` | Select this row |
+| `deselect()` | Deselect this row |
+| `openDetails()` | Open this row's details panel |
+| `closeDetails()` | Close this row's details panel |
+| `isDetailsOpen()` | Whether this row's details panel is open |
 
 ## Usage Examples
 
@@ -171,33 +182,20 @@ GridElement grid = GridElement.getById(page, "my-grid");
 GridElement grid = GridElement.getById(page, "my-grid");
 
 // Row and column counts
-int rows = grid.getRowCount();
+int rows = grid.getTotalRowCount();
 int cols = grid.getColumnCount();
 
 // Headers
 List<String> headers = grid.getHeaderCellContents();
-String firstHeader = grid.getHeaderCellContent(0);
 
-// Cell content by index
-String value = grid.getCellContent(0, 0);
+// Cell content by index (auto-scrolls if needed)
+var valueCellO = grid.findCell(0, 0);
+assertTrue(valueCellO.isPresent());
+assertThat(valueCellO.get().getCellContent()).hasText("My name");
 
-// Cell content by header text
-String email = grid.getCellContent(0, "Email");
-```
-
-### Scrolling
-
-```java
-GridElement grid = GridElement.getById(page, "my-grid");
-
-grid.scrollToRow(50);
-grid.assertRowInView(50);
-
-grid.scrollToStart();
-grid.assertFirstVisibleRow(0);
-
-grid.scrollToEnd();
-grid.assertRowInView(grid.getRowCount() - 1);
+var emailCellO = grid.findCell(0, "Email");
+assertTrue(emailCellO.isPresent());
+assertThat(emailCellO.get().getCellContent()).hasText("my@email.com");
 ```
 
 ### Single Selection
@@ -205,12 +203,13 @@ grid.assertRowInView(grid.getRowCount() - 1);
 ```java
 GridElement grid = GridElement.getById(page, "single-select-grid");
 
-grid.selectRow(0);
-grid.assertRowSelected(0);
+grid.select(0);
+var row0 = grid.findRow(0);
+assertTrue(row0.isPresent());
+assertTrue(row0.get().isSelected());
 
-grid.selectRow(1);
-grid.assertRowSelected(1);
-grid.assertRowNotSelected(0);
+grid.select(1);
+assertFalse(row0.get().isSelected());
 ```
 
 ### Multi Selection
@@ -218,15 +217,15 @@ grid.assertRowNotSelected(0);
 ```java
 GridElement grid = GridElement.getById(page, "multi-select-grid");
 
-grid.toggleRowSelection(0);
-grid.toggleRowSelection(1);
-grid.assertSelectedItemCount(2);
+grid.select(0);
+grid.select(1);
+assertEquals(2, grid.getSelectedItemCount());
 
-grid.toggleSelectAll();
-grid.assertSelectedItemCount(totalRows);
+grid.checkSelectAll();
+assertTrue(grid.isSelectAllChecked());
 
-grid.deselectAll();
-grid.assertSelectedItemCount(0);
+grid.uncheckSelectAll();
+assertEquals(0, grid.getSelectedItemCount());
 ```
 
 ### Sorting
@@ -234,14 +233,16 @@ grid.assertSelectedItemCount(0);
 ```java
 GridElement grid = GridElement.getById(page, "sortable-grid");
 
-grid.clickHeaderToSort("Name");
-grid.assertSortDirection("Name", "asc");
+var headerCell = grid.findHeaderCellByText("Name");
+assertTrue(headerCell.isPresent());
+headerCell.get().clickSort();
+assertTrue(headerCell.get().isSortAscending());
 
-grid.clickHeaderToSort("Name");
-grid.assertSortDirection("Name", "desc");
+headerCell.get().clickSort();
+assertTrue(headerCell.get().isSortDescending());
 
-grid.clickHeaderToSort("Name");
-grid.assertNotSorted(0);
+headerCell.get().clickSort();
+assertTrue(headerCell.get().isNotSorted());
 ```
 
 ### Row Details
@@ -249,11 +250,13 @@ grid.assertNotSorted(0);
 ```java
 GridElement grid = GridElement.getById(page, "details-grid");
 
-grid.openDetails(0);
-grid.assertDetailsOpen(0);
+var row = grid.findRow(0);
+assertTrue(row.isPresent());
+row.get().openDetails();
+assertTrue(row.get().isDetailsOpen());
 
-grid.openDetails(0);   // click again to close
-grid.assertDetailsClosed(0);
+row.get().closeDetails();
+assertFalse(row.get().isDetailsOpen());
 ```
 
 ### Component Renderer
@@ -261,11 +264,9 @@ grid.assertDetailsClosed(0);
 ```java
 GridElement grid = GridElement.getById(page, "component-grid");
 
-// Get the cell content locator for a cell with a component renderer
-Locator cellContent = grid.getCellContentLocator(0, "Action");
-
-// Find and interact with the button inside
-Locator button = cellContent.locator("vaadin-button");
+var actionCell = grid.findCell(0, "Action");
+assertTrue(actionCell.isPresent());
+Locator button = actionCell.get().getCellContent().locator("vaadin-button");
 assertThat(button).hasText("Click First1");
 button.click();
 ```
@@ -275,17 +276,15 @@ button.click();
 ```java
 GridElement grid = GridElement.getById(page, "lit-renderer-grid");
 
-// Read text from a LitRenderer cell
-String text = grid.getCellContent(0, "First Name");
-
-// Locate elements inside a LitRenderer cell
-Locator cellContent = grid.getCellContentLocator(0, "First Name");
-Locator badge = cellContent.locator(".badge");
-assertThat(badge).hasText("First1");
+// Read text from a LitRenderer cell (auto-scrolls if needed)
+var firstNameCell = grid.findCell(0, "First Name");
+assertTrue(firstNameCell.isPresent());
+assertThat(firstNameCell.get().getCellContent().locator(".badge")).hasText("First1");
 
 // Click a LitRenderer button
-Locator actionCell = grid.getCellContentLocator(0, "Action");
-actionCell.locator("vaadin-button").click();
+var actionCell = grid.findCell(0, "Action");
+assertTrue(actionCell.isPresent());
+actionCell.get().getCellContent().locator("vaadin-button").click();
 ```
 
 ### Lazy Loading
@@ -293,10 +292,21 @@ actionCell.locator("vaadin-button").click();
 ```java
 GridElement grid = GridElement.getById(page, "lazy-grid");
 
-grid.assertRowCount(10000);
-grid.scrollToRow(9000);
-grid.assertRowInView(9000);
-String name = grid.getCellContent(9000, 0);
+assertEquals(10000, grid.getTotalRowCount());
+
+// findRow auto-scrolls to row 9000 before returning
+var row = grid.findRow(9000);
+assertTrue(row.isPresent());
+assertThat(row.get().getCell(0).getCellContent()).hasText("First9001");
+```
+
+### Searching Across Rows
+
+```java
+GridElement grid = GridElement.getById(page, "my-grid");
+
+// Find all row indexes where the "Status" column contains "Active"
+List<Integer> activeRows = grid.findRowIndexesWithColumnText(2, "Active");
 ```
 
 ## Related Elements
