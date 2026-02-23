@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
-
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
 
 /**
  * PlaywrightElement for {@code <vaadin-grid>}.
@@ -149,7 +148,8 @@ public class GridElement extends VaadinElement
 
     /**
      * Find a header cell by column index.
-     * Uses first header row. 
+     * Uses first header row.
+     *
      * @param columnIndex 0-based visible column index
      * @return optional header cell element. Empty if no header cell exists at the given column index.
      */
@@ -159,8 +159,9 @@ public class GridElement extends VaadinElement
 
     /**
      * Find a header cell by header row index and column index.
+     *
      * @param headerRowIndex 0-based header row index. Use 0 for the first header row, 1 for the second, etc.
-     * @param columnIndex 0-based visible column index. 
+     * @param columnIndex    0-based visible column index.
      * @return optional header cell element. Empty if no header cell exists at the given header row and column index.
      */
     public Optional<HeaderCellElement> findHeaderCell(int headerRowIndex, int columnIndex) {
@@ -214,7 +215,7 @@ public class GridElement extends VaadinElement
         var allHeaderCells = lastHeaderRow.locator("th").all();
         for (int i = 0; i < allHeaderCells.size(); i++) {
             var cell = new HeaderCellElement(allHeaderCells.get(i), i);
-            cell.getTableCell().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            cell.getTableCellLocator().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
             if (matchesHeaderCell(cell, text)) {
                 return Optional.of(cell);
             }
@@ -236,27 +237,29 @@ public class GridElement extends VaadinElement
             if (!headerCell.isPresent()) {
                 throw new IllegalStateException("No header cell found at column index " + i);
             }
-            headers.add(headerCell.get().getCellContent().innerText());
+            headers.add(headerCell.get().getCellContentLocator().innerText());
         }
         return headers;
     }
 
-    /** 
+    /**
      * Determine if a header cell matches the given text. By default, compares the trimmed innerText of the cell content.
      * Can be overridden for custom matching logic (e.g. ignoring case, or matching only a part of the text).
+     *
      * @param cell the header cell to check
      * @param text the header text to match
      * @return {@code true} if the cell matches the text, {@code false} otherwise
      */
     protected boolean matchesHeaderCell(CellElement cell, String text) {
-        return Objects.equals(cell.getCellContent().innerText(), text);
+        return Objects.equals(cell.getCellContentLocator().innerText(), text);
     }
 
     // ── Cell Content Access ────────────────────────────────────────────
 
     /**
      * Find a body cell by row index and column index.
-     * @param row row index, starting from 0.
+     *
+     * @param row    row index, starting from 0.
      * @param column column index, starting from 0.
      * @return optional cell element. Empty if no cell exists at the given row and column index.
      */
@@ -275,7 +278,8 @@ public class GridElement extends VaadinElement
 
     /**
      * Find a body cell by row index and column header text.
-     * @param row row index, starting from 0.
+     *
+     * @param row              row index, starting from 0.
      * @param columnHeaderText the header text of the column to find.
      * @return optional cell element. Empty if no cell exists at the given row and column header text.
      */
@@ -298,8 +302,9 @@ public class GridElement extends VaadinElement
 
     /**
      * Find row indexes where the cell in the given column has the given text.
+     *
      * @param columnIndex the column index to check the cell content in, starting from 0.
-     * @param text the text to match in the cell content.
+     * @param text        the text to match in the cell content.
      * @return list of row indexes where the cell in the given column matches the given text. Empty list if no match is found.
      */
     public List<Integer> findRowIndexesWithColumnText(int columnIndex, String text) {
@@ -325,8 +330,9 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Find a row by its index. 
-     * Scrolls the grid if necessary to find the row. 
+     * Find a row by its index.
+     * Scrolls the grid if necessary to find the row.
+     *
      * @param rowIndex row index, starting from 0.
      * @return optional row element. Empty if no row exists at the given index.
      */
@@ -340,7 +346,8 @@ public class GridElement extends VaadinElement
 
     /**
      * Find a row by its index, given the number of header rows.
-     * @param rowIndex row index, starting from 0.
+     *
+     * @param rowIndex       row index, starting from 0.
      * @param headerRowCount number of header rows in the grid, used to calculate the aria-rowIndex for finding the row.
      * @return optional row element. Empty if no row exists at the given index.
      */
@@ -382,10 +389,10 @@ public class GridElement extends VaadinElement
 
         if (ariaRowIndex < rowRangeData.getMin()) {
             // Scroll up
-            rowRangeData.getMinRow().evaluate("el => el.scrollIntoView({ block: 'end', inline: 'nearest' })");
+            rowRangeData.getMinRowLocator().evaluate("el => el.scrollIntoView({ block: 'end', inline: 'nearest' })");
         } else {
             // Scroll down
-            rowRangeData.getMaxRow().evaluate("el => el.scrollIntoView({ block: 'start', inline: 'nearest' })");
+            rowRangeData.getMaxRowLocator().evaluate("el => el.scrollIntoView({ block: 'start', inline: 'nearest' })");
         }
 
         waitForGridToStopLoading();
@@ -399,7 +406,7 @@ public class GridElement extends VaadinElement
             foundRow.scrollIntoViewIfNeeded();
             waitForGridToStopLoading();
         }
- 
+
         return Optional.of(foundRow);
     }
 
@@ -419,13 +426,14 @@ public class GridElement extends VaadinElement
     /**
      * Determine if a body cell matches the given text. By default, compares the trimmed innerText of the cell content.
      * Can be overridden for custom matching logic (e.g. ignoring case, or matching only a part of the text).
+     *
      * @param cell the body cell to check
      * @param text the text to match in the cell content
      * @return {@code true} if the cell matches the text, {@code false} otherwise
      */
     protected boolean matchesCellContent(CellElement cell, String text) {
-        cell.getCellContent().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
-        return Objects.equals(cell.getCellContent().innerText(), text);
+        cell.getCellContentLocator().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+        return Objects.equals(cell.getCellContentLocator().innerText(), text);
     }
 
     // ── Scroll Actions ─────────────────────────────────────────────────
@@ -439,7 +447,7 @@ public class GridElement extends VaadinElement
     public void scrollToRow(int rowIndex) {
         var row = findRow(rowIndex);
         if (row.isPresent()) {
-            row.get().getRow().scrollIntoViewIfNeeded();
+            row.get().getRowLocator().scrollIntoViewIfNeeded();
             waitForGridToStopLoading();
         }
     }
@@ -457,13 +465,14 @@ public class GridElement extends VaadinElement
     public void scrollToEnd() {
         var row = findRow(getTotalRowCount() - 1);
         if (row.isPresent()) {
-            row.get().getRow().scrollIntoViewIfNeeded();
+            row.get().getRowLocator().scrollIntoViewIfNeeded();
             waitForGridToStopLoading();
         }
     }
 
     /**
      * Select a row by id.
+     *
      * @param rowIndex index of the row to select, starting from 0.
      */
     public void select(int rowIndex) {
@@ -473,9 +482,10 @@ public class GridElement extends VaadinElement
 
     /**
      * Select the row.
-     * You can override this method to implement custom selection logic, 
-     * for example if you want to select by clicking some other cell than the first one, 
+     * You can override this method to implement custom selection logic,
+     * for example if you want to select by clicking some other cell than the first one,
      * or if you want to use some modifier keys for selection.
+     *
      * @param row row to select.
      */
     protected void select(RowElement row) {
@@ -486,6 +496,7 @@ public class GridElement extends VaadinElement
 
     /**
      * Deselect a row by id.
+     *
      * @param rowIndex index of the row to deselect, starting from 0.
      */
     public void deselect(int rowIndex) {
@@ -495,9 +506,10 @@ public class GridElement extends VaadinElement
 
     /**
      * Deselect the row.
-     * You can override this method to implement custom selection logic, 
-     * for example if you want to deselect by clicking some other cell than the first one, 
+     * You can override this method to implement custom selection logic,
+     * for example if you want to deselect by clicking some other cell than the first one,
      * or if you want to use some modifier keys for deselection.
+     *
      * @param row row to deselect.
      */
     protected void deselect(RowElement row) {
@@ -510,7 +522,7 @@ public class GridElement extends VaadinElement
      * You can override this method to implement custom selection logic for given cell.
      */
     protected void clickCellForSelection(CellElement cell) {
-        var checkbox = cell.getCellContent().locator("vaadin-checkbox");
+        var checkbox = cell.getCellContentLocator().locator("vaadin-checkbox");
         if (checkbox.count() > 0) {
             checkbox.click();
         } else {
@@ -531,28 +543,31 @@ public class GridElement extends VaadinElement
 
     /**
      * Check if the select-all checkbox is checked.
+     *
      * @return {@code true} if the select-all checkbox is checked (and not indeterminate), {@code false} otherwise
      */
     public boolean isSelectAllChecked() {
-        var checkbox = getSelectAllCheckbox();
-        return checkbox.getAttribute("checked") != null 
-        && checkbox.getAttribute("indeterminate") == null;
+        var checkbox = getSelectAllCheckboxLocator();
+        return checkbox.getAttribute("checked") != null
+                && checkbox.getAttribute("indeterminate") == null;
     }
 
     /**
      * Check if the select-all checkbox is indeterminate.
+     *
      * @return {@code true} if the select-all checkbox is indeterminate, {@code false} otherwise
      */
     public boolean isSelectAllIndeterminate() {
-        return getSelectAllCheckbox().getAttribute("indeterminate") != null;
+        return getSelectAllCheckboxLocator().getAttribute("indeterminate") != null;
     }
 
     /**
      * Check if the select-all checkbox is unchecked.
+     *
      * @return {@code true} if the select-all checkbox is unchecked, {@code false} otherwise
      */
     public boolean isSelectAllUnchecked() {
-        return getSelectAllCheckbox().getAttribute("checked") == null;
+        return getSelectAllCheckboxLocator().getAttribute("checked") == null;
     }
 
     /**
@@ -563,7 +578,7 @@ public class GridElement extends VaadinElement
         if (isSelectAllChecked()) {
             return;
         }
-        getSelectAllCheckbox().click();
+        getSelectAllCheckboxLocator().click();
         waitForGridToStopLoading();
     }
 
@@ -575,15 +590,16 @@ public class GridElement extends VaadinElement
         if (isSelectAllUnchecked()) {
             return;
         }
-        getSelectAllCheckbox().click();
+        getSelectAllCheckboxLocator().click();
         waitForGridToStopLoading();
     }
 
     /**
      * Get the select-all checkbox element.
+     *
      * @return the select-all checkbox element
      */
-    private Locator getSelectAllCheckbox() {
+    private Locator getSelectAllCheckboxLocator() {
         var checkboxLocator = getLocator().locator("vaadin-checkbox.vaadin-grid-select-all-checkbox");
         if (checkboxLocator.count() == 0) {
             throw new IllegalStateException("Select-all checkbox not found in the grid header");
@@ -594,8 +610,9 @@ public class GridElement extends VaadinElement
 
     /**
      * Open details for a row by id.
-     * Override this method if you need to control how the details are opened, 
+     * Override this method if you need to control how the details are opened,
      * for example by clicking some other cell than the first one.
+     *
      * @param row row for which to open details
      */
     protected void openDetails(RowElement row) {
@@ -609,8 +626,9 @@ public class GridElement extends VaadinElement
 
     /**
      * Close details for a row by id.
-     * Override this method if you need to control how the details are closed, 
+     * Override this method if you need to control how the details are closed,
      * for example by clicking some other cell than the first one.
+     *
      * @param row row for which to close details
      */
     protected void closeDetails(RowElement row) {
@@ -662,17 +680,17 @@ public class GridElement extends VaadinElement
             return max;
         }
 
-        public Locator getMinRow() {
+        public Locator getMinRowLocator() {
             return minRow;
         }
-        
-        public Locator getMaxRow() {
+
+        public Locator getMaxRowLocator() {
             return maxRow;
         }
     }
 
     /**
-     * Represents a cell in the grid, providing access to the table cell (td or th), 
+     * Represents a cell in the grid, providing access to the table cell (td or th),
      * the cell content (vaadin-grid-cell-content) and the column index.
      */
     public class CellElement {
@@ -684,7 +702,7 @@ public class GridElement extends VaadinElement
         public CellElement(Locator tableCell, int columnIndex) {
             this.tableCell = tableCell;
             this.columnIndex = columnIndex;
-            
+
             if (tableCell.count() == 0) {
                 throw new IllegalArgumentException("Table cell locator is empty");
             }
@@ -695,15 +713,17 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the locator for the table cell (td or th).
+         *
          * @return the locator for the table cell
          */
-        public Locator getTableCell() {
+        public Locator getTableCellLocator() {
             return tableCell;
         }
 
         /**
-         * Get the column index (0-based) of this cell. 
+         * Get the column index (0-based) of this cell.
          * Returns -1 for details cells.
+         *
          * @return the column index
          */
         public int getColumnIndex() {
@@ -712,14 +732,16 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the locator for the cell content (vaadin-grid-cell-content) assigned to this cell.
+         *
          * @return the locator for the cell content
          */
-        public Locator getCellContent() {
+        public Locator getCellContentLocator() {
             return cellContent;
         }
 
         /**
          * Get the name of the slot used for the cell content. This is used for accessing the cell content in the grid's shadow DOM.
+         *
          * @return the slot name
          */
         public String getContentSlotName() {
@@ -735,7 +757,7 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Represents a header cell in the grid, providing access to the table cell (th), 
+     * Represents a header cell in the grid, providing access to the table cell (th),
      * the cell content and sorting.
      */
     public class HeaderCellElement extends CellElement {
@@ -745,19 +767,20 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether the header cell supports sorting.
+         *
          * @return {@code true} if the header cell supports sorting, {@code false} otherwise
          */
         public boolean isSortable() {
-            var sorterLocator = getCellContent().locator("vaadin-grid-sorter");
+            var sorterLocator = getCellContentLocator().locator("vaadin-grid-sorter");
             return sorterLocator.count() > 0;
         }
 
         /**
-         * Click the header cell sorter to sort the column. 
+         * Click the header cell sorter to sort the column.
          * If the column is not currently sorted, it will be sorted in ascending order.
          */
         public void clickSort() {
-            var sorterLocator = getSorter();
+            var sorterLocator = getSorterLocator();
             if (sorterLocator.count() == 0) {
                 throw new IllegalStateException("Header cell at column index " + getColumnIndex() + " is not sortable");
             }
@@ -767,6 +790,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether the column is currently sorted in ascending order.
+         *
          * @return {@code true} if the column is sorted in ascending order, {@code false} otherwise
          */
         public boolean isSortAscending() {
@@ -775,6 +799,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether the column is currently sorted in descending order.
+         *
          * @return {@code true} if the column is sorted in descending order, {@code false} otherwise
          */
         public boolean isSortDescending() {
@@ -783,6 +808,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether the column is currently not sorted.
+         *
          * @return {@code true} if the column is not sorted, {@code false} otherwise
          */
         public boolean isNotSorted() {
@@ -791,12 +817,13 @@ public class GridElement extends VaadinElement
         }
 
         /**
-         * Get the current sort direction of the column. 
+         * Get the current sort direction of the column.
          * Returns "asc" for ascending, "desc" for descending, and null or empty string for not sorted.
+         *
          * @return the sort direction, or null/empty if not sorted
          */
         private String getSortDirection() {
-            var sorterLocator = getSorter();
+            var sorterLocator = getSorterLocator();
             if (sorterLocator.count() == 0) {
                 throw new IllegalStateException("Header cell at column index " + getColumnIndex() + " is not sortable");
             }
@@ -805,18 +832,19 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the locator for the vaadin-grid-sorter element in this header cell, if it exists.
+         *
          * @return the locator for the vaadin-grid-sorter element, or an empty locator if it doesn't exist
          */
-        private Locator getSorter() {
-            return getCellContent().locator("vaadin-grid-sorter");
+        private Locator getSorterLocator() {
+            return getCellContentLocator().locator("vaadin-grid-sorter");
         }
     }
 
     /**
-     * Represents a row in the grid, providing access to the row locator, 
+     * Represents a row in the grid, providing access to the row locator,
      * row index, and methods for accessing cells and interacting with the row (selection, details).
      */
-    public class RowElement { 
+    public class RowElement {
         private final Locator row;
         private final int rowIndex;
 
@@ -831,14 +859,16 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the locator for the row (tr).
+         *
          * @return the locator for the row
          */
-        public Locator getRow() {
+        public Locator getRowLocator() {
             return row;
         }
 
         /**
          * Get the row index (0-based) of this row.
+         *
          * @return the row index
          */
         public int getRowIndex() {
@@ -847,6 +877,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the cell element for the given column index in this row.
+         *
          * @param columnIndex the column index (0-based) of the cell to get
          * @return the cell element for the given column index
          */
@@ -866,6 +897,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the cell element for the given column header text in this row.
+         *
          * @param columnHeaderText the text of the column header
          * @return the cell element for the given column header text
          */
@@ -883,6 +915,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Get the cell element for the details column in this row.
+         *
          * @return the cell element for the details column.
          */
         public CellElement getDetailsCell() {
@@ -897,6 +930,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether this row is selected.
+         *
          * @return true if the row is selected, false otherwise
          */
         public boolean isSelected() {
@@ -919,7 +953,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether the details for this row are open.
-         * If you need to use a custom way to open the details, 
+         * If you need to use a custom way to open the details,
          * override the {@link GridElement#openDetails(GridElement.Row)} method.
          */
         public void openDetails() {
@@ -928,7 +962,7 @@ public class GridElement extends VaadinElement
 
         /**
          * Close the details for this row.
-         * If you need to use a custom way to close the details, 
+         * If you need to use a custom way to close the details,
          * override the {@link GridElement#closeDetails(GridElement.Row)} method.
          */
         public void closeDetails() {
@@ -937,10 +971,11 @@ public class GridElement extends VaadinElement
 
         /**
          * Whether the details for this row are open.
+         *
          * @return true if the details are open, false otherwise
          */
         public boolean isDetailsOpen() {
-            return getRow().getAttribute("details-opened") != null;
+            return getRowLocator().getAttribute("details-opened") != null;
         }
     }
 }

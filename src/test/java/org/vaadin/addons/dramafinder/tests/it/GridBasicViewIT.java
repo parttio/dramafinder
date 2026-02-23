@@ -2,15 +2,15 @@ package org.vaadin.addons.dramafinder.tests.it;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.GridElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridBasicViewIT extends SpringPlaywrightIT {
@@ -75,9 +75,9 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
     @Test
     public void testHeaderCellContent() {
         GridElement grid = GridElement.getById(page, "basic-grid");
-        assertThat(grid.findHeaderCell(0).get().getCellContent()).hasText("First Name");
-        assertThat(grid.findHeaderCell(1).get().getCellContent()).hasText("Last Name");
-        assertThat(grid.findHeaderCell(2).get().getCellContent()).hasText("Email");
+        assertThat(grid.findHeaderCell(0).get().getCellContentLocator()).hasText("First Name");
+        assertThat(grid.findHeaderCell(1).get().getCellContentLocator()).hasText("Last Name");
+        assertThat(grid.findHeaderCell(2).get().getCellContentLocator()).hasText("Email");
     }
 
     @Test
@@ -101,9 +101,9 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         assertTrue(secondCell.isPresent());
         assertTrue(thirdCell.isPresent());
 
-        assertThat(firstCell.get().getCellContent()).hasText("First1");
-        assertThat(secondCell.get().getCellContent()).hasText("Last1");
-        assertThat(thirdCell.get().getCellContent()).hasText("person1@example.com");
+        assertThat(firstCell.get().getCellContentLocator()).hasText("First1");
+        assertThat(secondCell.get().getCellContentLocator()).hasText("Last1");
+        assertThat(thirdCell.get().getCellContentLocator()).hasText("person1@example.com");
     }
 
     @Test
@@ -118,9 +118,9 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         assertTrue(secondCell.isPresent());
         assertTrue(thirdCell.isPresent());
 
-        assertThat(firstCell.get().getCellContent()).hasText("First1");
-        assertThat(secondCell.get().getCellContent()).hasText("Last1");
-        assertThat(thirdCell.get().getCellContent()).hasText("person1@example.com");
+        assertThat(firstCell.get().getCellContentLocator()).hasText("First1");
+        assertThat(secondCell.get().getCellContentLocator()).hasText("Last1");
+        assertThat(thirdCell.get().getCellContentLocator()).hasText("person1@example.com");
     }
 
     @Test
@@ -160,7 +160,7 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "lazy-grid");
         var row = grid.findRow(9000);
         assertTrue(row.isPresent());
-        assertThat(row.get().getCell(0).getCellContent()).hasText("First9001");
+        assertThat(row.get().getCell(0).getCellContentLocator()).hasText("First9001");
     }
 
     // ── CSS Class ──────────────────────────────────────────────────────

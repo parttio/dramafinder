@@ -1,15 +1,15 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.microsoft.playwright.Locator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.GridElement;
 
-import com.microsoft.playwright.Locator;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridComponentRendererViewIT extends SpringPlaywrightIT {
@@ -24,7 +24,7 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "component-grid");
         var cell = grid.findCell(0, 2);
         assertTrue(cell.isPresent());
-        assertThat(cell.get().getCellContent()).isVisible();
+        assertThat(cell.get().getCellContentLocator()).isVisible();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "component-grid");
         var cell = grid.findCell(0, "Action");
         assertTrue(cell.isPresent());
-        Locator button = cell.get().getCellContent().locator("vaadin-button");
+        Locator button = cell.get().getCellContentLocator().locator("vaadin-button");
         assertThat(button).isVisible();
         assertThat(button).hasText("Click First1");
     }
@@ -42,7 +42,7 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "component-grid");
         var cell = grid.findCell(0, "Action");
         assertTrue(cell.isPresent());
-        Locator button = cell.get().getCellContent().locator("vaadin-button");
+        Locator button = cell.get().getCellContentLocator().locator("vaadin-button");
         button.click();
         assertThat(page.locator("#click-output")).hasText("Clicked: First1");
     }
@@ -53,7 +53,7 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
         var cell = grid.findCell(1, "Action");
         assertTrue(cell.isPresent());
         ButtonElement button = new ButtonElement(
-                cell.get().getCellContent().locator("vaadin-button"));
+                cell.get().getCellContentLocator().locator("vaadin-button"));
         button.assertVisible();
         assertEquals("Click First2", button.getText());
     }
@@ -63,7 +63,7 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
     @Test
     public void testHeaderCellLocatorWithComponent() {
         GridElement grid = GridElement.getById(page, "component-header-grid");
-        Locator header = grid.findHeaderCell(2).get().getCellContent();
+        Locator header = grid.findHeaderCell(2).get().getCellContentLocator();
         Locator filter = header.locator("vaadin-text-field");
         assertThat(filter).isVisible();
         assertThat(filter).hasAttribute("placeholder", "Filter email...");
@@ -72,14 +72,14 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
     @Test
     public void testHeaderCellLocatorByText() {
         GridElement grid = GridElement.getById(page, "component-header-grid");
-        Locator header = grid.findHeaderCellByText("First Name").get().getCellContent();
+        Locator header = grid.findHeaderCellByText("First Name").get().getCellContentLocator();
         assertThat(header).hasText("First Name");
     }
 
     @Test
     public void testInteractWithComponentHeader() {
         GridElement grid = GridElement.getById(page, "component-header-grid");
-        Locator header = grid.findHeaderCell(2).get().getCellContent();
+        Locator header = grid.findHeaderCell(2).get().getCellContentLocator();
         Locator filter = header.locator("vaadin-text-field");
         filter.locator("input").fill("test");
         assertThat(filter.locator("input")).hasValue("test");
