@@ -100,6 +100,9 @@ RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
 # Install Codex CLI
 RUN npm install -g @openai/codex@latest
 
+# Fix git permissions for node user and set up gh config directory
+RUN mkdir -p /home/node/.config/gh && chown -R node:node /home/node/.config
+
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
 USER root

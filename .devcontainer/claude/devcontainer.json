@@ -35,7 +35,7 @@
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.codeActionsOnSave": {
-          "source.fixAl.eslint": "explicit"
+          "source.fixAll.eslint": "explicit"
         },
         "terminal.integrated.defaultProfile.linux": "zsh",
         "terminal.integrated.profiles.linux": {
@@ -47,10 +47,7 @@
             "path": "zsh"
           }
         },
-        // Pick a non-default dark theme you have installed:
         "workbench.colorTheme": "Tokyo Night",
-
-        // Make it EXTRA obvious you're in the container:
         "workbench.colorCustomizations": {
           "statusBar.background": "#1b2a41",
           "statusBar.noFolderBackground": "#1b2a41",
@@ -61,8 +58,6 @@
           "badge.background": "#ff4d6d",
           "badge.foreground": "#ffffff"
         },
-
-        // Optional: make the window title say it clearly
         "window.title": "${activeEditorShort}${separator}${rootName} — [DEV CONTAINER]"
       }
     }
@@ -70,18 +65,23 @@
   "remoteUser": "node",
   "mounts": [
     "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=git-creds-${devcontainerId},target=/home/node/.git-credentials,type=volume",
+    "source=gh-auth-${devcontainerId},target=/home/node/.config/gh,type=volume"
   ],
   "containerEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude",
     "POWERLEVEL9K_DISABLE_GITSTATUS": "true"
   },
-  //"postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "",
+    "DRAMAFINDER_PAT": "${localEnv:DRAMAFINDER_PAT}"
+  },
   "postStartCommand": "git remote set-url origin https://github.com/parttio/dramafinder.git",
+  "postAttachCommand": "bash .devcontainer/claude/check-gh-auth.sh",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
   "waitFor": "postStartCommand",
-  "postCreateCommand": "mkdir -p /home/node/.codex && test -f /home/node/.codex/config.toml || printf '[mcp_servers.vaadin]\\nurl = \"https://mcp.vaadin.com/docs\"\\n[mcp_servers.dramafinder]\\nurl = \"http://localhost:8080/sse\"\\n[mcp_servers.javadoc]\\nurl = \"https://www.javadocs.dev/mcp\"\\n' > /home/node/.codex/config.toml"
-  
+  "postCreateCommand": "mkdir -p /home/node/.codex && test -f /home/node/.codex/config.toml || printf '[mcp_servers.vaadin]\\nurl = \"https://mcp.vaadin.com/docs\"\\n[mcp_servers.dramafinder]\\nurl = \"http://localhost:8080/sse\"\\n[mcp_servers.javadoc]\\nurl = \"https://www.javadocs.dev/mcp\"\\n' > /home/node/.codex/config.toml; chmod +x .devcontainer/claude/check-gh-auth.sh || true"
 }
