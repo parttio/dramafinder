@@ -41,6 +41,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libnspr4 \
   libgbm1 \
   libxkbcommon0 \
   libcups2 \
+  libasound2 \
   && rm -rf /var/lib/apt/lists/*
 
 # Ensure default node user has access to /usr/local/share
