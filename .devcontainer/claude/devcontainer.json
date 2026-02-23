@@ -1,0 +1,87 @@
+{
+  "name": "Dramafinder (Claude + Codex)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:America/Los_Angeles}",
+      "CLAUDE_CODE_VERSION": "latest",
+      "GIT_DELTA_VERSION": "0.18.2",
+      "ZSH_IN_DOCKER_VERSION": "1.2.0"
+    }
+  },
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": "true",
+      "jdkDistro": "tem"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vaadin.vaadin-vscode",
+        "anthropic.claude-code",
+        "openai.chatgpt",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "enkia.tokyo-night"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+          },
+          "zsh": {
+            "path": "zsh"
+          }
+        },
+        "workbench.colorTheme": "Tokyo Night",
+        "workbench.colorCustomizations": {
+          "statusBar.background": "#1b2a41",
+          "statusBar.noFolderBackground": "#1b2a41",
+          "statusBar.debuggingBackground": "#3a1c71",
+          "activityBar.background": "#0f1a2b",
+          "titleBar.activeBackground": "#5d046b",
+          "titleBar.activeForeground": "#ffffff",
+          "badge.background": "#ff4d6d",
+          "badge.foreground": "#ffffff"
+        },
+        "window.title": "${activeEditorShort}${separator}${rootName} — [DEV CONTAINER]"
+      }
+    }
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=git-creds-${devcontainerId},target=/home/node/.git-credentials,type=volume",
+    "source=gh-auth-${devcontainerId},target=/home/node/.config/gh,type=volume"
+  ],
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "POWERLEVEL9K_DISABLE_GITSTATUS": "true"
+  },
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "",
+    "DRAMAFINDER_PAT": "${localEnv:DRAMAFINDER_PAT}"
+  },
+  "postStartCommand": "git remote set-url origin https://github.com/parttio/dramafinder.git",
+  "postAttachCommand": "bash .devcontainer/claude/check-gh-auth.sh",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+  "waitFor": "postStartCommand",
+  "postCreateCommand": "mkdir -p /home/node/.codex && test -f /home/node/.codex/config.toml || printf '[mcp_servers.vaadin]\\nurl = \"https://mcp.vaadin.com/docs\"\\n[mcp_servers.dramafinder]\\nurl = \"http://localhost:8080/sse\"\\n[mcp_servers.javadoc]\\nurl = \"https://www.javadocs.dev/mcp\"\\n' > /home/node/.codex/config.toml; chmod +x .devcontainer/claude/check-gh-auth.sh || true"
+}
