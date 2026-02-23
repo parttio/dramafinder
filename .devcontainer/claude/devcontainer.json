@@ -13,6 +13,13 @@
     "--cap-add=NET_ADMIN",
     "--cap-add=NET_RAW"
   ],
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": "true",
+      "jdkDistro": "tem"
+    }
+  },
   "customizations": {
     "vscode": {
       "extensions": [
