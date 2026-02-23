@@ -10,13 +10,12 @@ A GitHub PAT with read access is required for the devcontainer to authenticate w
 
 ### Step 1: Create a PAT on GitHub
 
-1. Go to [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
-2. Click **Generate new token** → **Generate new token (classic)**
-3. Give the token a descriptive name (e.g. `claude-devcontainer-read`)
+1. Go to [GitHub Settings → Developer settings → Personal access tokens → Tokens](https://github.com/settings/personal-access-tokens)
+2. Click **Generate new token**
+3. Give the token a descriptive name (e.g. `dramafinder-devcontainer-read`)
 4. Set an expiration date as appropriate
-5. Under **Select scopes**, check:
-   - `repo` → `public_repo` (for public repos only), or the full `repo` scope (for private repos)
-   - `read:org` (optional, if you need to access organisation resources)
+5. Under **Repository access**, check:
+   - Public repositories (if no need for other (private) repositories in your container)
 6. Click **Generate token**
 7. Copy the token immediately — you will not be able to see it again
 
