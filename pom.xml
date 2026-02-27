@@ -123,6 +123,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-grid-pro-flow</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- This builds our front-end during development/testing -->
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-dev</artifactId>
