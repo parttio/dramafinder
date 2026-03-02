@@ -130,6 +130,20 @@ public class GridProElement extends GridElement {
                 .map(cell -> new EditableCellElement(cell.getTableCellLocator(), columnIndex));
     }
 
+    /** 
+     * Check whether a given cell is currently in edit mode by checking for the presence of any of the three Grid Pro inline editors.
+     * Override to provide custom logic for detecting edit mode if needed (e.g. for custom editor components).
+     * @param cell the cell to check
+     * @return {@code true} if the cell is currently being edited
+     */
+    protected boolean isEditing(EditableCellElement cell) {
+        return cell.getCellContentLocator().locator(
+                    EDITOR_TEXT_FIELD_TAG_NAME + ", " +
+                    EDITOR_CHECKBOX_TAG_NAME + ", " +
+                    EDITOR_SELECT_TAG_NAME
+            ).count() > 0;
+    }
+
     // ── Inner Class: EditableCellElement ───────────────────────────────
 
     /**
@@ -149,33 +163,24 @@ public class GridProElement extends GridElement {
             super(tableCell, columnIndex);
         }
 
+        /**
+         * Create a new {@code EditableCellElement} from a parent {@link GridElement.CellElement}.
+         * The column index is taken from the parent cell, and the table cell locator is used as-is.
+         * @param cell the parent cell element to wrap as an editable cell
+         */
+        public EditableCellElement(GridElement.CellElement cell) {
+            super(cell.getTableCellLocator(), cell.getColumnIndex());
+        }
+
         // ── Edit Mode State ────────────────────────────────────────────
 
         /**
          * Whether this cell is currently in edit mode.
-         * <p>
-         * Detected by checking whether any of the three Grid Pro inline editors
-         * ({@code vaadin-grid-pro-edit-text-field}, {@code vaadin-grid-pro-edit-checkbox},
-         * or {@code vaadin-grid-pro-edit-select}) is rendered inside this cell's content
-         * slot. Grid Pro renders the active editor when edit mode starts and removes it
-         * when edit mode ends (on save or cancel).
-         * <p>
-         * Using editor presence rather than the {@code <td>} {@code part} attribute
-         * avoids Playwright's auto-wait behaviour on {@code getAttribute}, which can
-         * cause 15-second hangs when the grid briefly re-renders during edit-mode
-         * transitions. {@link Locator#count()} is used throughout because it never
-         * waits and always returns immediately.
          *
          * @return {@code true} if this cell is currently being edited
          */
-
-        // TODO change to be more inclusive of custom editors
         public boolean isEditing() {
-            return getCellContentLocator().locator(
-                    EDITOR_TEXT_FIELD_TAG_NAME + ", " +
-                    EDITOR_CHECKBOX_TAG_NAME + ", " +
-                    EDITOR_SELECT_TAG_NAME
-            ).count() > 0;
+            return GridProElement.this.isEditing(this);
         }
 
         // ── Enter Edit Mode ────────────────────────────────────────────
@@ -183,13 +188,6 @@ public class GridProElement extends GridElement {
         /**
          * Double-click the cell content to enter edit mode.
          * Use this for grids where {@code editOnClick} is {@code false} (the default).
-         * <p>
-         * Uses {@code dispatchEvent} rather than a native pointer action to avoid
-         * "body intercepts pointer events" timeouts that can occur when the Vaadin
-         * loading indicator briefly covers the page.
-         * <p>
-         * After dispatching the event this method waits until {@link #isEditing()}
-         * returns {@code true}, so callers can immediately query edit-mode state.
          */
         public void startEditing() {
             getCellContentLocator().dispatchEvent("dblclick");
@@ -200,13 +198,6 @@ public class GridProElement extends GridElement {
         /**
          * Single-click the cell content to enter edit mode.
          * Use this for grids where {@code editOnClick} is {@code true}.
-         * <p>
-         * Uses {@code dispatchEvent} rather than a native pointer action to avoid
-         * "body intercepts pointer events" timeouts that can occur when the Vaadin
-         * loading indicator briefly covers the page.
-         * <p>
-         * After dispatching the event this method waits until {@link #isEditing()}
-         * returns {@code true}, so callers can immediately query edit-mode state.
          */
         public void startEditingWithSingleClick() {
             getCellContentLocator().dispatchEvent("click");

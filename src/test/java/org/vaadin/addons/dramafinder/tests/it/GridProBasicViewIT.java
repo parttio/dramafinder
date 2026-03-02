@@ -291,7 +291,7 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         // Escapes are needed: the first closes the dropdown, the second exits edit mode.
         var cell = grid.findEditableCell(0, 3).get();
         cell.startEditing();
-        cell.cancelEditing(); // Close dropdown
+        cell.getSelectEditor().getLocator().page().keyboard().press("Escape"); // Close dropdown
         cell.cancelEditing(); // Exit edit mode
         assertThat(cell.getCellContentLocator()).hasText("Marketing");
     }
