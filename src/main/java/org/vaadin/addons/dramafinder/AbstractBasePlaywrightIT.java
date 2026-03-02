@@ -33,12 +33,12 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     // @formatter:on
 
     protected Page page;
-    protected static Playwright playwright;
-    protected static Browser browser;
+    private static final ThreadLocal<Playwright> playwright = new ThreadLocal<>();
+    private static final ThreadLocal<Browser> browser = new ThreadLocal<>();
 
     @BeforeEach
     public void setupTest() throws Exception {
-        page = browser.newPage();
+        page = browser.get().newPage();
         page.navigate(getUrl() + getView());
         page.waitForFunction(WAIT_FOR_VAADIN_SCRIPT);
         page.setDefaultNavigationTimeout(4000);
@@ -52,19 +52,36 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
     @AfterAll
     public static void cleanup() {
-        browser.close();
-        playwright.close();
+        Browser b = browser.get();
+        Playwright p = playwright.get();
+        if (b != null) {
+            b.close();
+            browser.remove();
+        }
+        if (p != null) {
+            p.close();
+            playwright.remove();
+        }
     }
 
     @BeforeAll
     public static void setup() {
-        playwright = Playwright.create();
-        browser = playwright.chromium().launch(new LaunchOptions()
-                .setHeadless(isHeadless()));
+        Playwright p = Playwright.create();
+        playwright.set(p);
+        browser.set(p.chromium().launch(new LaunchOptions()
+                .setHeadless(isHeadless())));
     }
 
     protected Page getPage() {
         return page;
+    }
+
+    protected Browser getBrowser() {
+        return browser.get();
+    }
+
+    protected Playwright getPlaywright() {
+        return playwright.get();
     }
 
     protected void event(Locator locator, String type, Object eventInit,
