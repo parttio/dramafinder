@@ -153,14 +153,29 @@ public class GridProElement extends GridElement {
 
         /**
          * Whether this cell is currently in edit mode.
-         * Grid Pro adds {@code "edited-cell"} to the {@code part} attribute of the
-         * active {@code <td>} when editing is in progress.
+         * <p>
+         * Detected by checking whether any of the three Grid Pro inline editors
+         * ({@code vaadin-grid-pro-edit-text-field}, {@code vaadin-grid-pro-edit-checkbox},
+         * or {@code vaadin-grid-pro-edit-select}) is rendered inside this cell's content
+         * slot. Grid Pro renders the active editor when edit mode starts and removes it
+         * when edit mode ends (on save or cancel).
+         * <p>
+         * Using editor presence rather than the {@code <td>} {@code part} attribute
+         * avoids Playwright's auto-wait behaviour on {@code getAttribute}, which can
+         * cause 15-second hangs when the grid briefly re-renders during edit-mode
+         * transitions. {@link Locator#count()} is used throughout because it never
+         * waits and always returns immediately.
          *
          * @return {@code true} if this cell is currently being edited
          */
+
+        // TODO change to be more inclusive of custom editors
         public boolean isEditing() {
-            String part = getTableCellLocator().getAttribute("part");
-            return part != null && part.contains("edited-cell");
+            return getCellContentLocator().locator(
+                    EDITOR_TEXT_FIELD_TAG_NAME + ", " +
+                    EDITOR_CHECKBOX_TAG_NAME + ", " +
+                    EDITOR_SELECT_TAG_NAME
+            ).count() > 0;
         }
 
         // ── Enter Edit Mode ────────────────────────────────────────────
@@ -169,21 +184,34 @@ public class GridProElement extends GridElement {
          * Double-click the cell content to enter edit mode.
          * Use this for grids where {@code editOnClick} is {@code false} (the default).
          * <p>
-         * If double-click is intercepted by {@code vaadin-grid-cell-content}, the
-         * fallback is to dispatch a synthetic {@code dblclick} event via JavaScript.
+         * Uses {@code dispatchEvent} rather than a native pointer action to avoid
+         * "body intercepts pointer events" timeouts that can occur when the Vaadin
+         * loading indicator briefly covers the page.
+         * <p>
+         * After dispatching the event this method waits until {@link #isEditing()}
+         * returns {@code true}, so callers can immediately query edit-mode state.
          */
         public void startEditing() {
-            getCellContentLocator().dblclick();
+            getCellContentLocator().dispatchEvent("dblclick");
             GridProElement.this.waitForGridToStopLoading();
+            getLocator().page().waitForCondition(this::isEditing);
         }
 
         /**
          * Single-click the cell content to enter edit mode.
          * Use this for grids where {@code editOnClick} is {@code true}.
+         * <p>
+         * Uses {@code dispatchEvent} rather than a native pointer action to avoid
+         * "body intercepts pointer events" timeouts that can occur when the Vaadin
+         * loading indicator briefly covers the page.
+         * <p>
+         * After dispatching the event this method waits until {@link #isEditing()}
+         * returns {@code true}, so callers can immediately query edit-mode state.
          */
         public void startEditingWithSingleClick() {
-            getCellContentLocator().click();
+            getCellContentLocator().dispatchEvent("click");
             GridProElement.this.waitForGridToStopLoading();
+            getLocator().page().waitForCondition(this::isEditing);
         }
 
         // ── Exit Edit Mode ─────────────────────────────────────────────
@@ -245,8 +273,7 @@ public class GridProElement extends GridElement {
          * Get the {@code vaadin-grid-pro-edit-checkbox} editor rendered inside this cell.
          * Grid Pro renders its own subclass of {@code vaadin-checkbox}; use
          * {@link GridProElement#EDITOR_CHECKBOX_TAG_NAME} for the exact tag name.
-         * Checkbox editors are always visible in Grid Pro cells (they do not require
-         * entering edit mode first).
+         * The cell must be in edit mode before calling this method.
          *
          * @return a {@link CheckboxElement} wrapping the checkbox editor
          */

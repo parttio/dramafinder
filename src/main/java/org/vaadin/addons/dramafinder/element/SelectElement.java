@@ -49,12 +49,44 @@ public class SelectElement extends VaadinElement
 
     /**
      * Select an item by its visible label.
+     * <p>
+     * Two cases are handled:
+     * <ol>
+     *   <li><b>Dropdown already open</b> (e.g. Grid Pro auto-opens it when
+     *       entering edit mode): clicking any item inside the overlay is
+     *       unreliable when the Vaadin loading indicator is present ("body
+     *       intercepts pointer events"). Instead, the overlay is closed with
+     *       Escape (Grid Pro stays in edit mode after a single Escape), and
+     *       the select's {@code value} property is set directly via
+     *       {@code evaluate}. Setting the property fires {@code value-changed},
+     *       which Grid Pro listens to for auto-commit.</li>
+     *   <li><b>Dropdown not yet open</b> (regular {@code vaadin-select}): the
+     *       select is clicked to open the overlay, and the target item is
+     *       clicked via {@code evaluate("el => el.click()")} to trigger the
+     *       item's selection handler.</li>
+     * </ol>
      *
      * @param item label of the item
      */
     public void selectItem(String item) {
-        getLocator().click();
-        getSelectItem(getLocator().getByRole(AriaRole.LISTBOX), item).click();
+        Locator listbox = getLocator().getByRole(AriaRole.LISTBOX);
+        if (listbox.count() > 0) {
+            // Dropdown is already open (Grid Pro context).
+            // Close the dropdown with Escape; Grid Pro remains in edit mode
+            // after a single Escape (a second Escape would exit edit mode).
+            getLocator().page().keyboard().press("Escape");
+            // Wait for the dropdown to disappear before setting the value.
+            getLocator().page().waitForCondition(() -> listbox.count() == 0);
+            // Setting the value property fires value-changed, which Grid Pro
+            // uses to auto-commit the new value and exit edit mode.
+            getLocator().evaluate("(el, v) => { el.value = v; }", item);
+        } else {
+            // Dropdown is not open (regular vaadin-select context).
+            // Open it, then click the target item.
+            getLocator().click();
+            listbox.waitFor();
+            getSelectItem(listbox, item).evaluate("el => el.click()");
+        }
     }
 
     /**

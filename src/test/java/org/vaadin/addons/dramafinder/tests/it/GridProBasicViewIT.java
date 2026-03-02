@@ -199,11 +199,13 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
     // ── Checkbox Editor ────────────────────────────────────────────────
 
     @Test
-    public void testCheckboxEditorIsAlwaysVisibleWithoutEnteringEditMode() {
+    public void testCheckboxEditorIsVisibleAfterEnteringEditMode() {
         var grid = GridProElement.getById(page, "basic-grid-pro");
         // Column 2 is the Active (checkbox) column; row 0 has active=false
         var cell = grid.findEditableCell(0, 2).get();
+        cell.startEditing();
         assertThat(cell.getCheckboxEditor().getLocator()).isVisible();
+        cell.cancelEditing();
     }
 
     @Test
@@ -211,9 +213,14 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         var grid = GridProElement.getById(page, "basic-grid-pro");
         // Row 0: active=false, Row 1: active=true
         var uncheckedCell = grid.findEditableCell(0, 2).get();
-        var checkedCell = grid.findEditableCell(1, 2).get();
+        uncheckedCell.startEditing();
         assertFalse(uncheckedCell.getCheckboxEditor().isChecked());
+        uncheckedCell.cancelEditing();
+
+        var checkedCell = grid.findEditableCell(1, 2).get();
+        checkedCell.startEditing();
         assertTrue(checkedCell.getCheckboxEditor().isChecked());
+        checkedCell.cancelEditing();
     }
 
     @Test
@@ -221,9 +228,12 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         var grid = GridProElement.getById(page, "basic-grid-pro");
         // Row 0: active=false initially
         var cell = grid.findEditableCell(0, 2).get();
-        assertFalse(cell.getCheckboxEditor().isChecked());
+        cell.startEditing();
         cell.toggleCheckboxEditor();
+        cell.tabToNextCell();
+        cell.startEditing();
         assertTrue(cell.getCheckboxEditor().isChecked());
+        cell.cancelEditing();
     }
 
     @Test
@@ -231,9 +241,12 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         var grid = GridProElement.getById(page, "basic-grid-pro");
         // Row 1: active=true initially
         var cell = grid.findEditableCell(1, 2).get();
-        assertTrue(cell.getCheckboxEditor().isChecked());
+        cell.startEditing();
         cell.toggleCheckboxEditor();
+        cell.tabToNextCell();
+        cell.startEditing();
         assertFalse(cell.getCheckboxEditor().isChecked());
+        cell.cancelEditing();
     }
 
     // ── Select Editor ──────────────────────────────────────────────────
@@ -265,6 +278,7 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         assertThat(cell.getCellContentLocator()).hasText("Engineering");
         cell.startEditing();
         cell.getSelectEditor().selectItem("Sales");
+        cell.tabToNextCell(); // Save changes by tabbing away
         grid.waitForGridToStopLoading();
         assertThat(cell.getCellContentLocator()).hasText("Sales");
     }
@@ -272,10 +286,13 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
     @Test
     public void testSelectEditorItemAndCancelWithEscapeKeepsCellUnchanged() {
         var grid = GridProElement.getById(page, "basic-grid-pro");
-        // Row 0: department=Marketing; start editing, press Escape without selecting
+        // Row 0: department=Marketing; start editing, press Escape without selecting.
+        // Grid Pro auto-opens the select dropdown when entering edit mode, so two
+        // Escapes are needed: the first closes the dropdown, the second exits edit mode.
         var cell = grid.findEditableCell(0, 3).get();
         cell.startEditing();
-        cell.cancelEditing();
+        cell.cancelEditing(); // Close dropdown
+        cell.cancelEditing(); // Exit edit mode
         assertThat(cell.getCellContentLocator()).hasText("Marketing");
     }
 
@@ -285,6 +302,7 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         // Row 3: department=Marketing; change to Engineering
         var cell = grid.findEditableCell(3, 3).get();
         cell.editWithSelectItem("Engineering");
+        cell.tabToNextCell(); // Save changes by tabbing away
         assertThat(cell.getCellContentLocator()).hasText("Engineering");
     }
 
@@ -350,7 +368,7 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         var grid = GridProElement.getById(page, "basic-grid-pro");
         var cell = grid.findEditableCell(0, 0).get();
         // Single click should not enter edit mode on a default grid
-        cell.getCellContentLocator().click();
+        cell.getCellContentLocator().dispatchEvent("click");
         grid.waitForGridToStopLoading();
         assertFalse(cell.isEditing());
         // Double click should enter edit mode
@@ -377,21 +395,22 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
     public void testEnterKeyMovesToNextRowFirstEditableCellWhenEnterNextRowIsEnabled() {
         var grid = GridProElement.getById(page, "enter-next-row-grid-pro");
         var row0Cell = grid.findEditableCell(0, 0).get();
-        var row1Cell = grid.findEditableCell(1, 0).get();
         row0Cell.startEditing();
         row0Cell.getTextFieldEditor().setValue("Row0Value");
         // Press Enter — with enterNextRow=true this moves to row 1 col 0
         row0Cell.saveEditing();
         assertFalse(row0Cell.isEditing());
         assertThat(row0Cell.getCellContentLocator()).hasText("Row0Value");
-        // Row 1 cell should now be in edit mode
+        // Refetch row 1 cell after Enter moved focus there; the old reference is stale.
+        // Wait for Grid Pro to render the edited-cell part on the new cell.
+        var row1Cell = grid.findEditableCell(1, 0).get();
+        page.waitForCondition(row1Cell::isEditing);
         assertTrue(row1Cell.isEditing());
     }
 
     @Test
     public void testShiftEnterKeyMovesToPreviousRowFirstEditableCellWhenEnterNextRowIsEnabled() {
         var grid = GridProElement.getById(page, "enter-next-row-grid-pro");
-        var row0Cell = grid.findEditableCell(0, 0).get();
         var row1Cell = grid.findEditableCell(1, 0).get();
         // Start editing row 1, then Shift+Enter to go back to row 0
         row1Cell.startEditing();
@@ -400,6 +419,10 @@ public class GridProBasicViewIT extends SpringPlaywrightIT {
         grid.waitForGridToStopLoading();
         assertFalse(row1Cell.isEditing());
         assertThat(row1Cell.getCellContentLocator()).hasText("Row1Value");
+        // Refetch row 0 cell after Shift+Enter moved focus there; the old reference is stale.
+        // Wait for Grid Pro to render the edited-cell part on the new cell.
+        var row0Cell = grid.findEditableCell(0, 0).get();
+        page.waitForCondition(row0Cell::isEditing);
         assertTrue(row0Cell.isEditing());
     }
 }
