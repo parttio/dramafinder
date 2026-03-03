@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vaadin.addons</groupId>
@@ -97,20 +99,6 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>vaadin-dev</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>hilla</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>flow-react</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -126,18 +114,7 @@
             <!-- This builds our front-end during development/testing -->
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-dev</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>hilla-dev</artifactId>
-                </exclusion>
-                <!-- This just makes things much faster to debug this kind of setup. Too bad we lose all developmen mode widgets. Add back later if it starts to behave well -->
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>copilot</artifactId>
-                </exclusion>
-            </exclusions>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <build>
@@ -178,7 +155,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
+                <version>0.8.14</version>
                 <executions>
                     <execution>
                         <goals>
@@ -198,6 +175,35 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>it</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <version>${vaadin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <vaadin.productionMode>true</vaadin.productionMode>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>debug-ui</id>
             <properties>
