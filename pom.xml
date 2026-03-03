@@ -180,6 +180,16 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <vaadin.productionMode>true
+                                </vaadin.productionMode>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
                         <version>${vaadin.version}</version>
@@ -188,18 +198,8 @@
                                 <goals>
                                     <goal>build-frontend</goal>
                                 </goals>
-                                <phase>pre-integration-test</phase>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <vaadin.productionMode>true</vaadin.productionMode>
-                            </systemPropertyVariables>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
