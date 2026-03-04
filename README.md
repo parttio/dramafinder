@@ -42,8 +42,7 @@ public void testHelper() {
 
 ## Note
 
-The API is in early stage of development and a lot of components are not yet
-covered.
+The API is in early stage of development.
 
 If you notice something missing please create a ticket or a Pull Request.
 
