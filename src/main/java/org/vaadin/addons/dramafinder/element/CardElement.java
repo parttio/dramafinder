@@ -112,7 +112,7 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
      * Locator for the default (content) slot.
      */
     public Locator getContentLocator() {
-        return getLocator().locator("xpath=./*[not(@slot)][1]");
+        return getLocator().locator("> :not([slot])");
     }
 
     /**

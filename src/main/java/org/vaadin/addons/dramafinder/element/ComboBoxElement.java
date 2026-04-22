@@ -80,18 +80,11 @@ public class ComboBoxElement extends VaadinElement
         assertThat(getInputLocator()).hasValue(expected != null ? expected : "");
     }
 
-    /**
-     * Set the combo box value by filtering and pressing Enter to commit.
-     * <p>
-     * Opens the overlay, types the value sequentially to trigger filtering,
-     * then presses Enter to commit the top matching result. This works
-     * reliably for both eager and lazy combo boxes.
-     *
-     * @param value the value to set
-     */
     @Override
     public void setValue(String value) {
-        getLocator().evaluate("(el, v) => { el.selectedItem = v; }", value);
+        getInputLocator().fill(value);
+        assertThat(getOverlayItem(value)).isVisible();
+        close();
     }
 
     /**
