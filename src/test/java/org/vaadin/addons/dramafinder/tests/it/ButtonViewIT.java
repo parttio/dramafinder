@@ -9,7 +9,9 @@ import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ButtonViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -50,6 +52,18 @@ public class ButtonViewIT extends SpringPlaywrightIT implements HasTestView {
         button.assertEnabled();
         button.click();
         button.assertDisabled();
+    }
+
+    @Test
+    public void testAssertEnabledWithBoolean() {
+        ButtonElement button = ButtonElement.getByText(page, "Toggle Button");
+        button.assertEnabled(true);
+        assertTrue(button.isEnabled(true));
+        assertFalse(button.isEnabled(false));
+        button.click();
+        button.assertEnabled(false);
+        assertTrue(button.isEnabled(false));
+        assertFalse(button.isEnabled(true));
     }
 
     @Test
