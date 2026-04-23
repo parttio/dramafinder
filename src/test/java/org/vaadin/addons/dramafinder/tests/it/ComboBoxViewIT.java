@@ -209,6 +209,15 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testSetValueWithExistingValue() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Sort by");
+        comboBox.setValue("Rating: high to low");
+        comboBox.assertValue("Rating: high to low");
+        comboBox.setValue("Rating: low to high");
+        comboBox.assertValue("Rating: low to high");
+    }
+
+    @Test
     public void testValue() {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Sort by");
         comboBox.selectItem("Rating: low to high");
@@ -255,6 +264,15 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
         comboBox.selectItem("Item 1");
         comboBox.assertValue("Item 1");
+        comboBox.clickClearButton();
+        comboBox.assertValue("");
+    }
+
+    @Test
+    public void testLazyClearAfterValueChange() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+        comboBox.setValue("Item 101");
+        comboBox.assertValue("Item 101");
         comboBox.clickClearButton();
         comboBox.assertValue("");
     }

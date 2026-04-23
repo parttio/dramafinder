@@ -31,9 +31,9 @@ public class CardViewIT extends SpringPlaywrightIT implements HasTestView {
         assertThat(card.getHeaderPrefixLocator()).hasText("Lapland prefix");
         assertThat(card.getHeaderSuffixLocator()).hasText("Arctic");
         assertThat(card.getMediaLocator()).hasText("Aurora media");
-        assertThat(card.getContentLocator())
+        assertThat(card.getContentLocator().first())
                 .containsText("Lapland is the northern-most region of Finland");
-        assertThat(card.getContentLocator())
+        assertThat(card.getContentLocator().nth(1))
                 .containsText("indigenous Sámi people");
     }
 
@@ -45,7 +45,7 @@ public class CardViewIT extends SpringPlaywrightIT implements HasTestView {
         card.assertTheme("elevated");
         card.assertCssClass("action-card");
 
-        assertThat(card.getContentLocator()).containsText("Awaiting action");
+        assertThat(card.getContentLocator().nth(1)).containsText("Awaiting action");
 
         ButtonElement bookButton = ButtonElement.getByText(card.getLocator(), "Book now");
         bookButton.click();

@@ -80,6 +80,13 @@ public class ComboBoxElement extends VaadinElement
         assertThat(getInputLocator()).hasValue(expected != null ? expected : "");
     }
 
+    @Override
+    public void setValue(String value) {
+        getInputLocator().fill(value);
+        assertThat(getOverlayItem(value)).isVisible();
+        close();
+    }
+
     /**
      * Select an item by its visible label.
      * Opens the overlay, clicks the matching item.
