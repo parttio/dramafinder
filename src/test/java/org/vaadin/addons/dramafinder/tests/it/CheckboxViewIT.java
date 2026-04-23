@@ -40,6 +40,16 @@ public class CheckboxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testIsCheckedSetterAndAssertion() {
+        CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Default Checkbox");
+        checkbox.assertChecked(false);
+        checkbox.isChecked(true);
+        checkbox.assertChecked(true);
+        checkbox.isChecked(false);
+        checkbox.assertChecked(false);
+    }
+
+    @Test
     public void testCheckedCheckbox() {
         CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Checked by default");
         checkbox.assertVisible();
