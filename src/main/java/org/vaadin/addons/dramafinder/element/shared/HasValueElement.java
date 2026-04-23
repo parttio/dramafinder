@@ -25,6 +25,7 @@ public interface HasValueElement extends HasLocatorElement {
     default void setValue(String value) {
         getInputLocator().fill(value);
         getLocator().dispatchEvent("change");
+        waitForVaadinIdle();
     }
 
     /** Clear the input value. */
