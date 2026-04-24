@@ -75,6 +75,19 @@ public class CheckboxElement extends VaadinElement
     }
 
     /**
+     * Assert the checkbox's checked state.
+     *
+     * @param checked expected checked state
+     */
+    public void assertChecked(boolean checked) {
+        if (checked) {
+            assertChecked();
+        } else {
+            assertNotChecked();
+        }
+    }
+
+    /**
      * Check the checkbox.
      */
     public void check() {
@@ -86,6 +99,19 @@ public class CheckboxElement extends VaadinElement
      */
     public void uncheck() {
         getInputLocator().uncheck();
+    }
+
+    /**
+     * Check or uncheck the checkbox.
+     *
+     * @param checked {@code true} to check, {@code false} to uncheck
+     */
+    public void isChecked(boolean checked) {
+        if (checked) {
+            check();
+        } else {
+            uncheck();
+        }
     }
 
     /**
