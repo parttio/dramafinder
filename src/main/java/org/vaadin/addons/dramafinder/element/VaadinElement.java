@@ -92,6 +92,29 @@ public abstract class VaadinElement implements HasLocatorElement {
     }
 
     /**
+     * Whether the component's visibility matches the expected state.
+     *
+     * @param visible expected visibility state
+     * @return {@code true} if the actual state equals {@code visible}
+     */
+    public boolean isVisible(boolean visible) {
+        return isVisible() == visible;
+    }
+
+    /**
+     * Assert the component's visibility state.
+     *
+     * @param visible expected visibility state
+     */
+    public void assertVisible(boolean visible) {
+        if (visible) {
+            assertVisible();
+        } else {
+            assertHidden();
+        }
+    }
+
+    /**
      * Whether the component is hidden.
      *
      * @return {@code true} when hidden

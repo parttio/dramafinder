@@ -19,6 +19,7 @@ public class ButtonView extends Main {
         createBasicButtons();
         createDisabledButton();
         createToggleButton();
+        createVisibilityToggleButton();
         createClickableButton();
         createIconButton();
         createTooltipButton();
@@ -42,6 +43,14 @@ public class ButtonView extends Main {
         Button button = new Button("Toggle Button");
         button.addClickListener(e -> button.setEnabled(!button.isEnabled()));
         addExample("Toggle Button", button);
+    }
+
+    private void createVisibilityToggleButton() {
+        Button target = new Button("Visibility Target Button");
+        Button toggle = new Button("Toggle Visibility Button");
+        toggle.addClickListener(e -> target.setVisible(!target.isVisible()));
+        addExample("Visibility Target Button", target);
+        addExample("Toggle Visibility Button", toggle);
     }
 
     private void createClickableButton() {
