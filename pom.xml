@@ -14,7 +14,7 @@
     <description>Playwright utility classes for Vaadin</description>
 
     <properties>
-        <vaadin.version>25.1.0-beta2</vaadin.version>
+        <vaadin.version>25.1.3</vaadin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8
         </project.reporting.outputEncoding>
@@ -24,7 +24,7 @@
         <github.account>parttio</github.account>
         <github.project>dramafinder</github.project>
         <!-- used for testing -->
-        <spring.boot.version>4.0.3</spring.boot.version>
+        <spring.boot.version>4.0.5</spring.boot.version>
     </properties>
 
     <organization>

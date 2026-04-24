@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
-    String WAIT_FOR_VAADIN_SCRIPT =
+    public static final String WAIT_FOR_VAADIN_SCRIPT =
             // @formatter:off
             "() => {"
             + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
