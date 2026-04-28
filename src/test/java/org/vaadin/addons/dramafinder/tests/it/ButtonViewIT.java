@@ -67,6 +67,22 @@ public class ButtonViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testAssertVisibleWithBoolean() {
+        ButtonElement target = ButtonElement.getByText(page, "Visibility Target Button");
+        ButtonElement toggle = ButtonElement.getByText(page, "Toggle Visibility Button");
+
+        target.assertVisible(true);
+        assertTrue(target.isVisible(true));
+        assertFalse(target.isVisible(false));
+
+        toggle.click();
+
+        target.assertVisible(false);
+        assertTrue(target.isVisible(false));
+        assertFalse(target.isVisible(true));
+    }
+
+    @Test
     public void testClickableButton() {
         ButtonElement button = ButtonElement.getByText(page, "Click me");
         button.click();
