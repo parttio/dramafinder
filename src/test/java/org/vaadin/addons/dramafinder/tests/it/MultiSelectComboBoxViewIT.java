@@ -231,6 +231,16 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testSetFilterReplacesPreviousFilter() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
+        comboBox.setFilter("Apr");
+        comboBox.assertItemCount(1); // Apricot
+        comboBox.setFilter("Ch");
+        comboBox.assertItemCount(1); // Cherry (would be 0 if "AprCh" was appended)
+        comboBox.close();
+    }
+
+    @Test
     public void testLazyMultiSelect() {
         MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");
         comboBox.selectItems("Item 1", "Item 2", "Item 3");
