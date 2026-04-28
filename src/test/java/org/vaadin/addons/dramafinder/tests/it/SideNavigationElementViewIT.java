@@ -23,6 +23,7 @@ public class SideNavigationElementViewIT extends SpringPlaywrightIT implements H
         SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
         nav.assertVisible();
         nav.assertCollapsible();
+
         nav.assertExpanded();
         nav.toggle();
         nav.assertCollapsed();
@@ -124,18 +125,18 @@ public class SideNavigationElementViewIT extends SpringPlaywrightIT implements H
     @Test
     public void testNavigate() {
         SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
-        SideNavigationItemElement reports = nav.getItem("Dashboard");
+        SideNavigationItemElement dashboard = nav.getItem("Dashboard");
         assertThat(page).hasURL(getUrl() + getView());
-        reports.navigate();
-        assertThat(page).not().hasURL(getUrl());
+        dashboard.navigate();
+        assertThat(page).hasURL(getUrl());
     }
 
     @Test
     public void testNavigateOnClick() {
         SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
-        SideNavigationItemElement reports = nav.getItem("Dashboard");
+        SideNavigationItemElement dashboard = nav.getItem("Dashboard");
         assertThat(page).hasURL(getUrl() + getView());
-        reports.click();
-        assertThat(page).not().hasURL(getUrl());
+        dashboard.click();
+        assertThat(page).hasURL(getUrl());
     }
 }
