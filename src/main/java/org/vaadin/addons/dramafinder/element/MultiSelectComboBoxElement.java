@@ -263,7 +263,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * @return the number of visible items
      */
     public int getOverlayItemCount() {
-        return getLocator().page().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])").count();
+        return getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])").count();
     }
 
     /**
@@ -272,7 +272,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * @param expected expected item count
      */
     public void assertItemCount(int expected) {
-        assertThat(getLocator().page().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])")).hasCount(expected);
+        assertThat(getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])")).hasCount(expected);
     }
 
     // ── Chips ──────────────────────────────────────────────────────────
@@ -378,7 +378,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * @return the first matching component inside the item
      */
     public <T extends VaadinElement> T getOverlayItemComponent(int index, Class<T> type) {
-        Locator item = getLocator().page().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])").nth(index);
+        Locator item = getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])").nth(index);
         return createComponent(item, type);
     }
 
@@ -417,7 +417,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
     // ── Internal ───────────────────────────────────────────────────────
 
     private Locator getOverlayItem(String label) {
-        return getLocator().page().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])")
+        return getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])")
                 .filter(new Locator.FilterOptions()
                         .setHasText(label)).first();
     }

@@ -279,6 +279,40 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testOverlayItemQueriesAreScopedToCombobox() {
+        MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        MultiSelectComboBoxElement filterable = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
+
+        fruits.open();
+        filterable.open();
+
+        assertEquals(5, fruits.getOverlayItemCount());
+        assertEquals(9, filterable.getOverlayItemCount());
+
+        fruits.assertItemCount(5);
+        filterable.assertItemCount(9);
+
+        fruits.close();
+        filterable.close();
+
+        filterable.selectItem("Apple");
+        filterable.assertSelectedItems("Apple");
+        fruits.assertSelectedCount(0);
+    }
+
+    @Test
+    public void testGetOverlayItemComponentByIndexIsScopedToCombobox() {
+        MultiSelectComboBoxElement filterable = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
+        MultiSelectComboBoxElement custom = MultiSelectComboBoxElement.getByLabel(page, "Custom renderer");
+
+        filterable.open();
+        custom.open();
+
+        ButtonElement button = custom.getOverlayItemComponent(0, ButtonElement.class);
+        assertThat(button.getLocator()).hasText("Info Apple");
+    }
+
+    @Test
     public void testCustomRendererSelectWithComponent() {
         MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Custom renderer");
         comboBox.selectItem("Cherry");

@@ -279,6 +279,28 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testOverlayItemQueriesAreScopedToCombobox() {
+        ComboBoxElement basic = ComboBoxElement.getByLabel(page, "Sort by");
+        ComboBoxElement filterable = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
+
+        basic.open();
+        filterable.open();
+
+        assertEquals(3, basic.getOverlayItemCount());
+        assertEquals(9, filterable.getOverlayItemCount());
+
+        basic.assertItemCount(3);
+        filterable.assertItemCount(9);
+
+        basic.close();
+        filterable.close();
+
+        basic.selectItem("Most recent first");
+        basic.assertValue("Most recent first");
+        filterable.assertValue("");
+    }
+
+    @Test
     public void testLazyClearAfterValueChange() {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
         comboBox.setValue("Item 101");
