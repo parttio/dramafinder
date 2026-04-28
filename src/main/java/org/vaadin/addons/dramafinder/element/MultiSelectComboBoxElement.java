@@ -156,6 +156,9 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * @param filter the filter text
      */
     public void setFilter(String filter) {
+        // Clear input directly to avoid clear() triggering a server roundtrip
+        // that may restore a non-empty default value.
+        getInputLocator().clear();
         open();
         getInputLocator().pressSequentially(filter);
     }

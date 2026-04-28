@@ -260,6 +260,16 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testSetFilterReplacesPreviousFilter() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
+        comboBox.setFilter("Apr");
+        comboBox.assertItemCount(1); // Apricot
+        comboBox.setFilter("Ch");
+        comboBox.assertItemCount(1); // Cherry (would be 0 if "AprCh" was appended)
+        comboBox.close();
+    }
+
+    @Test
     public void testLazyClearAfterSelection() {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
         comboBox.selectItem("Item 1");
