@@ -4,13 +4,13 @@
       "type": "http",
       "url": "https://mcp.vaadin.com/docs"
     },
-    "dramafinder": {
-      "type": "sse",
-      "url": "http://localhost:8080/sse"
-    },
     "JavaDocs": {
       "type": "http",
       "url": "https://www.javadocs.dev/mcp"
+    },
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "/Users/jean-christophe/.local/bin/codebase-memory-mcp"
     }
   }
 }
