@@ -1,6 +1,9 @@
-# Testing Guidelines
+---
+name: DramaFinder Testing Guidelines
+description: Best practices for writing Playwright integration tests in this project.
+---
 
-This document outlines the best practices for writing integration tests using Playwright in this project. The goal is to create a test suite that is readable, maintainable, and reliable.
+# Testing Guidelines
 
 ## Guiding Principles
 
