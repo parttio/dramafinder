@@ -3,8 +3,6 @@ package org.vaadin.addons.dramafinder.tests.it;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.GridElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -12,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridBasicViewIT extends SpringPlaywrightIT {
 
     @Override

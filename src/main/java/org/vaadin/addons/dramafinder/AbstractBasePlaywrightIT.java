@@ -52,24 +52,21 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
     @AfterAll
     public static void cleanup() {
-        Browser b = browser.get();
-        Playwright p = playwright.get();
-        if (b != null) {
-            b.close();
-            browser.remove();
-        }
-        if (p != null) {
-            p.close();
-            playwright.remove();
-        }
+        // Browser and Playwright are kept alive across test classes and closed by shutdown hook
     }
 
     @BeforeAll
     public static void setup() {
-        Playwright p = Playwright.create();
-        playwright.set(p);
-        browser.set(p.chromium().launch(new LaunchOptions()
-                .setHeadless(isHeadless())));
+        if (browser.get() == null) {
+            Playwright p = Playwright.create();
+            playwright.set(p);
+            Browser b = p.chromium().launch(new LaunchOptions().setHeadless(isHeadless()));
+            browser.set(b);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                b.close();
+                p.close();
+            }));
+        }
     }
 
     protected Page getPage() {
@@ -87,12 +84,10 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     protected void event(Locator locator, String type, Object eventInit,
                          DispatchEventOptions options) {
         locator.nth(0).dispatchEvent(type, eventInit, options);
-        getPage().waitForTimeout(10);
     }
 
     protected void event(Locator locator, String eventName) {
         locator.nth(0).dispatchEvent(eventName);
-        getPage().waitForTimeout(10);
     }
 
     protected void click(Locator locator) {
@@ -100,12 +95,10 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
             locator = locator.nth(0).locator("input");
         }
         locator.nth(0).click();
-        getPage().waitForTimeout(10);
     }
 
     protected void press(Locator locator, String key) {
         locator.nth(0).press(key);
-        getPage().waitForTimeout(10);
     }
 
     protected void fill(Locator locator, String value) {
@@ -114,7 +107,6 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
         }
         locator.nth(0).fill(value);
         locator.nth(0).blur();
-        getPage().waitForTimeout(10);
     }
 
     protected void select(Locator locator, String val) {

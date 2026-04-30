@@ -1,8 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.TreeGridElement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Multi-select tree ({@code "multi-select-tree-grid"}): same data, selection
  * column at DOM index 0, hierarchy column at DOM index 1.
  */
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TreeGridSelectionViewIT extends SpringPlaywrightIT {
 
     @Override

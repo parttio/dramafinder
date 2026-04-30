@@ -1,15 +1,12 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DateTimePickerViewIT extends SpringPlaywrightIT {
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

@@ -3,11 +3,8 @@ package org.vaadin.addons.dramafinder.tests.it;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.GridElement;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridDetailsViewIT extends SpringPlaywrightIT {
 
     @Override

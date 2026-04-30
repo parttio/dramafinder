@@ -6,13 +6,10 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.UploadElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class UploadViewIT extends SpringPlaywrightIT {
 
     @TempDir

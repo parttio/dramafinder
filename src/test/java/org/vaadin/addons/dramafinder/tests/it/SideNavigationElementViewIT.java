@@ -1,8 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.SideNavigationElement;
 import org.vaadin.addons.dramafinder.element.SideNavigationItemElement;
@@ -10,7 +8,6 @@ import org.vaadin.addons.dramafinder.element.SideNavigationItemElement;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class SideNavigationElementViewIT extends SpringPlaywrightIT implements HasTestView {
 
     @Override

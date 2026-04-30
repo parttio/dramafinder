@@ -1,8 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.CheckboxElement;
 import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
@@ -10,7 +8,6 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class CheckboxViewIT extends SpringPlaywrightIT {
 
 

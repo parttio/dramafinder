@@ -2,15 +2,12 @@ package org.vaadin.addons.dramafinder.tests.it;
 
 import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.DialogElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
 
     @Override

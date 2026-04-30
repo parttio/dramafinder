@@ -1,14 +1,11 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.IntegerFieldElement;
 import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class IntegerFieldViewIT extends SpringPlaywrightIT {
 
     @Override

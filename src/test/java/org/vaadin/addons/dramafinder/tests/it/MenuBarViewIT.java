@@ -1,8 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.MenuBarElement;
 import org.vaadin.addons.dramafinder.element.MenuElement;
@@ -11,7 +9,6 @@ import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class MenuBarViewIT extends SpringPlaywrightIT implements HasTestView {
 
     @Override
