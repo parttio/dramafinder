@@ -6,6 +6,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.HasAllowedCharPatternElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasClearButtonElement;
@@ -150,12 +151,7 @@ public class TextFieldElement extends VaadinElement
      */
     public static TextFieldElement getByLabel(Page page, String label) {
         return new TextFieldElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.TEXTBOX,
-                                        new Page.GetByRoleOptions().setName(label))
-                                        .or(page.getByPlaceholder(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
     }
 
     /**
@@ -170,14 +166,8 @@ public class TextFieldElement extends VaadinElement
      * @return the {@code TextFieldElement}
      */
     public static TextFieldElement getByLabel(Locator locator, String label) {
-        Page page = locator.page();
         return new TextFieldElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.TEXTBOX,
-                                        new Page.GetByRoleOptions().setName(label))
-                                        .or(page.getByPlaceholder(label)))
-                        ).first());
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
     }
 
     /**

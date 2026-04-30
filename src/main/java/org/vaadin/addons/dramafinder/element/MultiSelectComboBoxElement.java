@@ -8,6 +8,7 @@ import java.util.List;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAllowedCharPatternElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
@@ -393,11 +394,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
      */
     public static MultiSelectComboBoxElement getByLabel(Page page, String label) {
         return new MultiSelectComboBoxElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.COMBOBOX,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
     }
 
     /**
@@ -409,9 +406,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
      */
     public static MultiSelectComboBoxElement getByLabel(Locator locator, String label) {
         return new MultiSelectComboBoxElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label)))
-                        .first());
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
     }
 
     // ── Internal ───────────────────────────────────────────────────────
