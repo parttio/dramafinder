@@ -6,6 +6,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasInputFieldElement;
@@ -124,19 +125,18 @@ public class SelectElement extends VaadinElement
     }
 
     /**
-     * Get the {@code SelectElement} by its label.
+     * Get the {@code SelectElement} by its accessible name, searching the entire page.
+     * <p>
+     * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
+     * placeholder text (used as a fallback when no label is present).
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the field
+     * @param label the accessible name of the field
      * @return the matching {@code SelectElement}
      */
     public static SelectElement getByLabel(Page page, String label) {
         return new SelectElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.BUTTON,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.BUTTON, label));
     }
 
 }

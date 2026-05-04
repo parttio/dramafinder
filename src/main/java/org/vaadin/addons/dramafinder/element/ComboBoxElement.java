@@ -14,6 +14,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -71,6 +72,7 @@ public class ComboBoxElement extends VaadinElement
     }
 
     /**
+     *
      * Assert that the displayed value equals the expected string.
      *
      * @param expected expected label or empty string for no selection
@@ -237,11 +239,7 @@ public class ComboBoxElement extends VaadinElement
      */
     public static ComboBoxElement getByLabel(Page page, String label) {
         return new ComboBoxElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.COMBOBOX,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
     }
 
     /**
@@ -253,9 +251,7 @@ public class ComboBoxElement extends VaadinElement
      */
     public static ComboBoxElement getByLabel(Locator locator, String label) {
         return new ComboBoxElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label)))
-                        .first());
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
     }
 
     private Locator getOverlayItem(String label) {

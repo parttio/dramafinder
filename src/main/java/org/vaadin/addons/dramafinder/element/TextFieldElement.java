@@ -6,6 +6,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.HasAllowedCharPatternElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasClearButtonElement;
@@ -139,33 +140,34 @@ public class TextFieldElement extends VaadinElement
     }
 
     /**
-     * Get the {@code TextFieldElement} by its label.
+     * Get the {@code TextFieldElement} by its accessible name, searching the entire page.
+     * <p>
+     * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
+     * placeholder text (used as a fallback when no label is present).
      *
      * @param page  the Playwright page
-     * @param label the label of the text field
+     * @param label the accessible name of the text field
      * @return the {@code TextFieldElement}
      */
     public static TextFieldElement getByLabel(Page page, String label) {
         return new TextFieldElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.TEXTBOX,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
     }
 
     /**
-     * Get the {@code TextFieldElement} by its label.
+     * Get the {@code TextFieldElement} by its accessible name, scoped to the given locator.
+     * <p>
+     * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
+     * placeholder text (used as a fallback when no label is present). Only fields within
+     * the subtree of the provided locator are considered.
      *
-     * @param locator the locator to search within
-     * @param label   the label of the text field
+     * @param locator the locator defining the search scope
+     * @param label   the accessible name of the text field
      * @return the {@code TextFieldElement}
      */
     public static TextFieldElement getByLabel(Locator locator, String label) {
         return new TextFieldElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label))
-                        ).first());
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
     }
 
     /**

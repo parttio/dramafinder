@@ -1,0 +1,153 @@
+---
+name: vaadin-playwright-test
+description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library. Use when the user wants to write IT tests for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.
+---
+
+# Vaadin Playwright Test Generator (DramaFinder)
+
+You are helping the user write Playwright-based integration tests for a Vaadin 25 application using the [DramaFinder](https://github.com/vaadin/dramafinder) library, which provides typed `*Element` wrappers around Vaadin web components.
+
+## Best practices
+
+Always follow the guidelines in [@TESTING.md](TESTING.md) when generating tests. Key rules:
+
+- **One test, one assert** — each test method covers a single piece of functionality
+- **Independent tests** — no shared state between tests; use `@BeforeEach`/`@AfterEach` for setup
+- **Descriptive names** — test names must describe what is being tested without reading the body
+- **User-facing locators** — prefer label, `aria-label`, `aria-role`, or `data-testid` over CSS classes or generated IDs
+- **DramaFinder elements for all interactions** — never interact with raw locators when a wrapper exists
+- **No `Thread.sleep()`** — use Playwright auto-waiting or `waitFor` methods instead
+- **Assert on user-visible state** — check visibility, text, or enabled/disabled, not internal CSS or component state
+
+## Step 1 — Assess project state
+
+Run these checks in parallel before doing anything else:
+
+1. **DramaFinder on classpath?** — grep `pom.xml` for `dramafinder` or `org.vaadin.addons`
+2. **Spring Boot app?** — grep `pom.xml` for `spring-boot-starter` or `vaadin-spring-boot-starter`
+3. **Existing IT tests?** — look for `*IT.java` files under `src/test/java`
+
+### DramaFinder not found
+
+Show the user this message and stop:
+
+> DramaFinder is not on the classpath. Follow the [setup guide](setup.md) to add the required dependencies, then come back to generate tests.
+
+### DramaFinder found — follow existing patterns
+
+If existing `*IT.java` files are found, read one or two of them to understand the project's conventions (base class, package structure, assertion style, helper methods). Use those as the template for generated tests.
+
+If no existing IT tests exist, use the default structure in Step 3.
+
+## Step 2 — Map view components to DramaFinder elements
+
+Read the target view source provided by the user. Extract:
+
+- `@Route("value")` → URL path (default: class name lowercased, stripped of "View" suffix)
+- `@PageTitle("...")` → expected page title
+- All Vaadin component field declarations and `add(...)` calls → map to DramaFinder elements
+
+See [element-mapping.md](element-mapping.md) for the full component → element class table. Each element also has detailed documentation with examples in the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
+
+For components with **no DramaFinder wrapper**, use a plain Playwright locator. For more complex needs, you can create your own element class extending `VaadinElement`, or [open an issue](https://github.com/vaadin/dramafinder/issues) in the DramaFinder repository to request one.
+
+## Step 3 — Generate the test class
+
+### Default structure (no existing tests to mirror)
+
+```java
+package <same.package.as.view>; // mirror src/test/java structure
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.vaadin.addons.dramafinder.element.TextFieldElement; // import only used elements
+import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT; // or AbstractBasePlaywrightIT
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // omit if not Spring Boot
+public class <ViewName>IT extends SpringPlaywrightIT { // or AbstractBasePlaywrightIT
+
+    @Override
+    public String getView() {
+        return "/<route-path>";
+    }
+
+    @Test
+    public void testTitle() {
+        assertThat(page).hasTitle("<PageTitle value>");
+    }
+
+    // ... component tests below
+}
+```
+
+Use `SpringPlaywrightIT` if Spring Boot is detected, `AbstractBasePlaywrightIT` otherwise.
+
+### Component test patterns
+
+**Smoke test (one per component):**
+
+```java
+@Test
+public void test<ComponentLabel>() {
+    TextFieldElement field = TextFieldElement.getByLabel(page, "My Label");
+    field.assertVisible();
+    field.assertLabel("My Label");
+    field.assertValue("");
+    field.setValue("test value");
+    field.assertValue("test value");
+}
+```
+
+**Form with validation:**
+
+```java
+@Test
+public void testFormSubmitWithInvalidInput() {
+    TextFieldElement nameField = TextFieldElement.getByLabel(page, "Name");
+    ButtonElement submitBtn = ButtonElement.getByText(page, "Save");
+    nameField.setValue("");
+    submitBtn.click();
+    nameField.assertInvalid();
+    nameField.assertErrorMessage("Field is required");
+}
+
+@Test
+public void testFormSubmitWithValidInput() {
+    TextFieldElement nameField = TextFieldElement.getByLabel(page, "Name");
+    ButtonElement submitBtn = ButtonElement.getByText(page, "Save");
+    nameField.setValue("Jane Doe");
+    submitBtn.click();
+    nameField.assertValid();
+}
+```
+
+**Grid data loading:**
+
+```java
+@Test
+public void testGridLoadsData() {
+    GridElement grid = GridElement.get(page);
+    grid.assertRowCount(10); // adjust to expected count
+    grid.assertCellContent(0, 0, "Expected cell value");
+}
+```
+
+## Step 4 — Show generated test, then confirm before writing
+
+Display the full generated test class in a code block. Then ask:
+
+> Shall I write this to `src/test/java/<package>/<ViewName>IT.java`?
+
+Only write the file after explicit confirmation. Place it in `src/test/java` mirroring the view's package under `src/main/java`.
+
+## Step 5 — Offer to run the test
+
+After writing, ask:
+
+> Do you want me to run this test now with `mvn verify -Dit.test=<ViewName>IT`?
+
+**Warn the user**: the first Vaadin frontend build takes 3–5 minutes. Subsequent runs are ~25 seconds.

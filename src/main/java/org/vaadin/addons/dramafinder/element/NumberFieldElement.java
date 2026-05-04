@@ -3,6 +3,7 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.utils.NumberUtils;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -135,11 +136,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
      */
     public static NumberFieldElement getByLabel(Page page, String label) {
         return new NumberFieldElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.SPINBUTTON,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.SPINBUTTON, label));
     }
 
     /**
@@ -153,8 +150,6 @@ public class NumberFieldElement extends AbstractNumberFieldElement {
      */
     public static NumberFieldElement getByLabel(Locator locator, String label) {
         return new NumberFieldElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHas(locator.getByLabel(label)))
-                        .first());
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.SPINBUTTON, label));
     }
 }

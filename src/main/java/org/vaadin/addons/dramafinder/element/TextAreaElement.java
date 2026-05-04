@@ -3,6 +3,7 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 
 /**
  * PlaywrightElement for {@code <vaadin-text-area>}.
@@ -31,18 +32,17 @@ public class TextAreaElement extends TextFieldElement {
     }
 
     /**
-     * Get the {@code TextAreaElement} by its label.
+     * Get the {@code TextAreaElement} by its accessible name, searching the entire page.
+     * <p>
+     * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
+     * placeholder text (used as a fallback when no label is present).
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the text area
+     * @param label the accessible name of the text area
      * @return the matching {@code TextAreaElement}
      */
     public static TextAreaElement getByLabel(Page page, String label) {
         return new TextAreaElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.TEXTBOX,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
     }
 }
