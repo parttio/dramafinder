@@ -11,6 +11,14 @@
     "codebase-memory-mcp": {
       "type": "stdio",
       "command": "/Users/jean-christophe/.local/bin/codebase-memory-mcp"
+    },
+    "tessl": {
+      "type": "stdio",
+      "command": "tessl",
+      "args": [
+        "mcp",
+        "start"
+      ]
     }
   }
 }
