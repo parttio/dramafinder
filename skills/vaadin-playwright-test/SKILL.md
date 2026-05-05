@@ -19,21 +19,42 @@ Always follow the guidelines in [@TESTING.md](TESTING.md) when generating tests.
 
 Run these checks in parallel before doing anything else:
 
-1. **DramaFinder on classpath?** — grep `pom.xml` for `dramafinder` or `org.vaadin.addons`
-2. **Spring Boot app?** — grep `pom.xml` for `spring-boot-starter` or `vaadin-spring-boot-starter`
-3. **Existing IT tests?** — look for `*IT.java` files under `src/test/java`
+1. **DramaFinder on classpath?** — grep `pom.xml` for `<artifactId>dramafinder</artifactId>`.
+2. **Spring Boot app?** — grep `pom.xml` for `spring-boot-starter`.
+3. **Existing IT tests?** — look for `*IT.java` files under `src/test/java`.
+4. **`SpringPlaywrightIT` already in project?** — `find src/test/java -name SpringPlaywrightIT.java`.
 
-### DramaFinder not found
+### DramaFinder not found — propose setup, then run it
 
-Show the user this message and stop:
+Resolve the latest version (Step 1 of [setup.md](setup.md)) so you can show a concrete version number, then propose a single confirmation:
 
-> DramaFinder is not on the classpath. Follow the [setup guide](setup.md) to add the required dependencies, then come back to generate tests.
+**Spring Boot project:**
+
+> DramaFinder isn't on the classpath. To generate this test, I need to:
+> 1. Add `org.vaadin.addons:dramafinder:<VERSION>` and `com.microsoft.playwright:playwright` (test scope) to `pom.xml`, with `<dramafinder.version>` in `<properties>`.
+> 2. Create `src/test/java/<basePackage>/it/support/SpringPlaywrightIT.java`.
+>
+> Proceed?
+
+**Non-Spring project:**
+
+> DramaFinder isn't on the classpath. To generate this test, I need to add `org.vaadin.addons:dramafinder:<VERSION>` and `com.microsoft.playwright:playwright` (test scope) to `pom.xml`, with `<dramafinder.version>` in `<properties>`. Proceed?
+
+On confirmation, execute [setup.md](setup.md) end-to-end, then continue with Step 2.
 
 ### DramaFinder found — follow existing patterns
 
 If existing `*IT.java` files are found, read one or two of them to understand the project's conventions (base class, package structure, assertion style, helper methods). Use those as the template for generated tests.
 
 If no existing IT tests exist, use the default structure in Step 3.
+
+### `SpringPlaywrightIT` location
+
+When generating a Spring Boot test, the import for `SpringPlaywrightIT` must match wherever the file actually lives in the user's `src/test/java`:
+
+- 1 hit from the `find` above → use that fully-qualified class name as the import.
+- 0 hits + Spring Boot detected → run setup (it will create the file).
+- More than 1 hit → ask the user which one to use.
 
 ## Step 2 — Map view components to DramaFinder elements
 
@@ -58,7 +79,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.TextFieldElement; // import only used elements
-import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT; // or AbstractBasePlaywrightIT
+import <basePackage>.it.support.SpringPlaywrightIT; // Spring projects: actual location from Step 1
+// import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT; // non-Spring projects
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
