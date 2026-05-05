@@ -1,19 +1,15 @@
 ---
 name: vaadin-playwright-test
-description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library. Use when the user wants to write IT tests for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.
+description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library, including element interaction, form validation, grid assertions, and navigation checks. Use when the user wants to write IT tests for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.
 ---
 
 # Vaadin Playwright Test Generator (DramaFinder)
-
-You are helping the user write Playwright-based integration tests for a Vaadin 25 application using the [DramaFinder](https://github.com/vaadin/dramafinder) library, which provides typed `*Element` wrappers around Vaadin web components.
 
 ## Best practices
 
 Always follow the guidelines in [@TESTING.md](TESTING.md) when generating tests. Key rules:
 
 - **One test, one assert** — each test method covers a single piece of functionality
-- **Independent tests** — no shared state between tests; use `@BeforeEach`/`@AfterEach` for setup
-- **Descriptive names** — test names must describe what is being tested without reading the body
 - **User-facing locators** — prefer label, `aria-label`, `aria-role`, or `data-testid` over CSS classes or generated IDs
 - **DramaFinder elements for all interactions** — never interact with raw locators when a wrapper exists
 - **No `Thread.sleep()`** — use Playwright auto-waiting or `waitFor` methods instead
