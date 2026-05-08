@@ -1,82 +1,86 @@
 ---
 name: DramaFinder Setup
-description: How to add DramaFinder and Playwright to a Vaadin 25 Spring Boot project.
+description: Runbook for adding DramaFinder + Playwright to a Vaadin 25 project. Executed by Claude after the user confirms the setup plan.
 ---
 
-# Setting Up DramaFinder in Your Vaadin Project
+# DramaFinder Setup Runbook
 
-## 1. Add dependencies to `pom.xml`
+This file is a runbook for Claude to execute after the user confirms the setup plan in SKILL.md Step 1. Do not relay it to the user as documentation — perform the steps.
+
+## Constants
+
+- `KNOWN_LATEST = 1.1.1` — fallback version if Maven Central lookup fails. Bump when the library releases.
+
+## Step 1 — Resolve the latest version
+
+Run:
+
+```bash
+curl -s "https://repo1.maven.org/maven2/org/vaadin/addons/dramafinder/maven-metadata.xml" \
+  | grep -o '<release>[^<]*</release>' | sed 's/<[^>]*>//g'
+```
+
+If the command returns a non-empty version string, use it. Otherwise, use `KNOWN_LATEST`.
+
+## Step 2 — Edit `pom.xml`
+
+Two edits, both in `pom.xml`:
+
+### 2a. Add the version property
+
+Inside `<properties>`, add:
 
 ```xml
-<!-- Playwright runtime -->
+<dramafinder.version>RESOLVED_VERSION</dramafinder.version>
+```
+
+Replace `RESOLVED_VERSION` with the value from Step 1. If a `<dramafinder.version>` property already exists, leave it alone.
+
+### 2b. Add the dependencies
+
+Inside `<dependencies>`, add (skip whichever is already present):
+
+```xml
 <dependency>
     <groupId>com.microsoft.playwright</groupId>
     <artifactId>playwright</artifactId>
     <scope>test</scope>
 </dependency>
 
-<!-- DramaFinder element wrappers -->
 <dependency>
-    <groupId>org.vaadin.addons.dramafinder</groupId>
+    <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
-    <version>LATEST</version>
+    <version>${dramafinder.version}</version>
     <scope>test</scope>
 </dependency>
 ```
 
-Check the latest version at [GitHub releases](https://github.com/vaadin/dramafinder/releases).
+Note the groupId is `org.vaadin.addons` (not `org.vaadin.addons.dramafinder`).
 
-## 2. Base test class
+## Step 3 — Copy `SpringPlaywrightIT` (Spring Boot projects only)
 
-All IT tests extend `SpringPlaywrightIT` (Spring Boot) or `AbstractBasePlaywrightIT` (plain):
+Skip this step entirely if the project is not a Spring Boot project.
 
-```java
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class MyViewIT extends SpringPlaywrightIT {
+If `find src/test/java -name SpringPlaywrightIT.java` already returns a result, skip — the file exists and will be used as-is.
 
-    @Override
-    public String getView() {
-        return "/my-route";
-    }
+Otherwise:
 
-    @Test
-    public void testTitle() {
-        assertThat(page).hasTitle("Expected Title");
-    }
-}
-```
+1. **Find the base package** by locating the class annotated with `@SpringBootApplication` under `src/main/java`. Take its package (e.g., `com.example.app`).
+2. **Target package** is `<basePackage>.it.support` (e.g., `com.example.app.it.support`).
+3. **Read** `templates/SpringPlaywrightIT.java.tmpl` from this skill directory.
+4. **Substitute** `{{PACKAGE}}` with the target package.
+5. **Write** the result to `src/test/java/<basePackage-as-path>/it/support/SpringPlaywrightIT.java`.
 
-## 3. Run tests
+## Step 4 — Confirm dependencies resolve
 
-```bash
-# Run all IT tests
-mvn verify
+Optional but recommended: run `mvn -q dependency:resolve` to surface any pom syntax errors before generating tests. Skip if the user wants to proceed without compile-time verification.
 
-# Run a specific IT test
-mvn verify -Dit.test=MyViewIT
-```
+## Debugging with a visible browser (informational)
 
-> **Note:** The first Vaadin frontend build takes 3–5 minutes. Subsequent runs take ~25 seconds.
-
-## 4. Debugging with a visible browser
-
-To disable headless mode and watch the browser during a test run, use the `headless` property or add a `debug-ui` profile:
+To run tests with a visible browser, pass `-Dheadless=false`:
 
 ```bash
-# Via system property
 mvn -Dit.test=MyViewIT -Dheadless=false verify
-
-# Via profile (if added to pom.xml)
-mvn -Pdebug-ui -Dit.test=MyViewIT verify
 ```
 
-Add this profile to your `pom.xml` to enable the `-Pdebug-ui` shorthand:
-
-```xml
-<profile>
-    <id>debug-ui</id>
-    <properties>
-        <headless>false</headless>
-    </properties>
-</profile>
-```
+A `debug-ui` profile can be added to `pom.xml` for shorthand `-Pdebug-ui`. Mention this only if the user asks about debugging.
