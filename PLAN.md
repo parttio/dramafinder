@@ -30,33 +30,33 @@ flowchart LR
     SKILL["SKILL.md<br/>(source of truth)"]
     DATASET["dataset items<br/>(TypeScript)"]
     HARNESS["harness.ts<br/>builds system prompt"]
-
+ 
     SKILL --> HARNESS
     DATASET --> HARNESS
-
-    HARNESS --> WITH["call Claude<br/>WITH skill in prompt"]
-    HARNESS --> WITHOUT["call Claude<br/>WITHOUT skill"]
-
-    WITH --> COMP1["completion A"]
-    WITHOUT --> COMP2["completion B"]
-
+ 
+    HARNESS --> CALL_WITH["call Claude<br/>WITH skill in prompt"]
+    HARNESS --> CALL_WITHOUT["call Claude<br/>WITHOUT skill"]
+ 
+    CALL_WITH --> COMP1["completion A"]
+    CALL_WITHOUT --> COMP2["completion B"]
+ 
     COMP1 --> RUBRIC["rubric.ts<br/>deterministic checks"]
     COMP1 --> JUDGE["judge.ts<br/>Haiku LLM judge"]
     COMP2 --> RUBRIC
     COMP2 --> JUDGE
-
+ 
     RUBRIC --> LF["Langfuse<br/>traces + scores"]
     JUDGE --> LF
-
-    LF --> COMPARE["compare view:<br/>lift = with − without"]
-
+ 
+    LF --> COMPARE["compare view:<br/>lift = score(with) - score(without)"]
+ 
     classDef src fill:#dbeafe,stroke:#1e40af,color:#1e3a8a
     classDef code fill:#fef3c7,stroke:#a16207,color:#713f12
-    classDef call fill:#fce7f3,stroke:#9d174d,color:#831843
+    classDef apicall fill:#fce7f3,stroke:#9d174d,color:#831843
     classDef out fill:#d1fae5,stroke:#065f46,color:#064e3b
     class SKILL,DATASET src
     class HARNESS,RUBRIC,JUDGE code
-    class WITH,WITHOUT call
+    class CALL_WITH,CALL_WITHOUT apicall
     class COMP1,COMP2,LF,COMPARE out
 ```
 
