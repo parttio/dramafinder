@@ -18,6 +18,7 @@ public class NotificationView extends Main {
     public NotificationView() {
         createBasicExample();
         createComponentExample();
+        createMultipleExample();
     }
 
     private void createBasicExample() {
@@ -40,6 +41,18 @@ public class NotificationView extends Main {
         addExample("Notification component example", openNotificationButton);
     }
 
+
+    private void createMultipleExample() {
+        Button openNotificationsButton = new Button("Show multiple notifications", e -> {
+            Notification first = new Notification("First notification");
+            first.setDuration(0);
+            first.open();
+            Notification second = new Notification("Second notification");
+            second.setDuration(0);
+            second.open();
+        });
+        addExample("Multiple notifications example", openNotificationsButton);
+    }
 
     private void addExample(String title, Component component) {
         add(new H2(title), component);

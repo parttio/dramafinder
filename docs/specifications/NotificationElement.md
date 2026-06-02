@@ -46,6 +46,14 @@ NotificationElement(Locator locator)
 
 Creates a `NotificationElement` from an existing locator.
 
+The constructor scopes its locator to open cards only (`vaadin-notification-card[slot]`), so closed and never-opened cards are excluded. It targets the single open notification; when several are open at once, use `getByText` to disambiguate.
+
+### Factory Methods
+
+| Method | Description |
+|--------|-------------|
+| `getByText(Page page, String text)` | Get an open notification by (a substring of) its text |
+
 ### State Methods
 
 | Method | Description |
@@ -64,7 +72,7 @@ Creates a `NotificationElement` from an existing locator.
 |--------|-------------|
 | `assertOpen()` | Assert that notification is visible |
 | `assertClosed()` | Assert that notification is hidden |
-| `assertContent(String content)` | Assert notification contains exact text |
+| `assertContent(String content)` | Assert notification contains the given text (substring) |
 
 ## Usage Examples
 
@@ -87,13 +95,13 @@ notification.assertContent("Changes saved successfully");
 NotificationElement notification = new NotificationElement(page);
 
 // Check for success theme
-notification.assertHasTheme("success");
+notification.assertTheme("success");
 
 // Check for error theme
-notification.assertHasTheme("error");
+notification.assertTheme("error");
 
 // Check for warning theme
-notification.assertHasTheme("warning");
+notification.assertTheme("warning");
 ```
 
 ### Waiting for Notification to Close
@@ -109,12 +117,10 @@ notification.assertClosed();
 ### Multiple Notifications
 
 ```java
-// Get specific notification by content
-Locator notifications = page.locator("vaadin-notification-card");
-NotificationElement errorNotification = new NotificationElement(
-    notifications.filter(new Locator.FilterOptions().setHasText("Error"))
-);
+// Get a specific open notification by its text
+NotificationElement errorNotification = NotificationElement.getByText(page, "Error");
 errorNotification.assertOpen();
+errorNotification.assertContent("Error");
 ```
 
 ## Related Elements

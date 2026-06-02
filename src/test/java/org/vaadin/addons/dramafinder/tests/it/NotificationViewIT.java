@@ -44,6 +44,30 @@ public class NotificationViewIT extends SpringPlaywrightIT implements HasTestVie
 
 
     @Test
+    public void testAssertContent() {
+        ButtonElement openNotificationButton = ButtonElement.getByText(page, "Show notification");
+        openNotificationButton.click();
+
+        NotificationElement notification = new NotificationElement(page);
+        notification.assertOpen();
+        notification.assertContent("This is a notification.");
+    }
+
+    @Test
+    public void testGetByTextWithMultipleOpen() {
+        ButtonElement openNotificationsButton = ButtonElement.getByText(page, "Show multiple notifications");
+        openNotificationsButton.click();
+
+        NotificationElement first = NotificationElement.getByText(page, "First notification");
+        first.assertOpen();
+        first.assertContent("First notification");
+
+        NotificationElement second = NotificationElement.getByText(page, "Second notification");
+        second.assertOpen();
+        second.assertContent("Second notification");
+    }
+
+    @Test
     public void testHasClass() {
         ButtonElement openNotificationButton = ButtonElement.getByText(page, "Show component notification");
         openNotificationButton.click();
