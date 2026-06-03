@@ -105,4 +105,45 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
         assertTrue(row2.isSelected());
         assertFalse(row3.isSelected());
     }
+
+    // ── Assertions ─────────────────────────────────────────────────────
+
+    @Test
+    public void testAssertRowSelected() {
+        GridElement grid = GridElement.getById(page, "single-select-grid");
+        var row = grid.findRow(0).get();
+
+        grid.assertRowNotSelected(0);
+        row.select();
+        grid.assertRowSelected(0);
+        grid.assertSelectedItemCount(1);
+    }
+
+    @Test
+    public void testRowElementAssertSelected() {
+        GridElement grid = GridElement.getById(page, "single-select-grid");
+        var row = grid.findRow(0).get();
+
+        row.assertNotSelected();
+        row.select();
+        row.assertSelected();
+    }
+
+    @Test
+    public void testAssertSelectAll() {
+        GridElement grid = GridElement.getById(page, "multi-select-grid");
+
+        grid.assertSelectAllUnchecked();
+
+        grid.findRow(0).get().select();
+        grid.assertSelectAllIndeterminate();
+
+        grid.checkSelectAll();
+        grid.assertSelectAllChecked();
+        grid.assertSelectedItemCount(20);
+
+        grid.uncheckSelectAll();
+        grid.assertSelectAllUnchecked();
+        grid.assertSelectedItemCount(0);
+    }
 }

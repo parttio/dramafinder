@@ -54,6 +54,7 @@ public class GridBasicView extends Main {
         grid.addColumn(GridPerson::email).setHeader("Email");
         grid.setItems(generatePersons(5));
         grid.setAllRowsVisible(true);
+        grid.setColumnReorderingAllowed(true);
         add(new H2("All Rows Visible Grid"), grid);
     }
 
