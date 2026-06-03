@@ -74,4 +74,30 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "sortable-grid");
         assertEquals(true, grid.isMultiSort());
     }
+
+    // ── Assertions ─────────────────────────────────────────────────────
+
+    @Test
+    public void testAssertSortDirections() {
+        GridElement grid = GridElement.getById(page, "sortable-grid");
+        var headerCell = grid.findHeaderCell(0).get();
+
+        headerCell.assertSortable();
+        headerCell.assertNotSorted();
+
+        headerCell.clickSort();
+        headerCell.assertSortAscending();
+
+        headerCell.clickSort();
+        headerCell.assertSortDescending();
+
+        headerCell.clickSort();
+        headerCell.assertNotSorted();
+    }
+
+    @Test
+    public void testAssertMultiSort() {
+        GridElement grid = GridElement.getById(page, "sortable-grid");
+        grid.assertMultiSort();
+    }
 }

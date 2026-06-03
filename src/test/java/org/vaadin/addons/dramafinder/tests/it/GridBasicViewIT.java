@@ -189,4 +189,124 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         assertEquals(1, secondHeaderCell.get().getColumnIndex());
         assertEquals(2, thirdHeaderCell.get().getColumnIndex());
     }
+
+    // ── Assertions ─────────────────────────────────────────────────────
+
+    @Test
+    public void testAssertRowCount() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertRowCount(100);
+    }
+
+    @Test
+    public void testAssertEmpty() {
+        GridElement grid = GridElement.getById(page, "empty-grid");
+        grid.assertEmpty();
+    }
+
+    @Test
+    public void testAssertColumnCount() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertColumnCount(3);
+    }
+
+    @Test
+    public void testAssertAllRowsVisible() {
+        GridElement grid = GridElement.getById(page, "all-rows-visible-grid");
+        grid.assertAllRowsVisible();
+    }
+
+    @Test
+    public void testAssertNotAllRowsVisible() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertNotAllRowsVisible();
+    }
+
+    @Test
+    public void testAssertNotMultiSort() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertNotMultiSort();
+    }
+
+    @Test
+    public void testAssertColumnReorderingAllowed() {
+        GridElement grid = GridElement.getById(page, "all-rows-visible-grid");
+        grid.assertColumnReorderingAllowed();
+    }
+
+    @Test
+    public void testAssertColumnReorderingNotAllowed() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertColumnReorderingNotAllowed();
+    }
+
+    @Test
+    public void testAssertCellContentByIndex() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertCellContent(0, 0, "First1");
+        grid.assertCellContent(0, 1, "Last1");
+        grid.assertCellContent(0, 2, "person1@example.com");
+    }
+
+    @Test
+    public void testAssertCellContentByHeaderText() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertCellContent(0, "First Name", "First1");
+        grid.assertCellContent(0, "Last Name", "Last1");
+        grid.assertCellContent(0, "Email", "person1@example.com");
+    }
+
+    @Test
+    public void testAssertCellPresent() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertCellPresent(0, 0);
+        grid.assertCellNotPresent(0, 3);
+    }
+
+    @Test
+    public void testAssertHeaderCellContents() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertHeaderCellContents("First Name", "Last Name", "Email");
+    }
+
+    @Test
+    public void testAssertHeaderCell() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertHeaderCell(0, "First Name");
+        grid.assertHeaderCell(2, "Email");
+    }
+
+    @Test
+    public void testAssertColumnPresent() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertColumnPresent("Email");
+        grid.assertColumnNotPresent("Phone");
+    }
+
+    @Test
+    public void testAssertHeaderNotSortable() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.findHeaderCell(0).get().assertNotSortable();
+    }
+
+    @Test
+    public void testAssertRowPresent() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertRowPresent(0);
+        grid.assertRowPresent(99);
+        grid.assertRowNotPresent(100);
+    }
+
+    @Test
+    public void testAssertRowInView() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertRowInView(0);
+        grid.assertRowNotInView(99);
+    }
+
+    @Test
+    public void testAssertRowIndexesWithColumnText() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        grid.assertRowIndexesWithColumnText(0, "First1", 0);
+    }
 }

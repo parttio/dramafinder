@@ -64,4 +64,22 @@ public class GridDetailsViewIT extends SpringPlaywrightIT {
         // Row 0 details are closed because selection moved
         assertFalse(row.get().isDetailsOpen());
     }
+
+    // ── Assertions ─────────────────────────────────────────────────────
+
+    @Test
+    public void testAssertDetailsOpenAndClosed() {
+        GridElement grid = GridElement.getById(page, "details-grid");
+
+        grid.assertDetailsClosed(0);
+
+        var row = grid.findRow(0).get();
+        row.openDetails();
+        grid.assertDetailsOpen(0);
+        row.assertDetailsOpen();
+
+        row.closeDetails();
+        grid.assertDetailsClosed(0);
+        row.assertDetailsClosed();
+    }
 }
