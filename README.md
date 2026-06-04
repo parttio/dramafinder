@@ -1,5 +1,9 @@
 # Drama Finder
 
+## Documentation
+
+The documentation can be found in this repository and also deployed on https://parttio-dramafinder.mintlify.app/ if you find some errors please file an issue.
+
 ## Usage
 
 Drama Finder is a set of helper classes to test a Vaadin application using
