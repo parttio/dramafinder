@@ -44,6 +44,106 @@ public void testHelper() {
 
 ```
 
+## Getting started
+
+Add the addon as a test dependency.
+
+```xml
+
+<dependency>
+    <groupId>org.vaadin.addons</groupId>
+    <artifactId>dramafinder</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+```
+
+The Drama Finder element classes are built around a plain Playwright `Page`
+(or `Locator`). They have no dependency on any particular test base class, so
+you can use them with whatever Playwright setup you already have. Just hand a
+`Page` to the factory helpers (e.g. `getByLabel`) or to an element constructor.
+
+The simplest way to get started is to let Spring Boot start the server for you
+with `@SpringBootTest(webEnvironment = RANDOM_PORT)` and manage the Playwright
+`Page` yourself:
+
+```java
+
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class SimpleExampleViewIT {
+
+    @LocalServerPort
+    private int port;
+
+    Playwright playwright;
+    Browser browser;
+    Page page;
+
+    @BeforeEach
+    public void setup() {
+        playwright = Playwright.create();
+        browser = playwright.chromium().launch();
+        page = browser.newPage();
+        page.navigate(String.format("http://localhost:%d/", port));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        browser.close();
+        playwright.close();
+    }
+
+    @Test
+    public void testTooltip() {
+        // The only thing the element API needs is a Playwright Page
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
+        textfield.assertVisible();
+        textfield.assertTooltipHasText("Tooltip for textfield");
+    }
+}
+```
+
+Letting `@SpringBootTest` start the server is not the only option. You can also
+write the tests as plain integration tests (e.g. classes ending in `IT.java`
+run by the `maven-failsafe-plugin`) and start/stop the server separately with
+Maven — for example using the `spring-boot:start` and `spring-boot:stop` goals
+bound to the `pre-integration-test` / `post-integration-test` phases — before
+the ITs execute. In that case the test simply navigates to the externally
+started server's URL. Either way, the element API only ever needs a Playwright
+`Page`, so you are free to obtain it however suits your project.
+
+### Optional: `AbstractBasePlaywrightIT` convenience base class
+
+If you don't already have a Playwright setup, Drama Finder ships an optional
+`AbstractBasePlaywrightIT` base class that handles the boilerplate for you:
+creating and closing the `Playwright`/`Browser`, opening a fresh `page` and
+navigating to your view before each test, waiting for Vaadin to finish loading,
+sensible default timeouts, and headless toggling (via the `headless` system
+property or `HEADLESS` environment variable). Extending it is purely a
+convenience — it is never required to use the element API.
+
+```java
+
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class SimpleExampleViewIT extends AbstractBasePlaywrightIT {
+
+    @LocalServerPort
+    private int port;
+
+    @Override
+    public String getUrl() {
+        return String.format("http://localhost:%d/", port);
+    }
+
+    @Test
+    public void testTooltip() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
+        textfield.assertVisible();
+        textfield.assertTooltipHasText("Tooltip for textfield");
+    }
+}
+```
+
 ## Note
 
 The API is in early stage of development.
@@ -131,44 +231,6 @@ You will need to add the profile in your pom.xml:
     </properties>
 </profile>
 
-```
-
-## How to use it
-
-Add the addon as a test dependency.
-
-```xml
-
-<dependency>
-    <groupId>org.vaadin.addons</groupId>
-    <artifactId>dramafinder</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <scope>test</scope>
-</dependency>
-```
-
-With Spring Boot you can create a simple test:
-
-```java
-
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class SimpleExampleViewIT extends AbstractBasePlaywrightIT {
-
-    @LocalServerPort
-    private int port;
-
-    @Override
-    public String getUrl() {
-        return String.format("http://localhost:%d/", port);
-    }
-
-    @Test
-    public void testTooltip() {
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-        textfield.assertVisible();
-        textfield.assertTooltipHasText("Tooltip for textfield");
-    }
-}
 ```
 
 ## Cutting a release
