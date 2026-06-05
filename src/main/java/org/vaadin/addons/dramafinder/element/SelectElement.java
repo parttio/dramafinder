@@ -139,4 +139,19 @@ public class SelectElement extends VaadinElement
                 AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.BUTTON, label));
     }
 
+    /**
+     * Get the {@code SelectElement} by its accessible name within a given scope.
+     * <p>
+     * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
+     * placeholder text (used as a fallback when no label is present).
+     *
+     * @param locator the locator to search within
+     * @param label   the accessible name of the field
+     * @return the matching {@code SelectElement}
+     */
+    public static SelectElement getByLabel(Locator locator, String label) {
+        return new SelectElement(
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.BUTTON, label));
+    }
+
 }
