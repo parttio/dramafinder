@@ -45,4 +45,20 @@ public class TextAreaElement extends TextFieldElement {
         return new TextAreaElement(
                 AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
     }
+
+    /**
+     * Get the {@code TextAreaElement} by its accessible name, scoped to the given locator.
+     * <p>
+     * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
+     * placeholder text (used as a fallback when no label is present). Only fields within
+     * the subtree of the provided locator are considered.
+     *
+     * @param locator the locator defining the search scope
+     * @param label   the accessible name of the text area
+     * @return the matching {@code TextAreaElement}
+     */
+    public static TextAreaElement getByLabel(Locator locator, String label) {
+        return new TextAreaElement(
+                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
+    }
 }
