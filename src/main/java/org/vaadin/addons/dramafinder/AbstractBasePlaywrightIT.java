@@ -2,8 +2,6 @@ package org.vaadin.addons.dramafinder;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Locator.DispatchEventOptions;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterAll;
@@ -82,43 +80,6 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
 
     protected Playwright getPlaywright() {
         return playwright.get();
-    }
-
-    protected void event(Locator locator, String type, Object eventInit,
-                         DispatchEventOptions options) {
-        locator.nth(0).dispatchEvent(type, eventInit, options);
-        getPage().waitForTimeout(10);
-    }
-
-    protected void event(Locator locator, String eventName) {
-        locator.nth(0).dispatchEvent(eventName);
-        getPage().waitForTimeout(10);
-    }
-
-    protected void click(Locator locator) {
-        if (!locator.nth(0).locator("input").all().isEmpty()) {
-            locator = locator.nth(0).locator("input");
-        }
-        locator.nth(0).click();
-        getPage().waitForTimeout(10);
-    }
-
-    protected void press(Locator locator, String key) {
-        locator.nth(0).press(key);
-        getPage().waitForTimeout(10);
-    }
-
-    protected void fill(Locator locator, String value) {
-        if (!locator.first().locator("input").all().isEmpty()) {
-            locator = locator.first().locator("input");
-        }
-        locator.nth(0).fill(value);
-        locator.nth(0).blur();
-        getPage().waitForTimeout(10);
-    }
-
-    protected void select(Locator locator, String val) {
-        fill(locator, val);
     }
 
     protected static boolean isHeadless() {

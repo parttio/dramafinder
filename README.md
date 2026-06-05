@@ -117,8 +117,9 @@ started server's URL. Either way, the element API only ever needs a Playwright
 If you don't already have a Playwright setup, Drama Finder ships an optional
 `AbstractBasePlaywrightIT` base class that handles the boilerplate for you:
 creating and closing the `Playwright`/`Browser`, opening a fresh `page` and
-navigating to your view before each test, headless toggling, and a few helper
-interaction methods (`click`, `fill`, `press`, ...). Extending it is purely a
+navigating to your view before each test, waiting for Vaadin to finish loading,
+sensible default timeouts, and headless toggling (via the `headless` system
+property or `HEADLESS` environment variable). Extending it is purely a
 convenience — it is never required to use the element API.
 
 ```java
