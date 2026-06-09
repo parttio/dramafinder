@@ -36,14 +36,44 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         getLocator().press("Escape");
     }
 
+    /**
+     * Locator for the overlay rendered in the dialog's shadow DOM.
+     * <p>
+     * The {@code <vaadin-dialog>} host element itself has a zero-size bounding
+     * box, so Playwright never considers it visible. The actual visible content
+     * lives in the {@code <vaadin-dialog-overlay>} inside its shadow root, which
+     * Playwright's CSS engine reaches by piercing the open shadow root.
+     */
+    public Locator getOverlayLocator() {
+        return getLocator().locator("vaadin-dialog-overlay");
+    }
+
     /** Whether the dialog is open (visible). */
     public boolean isOpen() {
-        return getLocator().isVisible();
+        return getOverlayLocator().isVisible();
     }
 
     /** Assert that the dialog is open. */
     public void assertOpen() {
         assertThat(getLocator()).hasAttribute("opened", "");
+    }
+
+    /** Whether the dialog (its overlay) is visible. */
+    @Override
+    public boolean isVisible() {
+        return getOverlayLocator().isVisible();
+    }
+
+    /** Assert that the dialog overlay is visible. */
+    @Override
+    public void assertVisible() {
+        assertThat(getOverlayLocator()).isVisible();
+    }
+
+    /** Assert that the dialog overlay is hidden. */
+    @Override
+    public void assertHidden() {
+        assertThat(getOverlayLocator()).isHidden();
     }
 
     /** Whether the dialog is modal (i.e. not modeless). */
@@ -61,9 +91,9 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         assertThat(getLocator()).hasAttribute("modeless", "");
     }
 
-    /** Assert that the dialog is closed (hidden). */
+    /** Assert that the dialog is closed (its overlay is hidden). */
     public void assertClosed() {
-        assertThat(getLocator()).isHidden();
+        assertThat(getOverlayLocator()).isHidden();
     }
 
     /** Get the header text from the title slot. */

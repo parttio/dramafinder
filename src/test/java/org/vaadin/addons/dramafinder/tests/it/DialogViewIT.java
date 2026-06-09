@@ -26,8 +26,8 @@ public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
         openDialogButton.click();
 
         DialogElement dialog = new DialogElement(page);
-        dialog.assertClosed();
         dialog.assertOpen();
+        dialog.assertVisible();
         dialog.assertModal();
         dialog.assertHeaderText("My Dialog");
 
@@ -84,8 +84,8 @@ public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
         openDialogButton.click();
 
         DialogElement dialog = DialogElement.getByHeaderText(page, "Header title");
-        dialog.assertClosed();
         dialog.assertOpen();
+        dialog.assertVisible();
         dialog.assertModal();
         dialog.assertHeaderText("Header title");
         assertThat(dialog.getHeaderLocator()).hasText("This is the header of the dialog.");
