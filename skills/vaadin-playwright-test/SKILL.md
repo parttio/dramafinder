@@ -13,8 +13,14 @@ Always follow [@TESTING.md](TESTING.md) when generating tests. Key rules:
   functionality
 - **User-facing locators** — prefer label, `aria-label`, `aria-role`, or
   `data-testid` over CSS classes or generated IDs
-- **DramaFinder elements for all interactions** — never interact with raw
-  locators when a wrapper exists
+- **DramaFinder elements for all interactions AND assertions** — if a wrapper
+  exists for the component (see [element-mapping.md](element-mapping.md)), you
+  MUST use it. Never reach into the component's internal DOM with a raw
+  Playwright locator (e.g. `grid.locator("vaadin-grid-cell-content")`,
+  `combo.locator("vaadin-combo-box-item")`). These shadow/light-DOM tags are
+  implementation details — the wrapper already exposes the count, content, and
+  state you need. Raw locators are a **last resort**, allowed only for a
+  component that has no wrapper at all (see Step 2).
 - **No `Thread.sleep()`** — use Playwright auto-waiting or `waitFor` methods
   instead
 - **Assert on user-visible state** — check visibility, text, or
@@ -75,11 +81,36 @@ See [element-mapping.md](element-mapping.md) for the full component → element
 class table. Each element also has detailed documentation with examples in
 the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
 
-For components with **no DramaFinder wrapper**, use a plain Playwright locator.
-For more complex needs, you can create your own element class extending
-`VaadinElement`,
+Before writing any raw locator, confirm there is genuinely no wrapper: check
+[element-mapping.md](element-mapping.md) **and** scan `src/main/java` for
+`*Element.java` files (custom extensions not in the table). Only if neither
+covers the component may you use a plain Playwright locator. For recurring
+needs, create your own element class extending `VaadinElement`,
 or [open an issue](https://github.com/vaadin/dramafinder/issues) in the
 DramaFinder repository to request one.
+
+### Do NOT drop to raw locators for wrapped components
+
+A wrapper exposes the count/content/state you need — use it instead of digging
+into the component's internal tags.
+
+```java
+// ❌ WRONG — reaching into Grid internals with a raw locator
+GridElement leaderboardGrid = GridElement.get(page);
+// Vaadin Grid renders row cells as vaadin-grid-cell-content inside the grid element
+int cellCount = leaderboardGrid.getLocator().locator("vaadin-grid-cell-content").count();
+
+// ✅ RIGHT — use the GridElement API
+GridElement leaderboardGrid = GridElement.get(page);
+int rows = leaderboardGrid.getRenderedRowCount();   // or getTotalRowCount()
+int cols = leaderboardGrid.getColumnCount();
+leaderboardGrid.assertCellContent(0, "Score", "100");
+leaderboardGrid.assertRowCount(10);
+```
+
+The same rule applies to every wrapped component: `ComboBoxElement.selectByText()`
+not `combo.locator("vaadin-combo-box-item")`; `MenuBarElement.clickItem()` not
+a raw `vaadin-menu-bar-button` locator; and so on.
 
 ## Step 3 — Generate the test class
 

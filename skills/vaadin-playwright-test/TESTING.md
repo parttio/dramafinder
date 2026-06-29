@@ -31,6 +31,8 @@ description: Best practices for writing Playwright integration tests in this pro
 
 - **Use the drama finder elements:** All interactions with the UI should be done through the `dramafinder` elements. These elements provide a high-level API for interacting with Vaadin components and handle waiting for elements to be ready automatically.
 
+- **Never reach into a wrapped component's internal DOM:** If a `dramafinder` element exists for a component, use its API for both interactions and assertions. Do NOT query the component's internal tags with a raw locator — e.g. avoid `grid.getLocator().locator("vaadin-grid-cell-content")`, use `GridElement.getRenderedRowCount()` / `getColumnCount()` / `assertCellContent(...)` instead. Raw Playwright locators are reserved for components that have no wrapper at all.
+
 - **Avoid `sleep()`:** Do not use `Thread.sleep()` to wait for elements to appear. Playwright's auto-waiting mechanism handles this automatically. If you need to wait for something specific, use the appropriate `waitFor` method from Playwright or a custom wait condition.
 
 ## Test Organization
