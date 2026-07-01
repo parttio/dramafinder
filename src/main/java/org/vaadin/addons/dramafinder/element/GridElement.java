@@ -256,6 +256,125 @@ public class GridElement extends VaadinElement
         return Objects.equals(cell.getCellContentLocator().innerText(), text);
     }
 
+    // ── Footer Access ──────────────────────────────────────────────────
+
+    /**
+     * Get the number of footer rows. Usually 0 (no footer) or 1, but can be more if there are column groups.
+     *
+     * @return footer row count
+     */
+    protected int getFooterRowCount() {
+        return locator.locator("tfoot tr").count();
+    }
+
+    /**
+     * Find a footer cell by column index.
+     * Uses the first footer row.
+     *
+     * @param columnIndex 0-based visible column index
+     * @return optional footer cell element. Empty if no footer cell exists at the given column index.
+     */
+    public Optional<FooterCellElement> findFooterCell(int columnIndex) {
+        return findFooterCell(0, columnIndex);
+    }
+
+    /**
+     * Find a footer cell by footer row index and column index.
+     *
+     * @param footerRowIndex 0-based footer row index. Use 0 for the first footer row, 1 for the second, etc.
+     * @param columnIndex    0-based visible column index.
+     * @return optional footer cell element. Empty if no footer cell exists at the given footer row and column index.
+     */
+    public Optional<FooterCellElement> findFooterCell(int footerRowIndex, int columnIndex) {
+        if (columnIndex < 0) {
+            throw new IllegalArgumentException("Column index must be non-negative");
+        } else if (footerRowIndex < 0) {
+            throw new IllegalArgumentException("Footer row index must be non-negative");
+        }
+
+        var footerRow = locator.locator("tfoot tr").nth(footerRowIndex);
+        if (footerRow.count() == 0) {
+            return Optional.empty();
+        }
+
+        var footerCell = footerRow.locator("td").nth(columnIndex);
+        if (footerCell.count() > 0) {
+            footerCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            return Optional.of(new FooterCellElement(footerCell, columnIndex));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Find a footer cell by its text content.
+     * Uses the first footer row.
+     *
+     * @param text the footer text to find
+     * @return optional footer cell element. Empty if no footer cell with the given text is found.
+     */
+    public Optional<FooterCellElement> findFooterCellByText(String text) {
+        return findFooterCellByText(0, text);
+    }
+
+    /**
+     * Find a footer cell by footer row index and text content.
+     *
+     * @param footerRowIndex 0-based footer row index. Use 0 for the first footer row, 1 for the second, etc.
+     * @param text           the footer text to find
+     * @return optional footer cell element. Empty if no footer cell with the given text is found in the given footer row.
+     */
+    public Optional<FooterCellElement> findFooterCellByText(int footerRowIndex, String text) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("Text must not be null or empty");
+        }
+        var footerRow = locator.locator("tfoot tr").nth(footerRowIndex);
+        if (footerRow.count() == 0) {
+            return Optional.empty();
+        }
+
+        var allFooterCells = footerRow.locator("td").all();
+        for (int i = 0; i < allFooterCells.size(); i++) {
+            var cell = new FooterCellElement(allFooterCells.get(i), i);
+            cell.getTableCellLocator().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            if (matchesFooterCell(cell, text)) {
+                return Optional.of(cell);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Get the text content of all visible footer cells.
+     *
+     * @return list of footer cell text contents
+     */
+    public List<String> getFooterCellContents() {
+        int count = getColumnCount();
+        List<String> footers = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            var footerCell = findFooterCell(i);
+            if (!footerCell.isPresent()) {
+                throw new IllegalStateException("No footer cell found at column index " + i);
+            }
+            footers.add(footerCell.get().getCellContentLocator().innerText());
+        }
+        return footers;
+    }
+
+    /**
+     * Determine if a footer cell matches the given text. By default, compares the trimmed innerText of the cell content.
+     * Can be overridden for custom matching logic (e.g. ignoring case, or matching only a part of the text).
+     *
+     * @param cell the footer cell to check
+     * @param text the footer text to match
+     * @return {@code true} if the cell matches the text, {@code false} otherwise
+     */
+    protected boolean matchesFooterCell(CellElement cell, String text) {
+        return Objects.equals(cell.getCellContentLocator().innerText(), text);
+    }
+
     // ── Cell Content Access ────────────────────────────────────────────
 
     /**
@@ -851,6 +970,47 @@ public class GridElement extends VaadinElement
     }
 
     /**
+     * Assert that the visible footer cells have exactly the given text contents, in order.
+     *
+     * @param expected the expected footer cell text contents
+     */
+    public void assertFooterCellContents(String... expected) {
+        locator.page().waitForCondition(() -> getFooterCellContents().equals(List.of(expected)));
+    }
+
+    /**
+     * Assert that the footer cell at the given column has the given text content.
+     *
+     * @param column   column index, starting from 0.
+     * @param expected the expected footer cell text content
+     */
+    public void assertFooterCell(int column, String expected) {
+        var footerCell = findFooterCell(column);
+        if (!footerCell.isPresent()) {
+            throw new AssertionError("No footer cell found at column " + column);
+        }
+        assertThat(footerCell.get().getCellContentLocator()).hasText(expected);
+    }
+
+    /**
+     * Assert that a footer cell with the given text exists.
+     *
+     * @param footerText the footer text to look for
+     */
+    public void assertFooterPresent(String footerText) {
+        locator.page().waitForCondition(() -> findFooterCellByText(footerText).isPresent());
+    }
+
+    /**
+     * Assert that no footer cell with the given text exists.
+     *
+     * @param footerText the footer text to look for
+     */
+    public void assertFooterNotPresent(String footerText) {
+        locator.page().waitForCondition(() -> !findFooterCellByText(footerText).isPresent());
+    }
+
+    /**
      * Assert that a row exists at the given index (auto-scrolling if necessary).
      *
      * @param rowIndex row index, starting from 0.
@@ -1191,6 +1351,16 @@ public class GridElement extends VaadinElement
          */
         private Locator getSorterLocator() {
             return getCellContentLocator().locator("vaadin-grid-sorter");
+        }
+    }
+
+    /**
+     * Represents a footer cell in the grid, providing access to the table cell (td)
+     * and the cell content.
+     */
+    public class FooterCellElement extends CellElement {
+        public FooterCellElement(Locator tableCell, int columnIndex) {
+            super(tableCell, columnIndex);
         }
     }
 
