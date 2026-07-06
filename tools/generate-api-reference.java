@@ -29,7 +29,9 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class GenerateApiReference {
+// Package-private on purpose: JBang compiles this under its hyphenated file name,
+// and javac only allows a *public* top-level class to differ from the file name.
+class GenerateApiReference {
 
     static final Path REPO = Paths.get(System.getProperty("repo.dir", "."));
     static final Path ELEMENT_DIR = REPO.resolve("src/main/java/org/vaadin/addons/dramafinder/element");
