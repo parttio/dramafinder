@@ -1,5 +1,9 @@
 # TreeGridElement Specification
 
+> For the authoritative method list and signatures, see the auto-generated
+> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
+> file focuses on behaviour and usage that signatures alone don't convey.
+
 ## Overview
 
 `TreeGridElement` is a Playwright element wrapper for `<vaadin-grid>` backed by a Vaadin `TreeGrid`. It extends `GridElement` with tree-specific APIs for querying hierarchy levels, checking expanded/collapsed/leaf state, and performing single-row or level-based bulk expand and collapse operations.

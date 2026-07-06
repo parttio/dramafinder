@@ -1,5 +1,9 @@
 # VaadinElement Specification
 
+> For the authoritative method list and signatures, see the auto-generated
+> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
+> file focuses on behaviour and usage that signatures alone don't convey.
+
 ## Overview
 
 `VaadinElement` is the abstract base class for all typed Playwright wrappers around Vaadin components. It exposes common helpers such as clicking, visibility assertions, text retrieval and generic DOM property access. Concrete components add component-specific APIs on top of this.

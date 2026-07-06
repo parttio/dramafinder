@@ -17,6 +17,17 @@ username.assertValue("john.doe");
 submit.click();
 ```
 
+## API Reference
+
+The complete public API of every element wrapper (methods, signatures, one-line
+descriptions) is auto-generated from source into a single file:
+
+- [api-reference.md](https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md)
+
+**Do not download or unzip the DramaFinder jar/sources to find its API — fetch
+the file above (one request) instead.** It is regenerated on every release and
+cannot drift from the shipped code.
+
 ## Documentation
 
 - [AGENTS.md](AGENTS.md) - Repository guidelines, coding conventions, pitfalls & patterns
@@ -25,42 +36,24 @@ submit.click();
 
 ## Element Specifications
 
-Detailed API documentation for each element wrapper:
+Signatures for **every** element live in the auto-generated
+[api-reference.md](https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md).
+The files below are hand-written prose docs, kept only for components whose
+behaviour isn't obvious from the signatures:
 
-- [VaadinElement](docs/specifications/VaadinElement.md) - Base class for all elements
-- [TextFieldElement](docs/specifications/TextFieldElement.md) - Text input
-- [TextAreaElement](docs/specifications/TextAreaElement.md) - Multi-line text
-- [EmailFieldElement](docs/specifications/EmailFieldElement.md) - Email input
-- [PasswordFieldElement](docs/specifications/PasswordFieldElement.md) - Password input
-- [NumberFieldElement](docs/specifications/NumberFieldElement.md) - Decimal numbers
-- [IntegerFieldElement](docs/specifications/IntegerFieldElement.md) - Integer numbers
-- [BigDecimalFieldElement](docs/specifications/BigDecimalFieldElement.md) - BigDecimal numbers
-- [DatePickerElement](docs/specifications/DatePickerElement.md) - Date selection
-- [TimePickerElement](docs/specifications/TimePickerElement.md) - Time selection
-- [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Date and time
-- [CheckboxElement](docs/specifications/CheckboxElement.md) - Checkbox input
-- [RadioButtonGroupElement](docs/specifications/RadioButtonGroupElement.md) - Radio group
-- [SelectElement](docs/specifications/SelectElement.md) - Dropdown select
-- [ListBoxElement](docs/specifications/ListBoxElement.md) - List selection
-- [ButtonElement](docs/specifications/ButtonElement.md) - Buttons
-- [DialogElement](docs/specifications/DialogElement.md) - Modal dialogs
-- [NotificationElement](docs/specifications/NotificationElement.md) - Toast notifications
-- [PopoverElement](docs/specifications/PopoverElement.md) - Popover overlays
-- [AccordionElement](docs/specifications/AccordionElement.md) - Accordion container
-- [AccordionPanelElement](docs/specifications/AccordionPanelElement.md) - Accordion panel
-- [DetailsElement](docs/specifications/DetailsElement.md) - Collapsible details
-- [TabSheetElement](docs/specifications/TabSheetElement.md) - Tab container
-- [TabElement](docs/specifications/TabElement.md) - Individual tab
-- [CardElement](docs/specifications/CardElement.md) - Card layout
-- [MenuBarElement](docs/specifications/MenuBarElement.md) - Menu bar
-- [MenuElement](docs/specifications/MenuElement.md) - Menu overlay
-- [MenuItemElement](docs/specifications/MenuItemElement.md) - Menu item
-- [ContextMenuElement](docs/specifications/ContextMenuElement.md) - Context menu
-- [SideNavigationElement](docs/specifications/SideNavigationElement.md) - Side navigation
-- [SideNavigationItemElement](docs/specifications/SideNavigationItemElement.md) - Navigation item
-- [UploadElement](docs/specifications/UploadElement.md) - File upload
-- [ProgressBarElement](docs/specifications/ProgressBarElement.md) - Progress indicator
-- [AbstractNumberFieldElement](docs/specifications/AbstractNumberFieldElement.md) - Number field base
+- [VaadinElement](docs/specifications/VaadinElement.md) - Base class + how to extend it
+- [GridElement](docs/specifications/GridElement.md) - Auto-scroll & stale-element caveats, renderer/lazy examples
+- [TreeGridElement](docs/specifications/TreeGridElement.md) - Tree-state reading, hierarchy-column location
+- [VirtualListElement](docs/specifications/VirtualListElement.md) - Debouncer flush, typed component queries
+- [ComboBoxElement](docs/specifications/ComboBoxElement.md) - Lazy data providers, filter-and-select
+- [DatePickerElement](docs/specifications/DatePickerElement.md) - String vs LocalDate value formats
+- [TimePickerElement](docs/specifications/TimePickerElement.md) - String vs LocalTime value formats
+- [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Composite enabled/aria semantics
+- [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
+- [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
+- [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group
+- [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
+- [UploadElement](docs/specifications/UploadElement.md) - Hidden-file-input pattern
 
 ## Key Patterns
 

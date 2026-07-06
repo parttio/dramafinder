@@ -1,5 +1,9 @@
 # VirtualListElement Specification
 
+> For the authoritative method list and signatures, see the auto-generated
+> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
+> file focuses on behaviour and usage that signatures alone don't convey.
+
 ## Overview
 
 `VirtualListElement` is a Playwright element wrapper for the `<vaadin-virtual-list>` web component. It wraps a virtualized scrollable list that lazily renders items as the user scrolls. It provides helpers for scrolling, querying visible rows, accessing rendered item content, and retrieving typed component elements inside items.
