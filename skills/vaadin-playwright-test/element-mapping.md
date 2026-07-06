@@ -4,6 +4,13 @@ Use this table to map Vaadin component class names found in view source to the c
 
 Also scan `src/main/java` for any `*Element.java` files not listed here (custom extensions).
 
+> **The `Key Methods` column is illustrative, not authoritative.** Factory
+> methods are **not** uniform across elements — the factory name shown here may
+> be out of date. For the exact, always-current factory signatures of each
+> element, use the auto-generated **Element index** at the top of
+> [api-reference.md](api-reference.md) (derived directly from source, verified in
+> CI). Never assume a factory that isn't listed there.
+
 | Vaadin Component | DramaFinder Element Class | Key Methods |
 |-----------------|--------------------------|-------------|
 | `TextField` | `TextFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()`, `assertValid()`, `assertInvalid()`, `assertErrorMessage()`, `assertLabel()`, `assertPlaceholder()`, `assertHelperHasText()`, `assertPrefixHasText()`, `assertSuffixHasText()`, `assertClearButtonVisible()`, `clickClearButton()`, `assertTheme()`, `assertAllowedCharPattern()`, `assertMinLength()`, `assertMaxLength()`, `assertPattern()`, `assertTooltipHasText()`, `assertAriaLabel()`, `assertIsFocused()`, `assertEnabled()`, `assertDisabled()` |
@@ -47,19 +54,28 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 
 ## Factory method conventions
 
-Every element has these standard factory methods:
+Factory methods are **not uniform** across elements — do not assume every
+element has `get`, `getByLabel`, and `getById`. The **Element index** in
+[api-reference.md](api-reference.md) lists the exact factories each element
+provides. The common shapes are:
 
 ```java
-// From a Page (finds the first matching element on the page)
-TextFieldElement field = TextFieldElement.get(page);
-
-// By aria-label or visible label text
+// Fields (TextField, ComboBox, DatePicker, ...) — by aria-label or visible label
 TextFieldElement field = TextFieldElement.getByLabel(page, "My Label");
 
-// By DOM id
-TextFieldElement field = TextFieldElement.getById(page, "my-field-id");
+// Containers (Grid, VirtualList, TabSheet, ...) — first matching element on the page
+GridElement grid = GridElement.get(page);
 
-// From a Locator (useful for elements inside dialogs, grid cells, etc.)
+// By DOM id — only on a few elements (e.g. GridElement, TreeGridElement)
+GridElement grid = GridElement.getById(page, "my-grid-id");
+
+// Some elements have a bespoke factory (check the index), e.g.
+ButtonElement save = ButtonElement.getByText(page, "Save");
+NotificationElement toast = NotificationElement.getByText(page, "Saved");
+DialogElement dialog = DialogElement.getByHeaderText(page, "Confirm");
+
+// From a Locator — always available via the constructor
+// (useful for elements inside dialogs, grid cells, etc.)
 TextFieldElement field = new TextFieldElement(dialog.getLocator().locator("vaadin-text-field"));
 ```
 

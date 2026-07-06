@@ -78,6 +78,12 @@ class GenerateApiReference {
         md.append("Method one-liners come from Javadoc.\n\n");
         md.append("**Do not download or unzip the DramaFinder jar to discover its API — it is all here.**\n\n");
 
+        // Component tag → wrapper → factories index. Machine-derived from the
+        // @PlaywrightElement annotation and each wrapper's static factory
+        // methods, so it can never drift: factory methods are NOT uniform
+        // across elements, and this table is the authoritative list.
+        renderIndex(md, elements);
+
         // Table of contents for the elements.
         md.append("## Elements\n\n");
         md.append(elements.keySet().stream()
@@ -106,6 +112,57 @@ class GenerateApiReference {
         Files.writeString(OUT, md.toString());
         System.out.println("Wrote " + OUT + " (" + elements.size() + " elements, "
                 + mixins.size() + " mixins)");
+    }
+
+    /** Render the tag → wrapper → factories index table. */
+    static void renderIndex(StringBuilder md, Map<String, TypeDeclaration<?>> elements) {
+        md.append("## Element index\n\n");
+        md.append("Wrapped web-component tag, its wrapper class, and the wrapper's actual ");
+        md.append("static factory methods. **Factory methods are not uniform** — an element ");
+        md.append("only has the factories listed here (e.g. most fields use `getByLabel`, ");
+        md.append("containers use `get`; `getById` exists on only a few). Do not assume a ");
+        md.append("factory that isn't listed. Every wrapper is also constructible via ");
+        md.append("`new <Name>(Locator)`.\n\n");
+        md.append("| Web-component tag | Element wrapper | Static factory methods |\n");
+        md.append("|---|---|---|\n");
+        // Sort by tag (untagged composites last), then by name.
+        elements.entrySet().stream()
+                .sorted(Comparator
+                        .<Map.Entry<String, TypeDeclaration<?>>, String>comparing(
+                                e -> { String t = tagOf(e.getValue()); return t == null ? "￿" : t; })
+                        .thenComparing(Map.Entry::getKey))
+                .forEach(e -> {
+                    TypeDeclaration<?> t = e.getValue();
+                    String name = e.getKey();
+                    String tag = tagOf(t);
+                    List<String> factories = factorySigs(t);
+                    md.append("| ").append(tag != null ? "`<" + tag + ">`" : "—")
+                      .append(" | [").append(name).append("](#").append(anchor(name)).append(")")
+                      .append(" | ")
+                      .append(factories.isEmpty()
+                              ? "*constructor only*"
+                              : factories.stream().map(s -> "`" + s + "`").collect(Collectors.joining(", ")))
+                      .append(" |\n");
+                });
+        md.append("\n");
+    }
+
+    /** Public static methods that return the element's own type — i.e. its factory methods. */
+    static List<String> factorySigs(TypeDeclaration<?> t) {
+        String name = t.getNameAsString();
+        return t.getMethods().stream()
+                .filter(m -> m.isPublic() && m.isStatic())
+                .filter(m -> m.getType().asString().equals(name))
+                .map(m -> m.getNameAsString() + "(" + paramTypes(m.getParameters()) + ")")
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    static String paramTypes(List<Parameter> ps) {
+        return ps.stream()
+                .map(p -> p.getType().asString() + (p.isVarArgs() ? "..." : ""))
+                .collect(Collectors.joining(", "));
     }
 
     /** Render one type: heading, tag, javadoc, hierarchy, constants, constructors, methods, nested types. */

@@ -179,7 +179,7 @@ The demo is only here to run the test
 
 ### Javadoc
 
-Public APIs in the `dramafinder` module are documented with concise Javadoc:
+Public APIs in the `dramafinder` library are documented with concise Javadoc:
 
 - Element classes include a short summary referencing the underlying Vaadin
   tag (e.g., `vaadin-text-field`) and any noteworthy behaviors.
@@ -198,8 +198,7 @@ mvn test
 ## Integration tests
 
 The integration tests are built using Spring Boot, Playwright, and Axe-core.
-The tests are located in files ending with `IT.java` in the
-`sortable-layout-demo` module.
+The tests are located in files ending with `IT.java` under `src/test/java`.
 The tests are run with the `maven-failsafe-plugin` when the `it` profile is
 activated.
 

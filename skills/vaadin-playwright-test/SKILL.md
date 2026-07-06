@@ -98,7 +98,7 @@ Before writing any raw locator, confirm there is genuinely no wrapper: check
 `*Element.java` files (custom extensions not in the table). Only if neither
 covers the component may you use a plain Playwright locator. For recurring
 needs, create your own element class extending `VaadinElement`,
-or [open an issue](https://github.com/vaadin/dramafinder/issues) in the
+or [open an issue](https://github.com/parttio/dramafinder/issues) in the
 DramaFinder repository to request one.
 
 ### Do NOT drop to raw locators for wrapped components
