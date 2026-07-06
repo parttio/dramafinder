@@ -245,4 +245,16 @@ public static ButtonElement getByText(Locator locator, String text) { ... }
 - Follow this file's conventions for any edits. Keep patches minimal and
   focused.
 - Use `*IT.java` only for end-to-end tests executed by Failsafe.
-- Refer to `docs/specifications/` for detailed element API documentation.
+- **Never download or unzip the DramaFinder jar/sources to discover its API.**
+  The complete public API (every element, signatures, one-line descriptions) is
+  in `skills/vaadin-playwright-test/api-reference.md`, auto-generated from source
+  by `tools/generate-api-reference.java`. To look something up, **grep that file
+  for the element name and read only its `### <Name>Element` section** — don't
+  read the whole file. In a consumer project where it isn't checked out, fetch
+  it (one request) from
+  `https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md`.
+- `api-reference.md` is generated — never edit it by hand. After changing any
+  element's public API, regenerate it (`jbang tools/generate-api-reference.java`)
+  and commit the result; CI fails if it is stale.
+- Refer to `docs/specifications/` for the prose docs on components with
+  non-obvious behaviour (Grid, TreeGrid, VirtualList, and extension guidance).

@@ -1,5 +1,9 @@
 # GridElement Specification
 
+> For the authoritative method list and signatures, see the auto-generated
+> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
+> file focuses on behaviour and usage that signatures alone don't convey.
+
 ## Overview
 
 `GridElement` is a Playwright element wrapper for the `<vaadin-grid>` web component. It provides helpers for querying rows and cells, accessing cell content by row/column index or header text, and interacting with the grid's selection, sorting, and row details features. Row and cell access methods **auto-scroll** the grid as needed to bring virtualized rows into view. 

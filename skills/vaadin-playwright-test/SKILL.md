@@ -78,8 +78,20 @@ Read the target view source provided by the user. Extract:
 - Navigation triggers → button labels or menu items that cause route changes.
 
 See [element-mapping.md](element-mapping.md) for the full component → element
-class table. Each element also has detailed documentation with examples in
-the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
+class table, and [api-reference.md](api-reference.md) for the **complete public
+API** (every element, its methods, signatures and one-line descriptions) of the
+version you have installed.
+
+> **Never download or unzip the DramaFinder jar/sources to discover its API.**
+> The complete, always-current signature reference is bundled beside this skill
+> in [api-reference.md](api-reference.md) (auto-generated from source). If a
+> method isn't there, it doesn't exist in this version — do not guess or dig
+> into the jar. The few components with non-obvious behaviour also have prose
+> docs in the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
+>
+> To look up an element, **grep `api-reference.md` for the element name and read
+> only that section** (each is a `### <Name>Element` heading) — don't read the
+> whole file. Shared mixin methods are documented once under "Shared mixins".
 
 Before writing any raw locator, confirm there is genuinely no wrapper: check
 [element-mapping.md](element-mapping.md) **and** scan `src/main/java` for
