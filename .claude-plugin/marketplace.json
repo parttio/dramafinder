@@ -1,0 +1,14 @@
+{
+  "name": "dramafinder",
+  "owner": {
+    "name": "parttio",
+    "url": "https://github.com/parttio"
+  },
+  "plugins": [
+    {
+      "name": "vaadin-playwright-test",
+      "source": "./",
+      "description": "Generate Playwright integration tests for Vaadin views using the DramaFinder library."
+    }
+  ]
+}

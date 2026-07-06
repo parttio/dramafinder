@@ -4,6 +4,18 @@
 
 The documentation can be found in this repository and also deployed on https://parttio-dramafinder.mintlify.app/ if you find some errors please file an issue.
 
+## Claude Code skill
+
+This repository ships a Claude Code skill that generates Playwright integration
+tests for Vaadin views using Drama Finder. Install it as a plugin:
+
+```
+/plugin marketplace add parttio/dramafinder
+/plugin install vaadin-playwright-test@dramafinder
+```
+
+To get later updates, run `/plugin marketplace update dramafinder`.
+
 ## Usage
 
 Drama Finder is a set of helper classes to test a Vaadin application using
