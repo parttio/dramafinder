@@ -11,7 +11,7 @@ the steps.
 
 ## Constants
 
-- `KNOWN_LATEST = 1.1.1` — fallback version if Maven Central lookup fails. Bump
+- `KNOWN_LATEST = 1.1.2` — fallback version if Maven Central lookup fails. Bump
   when the library releases.
 
 ## Step 1 — Resolve the latest version

@@ -2,23 +2,28 @@
 
 ## Project Structure & Module Organization
 
-- Root `pom.xml` — Core Playwright helpers for Vaadin (`src/main/java/...`),
-  resources under `src/main/resources`.
+- Single-module Maven project. Root `pom.xml` builds the library — core
+  Playwright helpers for Vaadin live in
+  `src/main/java/org/vaadin/addons/dramafinder/`.
+- The demo views used to exercise the library are test-only, under
+  `src/test/java/.../tests/testuis/`; there is no standalone runnable demo app.
+  Views are served by the Spring Boot IT harness (`@SpringBootTest`) when the
+  `*IT.java` tests run.
 
 ## Build, Test, and Development Commands
 
-- Build all modules + unit tests: `./mvnw clean install`
-- Run demo locally: `./mvnw -pl dramafinder-demo spring-boot:run` (serves
-  at http://localhost:8080)
-- Run integration tests (Failsafe, includes `**/*IT.java`):
-  `./mvnw -B verify --file pom.xml`
-- Run a single test:
-    - IT: `./mvnw -Dit.test=MyViewIT -Pit verify`
+- Build + unit tests: `./mvnw clean install`
+- Run unit tests only: `./mvnw test`
+- Run integration tests (Failsafe, `**/*IT.java`, requires the `it` profile):
+  `./mvnw -Pit verify`
+- Run a single IT: `./mvnw -Dit.test=MyViewIT -Pit verify`
+- Debug an IT with a visible browser: `./mvnw -Pdebug-ui -Dit.test=MyViewIT verify`
+  (or `-Dheadless=false`)
 
 ## Coding Style & Naming Conventions
 
 - Java 21; 4-space indent; organize imports; no trailing whitespace.
-- Packages: lowercase (`org.vaadin.dramafinder`); classes: `PascalCase`;
+- Packages: lowercase (`org.vaadin.addons.dramafinder`); classes: `PascalCase`;
   methods/fields: `camelCase`; constants: `UPPER_SNAKE_CASE`.
 - Public API in `dramafinder` should be small, cohesive, and documented with
   Javadoc.

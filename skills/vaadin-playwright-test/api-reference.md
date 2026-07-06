@@ -7,6 +7,55 @@ Complete public API of every DramaFinder element wrapper. Each element lists the
 
 **Do not download or unzip the DramaFinder jar to discover its API — it is all here.**
 
+## Element index
+
+Wrapped web-component tag, its wrapper class, and the wrapper's actual static factory methods. **Factory methods are not uniform** — an element only has the factories listed here (e.g. most fields use `getByLabel`, containers use `get`; `getById` exists on only a few). Do not assume a factory that isn't listed. Every wrapper is also constructible via `new <Name>(Locator)`.
+
+| Web-component tag | Element wrapper | Static factory methods |
+|---|---|---|
+| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* |
+| `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` |
+| `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` |
+| `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
+| `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` |
+| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Page, String)` |
+| `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` |
+| `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
+| `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` |
+| `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` |
+| `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` |
+| `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Page, String)` |
+| `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | *constructor only* |
+| `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Page, String)` |
+| `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` |
+| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* |
+| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` |
+| `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` |
+| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` |
+| `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` |
+| `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` |
+| — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* |
+| — | [ContextMenuElement](#contextmenuelement) | *constructor only* |
+| — | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` |
+| — | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)` |
+| — | [MenuElement](#menuelement) | `getByLabel(Page, String)` |
+| — | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` |
+| — | [NotificationElement](#notificationelement) | `getByText(Page, String)` |
+| — | [PopoverElement](#popoverelement) | `getByLabel(Page, String)` |
+| — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
+
 ## Elements
 
 [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
