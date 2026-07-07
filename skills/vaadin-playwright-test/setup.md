@@ -81,7 +81,24 @@ Otherwise:
 5. **Write** the result to
    `src/test/java/<basePackage-as-path>/it/support/SpringPlaywrightIT.java`.
 
-## Step 4 — Confirm dependencies resolve
+## Step 4 — Add a CLAUDE.md pointer
+
+Skill matching is heuristic: a future task that never mentions Vaadin,
+Playwright, or tests won't trigger the skill on its own. A standing pointer in
+the project's `CLAUDE.md` fixes that (it is loaded into context every session).
+
+Skip this step if `CLAUDE.md` already mentions `vaadin-playwright-test`.
+Otherwise append to `CLAUDE.md` (create the file if it doesn't exist):
+
+```markdown
+## Integration testing
+
+This project uses DramaFinder for Playwright integration tests. For any
+integration/IT test work (writing, editing, or running tests for Vaadin
+views), use the `vaadin-playwright-test` skill.
+```
+
+## Step 5 — Confirm dependencies resolve
 
 Optional but recommended: run `mvn -q dependency:resolve` to surface any pom
 syntax errors before generating tests. Skip if the user wants to proceed without
