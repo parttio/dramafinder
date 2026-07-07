@@ -7,7 +7,7 @@ description: Best practices for writing Playwright integration tests in this pro
 
 ## Guiding Principles
 
-- **Page Object Model (POM):** All tests should use the Page Object Model. Interactions with the UI should be encapsulated in page objects, and tests should only call methods on these page objects. This isolates the tests from changes in the UI. The page objects are the drama finder elements in `src/main/java/org/vaadin/addons/dramafinder/element`.
+- **Page Object Model (POM):** All tests should use the Page Object Model. Interactions with the UI should be encapsulated in page objects, and tests should only call methods on these page objects. This isolates the tests from changes in the UI. The page objects are the DramaFinder element wrappers from the library (package `org.vaadin.addons.dramafinder.element`), plus any custom `*Element` classes in the project's own sources.
 
 - **One Test, One Assert:** Each test method should test a single, specific piece of functionality. This makes tests easier to understand and debug.
 
