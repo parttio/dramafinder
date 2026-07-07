@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "vaadin-playwright-test",
-      "source": "./",
+      "source": "./skills/vaadin-playwright-test",
       "description": "Generate Playwright integration tests for Vaadin views using the DramaFinder library."
     }
   ]
