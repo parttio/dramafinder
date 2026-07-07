@@ -35,7 +35,6 @@ Two edits, both in `pom.xml`:
 Inside `<properties>`, add:
 
 ```xml
-
 <dramafinder.version>RESOLVED_VERSION</dramafinder.version>
 ```
 
@@ -47,7 +46,6 @@ Replace `RESOLVED_VERSION` with the value from Step 1. If a
 Inside `<dependencies>`, add (skip whichever is already present):
 
 ```xml
-
 <dependency>
     <groupId>com.microsoft.playwright</groupId>
     <artifactId>playwright</artifactId>
@@ -55,10 +53,10 @@ Inside `<dependencies>`, add (skip whichever is already present):
 </dependency>
 
 <dependency>
-<groupId>org.vaadin.addons</groupId>
-<artifactId>dramafinder</artifactId>
-<version>${dramafinder.version}</version>
-<scope>test</scope>
+    <groupId>org.vaadin.addons</groupId>
+    <artifactId>dramafinder</artifactId>
+    <version>${dramafinder.version}</version>
+    <scope>test</scope>
 </dependency>
 ```
 

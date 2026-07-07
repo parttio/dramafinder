@@ -69,8 +69,9 @@ If no existing IT tests exist, use the default structure in Step 3.
 
 Read the target view source provided by the user. Extract:
 
-- `@Route("value")` → URL path (default: class name lowercased, stripped of
-  `View` suffix, e.g. `PersonView` → `/person`).
+- `@Route("value")` → URL path (default when no value: class name lowercased,
+  stripped of `View` suffix, e.g. `PersonView` → `/person`; `MainView` and
+  `Main` map to `/`).
 - `@PageTitle("...")` → expected page title
 - Every interactive component → its DramaFinder wrapper (see table below).
 - Form fields → label text used as locator.
@@ -80,7 +81,10 @@ Read the target view source provided by the user. Extract:
 See [element-mapping.md](element-mapping.md) for the full component → element
 class table, and [api-reference.md](api-reference.md) for the **complete public
 API** (every element, its methods, signatures and one-line descriptions) of the
-version you have installed.
+DramaFinder version bundled with this skill (see the version in its header). If
+the project pins an older `<dramafinder.version>`, a method documented there may
+not exist yet — if a call fails to compile, check the project's version before
+looking for alternatives.
 
 > **Never download or unzip the DramaFinder jar/sources to discover its API.**
 > The complete, always-current signature reference is bundled beside this skill
@@ -120,18 +124,17 @@ leaderboardGrid.assertCellContent(0, "Score", "100");
 leaderboardGrid.assertRowCount(10);
 ```
 
-The same rule applies to every wrapped component: `ComboBoxElement.selectByText()`
-not `combo.locator("vaadin-combo-box-item")`; `MenuBarElement.clickItem()` not
-a raw `vaadin-menu-bar-button` locator; and so on.
+The same rule applies to every wrapped component:
+`ComboBoxElement.selectItem()` not `combo.locator("vaadin-combo-box-item")`;
+`MenuBarElement.getMenuItemElement("File").click()` not a raw
+`vaadin-menu-bar-button` locator; and so on.
 
 ## Step 3 — Generate the test class
 
 ### Default structure (no existing tests to mirror)
 
 ```java
-package
-
-<same.package.as.view>; // mirror src/test/java structure
+package <same.package.as.view>; // mirror src/test/java structure
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -142,21 +145,17 @@ import <basePackage>.it.support.SpringPlaywrightIT; // Spring projects: actual l
 // import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT; // non-Spring projects
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-// omit if not Spring Boot
-public class <ViewName>IT extends
-
-SpringPlaywrightIT { // or AbstractBasePlaywrightIT
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // omit if not Spring Boot
+public class <ViewName>IT extends SpringPlaywrightIT { // or AbstractBasePlaywrightIT
 
     @Override
-    public String getView () {
+    public String getView() {
         return "/<route-path>";
     }
 
     @Test
-    public void testTitle () {
+    public void testTitle() {
         assertThat(page).hasTitle("<PageTitle value>");
     }
 
@@ -172,24 +171,14 @@ otherwise.
 **Smoke test (one per component):**
 
 ```java
-    @Test
-public void test<ComponentLabel>(){
-TextFieldElement field = TextFieldElement.getByLabel(page, "My Label");
-    field.
-
-assertVisible();
-    field.
-
-assertLabel("My Label");
-    field.
-
-assertValue("");
-    field.
-
-setValue("test value");
-    field.
-
-assertValue("test value");
+@Test
+public void test<ComponentLabel>() {
+    TextFieldElement field = TextFieldElement.getByLabel(page, "My Label");
+    field.assertVisible();
+    field.assertLabel("My Label");
+    field.assertValue("");
+    field.setValue("test value");
+    field.assertValue("test value");
 }
 ```
 
@@ -229,20 +218,25 @@ public void testGridLoadsData() {
 }
 ```
 
-## Step 4 — Show generated test, then confirm before writing
+## Step 4 — Write the test
 
-Display the full generated test class in a code block. Then ask:
+Place the test in `src/test/java` mirroring the view's package under
+`src/main/java`.
 
-> Shall I write this to `src/test/java/<package>/<ViewName>IT.java`?
+- **Interactive session** (the user asked for a test in conversation): display
+  the full generated test class in a code block first, then ask:
+  > Shall I write this to `src/test/java/<package>/<ViewName>IT.java`?
 
-Only write the file after explicit confirmation. Place it in `src/test/java`
-mirroring the view's package under `src/main/java`.
+  Only write the file after confirmation.
+- **Autonomous execution** (implementing an issue/PR/spec, or running
+  unattended): write the file directly without asking.
 
-## Step 5 — Offer to run the test
+## Step 5 — Run the test
 
-After writing, ask:
+Run with `mvn verify -Dit.test=<ViewName>IT`.
 
-> Do you want me to run this test now with `mvn verify -Dit.test=<ViewName>IT`?
-
-**Warn the user**: the first Vaadin frontend build takes 3–5 minutes. Subsequent
-runs are ~25 seconds.
+- **Interactive session**: offer to run it first — the first Vaadin frontend
+  build takes 3–5 minutes (subsequent runs are ~25 seconds), so let the user
+  decide.
+- **Autonomous execution**: run it directly and fix any failures before
+  finishing.
