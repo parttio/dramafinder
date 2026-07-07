@@ -1,6 +1,6 @@
 ---
 name: vaadin-playwright-test
-description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library, including element interaction, form validation, grid assertions, and navigation checks. Use when the user wants to write IT tests for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.
+description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library, including element interaction, form validation, grid assertions, and navigation checks. Use whenever you are about to write, edit, or run an integration/IT test for a Vaadin view — including when the requirement comes from a GitHub issue, PR, spec, or ticket rather than the user's direct words (e.g. "implement #85", "fix the failing test", "add coverage for this view"). Also use when the user mentions DramaFinder, Playwright, `SpringPlaywrightIT`, `@PlaywrightElement`, files under `src/test/**/tests/it/`, or asks about Playwright testing in a Vaadin project. If a task in a Vaadin project involves any Playwright/IT test, load this skill before writing the test.
 ---
 
 # Vaadin Playwright Test Generator (DramaFinder)
