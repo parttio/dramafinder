@@ -15,21 +15,20 @@ Unless the use case specifies otherwise, use a **1920x1080** viewport.
 
 ## Prerequisite: the application must be running
 
-The temp test connects to an **already running** application — it does not
-start one. Before anything else:
+The temp test connects to an **already running** application — it never boots
+the app itself. Keeping the app out of the test run is what makes iterations
+cheap. Before running the verification test:
 
-1. Check whether the app responds (e.g. `curl -sf http://localhost:8080 -o /dev/null`).
-2. If not running, start it yourself **in the background** with the project's
-   dev profile (e.g. `mvn spring-boot:run` / `./gradlew bootRun` with the
-   `local` profile), wait for the port to answer, and remember that you started
-   it so you can stop it afterwards.
-3. Only then run the verification test. Never let the test itself boot the app
-   — keeping the app out of the test run is what makes iterations cheap.
+1. Check whether the app already responds on its URL.
+2. If it doesn't, start it the way this project runs its app — the project
+   knows how (consult its README / `CLAUDE.md` / `AGENTS.md`). Start it in the
+   background, wait for it to answer, and remember that you started it so you
+   can stop it afterwards.
 
 ## The loop
 
 1. Ensure the app is running with the required state (see prerequisite above
-   and "Set up state cheaply" below).
+   and "Reaching the state" below).
 2. Write the temp test at
    `src/test/java/<project-package>/agent/AgentVerifyIT.java`
    (fixed name, fixed `agent` sub-package — overwrite the previous one, never
@@ -54,11 +53,18 @@ start one. Before anything else:
 
 ## Writing the temp test
 
-- Connect to the **already running app** — `open("route")` (relative to the
-  base URL) or plain Playwright `page.navigate(...)`, no Spring context, no app
-  restart.
-- Use **DramaFinder locators** for all Vaadin components (grid cells, combo
-  boxes, dialogs, notifications) — never hand-rolled shadow-DOM selectors.
+Write the test as a normal DramaFinder test — for how to locate Vaadin
+components and assert on them, use the **vaadin-playwright-test** skill. This
+skill only adds the visual-capture concerns on top of it:
+
+- Extend `org.vaadin.addons.dramafinder.agent.VisualVerificationTest`, which
+  connects to the already-running app and wires in the `AgentReporting`
+  extension. It never boots the app or a Spring context.
+- Navigate with `open("route")` (relative to the base URL) or plain Playwright
+  `page.navigate(...)`. The base URL defaults to `http://localhost:8080` and is
+  overridable via `-Ddramafinder.agent.baseUrl=...` or `DRAMAFINDER_BASE_URL`.
+- Use **DramaFinder locators** for all Vaadin components — never hand-rolled
+  shadow-DOM selectors.
 - The base class sets a 1920x1080 viewport for you; override per test, and add
   375x812 and 768x1024 passes when the use case has responsive requirements.
 - `shot("name")` at every **key interaction point** and each **unique visual
@@ -68,65 +74,14 @@ start one. Before anything else:
   is covered by the browserless tests (pyramid layer 3) — don't duplicate those
   assertions here. Screenshots of unique visual states are the deliverable.
 
-Skeleton (use the host project's base package for the `agent` sub-package):
+## Reaching the state
 
-```java
-package com.example.myapp.agent;
-
-import org.junit.jupiter.api.Test;
-import org.vaadin.addons.dramafinder.agent.VisualVerificationTest;
-import org.vaadin.addons.dramafinder.element.GridElement;
-
-class AgentVerifyIT extends VisualVerificationTest { // AgentReporting extension included
-
-    @Test
-    void verifyUseCase() {
-        page.navigate(baseUrl() + "/login");
-        page.fill("input[name='username']", "employee");
-        page.fill("input[name='password']", "secret");
-        page.keyboard().press("Enter");            // no shadow-DOM submit hunt
-
-        open("orders");                            // relative to baseUrl()
-        shot("01-order-list");
-        GridElement.get(page).assertRowCount(12);
-
-        // ...drive the main flow with DramaFinder locators, shot() each state
-    }
-}
-```
-
-## Set up state cheaply
-
-How test state is established is a **saved project preference**, not a hard
-rule. On first use, check `CLAUDE.md` for a `## Verification preferences`
-section. If it's missing, ask the user once:
-
-> "For visual verification setup: use seeded fixtures + deep links (fast,
-> requires seeding infra), or drive the real UI flow (slower, no infra needed)?"
-
-Record the answer in `CLAUDE.md` under `## Verification preferences`
-(e.g., `state-setup: seeded` or `state-setup: ui-flow`) and never ask again —
-the user can edit the file to change it.
-
-**If `state-setup: seeded`**:
-- Run the app with its dev/local profile so its seeder populates labelled
-  fixtures on an empty DB; the test logs in and deep-links directly to the
-  screen under test — no click-through of create → save → submit just to reach
-  a state. Look up fixtures, dev logins, and deep-link routes in the project's
-  docs (and record their location in `CLAUDE.md` alongside the preference).
-
-**If `state-setup: ui-flow`**:
-- Script the setup clicks inside the same temp test (still one batch run —
-  never set up state interactively via MCP). Keep setup steps minimal and
-  screenshot only the states under test, not the setup steps.
-
-Regardless of mode:
 - **Deep-link with stable selectors** where possible; drive elements by
   DramaFinder locators, button text, `aria-label`, or stable `name` attributes.
-- **Batch everything.** All navigation, form filling, and screenshots happen
-  inside the single test run — never interleave with manual inspection.
-- A use case may override the saved preference when it explicitly tests the
-  creation flow itself.
+- If the screen under test needs data or a logged-in user, script the minimal
+  setup steps inside the same temp test — still one batch run, never set up
+  state interactively via MCP. Screenshot only the states under test, not the
+  setup steps.
 
 ## Validating visual appearance
 
