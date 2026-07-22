@@ -4,15 +4,24 @@
 
 The documentation can be found in this repository and also deployed on https://parttio-dramafinder.mintlify.app/ if you find some errors please file an issue.
 
-## Claude Code skill
+## Claude Code skills
 
-This repository ships a Claude Code skill that generates Playwright integration
-tests for Vaadin views using Drama Finder. Install it as a plugin:
+This repository ships two Claude Code skills. Install them as plugins:
 
 ```
 /plugin marketplace add parttio/dramafinder
 /plugin install vaadin-playwright-test@dramafinder
+/plugin install visual-verification@dramafinder
 ```
+
+- **vaadin-playwright-test** — generates Playwright integration tests for
+  Vaadin views using Drama Finder.
+- **visual-verification** — visually verifies UI changes by writing a temporary
+  Drama Finder test that batch-captures screenshots against the running app,
+  then reviewing them. Backed by the `org.vaadin.addons.dramafinder.agent`
+  helpers (`VisualVerificationTest`, `AgentReporting`, `ComponentSnapshot`), which
+  write a screenshot, semantic component snapshot, and stack trace to
+  `target/agent-report/` on failure.
 
 To get later updates, run `/plugin marketplace update dramafinder`.
 
