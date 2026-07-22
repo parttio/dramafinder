@@ -5,6 +5,9 @@ description: Visually verify an implemented use case by writing a temporary Dram
 
 # Visual Verification
 
+> **Invoke this skill via the Skill tool — do not just read this `SKILL.md`.**
+> Invoking is what loads this guidance (and anything it references) into context.
+
 Verify what the user sees. The screenshot is the ground truth; DOM and CSS are
 helpers. But **do not drive the browser interactively via MCP by default** —
 write a temporary DramaFinder test that performs the whole flow and captures all
@@ -54,7 +57,9 @@ cheap. Before running the verification test:
 ## Writing the temp test
 
 Write the test as a normal DramaFinder test — for how to locate Vaadin
-components and assert on them, use the **vaadin-playwright-test** skill. This
+components and assert on them, invoke the **vaadin-playwright-test** skill via
+the Skill tool (don't just read its `SKILL.md` — that's how its bundled API
+reference loads). This
 skill only adds the visual-capture concerns on top of it:
 
 - Extend `org.vaadin.addons.dramafinder.agent.VisualVerificationTest`, which
