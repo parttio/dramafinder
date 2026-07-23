@@ -11,9 +11,9 @@
       "description": "Generate Playwright integration tests for Vaadin views using the DramaFinder library."
     },
     {
-      "name": "visual-verification",
-      "source": "./skills/visual-verification",
-      "description": "Visually verify Vaadin UI changes with a temporary DramaFinder test that batch-captures screenshots against the running app."
+      "name": "vaadin-playwright-screenshot",
+      "source": "./skills/vaadin-playwright-screenshot",
+      "description": "Capture screenshots of a running Vaadin app with a temporary DramaFinder test that batch-captures every key visual state in one run."
     }
   ]
 }
