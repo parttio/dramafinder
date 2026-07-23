@@ -261,5 +261,10 @@ public static ButtonElement getByText(Locator locator, String text) { ... }
 - `api-reference.md` is generated — never edit it by hand. After changing any
   element's public API, regenerate it (`jbang tools/generate-api-reference.java`)
   and commit the result; CI fails if it is stale.
+- The `org.vaadin.addons.dramafinder.agent` helpers (`VisualVerificationTest`,
+  `AgentReporting`, …) have their own generated reference at
+  `skills/vaadin-playwright-screenshot/agent-api-reference.md`
+  (`tools/generate-agent-api-reference.java`; same never-edit-by-hand, CI-enforced
+  rule). After changing that package's public API, regenerate and commit it.
 - Refer to `docs/specifications/` for the prose docs on components with
   non-obvious behaviour (Grid, TreeGrid, VirtualList, and extension guidance).

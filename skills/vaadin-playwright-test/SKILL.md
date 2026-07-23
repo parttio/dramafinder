@@ -1,9 +1,18 @@
 ---
 name: vaadin-playwright-test
-description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library, including element interaction, form validation, grid assertions, and navigation checks. Use whenever you are about to write, edit, or run an integration/IT test for a Vaadin view — including when the requirement comes from a GitHub issue, PR, spec, or ticket rather than the user's direct words (e.g. "implement #85", "fix the failing test", "add coverage for this view"). Also use when the user mentions DramaFinder, Playwright, `SpringPlaywrightIT`, `@PlaywrightElement`, files under `src/test/**/tests/it/`, or asks about Playwright testing in a Vaadin project. If a task in a Vaadin project involves any Playwright/IT test, load this skill before writing the test.
+description: Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library, including element interaction, form validation, grid assertions, and navigation checks. Use whenever you are about to write, edit, or run an integration/IT test for a Vaadin view — including when the requirement comes from a GitHub issue, PR, spec, or ticket rather than the user's direct words (e.g. "implement #85", "fix the failing test", "add coverage for this view"). Also use when the user mentions DramaFinder, Playwright, `SpringPlaywrightIT`, `@PlaywrightElement`, files under `src/test/**/tests/it/`, or asks about Playwright testing in a Vaadin project. If a task in a Vaadin project involves any Playwright/IT test, invoke this skill (via the Skill tool) before writing the test.
 ---
 
 # Vaadin Playwright Test Generator (DramaFinder)
+
+> **Invoke this skill via the Skill tool — do not just read this `SKILL.md`.**
+> The files this skill depends on — [api-reference.md](api-reference.md) (the
+> complete DramaFinder API), [element-mapping.md](element-mapping.md), and
+> [TESTING.md](TESTING.md) — are bundled beside this file and only load into
+> context when the skill is *invoked*, not when you open `SKILL.md` by hand. If
+> you are reading this file directly, stop and invoke the skill instead. This is
+> also *why* the rule below ("never unzip the jar to discover the API") holds:
+> when invoked, the API reference is already in front of you.
 
 ## Best practices
 

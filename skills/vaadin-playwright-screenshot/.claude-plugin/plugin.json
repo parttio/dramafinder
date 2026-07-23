@@ -1,0 +1,10 @@
+{
+  "name": "vaadin-playwright-screenshot",
+  "description": "Capture screenshots of a running Vaadin app by writing a temporary DramaFinder test that batch-captures every key visual state in one run — a cheap alternative to interactive Playwright MCP.",
+  "version": "0.1.0",
+  "author": {
+    "name": "jcgueriaud1"
+  },
+  "homepage": "https://github.com/parttio/dramafinder",
+  "repository": "https://github.com/parttio/dramafinder"
+}
