@@ -14,6 +14,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasInputFieldElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPlaceholderElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
+import org.vaadin.addons.dramafinder.element.shared.HasReadOnlyElement;
 import org.vaadin.addons.dramafinder.element.shared.HasSuffixElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
@@ -28,7 +29,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class TextFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
         HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement,
-        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement {
+        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasReadOnlyElement, HasTooltipElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-text-field";
     public static final String MAXLENGTH_ATTRIBUTE = "maxlength";

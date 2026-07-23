@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.3-SNAPSHOT — 42 element wrappers.
+> DramaFinder 1.1.6-SNAPSHOT — 42 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -274,7 +274,7 @@ PlaywrightElement for <vaadin-checkbox>.
 PlaywrightElement for <vaadin-combo-box>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasPrefixElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasPrefixElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-combo-box"`, `String FIELD_ITEM_TAG_NAME = "vaadin-combo-box-item"`
 
@@ -298,9 +298,6 @@ PlaywrightElement for <vaadin-combo-box>.
 - `boolean isOpened()` — Whether the overlay is currently open.
 - `void assertOpened()` — Assert that the combo box overlay is open.
 - `void assertClosed()` — Assert that the combo box overlay is closed.
-- `boolean isReadOnly()` — Whether the combo box is read-only.
-- `void assertReadOnly()` — Assert that the combo box is read-only.
-- `void assertNotReadOnly()` — Assert that the combo box is not read-only.
 - `Locator getToggleButtonLocator()` — Locator for the toggle button part.
 - `void clickToggleButton()` — Click the dropdown toggle button.
 - `int getOverlayItemCount()` — Count visible overlay items.
@@ -811,7 +808,7 @@ PlaywrightElement for <vaadin-message-list>.
 PlaywrightElement for <vaadin-multi-select-combo-box>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-multi-select-combo-box"`, `String FIELD_ITEM_TAG_NAME = "vaadin-multi-select-combo-box-item"`, `String FIELD_CHIP_TAG_NAME = "vaadin-multi-select-combo-box-chip"`
 
@@ -838,9 +835,6 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 - `boolean isOpened()` — Whether the overlay is currently open.
 - `void assertOpened()` — Assert that the combo box overlay is open.
 - `void assertClosed()` — Assert that the combo box overlay is closed.
-- `boolean isReadOnly()` — Whether the combo box is read-only.
-- `void assertReadOnly()` — Assert that the combo box is read-only.
-- `void assertNotReadOnly()` — Assert that the combo box is not read-only.
 - `Locator getToggleButtonLocator()` — Locator for the toggle button part.
 - `void clickToggleButton()` — Click the dropdown toggle button.
 - `int getOverlayItemCount()` — Count visible overlay items.
@@ -1178,7 +1172,7 @@ PlaywrightElement for <vaadin-text-area>.
 PlaywrightElement for <vaadin-text-field>
 
 **Extends:** VaadinElement  
-**Implements:** HasValidationPropertiesElement, HasInputFieldElement, HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement  
+**Implements:** HasValidationPropertiesElement, HasInputFieldElement, HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasReadOnlyElement, HasTooltipElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-text-field"`, `String MAXLENGTH_ATTRIBUTE = "maxlength"`, `String PATTERN_ATTRIBUTE = "pattern"`, `String MIN_LENGTH_ATTRIBUTE = "minLength"`
 
@@ -1477,6 +1471,23 @@ Utilities to interact with components implementing Vaadin's HasPrefix(slot="pref
 - `Locator getPrefixLocator()` — Locator for the prefix slot content.
 - `String getPrefixText()` — Text content of the prefix slot.
 - `void assertPrefixHasText(String text)` — Assert that the prefix slot has the expected text, or is hidden when null.
+
+### HasReadOnlyElement
+
+Mixin for components that expose a read-only state through the reflected readonly attribute.
+
+**Extends:** HasLocatorElement  
+
+**Constants:** `String READONLY_ATTRIBUTE = "readonly"`
+
+**Methods:**
+
+- `Locator getReadOnlyLocator()` — Locator used to check the read-only state.
+- `boolean isReadOnly()` — Whether the component is read-only.
+- `boolean isReadOnly(boolean readOnly)` — Whether the component's read-only state matches the expected value.
+- `void assertReadOnly()` — Assert that the component is read-only.
+- `void assertReadOnly(boolean readOnly)` — Assert that the component is read-only (true) or not read-only (false).
+- `void assertNotReadOnly()` — Assert that the component is not read-only.
 
 ### HasStyleElement
 

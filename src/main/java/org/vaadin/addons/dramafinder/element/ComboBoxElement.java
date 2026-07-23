@@ -11,6 +11,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasInputFieldElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPlaceholderElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
+import org.vaadin.addons.dramafinder.element.shared.HasReadOnlyElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
@@ -29,7 +30,7 @@ public class ComboBoxElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasInputFieldElement,
         HasPrefixElement, HasThemeElement, HasPlaceholderElement,
         HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement,
-        HasClearButtonElement, HasAllowedCharPatternElement {
+        HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-combo-box";
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-combo-box-item";
@@ -171,29 +172,6 @@ public class ComboBoxElement extends VaadinElement
      */
     public void assertClosed() {
         assertThat(getLocator()).not().hasAttribute("opened", "");
-    }
-
-    /**
-     * Whether the combo box is read-only.
-     *
-     * @return {@code true} when read-only
-     */
-    public boolean isReadOnly() {
-        return getLocator().getAttribute("readonly") != null;
-    }
-
-    /**
-     * Assert that the combo box is read-only.
-     */
-    public void assertReadOnly() {
-        assertThat(getLocator()).hasAttribute("readonly", "");
-    }
-
-    /**
-     * Assert that the combo box is not read-only.
-     */
-    public void assertNotReadOnly() {
-        assertThat(getLocator()).not().hasAttribute("readonly", "");
     }
 
     /**

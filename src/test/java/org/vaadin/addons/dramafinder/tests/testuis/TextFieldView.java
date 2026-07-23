@@ -25,6 +25,17 @@ public class TextFieldView extends Main {
         createTextFieldWithAriaLabel();
         createTextFieldWithAriaLabelledBy();
         createEnabledDisabledExample();
+        createReadOnlyExample();
+    }
+
+    private void createReadOnlyExample() {
+        TextField textfield = new TextField("Read-only Field");
+        textfield.setValue("Read-only value");
+        textfield.setReadOnly(true);
+        Button button = new Button("Toggle read-only");
+        button.setId("toggle-read-only-button");
+        button.addClickListener(e -> textfield.setReadOnly(!textfield.isReadOnly()));
+        addExample("Read-only Example", new HorizontalLayout(textfield, button));
     }
 
     private void createTextFieldWithThemeExample() {

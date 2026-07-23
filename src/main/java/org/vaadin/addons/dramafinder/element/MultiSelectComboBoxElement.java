@@ -16,6 +16,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasClearButtonElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasInputFieldElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPlaceholderElement;
+import org.vaadin.addons.dramafinder.element.shared.HasReadOnlyElement;
 
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
@@ -34,7 +35,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasInputFieldElement,
         HasThemeElement, HasPlaceholderElement,
         HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement,
-        HasClearButtonElement, HasAllowedCharPatternElement {
+        HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-multi-select-combo-box";
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-multi-select-combo-box-item";
@@ -211,31 +212,6 @@ public class MultiSelectComboBoxElement extends VaadinElement
      */
     public void assertClosed() {
         assertThat(getLocator()).not().hasAttribute("opened", "");
-    }
-
-    // ── Read-only ──────────────────────────────────────────────────────
-
-    /**
-     * Whether the combo box is read-only.
-     *
-     * @return {@code true} when read-only
-     */
-    public boolean isReadOnly() {
-        return getLocator().getAttribute("readonly") != null;
-    }
-
-    /**
-     * Assert that the combo box is read-only.
-     */
-    public void assertReadOnly() {
-        assertThat(getLocator()).hasAttribute("readonly", "");
-    }
-
-    /**
-     * Assert that the combo box is not read-only.
-     */
-    public void assertNotReadOnly() {
-        assertThat(getLocator()).not().hasAttribute("readonly", "");
     }
 
     // ── Toggle button ──────────────────────────────────────────────────
