@@ -222,6 +222,20 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testReadOnly() {
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Read-only Field");
+        textfield.assertReadOnly();
+        textfield.assertReadOnly(true);
+        assertEquals(true, textfield.isReadOnly());
+
+        page.locator("#toggle-read-only-button").click();
+
+        textfield.assertNotReadOnly();
+        textfield.assertReadOnly(false);
+        assertEquals(false, textfield.isReadOnly());
+    }
+
+    @Test
     public void testLabel() {
         TextFieldElement textfieldWithLabel = TextFieldElement.getByLabel(page, "Textfield");
         textfieldWithLabel.assertVisible();
