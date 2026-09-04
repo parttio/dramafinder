@@ -84,6 +84,7 @@ Each element class wraps a Playwright `Locator` and provides typed helpers (gett
 | `RadioButtonGroupElement` | RadioButtonGroup | `vaadin-radio-group` |
 | `SelectElement` | Select | `vaadin-select` |
 | `SideNavigationElement` | SideNav | `vaadin-side-nav` |
+| `TabsElement` | Tabs | `vaadin-tabs` |
 | `TabSheetElement` | TabSheet | `vaadin-tabsheet` |
 | `TextAreaElement` | TextArea | `vaadin-text-area` |
 | `TextFieldElement` | TextField | `vaadin-text-field` |

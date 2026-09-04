@@ -36,8 +36,9 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `VirtualList` | `VirtualListElement` | `get(page)`, `assertRowCount()`, `assertItemRendered()`, `scrollToRow()` |
 | `Dialog` | `DialogElement` | `getByHeaderText(page, text)` or `new DialogElement(page)`, `assertOpen()`, `assertClosed()`, `assertHeaderText()`, `closeWithEscape()`, `getContentLocator()` |
 | `Notification` | `NotificationElement` | `getByText(page, text)`, `assertOpen()`, `assertClosed()`, `assertContent()` |
-| `Tabs` / `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `assertSelected()` |
-| `TabSheet` | `TabSheetElement` | `get(page)`, `selectTab(label)`, `getSelectedTab()`, `assertTabsCount()` |
+| `Tabs` | `TabsElement` | `get(page)`, `getById(page, id)`, `getTab(label)`, `getTab(index)`, `getTabs()`, `getTabCount()`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `getSelectedIndex()`, `assertSelectedTab()`, `assertTabCount()`, `getOrientation()`, `assertOrientation()` |
+| `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `getLabel()`, `assertSelected()`, `assertNotSelected()` |
+| `TabSheet` | `TabSheetElement` | `get(page)`, `getTabsElement()`, `getTab(label)`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `assertSelectedTab(label)`, `assertTabsCount()`, `getContentLocator()` |
 | `Accordion` | `AccordionElement` | `new AccordionElement(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `assertOpened()`, `assertClosed()` |
