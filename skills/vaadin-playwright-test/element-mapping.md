@@ -47,6 +47,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Upload` | `UploadElement` | `getByButtonText(page, text)`, `uploadFiles(Path...)`, `assertHasFile()`, `assertFileComplete()` |
 | `ProgressBar` | `ProgressBarElement` | `new ProgressBarElement(locator)`, `assertValue()`, `assertIndeterminate()` |
 | `Avatar` | `AvatarElement` | `get(page)`, `getByName(page, name)`, `assertName()`, `assertAbbreviation()` |
+| `AvatarGroup` | `AvatarGroupElement` | `get(page)`, `getAvatars()`, `getAvatar(index)`, `getVisibleCount()`, `assertNames()`, `getOverflowAvatar()`, `assertHasOverflow()`, `openOverflow()`, `getOverflowAvatars()`, `assertOverflowNames()` |
 | `MessageInput` | `MessageInputElement` | `get(page)`, `typeAndSubmit()`, `submit()`, `assertValue()` |
 | `MessageList` | `MessageListElement` | `get(page)`, `assertMessageCount()`, `assertMessageText(index, text)`, `assertMessageUserName(index, name)` |
 | `Popover` | `PopoverElement` | `getByLabel(page, label)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
