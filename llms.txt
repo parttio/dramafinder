@@ -42,6 +42,7 @@ The files below are hand-written prose docs, kept only for components whose
 behaviour isn't obvious from the signatures:
 
 - [VaadinElement](docs/specifications/VaadinElement.md) - Base class + how to extend it
+- [BadgeElement](docs/specifications/BadgeElement.md) - Text vs number vs icon, theme-variant assertions
 - [GridElement](docs/specifications/GridElement.md) - Auto-scroll & stale-element caveats, renderer/lazy examples
 - [TreeGridElement](docs/specifications/TreeGridElement.md) - Tree-state reading, hierarchy-column location
 - [VirtualListElement](docs/specifications/VirtualListElement.md) - Debouncer flush, typed component queries
