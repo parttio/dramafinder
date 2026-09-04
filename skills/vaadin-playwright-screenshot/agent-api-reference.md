@@ -1,7 +1,7 @@
 # DramaFinder Agent Helpers API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-agent-api-reference.java`.
-> DramaFinder 1.1.6-SNAPSHOT — 5 agent helper types.
+> DramaFinder 1.1.7-SNAPSHOT — 5 agent helper types.
 
 Public API of the `org.vaadin.addons.dramafinder.agent` helpers used by the **vaadin-playwright-screenshot** skill. Method one-liners come from Javadoc.
 
