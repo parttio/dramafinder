@@ -23,6 +23,7 @@
 - Select
 - Side navigation
 - Split Layout
+- Switch (experimental, Vaadin 25.3)
 - Tabs
 - TextArea
 - TextField
