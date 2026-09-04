@@ -28,6 +28,7 @@ public class RadioButtonGroupViewIT extends SpringPlaywrightIT {
         RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup");
         group.assertVisible();
         group.assertEnabled();
+        group.assertLabel("Basic RadioButtonGroup");
         group.assertValue(null);
 
         group.selectByLabel("Option 2");

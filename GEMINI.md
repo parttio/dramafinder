@@ -67,6 +67,7 @@ Each element class wraps a Playwright `Locator` and provides typed helpers (gett
 | `ButtonElement` | Button | `vaadin-button` |
 | `CardElement` | Card | `vaadin-card` |
 | `CheckboxElement` | Checkbox | `vaadin-checkbox` |
+| `CheckboxGroupElement` | CheckboxGroup | `vaadin-checkbox-group` |
 | `ContextMenuElement` | ContextMenu | `vaadin-context-menu` |
 | `DatePickerElement` | DatePicker | `vaadin-date-picker` |
 | `DateTimePickerElement` | DateTimePicker | `vaadin-date-time-picker` |

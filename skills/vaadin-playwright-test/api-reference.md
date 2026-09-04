@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 42 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 43 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -19,7 +19,8 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
 | `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` |
-| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Page, String)` |
+| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
@@ -58,7 +59,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractNumberFieldElement
 
@@ -254,6 +255,7 @@ PlaywrightElement for <vaadin-checkbox>.
 **Static factory methods:**
 
 - `CheckboxElement getByLabel(Page page, String label)` — Get a CheckboxElement by its accessible label.
+- `CheckboxElement getByLabel(Locator locator, String label)` — Get a CheckboxElement by its accessible label within a given scope.
 
 **Methods:**
 
@@ -268,6 +270,36 @@ PlaywrightElement for <vaadin-checkbox>.
 - `void assertIndeterminate()` — Assert that the checkbox is indeterminate.
 - `void assertNotIndeterminate()` — Assert that the checkbox is not indeterminate.
 - `void setIndeterminate(boolean indeterminate)` — Set the indeterminate state.
+
+### CheckboxGroupElement  `<vaadin-checkbox-group>`
+
+PlaywrightElement for <vaadin-checkbox-group>.
+
+**Extends:** VaadinElement  
+**Implements:** HasLabelElement, HasHelperElement, HasValidationPropertiesElement, HasEnabledElement, HasThemeElement, HasStyleElement, HasTooltipElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-checkbox-group"`
+
+**Constructors:**
+
+- `CheckboxGroupElement(Locator locator)` — Create a new CheckboxGroupElement.
+
+**Static factory methods:**
+
+- `CheckboxGroupElement getByLabel(Page page, String label)` — Get a CheckboxGroupElement by its accessible label.
+- `CheckboxGroupElement getByLabel(Locator locator, String label)` — Get a CheckboxGroupElement by its accessible label within a given scope.
+
+**Methods:**
+
+- `List<CheckboxElement> getCheckboxes()` — Get all checkboxes of the group, in DOM order.
+- `CheckboxElement getCheckbox(String label)` — Get a single checkbox of the group by its label.
+- `int getCheckboxCount()` — Count the checkboxes of the group.
+- `void assertCheckboxCount(int expected)` — Assert that the group contains exactly the expected number of checkboxes.
+- `void selectByLabel(String... labels)` — Select the checkboxes matching the given labels.
+- `void deselectByLabel(String... labels)` — Deselect the checkboxes matching the given labels.
+- `void deselectAll()` — Deselect every checkbox of the group.
+- `List<String> getSelectedValues()` — Get the labels of the currently selected checkboxes, in DOM order.
+- `void assertSelected(String... labels)` — Assert that exactly the checkboxes with the given labels are selected.
 
 ### ComboBoxElement  `<vaadin-combo-box>`
 

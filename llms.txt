@@ -51,6 +51,7 @@ behaviour isn't obvious from the signatures:
 - [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Composite enabled/aria semantics
 - [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
 - [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
+- [CheckboxGroupElement](docs/specifications/CheckboxGroupElement.md) - Label-based selection, exhaustive assertSelected
 - [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group
 - [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
 - [UploadElement](docs/specifications/UploadElement.md) - Hidden-file-input pattern
@@ -75,6 +76,7 @@ TextFieldElement.getByLabel(formLocator, "Name")
 - Date/time pickers: `AriaRole.COMBOBOX`
 - Buttons: `AriaRole.BUTTON`
 - Checkboxes: `AriaRole.CHECKBOX`
+- Checkbox groups / radio groups: `AriaRole.GROUP`, `AriaRole.RADIOGROUP`
 - Radio buttons: `AriaRole.RADIO`
 - Dialogs: `AriaRole.DIALOG`
 - List boxes: `AriaRole.LISTBOX`
