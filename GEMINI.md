@@ -65,6 +65,8 @@ Each element class wraps a Playwright `Locator` and provides typed helpers (gett
 | `AccordionPanelElement` | AccordionPanel | `vaadin-accordion-panel` |
 | `BigDecimalFieldElement` | BigDecimalField | `vaadin-big-decimal-field` |
 | `ButtonElement` | Button | `vaadin-button` |
+| `BreadcrumbsElement` | Breadcrumbs | `vaadin-breadcrumbs` |
+| `BreadcrumbsItemElement` | BreadcrumbsItem | `vaadin-breadcrumbs-item` |
 | `CardElement` | Card | `vaadin-card` |
 | `CheckboxElement` | Checkbox | `vaadin-checkbox` |
 | `ContextMenuElement` | ContextMenu | `vaadin-context-menu` |

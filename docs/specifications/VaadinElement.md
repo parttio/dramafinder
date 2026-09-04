@@ -16,6 +16,8 @@ VaadinElement (abstract)
     ├── AccordionElement
     ├── AccordionPanelElement
     ├── BigDecimalFieldElement
+    ├── BreadcrumbsElement
+    ├── BreadcrumbsItemElement
     ├── ButtonElement
     ├── CardElement
     ├── CheckboxElement
