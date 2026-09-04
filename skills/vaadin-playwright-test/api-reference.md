@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 42 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 43 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -28,6 +28,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
 | `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` |
+| `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
@@ -58,7 +59,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractNumberFieldElement
 
@@ -663,6 +664,44 @@ PlaywrightElement for <vaadin-list-box>.
 - `boolean isMultiple()`
 - `void assertMultiple()` — Assert that multiple selection is enabled.
 - `void assertSingle()` — Assert that single selection mode is enabled.
+
+### MarkdownElement  `<vaadin-markdown>`
+
+PlaywrightElement for <vaadin-markdown>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-markdown"`
+
+**Constructors:**
+
+- `MarkdownElement(Locator locator)` — Create a new MarkdownElement.
+
+**Static factory methods:**
+
+- `MarkdownElement get(Page page)` — Get the first <vaadin-markdown> on the page.
+- `MarkdownElement get(Locator locator)` — Get the first <vaadin-markdown> within a locator scope.
+
+**Methods:**
+
+- `Locator getRenderedLocator()` — Locator for the root of the rendered Markdown output.
+- `void assertContainsText(String expected)` — Assert that the rendered Markdown contains the given text.
+- `void assertText(String expected)` — Assert the full text of the rendered Markdown.
+- `Locator getHeadings()` — Locator for every rendered heading (h1–h6), in document order.
+- `Locator getHeadings(int level)` — Locator for the rendered headings of a single level, in document order.
+- `Locator getHeading(int index)` — Locator for the rendered heading at the given index.
+- `void assertHeadingCount(int count)` — Assert that the rendered output contains exactly the expected number of headings.
+- `void assertHeading(int index, String expected)` — Assert the text of the rendered heading at the given index.
+- `Locator getLinks()` — Locator for every rendered link, in document order.
+- `Locator getLink(String text)` — Locator for the first rendered link with the given accessible name.
+- `void assertLinkCount(int count)` — Assert that the rendered output contains exactly the expected number of links.
+- `void assertLink(String text, String href)` — Assert that a rendered link with the given text points to the given target.
+- `Locator getCodeBlocks()` — Locator for every rendered fenced or indented code block, in document order.
+- `Locator getCodeBlock(int index)` — Locator for the rendered code block at the given index.
+- `void assertCodeBlockCount(int count)` — Assert that the rendered output contains exactly the expected number of code blocks.
+- `void assertCodeBlock(int index, String expected)` — Assert the text of the rendered code block at the given index.
+- `void assertCodeBlockLanguage(int index, String language)` — Assert the language of the rendered code block at the given index.
 
 ### MenuBarElement
 
