@@ -45,6 +45,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `ContextMenu` | `ContextMenuElement` | `ContextMenuElement.openOn(target)` then `new ContextMenuElement(page)`, `selectItem()`, `assertOpen()`, `assertClosed()` |
 | `SplitLayout` | `SplitLayoutElement` | `get(page)`, `assertHorizontal()`, `assertVertical()`, `dragSplitterBy()` |
 | `Upload` | `UploadElement` | `getByButtonText(page, text)`, `uploadFiles(Path...)`, `assertHasFile()`, `assertFileComplete()` |
+| `IntegerSlider` / `DecimalSlider` | `SliderElement` | `getByLabel(page, label)`, `getValue()`, `setValue(double)`, `assertValue()`, `assertMin()`, `assertMax()`, `assertStep()`, `increment()`, `decrement()`, `moveToMin()`, `moveToMax()` |
 | `ProgressBar` | `ProgressBarElement` | `new ProgressBarElement(locator)`, `assertValue()`, `assertIndeterminate()` |
 | `Avatar` | `AvatarElement` | `get(page)`, `getByName(page, name)`, `assertName()`, `assertAbbreviation()` |
 | `MessageInput` | `MessageInputElement` | `get(page)`, `typeAndSubmit()`, `submit()`, `assertValue()` |
