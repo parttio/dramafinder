@@ -121,7 +121,7 @@ public class AvatarGroupElement extends VaadinElement
      * @return the names; an entry is {@code null} when that avatar has no name
      */
     public List<String> getNames() {
-        return toNames(getAvatars());
+        return toNames(getAvatarsLocator());
     }
 
     /**
@@ -167,10 +167,14 @@ public class AvatarGroupElement extends VaadinElement
 
     /**
      * Open the overflow overlay by clicking the overflow avatar, and wait until
-     * it is open.
+     * it is open. Does nothing when the overlay is already open — clicking the
+     * overflow avatar toggles the overlay, so an unconditional click would
+     * close it again.
      */
     public void openOverflow() {
-        getOverflowAvatar().click();
+        if (!isOverflowOpen()) {
+            getOverflowAvatar().click();
+        }
         assertOverflowOpen();
     }
 
@@ -231,7 +235,7 @@ public class AvatarGroupElement extends VaadinElement
      * @return the names; an entry is {@code null} when that avatar has no name
      */
     public List<String> getOverflowNames() {
-        return toNames(getOverflowAvatars());
+        return toNames(getOverflowAvatarsLocator());
     }
 
     // ── Assertions ─────────────────────────────────────────────────────
@@ -307,10 +311,16 @@ public class AvatarGroupElement extends VaadinElement
         return elements;
     }
 
-    private static List<String> toNames(List<AvatarElement> avatars) {
-        List<String> names = new ArrayList<>(avatars.size());
-        for (AvatarElement avatar : avatars) {
-            names.add(avatar.getName());
+    /**
+     * Read the {@code name} property of every matched avatar in a single
+     * round-trip to the browser.
+     */
+    private static List<String> toNames(Locator avatars) {
+        Object evaluated = avatars
+                .evaluateAll("avatars => avatars.map(avatar => avatar.name ?? null)");
+        List<String> names = new ArrayList<>();
+        for (Object name : (List<?>) evaluated) {
+            names.add((String) name);
         }
         return names;
     }

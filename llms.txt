@@ -49,6 +49,7 @@ behaviour isn't obvious from the signatures:
 - [DatePickerElement](docs/specifications/DatePickerElement.md) - String vs LocalDate value formats
 - [TimePickerElement](docs/specifications/TimePickerElement.md) - String vs LocalTime value formats
 - [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Composite enabled/aria semantics
+- [AvatarGroupElement](docs/specifications/AvatarGroupElement.md) - Overflow model, xpath scoping, maxItemsVisible budget
 - [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
 - [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
 - [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group

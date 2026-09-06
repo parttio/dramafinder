@@ -145,6 +145,14 @@ public class AvatarGroupViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testOpenOverflowIsIdempotent() {
+        AvatarGroupElement group = overflowGroup();
+        group.openOverflow();
+        group.openOverflow();
+        group.assertOverflowOpen();
+    }
+
+    @Test
     public void testOverflowNames() {
         AvatarGroupElement group = overflowGroup();
         group.openOverflow();

@@ -57,4 +57,6 @@ group.closeOverflow();                      // Escape, waits for closed
 ```
 
 Open state is read from the overflow avatar's `aria-expanded` attribute, which
-the component keeps in sync with the overlay.
+the component keeps in sync with the overlay. Clicking the `+N` avatar *toggles*
+the overlay, so `openOverflow()` clicks only when the overlay is closed — calling
+it twice leaves the overlay open rather than closing it again.
