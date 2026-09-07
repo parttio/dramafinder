@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.ListBoxElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ListBoxViewIT extends SpringPlaywrightIT {
@@ -56,12 +58,15 @@ public class ListBoxViewIT extends SpringPlaywrightIT {
     public void testEnabledDisabled() {
         ListBoxElement listBox = ListBoxElement.getByLabel(page, "Enabled/Disabled Field");
         listBox.assertDisabled();
+        assertFalse(listBox.isEnabled());
+        assertTrue(listBox.isEnabled(false));
         listBox.assertItemDisabled("Most recent first");
         listBox.assertItemDisabled("Always disabled");
 
         page.locator("#enable-disable-button").click();
 
         listBox.assertEnabled();
+        assertTrue(listBox.isEnabled());
         listBox.assertItemEnabled("Most recent first");
         listBox.assertItemDisabled("Always disabled");
     }

@@ -9,6 +9,8 @@ import org.vaadin.addons.dramafinder.element.SideNavigationItemElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class SideNavigationElementViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -76,6 +78,12 @@ public class SideNavigationElementViewIT extends SpringPlaywrightIT implements H
         SideNavigationItemElement reports = nav.getItem("Reports");
         reports.assertVisible();
         reports.assertDisabled();
+        assertFalse(reports.isEnabled());
+        assertTrue(reports.isEnabled(false));
+
+        SideNavigationItemElement dashboard = nav.getItem("Dashboard");
+        dashboard.assertEnabled();
+        assertTrue(dashboard.isEnabled());
     }
 
     @Test

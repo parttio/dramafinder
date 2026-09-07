@@ -173,5 +173,8 @@ public class MyElement extends VaadinElement {
 - `HasValidationPropertiesElement` - Validation support
 - `FocusableElement` - Focus operations
 - `HasEnabledElement` - Enabled/disabled state
+- `HasDisabledAttributeElement` - Enabled/disabled state read from the host's
+  `disabled` attribute, for hosts whose ARIA role Playwright does not treat as
+  disableable
 - `HasCheckedElement` - Boolean checked state of checkbox-like inputs
 - `HasThemeElement` - Theme variants

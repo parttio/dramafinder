@@ -398,7 +398,7 @@ PlaywrightElement for <vaadin-breadcrumbs>.
 PlaywrightElement for <vaadin-breadcrumbs-item>, a single entry of a BreadcrumbsElement trail.
 
 **Extends:** VaadinElement  
-**Implements:** HasEnabledElement, HasPrefixElement, HasStyleElement  
+**Implements:** HasDisabledAttributeElement, HasPrefixElement, HasStyleElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-breadcrumbs-item"`
 
@@ -906,7 +906,7 @@ PlaywrightElement for <vaadin-integer-field>.
 PlaywrightElement for <vaadin-list-box>.
 
 **Extends:** VaadinElement  
-**Implements:** HasAriaLabelElement, HasStyleElement, HasTooltipElement, HasEnabledElement  
+**Implements:** HasAriaLabelElement, HasStyleElement, HasTooltipElement, HasDisabledAttributeElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-list-box"`, `String FIELD_ITEM_TAG_NAME = "vaadin-item"`, `String MULTIPLE_ATTRIBUTE = "multiple"`
 
@@ -1403,7 +1403,7 @@ PlaywrightElement for <vaadin-side-nav>.
 PlaywrightElement for <vaadin-side-nav-item>.
 
 **Extends:** VaadinElement  
-**Implements:** HasEnabledElement, HasPrefixElement, HasSuffixElement, HasLabelElement  
+**Implements:** HasDisabledAttributeElement, HasPrefixElement, HasSuffixElement, HasLabelElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-side-nav-item"`
 
@@ -1850,6 +1850,14 @@ Mixin for components with a clear button part.
 - `boolean isClearButtonVisible()` — Whether the clear button is visible.
 - `void assertClearButtonVisible()` — Assert that the clear button is visible.
 - `void assertClearButtonNotVisible()` — Assert that the clear button is not visible.
+
+### HasDisabledAttributeElement
+
+Mixin for components whose enablement has to be read from the disabled attribute of the host element instead of Playwright's enablement check.
+
+**Extends:** HasEnabledElement  
+
+*Marker interface — composes the mixins listed above; no own methods.*
 
 ### HasEnabledElement
 

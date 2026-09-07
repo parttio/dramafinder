@@ -100,8 +100,15 @@ public class BreadcrumbsViewIT extends SpringPlaywrightIT implements HasTestView
     public void testItemEnabledState() {
         BreadcrumbsElement breadcrumbs = getTrail();
 
-        breadcrumbs.getItem("Movies").assertEnabled();
-        breadcrumbs.getItem("Archive").assertDisabled();
+        BreadcrumbsItemElement movies = breadcrumbs.getItem("Movies");
+        movies.assertEnabled();
+        assertTrue(movies.isEnabled());
+        assertTrue(movies.isEnabled(true));
+
+        BreadcrumbsItemElement archive = breadcrumbs.getItem("Archive");
+        archive.assertDisabled();
+        assertFalse(archive.isEnabled());
+        assertTrue(archive.isEnabled(false));
     }
 
     @Test
