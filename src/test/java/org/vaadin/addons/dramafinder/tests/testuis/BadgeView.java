@@ -5,6 +5,7 @@ import com.vaadin.flow.component.badge.BadgeVariant;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -50,9 +51,19 @@ public class BadgeView extends Main {
         Badge withoutIcon = new Badge("No icon");
         withoutIcon.setId("badge-without-icon");
 
+        // An icon that renders a text glyph in the light DOM, so the host's
+        // textContent is "Verified\u2713" while the badge's own text is "Verified".
+        Badge withTextIcon = new Badge("Verified", new Span("\u2713"));
+        withTextIcon.setId("badge-with-text-icon");
+
         Badge withNumber = new Badge("unread messages", 5);
         withNumber.setId("badge-with-number");
         withNumber.addThemeVariants(BadgeVariant.NUMBER_ONLY);
+
+        // Sits after the numbered badge so getByText(page, "5") still resolves
+        // to that one, showing the shadow-rendered number is part of the match.
+        Badge minutes = new Badge("5 minutes");
+        minutes.setId("badge-minutes");
 
         Badge dot = new Badge();
         dot.setId("badge-dot");
@@ -72,6 +83,7 @@ public class BadgeView extends Main {
         update.setId("badge-update-button");
 
         add(container, plain, success, error, contrast, warning, smallSuccess,
-                withIcon, withoutIcon, withNumber, dot, withClass, dynamic, update);
+                withIcon, withoutIcon, withTextIcon, withNumber, minutes, dot,
+                withClass, dynamic, update);
     }
 }

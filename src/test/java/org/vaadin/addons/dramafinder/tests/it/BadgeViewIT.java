@@ -10,6 +10,8 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BadgeViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -50,6 +52,17 @@ public class BadgeViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testGetByTextMatchesShadowNumber() {
+        // Playwright's hasText filter traverses the shadow DOM, so the rendered
+        // number is part of the matched text: "5" resolves to the numbered badge
+        // even though its own text is "unread messages", and not to the badge
+        // that literally reads "5 minutes".
+        BadgeElement badge = BadgeElement.getByText(page, "5");
+        badge.assertText("unread messages");
+        badge.assertNumber(5);
+    }
+
+    @Test
     public void testGetByTextScoped() {
         BadgeElement badge = BadgeElement.getByText(page.locator("#badge-container"), "Scoped");
         badge.assertVisible();
@@ -80,6 +93,15 @@ public class BadgeViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testTextExcludesIconSlotText() {
+        // The icon is a Span("\u2713") in the light DOM, so the host's textContent
+        // is "Verified\u2713" — only the badge's own text is asserted.
+        BadgeElement badge = new BadgeElement(page.locator("#badge-with-text-icon"));
+        badge.assertText("Verified");
+        assertEquals("Verified", badge.getText());
+    }
+
+    @Test
     public void testNoText() {
         BadgeElement badge = new BadgeElement(page.locator("#badge-dot"));
         badge.assertText(null);
@@ -94,6 +116,25 @@ public class BadgeViewIT extends SpringPlaywrightIT implements HasTestView {
         assertEquals(5, badge.getNumber());
         // The number is rendered in the shadow DOM, so it is not part of the text
         badge.assertText("unread messages");
+    }
+
+    @Test
+    public void testNumberMismatchReportsExpectedAndActual() {
+        BadgeElement badge = new BadgeElement(page.locator("#badge-with-number"));
+        AssertionError error = assertThrows(AssertionError.class,
+                () -> badge.assertNumber(9));
+        assertTrue(error.getMessage().contains("9"), error.getMessage());
+        assertTrue(error.getMessage().contains("5"), error.getMessage());
+    }
+
+    @Test
+    public void testTextMismatchReportsExpectedAndActual() {
+        page.setDefaultTimeout(1000);
+        BadgeElement badge = new BadgeElement(page.locator("#badge-plain"));
+        AssertionError error = assertThrows(AssertionError.class,
+                () -> badge.assertText("Nope"));
+        assertTrue(error.getMessage().contains("Nope"), error.getMessage());
+        assertTrue(error.getMessage().contains("Pending"), error.getMessage());
     }
 
     @Test

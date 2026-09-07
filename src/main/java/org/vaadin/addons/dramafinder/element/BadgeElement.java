@@ -1,10 +1,10 @@
 package org.vaadin.addons.dramafinder.element;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -28,15 +28,17 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  *   <li>a component in the {@code icon} slot — located with
  *       {@link #getIconLocator()}.</li>
  * </ul>
- * The number lives in the component's shadow DOM, so it is <strong>not</strong>
- * part of {@link #getText()}.
+ * {@link #getText()} reads only the badge's own, non-slotted content, so
+ * neither the number (rendered in the shadow DOM) nor the icon (in the
+ * {@code icon} slot) is part of it.
  * <p>
  * Theme variants ({@code success}, {@code error}, {@code contrast},
  * {@code warning}, {@code small}, {@code filled}, {@code dot},
  * {@code icon-only}, {@code number-only}) are combined into a single
  * space-separated {@code theme} attribute. Use
- * {@link #assertHasThemeVariant(String)} to assert one variant among several,
- * or {@link HasThemeElement#assertTheme(String)} for the whole attribute.
+ * {@link HasThemeElement#assertHasThemeVariant(String)} to assert one variant
+ * among several, or {@link HasThemeElement#assertTheme(String)} for the whole
+ * attribute.
  * <p>
  * The {@code dot}, {@code icon-only} and {@code number-only} variants hide
  * content visually while keeping it in the DOM for screen readers, so the
@@ -46,6 +48,17 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class BadgeElement extends VaadinElement implements HasThemeElement, HasStyleElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-badge";
+
+    /**
+     * Concatenate the text of the child nodes that are not assigned to a named
+     * slot, i.e. the badge's own content. Text nodes have no {@code slot}
+     * attribute, so only slotted elements — the icon — are skipped.
+     */
+    private static final String OWN_TEXT_JS = """
+            el => Array.from(el.childNodes)
+                .filter(node => !(node.nodeType === Node.ELEMENT_NODE && node.hasAttribute('slot')))
+                .map(node => node.textContent)
+                .join('')""";
 
     /**
      * Create a new {@code BadgeElement}.
@@ -82,8 +95,12 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
      * Get a {@code BadgeElement} by its text content.
      * <p>
      * The match is a case-insensitive substring match on the badge's text, so
-     * pass enough of the text to be unambiguous. The {@code number} is rendered
-     * in the shadow DOM and is not part of the matched text.
+     * pass enough of the text to be unambiguous. Playwright's {@code hasText}
+     * filter traverses the shadow DOM, so — unlike {@link #getText()} — the
+     * matched text also contains the rendered {@code number}: on a page with
+     * {@code new Badge("unread messages", 5)}, {@code getByText(page, "5")}
+     * matches that badge. Pass some of the badge's own text to avoid matching a
+     * number by accident.
      *
      * @param page the Playwright page
      * @param text the text the badge contains
@@ -97,6 +114,9 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
 
     /**
      * Get a {@code BadgeElement} by its text content within a scope.
+     * <p>
+     * As with {@link #getByText(Page, String)}, the matched text includes the
+     * {@code number} the component renders in its shadow DOM.
      *
      * @param locator the scope containing the badge
      * @param text    the text the badge contains
@@ -122,6 +142,21 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
     // ── Properties ─────────────────────────────────────────────────────
 
     /**
+     * Get the badge's own text content.
+     * <p>
+     * Only child nodes that are not assigned to a named slot are read, so the
+     * text of an icon that renders a glyph in the light DOM is excluded. The
+     * {@code number} lives in the shadow DOM and is excluded as well; read it
+     * with {@link #getNumber()}.
+     *
+     * @return the badge's own text content, or an empty string when it has none
+     */
+    @Override
+    public String getText() {
+        return (String) getLocator().evaluate(OWN_TEXT_JS);
+    }
+
+    /**
      * Get the number displayed by the badge.
      *
      * @return the number, or {@code null} when the badge has no number
@@ -137,26 +172,38 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
      * Assert the badge's text content.
      * <p>
      * The comparison is exact (no whitespace normalization) and covers only the
-     * badge's own text content, so the {@code number} — which the component
-     * renders in its shadow DOM — is excluded. Playwright's
-     * {@code hasText} assertion does traverse the shadow DOM, so asserting on
-     * {@link #getLocator()} directly would also match the number.
+     * text {@link #getText()} returns, so neither the {@code number} nor an
+     * icon's light-DOM text is included. Playwright's {@code hasText} assertion
+     * does traverse the shadow DOM, so asserting on {@link #getLocator()}
+     * directly would also match the number.
      *
      * @param text the expected text, or {@code null} to assert the badge has no
      *             text content
      */
     public void assertText(String text) {
-        assertThat(getLocator()).hasJSProperty("textContent", text == null ? "" : text);
+        String expected = text == null ? "" : text;
+        try {
+            locator.page().waitForCondition(() -> expected.equals(getText()));
+        } catch (PlaywrightException e) {
+            throw new AssertionError("Badge text mismatch. Expected: <" + expected
+                    + ">, actual: <" + getText() + ">", e);
+        }
     }
 
     /**
      * Assert the badge's number.
      *
      * @param number the expected number, or {@code null} to assert the badge has
-     *               no number
+     *               no number. The component toggles the {@code has-number}
+     *               attribute exactly when {@code number != null}, so absence is
+     *               asserted on that attribute.
      */
     public void assertNumber(Integer number) {
-        locator.page().waitForCondition(() -> Objects.equals(number, getNumber()));
+        if (number != null) {
+            assertThat(getLocator()).hasJSProperty("number", number);
+        } else {
+            assertThat(getLocator()).not().hasAttribute("has-number", Pattern.compile(".*"));
+        }
     }
 
     /**
@@ -171,36 +218,5 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
      */
     public void assertHasNoIcon() {
         assertThat(getLocator()).not().hasAttribute("has-icon", Pattern.compile(".*"));
-    }
-
-    /**
-     * Assert that the badge's {@code theme} attribute contains the given
-     * variant, ignoring any other variants that are also applied.
-     *
-     * @param variant the theme variant name, e.g. {@code success}
-     */
-    public void assertHasThemeVariant(String variant) {
-        assertThat(getLocator()).hasAttribute("theme", themeVariantPattern(variant));
-    }
-
-    /**
-     * Assert that the badge's {@code theme} attribute does not contain the given
-     * variant.
-     *
-     * @param variant the theme variant name, e.g. {@code success}
-     */
-    public void assertHasNoThemeVariant(String variant) {
-        assertThat(getLocator()).not().hasAttribute("theme", themeVariantPattern(variant));
-    }
-
-    /**
-     * Build a pattern matching {@code variant} as a whole token inside a
-     * space-separated attribute value. The escaping is done by hand because
-     * Playwright compiles the pattern into a JavaScript {@code RegExp}, which
-     * does not understand {@link Pattern#quote(String)}'s {@code \Q...\E}.
-     */
-    private static Pattern themeVariantPattern(String variant) {
-        String quoted = variant.replaceAll("[\\\\^$.|?*+()\\[\\]{}]", "\\\\$0");
-        return Pattern.compile("(^|\\s)" + quoted + "($|\\s)");
     }
 }

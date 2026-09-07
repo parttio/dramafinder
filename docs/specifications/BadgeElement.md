@@ -28,27 +28,46 @@ A badge can carry all three at once:
 | number   | `number` property, rendered in the component's shadow DOM | `getNumber()` / `assertNumber(...)` |
 | icon     | `icon` slot (light DOM)            | `getIconLocator()`, `assertHasIcon()` |
 
-`getText()` and `assertText(...)` read the badge's own text content, so the
-number is **not** included:
+`getText()` and `assertText(...)` read only the child nodes that carry no
+`slot` attribute — the badge's own content. Neither the number (shadow DOM) nor
+an icon's light-DOM text is included:
 
 ```java
 // new Badge("unread messages", 5) with BadgeVariant.NUMBER_ONLY
 badge.assertText("unread messages");
 badge.assertNumber(5);
+
+// new Badge("Verified", new Span("✓")) — the host's textContent is "Verified✓"
+badge.assertText("Verified");
 ```
 
 Note that a raw Playwright text assertion on the host element behaves
 differently: `assertThat(badge.getLocator()).hasText("unread messages")` fails,
 because Playwright's text assertions traverse the shadow DOM and therefore also
-pick up the rendered number. Use `assertText(...)` — it compares the badge's
+pick up the rendered number. Use `assertText(...)` — it compares the badge's own
 text content exactly, without whitespace normalization.
+
+## `getByText(...)` *does* match the number
+
+The factories are the exception to the rule above. They filter with Playwright's
+`hasText`, which uses the same shadow-traversing text as `hasText` assertions, so
+the rendered number is part of the matched text:
+
+```java
+// new Badge("unread messages", 5), plus a separate badge reading "5 minutes"
+BadgeElement.getByText(page, "5");        // the *numbered* badge, not "5 minutes"
+BadgeElement.getByText(page, "unread");   // unambiguous
+```
+
+Pass some of the badge's own text to avoid matching a number by accident.
 
 ## Theme variants combine into one attribute
 
 `Badge.addThemeVariants(...)` appends to a single space-separated `theme`
-attribute, so `assertTheme(...)` (from `HasThemeElement`) has to match the whole
-value. Use `assertHasThemeVariant(...)` to assert one variant regardless of the
-others:
+attribute, so `assertTheme(...)` has to match the whole value. Use
+`assertHasThemeVariant(...)` to assert one variant regardless of the others.
+Both live on `HasThemeElement`, so they are available on every themed element,
+not only the badge:
 
 ```java
 // badge.addThemeVariants(BadgeVariant.SUCCESS, BadgeVariant.SMALL)
