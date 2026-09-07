@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 43 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 44 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -16,6 +16,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* |
 | `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` |
 | `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` |
+| `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` |
 | `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
 | `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` |
@@ -59,7 +60,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractNumberFieldElement
 
@@ -168,6 +169,37 @@ PlaywrightElement for <vaadin-avatar>.
 - `void assertAbbreviation(String abbr)` — Assert the avatar's abbreviation.
 - `void assertHasImage()` — Assert that the avatar has an image set.
 - `void assertHasNoImage()` — Assert that the avatar has no image set.
+
+### BadgeElement  `<vaadin-badge>`
+
+PlaywrightElement for <vaadin-badge>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-badge"`
+
+**Constructors:**
+
+- `BadgeElement(Locator locator)` — Create a new BadgeElement.
+
+**Static factory methods:**
+
+- `BadgeElement get(Page page)` — Get the first BadgeElement on the page.
+- `BadgeElement get(Locator locator)` — Get the first BadgeElement within a scope.
+- `BadgeElement getByText(Page page, String text)` — Get a BadgeElement by its text content.
+- `BadgeElement getByText(Locator locator, String text)` — Get a BadgeElement by its text content within a scope.
+
+**Methods:**
+
+- `Locator getIconLocator()` — Locator for the content of the icon slot.
+- `Integer getNumber()` — Get the number displayed by the badge.
+- `void assertText(String text)` — Assert the badge's text content.
+- `void assertNumber(Integer number)` — Assert the badge's number.
+- `void assertHasIcon()` — Assert that the badge has content in its icon slot.
+- `void assertHasNoIcon()` — Assert that the badge has no content in its icon slot.
+- `void assertHasThemeVariant(String variant)` — Assert that the badge's theme attribute contains the given variant, ignoring any other variants that are also applied.
+- `void assertHasNoThemeVariant(String variant)` — Assert that the badge's theme attribute does not contain the given variant.
 
 ### BigDecimalFieldElement  `<vaadin-big-decimal-field>`
 
