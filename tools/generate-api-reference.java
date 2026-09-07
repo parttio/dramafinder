@@ -252,6 +252,7 @@ class GenerateApiReference {
 
     static void appendMethod(StringBuilder md, MethodDeclaration m) {
         md.append("- `").append(methodSig(m)).append("`");
+        if (isDeprecated(m)) md.append(" *(deprecated)*");
         firstSentence(m).ifPresent(s -> md.append(" — ").append(s));
         md.append("\n");
     }
@@ -326,6 +327,10 @@ class GenerateApiReference {
 
     static boolean isOverride(MethodDeclaration m) {
         return m.getAnnotationByName("Override").isPresent();
+    }
+
+    static boolean isDeprecated(MethodDeclaration m) {
+        return m.getAnnotationByName("Deprecated").isPresent();
     }
 
     static java.util.function.Predicate<ConstructorDeclaration> NodeWithModifiersPublic() {

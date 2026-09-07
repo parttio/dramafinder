@@ -8,7 +8,9 @@ import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class CheckboxViewIT extends SpringPlaywrightIT {
@@ -40,13 +42,25 @@ public class CheckboxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void testIsCheckedSetterAndAssertion() {
+    public void testSetCheckedAndAssertion() {
         CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Default Checkbox");
         checkbox.assertChecked(false);
-        checkbox.isChecked(true);
+        assertFalse(checkbox.isChecked());
+        checkbox.setChecked(true);
         checkbox.assertChecked(true);
-        checkbox.isChecked(false);
+        assertTrue(checkbox.isChecked());
+        checkbox.setChecked(false);
         checkbox.assertChecked(false);
+    }
+
+    @Test
+    @SuppressWarnings("removal")
+    public void testDeprecatedIsCheckedSetter() {
+        CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Default Checkbox");
+        checkbox.isChecked(true);
+        checkbox.assertChecked();
+        checkbox.isChecked(false);
+        checkbox.assertNotChecked();
     }
 
     @Test

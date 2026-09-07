@@ -5,12 +5,12 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
+import org.vaadin.addons.dramafinder.element.shared.HasCheckedElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasHelperElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
-import org.vaadin.addons.dramafinder.element.shared.HasValueElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -19,11 +19,12 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * <p>
  * Provides helpers to read and modify checked/indeterminate state and
  * access common mixins for label, helper, validation and enablement.
+ * The checked-state API comes from {@link HasCheckedElement}.
  */
 @PlaywrightElement(CheckboxElement.FIELD_TAG_NAME)
 public class CheckboxElement extends VaadinElement
-        implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
-        HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement {
+        implements FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement,
+        HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-checkbox";
 
@@ -36,82 +37,17 @@ public class CheckboxElement extends VaadinElement
         super(locator);
     }
 
-    @Override
-    public Locator getEnabledLocator() {
-        return getInputLocator();
-    }
-
-    @Override
-    public Locator getAriaLabelLocator() {
-        return getInputLocator();
-    }
-
-    @Override
-    public Locator getFocusLocator() {
-        return getInputLocator();
-    }
-
-    /**
-     * Whether the checkbox is currently checked.
-     *
-     * @return {@code true} if checked
-     */
-    public boolean isChecked() {
-        return getInputLocator().isChecked();
-    }
-
-    /**
-     * Assert that the checkbox is checked.
-     */
-    public void assertChecked() {
-        assertThat(getInputLocator()).isChecked();
-    }
-
-    /**
-     * Assert that the checkbox is not checked.
-     */
-    public void assertNotChecked() {
-        assertThat(getInputLocator()).not().isChecked();
-    }
-
-    /**
-     * Assert the checkbox's checked state.
-     *
-     * @param checked expected checked state
-     */
-    public void assertChecked(boolean checked) {
-        if (checked) {
-            assertChecked();
-        } else {
-            assertNotChecked();
-        }
-    }
-
-    /**
-     * Check the checkbox.
-     */
-    public void check() {
-        getInputLocator().check();
-    }
-
-    /**
-     * Uncheck the checkbox.
-     */
-    public void uncheck() {
-        getInputLocator().uncheck();
-    }
-
     /**
      * Check or uncheck the checkbox.
      *
      * @param checked {@code true} to check, {@code false} to uncheck
+     * @deprecated use {@link #setChecked(boolean)} instead; this name reads as a
+     *             getter and is inconsistent with the other checkbox-like
+     *             elements.
      */
+    @Deprecated(forRemoval = true)
     public void isChecked(boolean checked) {
-        if (checked) {
-            check();
-        } else {
-            uncheck();
-        }
+        setChecked(checked);
     }
 
     /**

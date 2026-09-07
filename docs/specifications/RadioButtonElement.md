@@ -4,7 +4,7 @@
 
 ## Package-private — use through RadioButtonGroupElement
 
-`RadioButtonElement` is package-private and intended for internal use by `RadioButtonGroupElement`; its factory and checked-state methods are also package-private. Drive radio buttons through the group rather than constructing them directly.
+`RadioButtonElement` is package-private and intended for internal use by `RadioButtonGroupElement`; its factory is package-private too, and the checked-state methods it inherits from `HasCheckedElement` are only reachable from inside the package. Drive radio buttons through the group rather than constructing them directly.
 
 ```java
 RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Gender");
