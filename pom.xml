@@ -191,6 +191,13 @@
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
                         <version>${vaadin.version}</version>
+                        <configuration>
+                            <!-- The demo views are test-only, so the feature
+                                 flags enabling experimental components live in
+                                 the test resources instead of
+                                 src/main/resources. -->
+                            <javaResourceFolder>${project.basedir}/src/test/resources</javaResourceFolder>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>

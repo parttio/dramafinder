@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 45 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 50 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -16,6 +16,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* |
 | `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` |
 | `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` |
+| `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` |
 | `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
 | `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` |
@@ -30,6 +31,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` |
 | `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` |
+| `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
@@ -40,8 +42,11 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` |
 | `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* |
+| `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` |
+| `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Page, String)` |
 | `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` |
+| `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
 | `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` |
 | `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
@@ -61,7 +66,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -204,6 +209,37 @@ PlaywrightElement for <vaadin-avatar>.
 - `void assertAbbreviation(String abbr)` — Assert the avatar's abbreviation.
 - `void assertHasImage()` — Assert that the avatar has an image set.
 - `void assertHasNoImage()` — Assert that the avatar has no image set.
+
+### BadgeElement  `<vaadin-badge>`
+
+PlaywrightElement for <vaadin-badge>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-badge"`
+
+**Constructors:**
+
+- `BadgeElement(Locator locator)` — Create a new BadgeElement.
+
+**Static factory methods:**
+
+- `BadgeElement get(Page page)` — Get the first BadgeElement on the page.
+- `BadgeElement get(Locator locator)` — Get the first BadgeElement within a scope.
+- `BadgeElement getByText(Page page, String text)` — Get a BadgeElement by its text content.
+- `BadgeElement getByText(Locator locator, String text)` — Get a BadgeElement by its text content within a scope.
+
+**Methods:**
+
+- `Locator getIconLocator()` — Locator for the content of the icon slot.
+- `Integer getNumber()` — Get the number displayed by the badge.
+- `void assertText(String text)` — Assert the badge's text content.
+- `void assertNumber(Integer number)` — Assert the badge's number.
+- `void assertHasIcon()` — Assert that the badge has content in its icon slot.
+- `void assertHasNoIcon()` — Assert that the badge has no content in its icon slot.
+- `void assertHasThemeVariant(String variant)` — Assert that the badge's theme attribute contains the given variant, ignoring any other variants that are also applied.
+- `void assertHasNoThemeVariant(String variant)` — Assert that the badge's theme attribute does not contain the given variant.
 
 ### BigDecimalFieldElement  `<vaadin-big-decimal-field>`
 
@@ -747,6 +783,44 @@ PlaywrightElement for <vaadin-login-overlay>.
 - `Locator getDescriptionLocator()` — Locator for the application description shown in the branding area.
 - `void assertDescription(String description)` — Assert that the application description matches the expected text.
 
+### MarkdownElement  `<vaadin-markdown>`
+
+PlaywrightElement for <vaadin-markdown>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-markdown"`
+
+**Constructors:**
+
+- `MarkdownElement(Locator locator)` — Create a new MarkdownElement.
+
+**Static factory methods:**
+
+- `MarkdownElement get(Page page)` — Get the first <vaadin-markdown> on the page.
+- `MarkdownElement get(Locator locator)` — Get the first <vaadin-markdown> within a locator scope.
+
+**Methods:**
+
+- `Locator getRenderedLocator()` — Locator for the root of the rendered Markdown output.
+- `void assertContainsText(String expected)` — Assert that the rendered Markdown contains the given text.
+- `void assertText(String expected)` — Assert the full text of the rendered Markdown.
+- `Locator getHeadings()` — Locator for every rendered heading (h1–h6), in document order.
+- `Locator getHeadings(int level)` — Locator for the rendered headings of a single level, in document order.
+- `Locator getHeading(int index)` — Locator for the rendered heading at the given index.
+- `void assertHeadingCount(int count)` — Assert that the rendered output contains exactly the expected number of headings.
+- `void assertHeading(int index, String expected)` — Assert the text of the rendered heading at the given index.
+- `Locator getLinks()` — Locator for every rendered link, in document order.
+- `Locator getLink(String text)` — Locator for the first rendered link with the given accessible name.
+- `void assertLinkCount(int count)` — Assert that the rendered output contains exactly the expected number of links.
+- `void assertLink(String text, String href)` — Assert that a rendered link with the given text points to the given target.
+- `Locator getCodeBlocks()` — Locator for every rendered fenced or indented code block, in document order.
+- `Locator getCodeBlock(int index)` — Locator for the rendered code block at the given index.
+- `void assertCodeBlockCount(int count)` — Assert that the rendered output contains exactly the expected number of code blocks.
+- `void assertCodeBlock(int index, String expected)` — Assert the text of the rendered code block at the given index.
+- `void assertCodeBlockLanguage(int index, String language)` — Assert the language of the rendered code block at the given index.
+
 ### MenuBarElement
 
 PlaywrightElement for <vaadin-menu-bar>.
@@ -1154,6 +1228,43 @@ PlaywrightElement for <vaadin-side-nav-item>.
 - `void toggle()` — Toggles the expansion state of the item.
 - `void navigate()`
 
+### SliderElement  `<vaadin-slider>`
+
+PlaywrightElement for <vaadin-slider> (the Flow IntegerSlider and DecimalSlider components).
+
+**Extends:** VaadinElement  
+**Implements:** HasLabelElement, HasHelperElement, HasEnabledElement, HasReadOnlyElement, FocusableElement, HasThemeElement, HasStyleElement, HasTooltipElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-slider"`
+
+**Constructors:**
+
+- `SliderElement(Locator locator)` — Creates a new SliderElement.
+
+**Static factory methods:**
+
+- `SliderElement getByLabel(Page page, String label)` — Get the SliderElement by its label.
+- `SliderElement getByLabel(Locator locator, String label)` — Get the SliderElement by its label within a given scope.
+
+**Methods:**
+
+- `Locator getInputLocator()` — Locator for the native range input rendered in the slider's light DOM.
+- `double getValue()` — Get the current value.
+- `void setValue(double value)` — Set the value.
+- `void assertValue(double value)` — Assert that the value matches the expected one.
+- `Double getMin()` — Get the min constraint.
+- `void assertMin(double min)` — Assert that the min constraint matches the expected value.
+- `Double getMax()` — Get the max constraint.
+- `void assertMax(double max)` — Assert that the max constraint matches the expected value.
+- `Double getStep()` — Get the step constraint.
+- `void assertStep(double step)` — Assert that the step constraint matches the expected value.
+- `void increment()` — Increase the value by one step, as pressing the right arrow key does.
+- `void increment(int steps)` — Increase the value by the given number of steps.
+- `void decrement()` — Decrease the value by one step, as pressing the left arrow key does.
+- `void decrement(int steps)` — Decrease the value by the given number of steps.
+- `void moveToMin()` — Move the value to min, as pressing the Home key does.
+- `void moveToMax()` — Move the value to max, as pressing the End key does.
+
 ### SplitLayoutElement  `<vaadin-split-layout>`
 
 PlaywrightElement for vaadin-split-layout.
@@ -1179,6 +1290,33 @@ PlaywrightElement for vaadin-split-layout.
 - `void assertVertical()` — Assert that the layout orientation is vertical.
 - `void assertHorizontal()` — Assert that the layout orientation is horizontal.
 - `void dragSplitterBy(double deltaX, double deltaY)` — Drag the splitter by a delta offset in pixels.
+
+### SwitchElement  `<vaadin-switch>`
+
+PlaywrightElement for <vaadin-switch>.
+
+**Extends:** VaadinElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasEnabledElement, HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-switch"`
+
+**Constructors:**
+
+- `SwitchElement(Locator locator)` — Create a new SwitchElement.
+
+**Static factory methods:**
+
+- `SwitchElement getByLabel(Page page, String label)` — Get a SwitchElement by its accessible label.
+
+**Methods:**
+
+- `boolean isChecked()` — Whether the switch is currently checked (on).
+- `void assertChecked()` — Assert that the switch is checked.
+- `void assertNotChecked()` — Assert that the switch is not checked.
+- `void assertChecked(boolean checked)` — Assert the switch's checked state.
+- `void check()` — Switch on.
+- `void uncheck()` — Switch off.
+- `void setChecked(boolean checked)` — Switch on or off.
 
 ### TabElement  `<vaadin-tab>`
 
@@ -1223,11 +1361,49 @@ PlaywrightElement for <vaadin-tabsheet>.
 
 **Methods:**
 
+- `TabsElement getTabsElement()` — Get the embedded tab strip.
 - `void assertTabsCount(int count)` — Assert the count of tabs.
 - `TabElement getTab(String label)` — Get a tab by its label.
 - `TabElement getSelectedTab()` — Get the currently selected tab.
 - `void selectTab(String label)` — Select a tab by label text.
+- `void selectTab(int index)` — Select a tab by its zero-based index.
+- `void assertSelectedTab(String label)` — Assert that the tab with the given label is selected.
 - `Locator getContentLocator()` — Locator for the currently visible content panel.
+
+### TabsElement  `<vaadin-tabs>`
+
+PlaywrightElement for <vaadin-tabs>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-tabs"`, `String ORIENTATION_HORIZONTAL = "horizontal"`, `String ORIENTATION_VERTICAL = "vertical"`
+
+**Constructors:**
+
+- `TabsElement(Locator locator)` — Create a new TabsElement.
+
+**Static factory methods:**
+
+- `TabsElement get(Page page)` — Get the first TabsElement on the page.
+- `TabsElement get(Locator parent)` — Get the first TabsElement within a parent locator.
+- `TabsElement getById(Page page, String id)` — Get a TabsElement by its id attribute.
+
+**Methods:**
+
+- `Locator getTabs()` — Locator matching every tab of this tab strip, in DOM order.
+- `int getTabCount()` — Get the number of tabs currently in the tab strip.
+- `TabElement getTab(String label)` — Get a tab by its label.
+- `TabElement getTab(int index)` — Get a tab by its zero-based index.
+- `TabElement getSelectedTab()` — Get the currently selected tab.
+- `int getSelectedIndex()` — Get the zero-based index of the selected tab.
+- `String getOrientation()` — Get the current orientation.
+- `void selectTab(String label)` — Select a tab by its label.
+- `void selectTab(int index)` — Select a tab by its zero-based index.
+- `void assertTabCount(int count)` — Assert the number of tabs in the tab strip.
+- `void assertSelectedTab(String label)` — Assert that the tab with the given label is the selected one.
+- `void assertSelectedTab(int index)` — Assert that the tab at the given zero-based index is the selected one.
+- `void assertOrientation(String orientation)` — Assert the orientation of the tab strip.
 
 ### TextAreaElement  `<vaadin-text-area>`
 
