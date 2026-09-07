@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 51 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 53 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -19,6 +19,8 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` |
 | `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)` |
+| `<vaadin-breadcrumbs-item>` | [BreadcrumbsItemElement](#breadcrumbsitemelement) | `getByText(Locator, String)`, `getByText(Page, String)` |
 | `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
 | `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` |
 | `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Page, String)` |
@@ -67,7 +69,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -303,6 +305,81 @@ PlaywrightElement for <vaadin-big-decimal-field>.
 
 - `BigDecimalFieldElement getByLabel(Page page, String label)` — Get the BigDecimalFieldElement by its label.
 - `BigDecimalFieldElement getByLabel(Locator locator, String label)` — Get the BigDecimalFieldElement by its label within a given scope.
+
+### BreadcrumbsElement  `<vaadin-breadcrumbs>`
+
+PlaywrightElement for <vaadin-breadcrumbs>.
+
+**Extends:** VaadinElement  
+**Implements:** HasAriaLabelElement, HasStyleElement, HasThemeElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-breadcrumbs"`
+
+**Constructors:**
+
+- `BreadcrumbsElement(Locator locator)` — Create a new BreadcrumbsElement.
+
+**Static factory methods:**
+
+- `BreadcrumbsElement get(Page page)` — Get the first <vaadin-breadcrumbs> on the page.
+- `BreadcrumbsElement get(Locator locator)` — Get the first <vaadin-breadcrumbs> within a locator scope.
+- `BreadcrumbsElement getByLabel(Page page, String label)` — Get the <vaadin-breadcrumbs> by its accessible name, using the ARIA role navigation.
+
+**Methods:**
+
+- `Locator getItemsLocator()` — Locator for every <vaadin-breadcrumbs-item> of the trail, including the items collapsed into the overflow overlay.
+- `List<BreadcrumbsItemElement> getItems()` — Get every item of the trail, in trail order, including the items collapsed into the overflow overlay.
+- `BreadcrumbsItemElement getItem(int index)` — Get the item at the given position in the trail.
+- `BreadcrumbsItemElement getItem(String text)` — Get the item showing the given text.
+- `BreadcrumbsItemElement getCurrentItem()` — Get the item marked as the current page, that is, the last item of the trail when it has no path.
+- `void assertItemCount(int count)` — Assert that the trail holds exactly the expected number of items.
+- `void assertItemTexts(String... texts)` — Assert that the trail shows exactly the given texts, in trail order.
+- `Locator getOverflowButtonLocator()` — Locator for the button that reveals the collapsed items.
+- `boolean hasOverflow()` — Whether one or more items are collapsed into the overflow overlay.
+- `void assertHasOverflow()` — Assert that items are collapsed into the overflow overlay.
+- `void assertHasNoOverflow()` — Assert that the whole trail fits and nothing is collapsed.
+- `Locator getOverflowItemsLocator()` — Locator for the items collapsed into the overflow overlay.
+- `List<BreadcrumbsItemElement> getOverflowItems()` — Get the items collapsed into the overflow overlay, in trail order.
+- `boolean isOverflowOpen()` — Whether the overflow overlay is open.
+- `void openOverflow()` — Open the overflow overlay, revealing the collapsed items.
+- `void closeOverflow()` — Close the overflow overlay by pressing Escape.
+- `void assertOverflowOpen()` — Assert that the overflow overlay is open.
+- `void assertOverflowClosed()` — Assert that the overflow overlay is closed.
+- `void assertOverflowButtonAriaLabel(String label)` — Assert the accessible name of the overflow button, which comes from BreadcrumbsI18n.moreItems.
+
+### BreadcrumbsItemElement  `<vaadin-breadcrumbs-item>`
+
+PlaywrightElement for <vaadin-breadcrumbs-item>, a single entry of a BreadcrumbsElement trail.
+
+**Extends:** VaadinElement  
+**Implements:** HasEnabledElement, HasPrefixElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-breadcrumbs-item"`
+
+**Constructors:**
+
+- `BreadcrumbsItemElement(Locator locator)` — Create a new BreadcrumbsItemElement.
+
+**Static factory methods:**
+
+- `BreadcrumbsItemElement getByText(Page page, String text)` — Get the first <vaadin-breadcrumbs-item> with the given text on the page.
+- `BreadcrumbsItemElement getByText(Locator locator, String text)` — Get the first <vaadin-breadcrumbs-item> with the given text within a locator scope.
+
+**Methods:**
+
+- `void assertText(String text)` — Assert that the item shows the expected text.
+- `String getPath()` — Get the path the item links to.
+- `void assertPath(String path)` — Assert the path the item links to.
+- `Locator getLinkLocator()` — Locator for the <a part="link"> rendered when the item has a path.
+- `boolean isLink()` — Whether the item renders as a link, which is the case when it has a path.
+- `void assertLink()` — Assert that the item renders as a link.
+- `void assertNotLink()` — Assert that the item renders as a non-link.
+- `boolean isCurrent()` — Whether the item represents the current page.
+- `void assertCurrent()` — Assert that the item represents the current page, both through the current host attribute and aria-current="page" on its [part='nolink'] element.
+- `void assertNotCurrent()` — Assert that the item does not represent the current page.
+- `boolean hasPrefix()` — Whether the item has content in its prefix slot.
+- `void assertHasPrefix()` — Assert that the item has content in its prefix slot.
+- `void assertHasNoPrefix()` — Assert that the item has no content in its prefix slot.
 
 ### ButtonElement  `<vaadin-button>`
 

@@ -60,6 +60,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Card` | `CardElement` | `getByTitle(page, title)`, `assertTitle()`, `assertSubtitle()` |
 | `Markdown` | `MarkdownElement` | `get(page)`, `getRenderedLocator()`, `getText()`, `assertContainsText()`, `getHeadings()`, `getLinks()`, `getCodeBlocks()`, `assertHeading(index, text)`, `assertLink(text, href)`, `assertCodeBlockLanguage(index, language)` |
 | `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
+| `Breadcrumbs` | `BreadcrumbsElement` | `get(page)`, `getByLabel(page, label)`, `getItems()`, `getItem(text)`, `getCurrentItem()`, `assertItemTexts()`, `assertItemCount()`, `hasOverflow()`, `openOverflow()`, `getOverflowItems()` |
+| `BreadcrumbsItem` | `BreadcrumbsItemElement` | `getByText(page, text)`, `getText()`, `getPath()`, `isLink()`, `click()`, `isCurrent()`, `assertCurrent()`, `assertHasPrefix()`, `assertDisabled()` |
 
 ## Factory method conventions
 

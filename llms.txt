@@ -43,6 +43,7 @@ behaviour isn't obvious from the signatures:
 
 - [VaadinElement](docs/specifications/VaadinElement.md) - Base class + how to extend it
 - [BadgeElement](docs/specifications/BadgeElement.md) - Text vs number vs icon, theme-variant assertions
+- [BreadcrumbsElement](docs/specifications/BreadcrumbsElement.md) - Overflow overlay model, experimental feature flag
 - [GridElement](docs/specifications/GridElement.md) - Auto-scroll & stale-element caveats, renderer/lazy examples
 - [TreeGridElement](docs/specifications/TreeGridElement.md) - Tree-state reading, hierarchy-column location
 - [VirtualListElement](docs/specifications/VirtualListElement.md) - Debouncer flush, typed component queries
