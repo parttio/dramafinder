@@ -2,7 +2,7 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.AriaRole;
-import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
 import org.vaadin.addons.dramafinder.element.shared.HasSuffixElement;
@@ -13,7 +13,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * PlaywrightElement for {@code <vaadin-side-nav-item>}.
  */
 @PlaywrightElement(SideNavigationItemElement.FIELD_TAG_NAME)
-public class SideNavigationItemElement extends VaadinElement implements HasEnabledElement, HasPrefixElement, HasSuffixElement, HasLabelElement {
+public class SideNavigationItemElement extends VaadinElement implements HasDisabledAttributeElement, HasPrefixElement, HasSuffixElement, HasLabelElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-side-nav-item";
 
@@ -40,22 +40,6 @@ public class SideNavigationItemElement extends VaadinElement implements HasEnabl
      */
     public void assertCollapsed() {
         assertThat(getLocator()).not().hasAttribute("expanded", "");
-    }
-
-    /**
-     * Asserts that the item is enabled.
-     */
-    @Override
-    public void assertEnabled() {
-        assertThat(getLocator()).not().hasAttribute("disabled", "");
-    }
-
-    /**
-     * Asserts that the item is disabled.
-     */
-    @Override
-    public void assertDisabled() {
-        assertThat(getLocator()).hasAttribute("disabled", "");
     }
 
     /**

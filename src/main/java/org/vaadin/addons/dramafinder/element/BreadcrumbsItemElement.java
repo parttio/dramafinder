@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 
@@ -22,7 +22,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(BreadcrumbsItemElement.FIELD_TAG_NAME)
 public class BreadcrumbsItemElement extends VaadinElement
-        implements HasEnabledElement, HasPrefixElement, HasStyleElement {
+        implements HasDisabledAttributeElement, HasPrefixElement, HasStyleElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-breadcrumbs-item";
 
@@ -172,25 +172,6 @@ public class BreadcrumbsItemElement extends VaadinElement
      */
     public void assertHasNoPrefix() {
         assertThat(getLocator()).not().hasAttribute("has-prefix", "");
-    }
-
-    // --- Enabled state ---
-
-    /**
-     * Assert that the item is enabled, that is, the {@code disabled} attribute
-     * is absent.
-     */
-    @Override
-    public void assertEnabled() {
-        assertThat(getLocator()).not().hasAttribute("disabled", "");
-    }
-
-    /**
-     * Assert that the item is disabled.
-     */
-    @Override
-    public void assertDisabled() {
-        assertThat(getLocator()).hasAttribute("disabled", "");
     }
 
     // --- Factory methods ---

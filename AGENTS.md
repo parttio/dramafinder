@@ -146,7 +146,38 @@ public void assertMinLength(Integer min) {
 }
 ```
 
-#### 7. ARIA Role Mismatch
+#### 7. Disabled State on Non-Form Hosts
+- **Pitfall**: Implementing `HasEnabledElement` on a component whose host is not
+  a native form control, e.g. `vaadin-side-nav-item` (`listitem`),
+  `vaadin-list-box` (`list`) or a plain container. Playwright only treats an
+  element as disabled when it is a native control with `disabled`, or has
+  `aria-disabled="true"` on a role that supports it (`button`, `link`,
+  `menuitem`, `tab`, `option`, …), so `isEnabled()` returns `true` on a disabled
+  Vaadin host even though `DisabledMixin` set `disabled` on it.
+- **Solution**: Implement `HasDisabledAttributeElement` instead. It redefines
+  `isEnabled()`, `assertEnabled()` and `assertDisabled()` in terms of the
+  `disabled` attribute of `getEnabledLocator()`, so the getter and the
+  assertions stay consistent. Never override only the assert methods: that
+  leaves `isEnabled()` / `isEnabled(boolean)` reporting the opposite.
+- Keep plain `HasEnabledElement` when the enablement locator is a native form
+  control (typically via `getEnabledLocator()` returning `getInputLocator()`) or
+  has a role Playwright understands — its checks also cover `aria-disabled` and
+  state inherited from an ancestor `fieldset`.
+```java
+// Host is <vaadin-side-nav-item role="listitem"> - attribute based
+public class SideNavigationItemElement extends VaadinElement
+        implements HasDisabledAttributeElement { }
+
+// Enablement lives on the inner <input> - Playwright based
+public class TextFieldElement extends VaadinElement implements HasEnabledElement {
+    @Override
+    public Locator getEnabledLocator() {
+        return getInputLocator();
+    }
+}
+```
+
+#### 8. ARIA Role Mismatch
 - **Pitfall**: Using wrong ARIA role in `getByRole()` lookups.
 - **Solution**: Check the actual role of the internal element:
   - Text inputs: `TEXTBOX`

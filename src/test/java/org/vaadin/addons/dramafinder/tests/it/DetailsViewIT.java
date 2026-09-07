@@ -8,6 +8,9 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.DetailsElement;
 import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DetailsViewIT extends SpringPlaywrightIT implements HasTestView {
 
@@ -59,7 +62,13 @@ public class DetailsViewIT extends SpringPlaywrightIT implements HasTestView {
     public void testDisabledDetails() {
         DetailsElement details = DetailsElement.getBySummaryText(page, "Disabled Details");
         details.assertDisabled();
+        assertFalse(details.isEnabled());
+        assertTrue(details.isEnabled(false));
         details.assertClosed();
+
+        DetailsElement enabled = DetailsElement.getBySummaryText(page, "Basic Details");
+        enabled.assertEnabled();
+        assertTrue(enabled.isEnabled());
     }
 
     @Test

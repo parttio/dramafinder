@@ -10,6 +10,8 @@ import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AccordionViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -30,12 +32,16 @@ public class AccordionViewIT extends SpringPlaywrightIT implements HasTestView {
 
         AccordionPanelElement panel2 = accordion.getPanel("Panel 2");
         panel2.assertClosed();
+        panel2.assertEnabled();
+        assertTrue(panel2.isEnabled());
         accordion.openPanel("Panel 2");
         panel1.assertClosed();
         panel2.assertOpened();
 
         AccordionPanelElement disabledPanel = accordion.getPanel("Disabled Panel");
         disabledPanel.assertDisabled();
+        assertFalse(disabledPanel.isEnabled());
+        assertTrue(disabledPanel.isEnabled(false));
         disabledPanel.assertClosed();
         disabledPanel.getSummaryLocator().click();
         disabledPanel.assertClosed();

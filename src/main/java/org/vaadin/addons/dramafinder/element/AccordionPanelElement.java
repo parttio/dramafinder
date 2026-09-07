@@ -2,6 +2,7 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -11,7 +12,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * Offers utilities to toggle open state, read summary and access content.
  */
 @PlaywrightElement(AccordionPanelElement.FIELD_TAG_NAME)
-public class AccordionPanelElement extends VaadinElement {
+public class AccordionPanelElement extends VaadinElement implements HasDisabledAttributeElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-accordion-panel";
     public static final String FIELD_HEADING_TAG_NAME = "vaadin-accordion-heading";
@@ -85,16 +86,6 @@ public class AccordionPanelElement extends VaadinElement {
                 new Locator.FilterOptions().setHas(
                         locator.page().locator(FIELD_HEADING_TAG_NAME + "[opened]")
                 )));
-    }
-
-    /** Assert that the panel is enabled. */
-    public void assertEnabled() {
-        assertThat(getLocator()).not().hasAttribute("disabled", "");
-    }
-
-    /** Assert that the panel is disabled. */
-    public void assertDisabled() {
-        assertThat(getLocator()).hasAttribute("disabled", "");
     }
 
 }
