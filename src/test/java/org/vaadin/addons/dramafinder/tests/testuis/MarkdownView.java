@@ -13,6 +13,7 @@ public class MarkdownView extends Main {
 
     public MarkdownView() {
         createBasicExample();
+        createOverlappingLinkNamesExample();
         createLineBreaksExample();
         createEmptyExample();
     }
@@ -36,6 +37,19 @@ public class MarkdownView extends Main {
                 Use `assertContainsText` for partial matches.
                 """);
         addExample("Basic Example", markdown);
+    }
+
+    private void createOverlappingLinkNamesExample() {
+        // "docs" is a substring of "API docs": only an exact accessible
+        // name match can tell the two links apart.
+        Markdown markdown = new Markdown("""
+                Read the [API docs](https://vaadin.com/api) or just the
+                [docs](https://vaadin.com/docs).
+
+                Two links share a name: [guide](https://vaadin.com/guide/a)
+                and [guide](https://vaadin.com/guide/b).
+                """);
+        addExample("Overlapping Link Names Example", markdown);
     }
 
     private void createLineBreaksExample() {
