@@ -154,6 +154,7 @@ PlaywrightElement for <vaadin-accordion>.
 PlaywrightElement for <vaadin-accordion-panel>.
 
 **Extends:** VaadinElement  
+**Implements:** HasDisabledAttributeElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-accordion-panel"`, `String FIELD_HEADING_TAG_NAME = "vaadin-accordion-heading"`
 
@@ -177,8 +178,6 @@ PlaywrightElement for <vaadin-accordion-panel>.
 - `Locator getContentLocator()` — Locator pointing to the first non-slotted content element.
 - `void assertContentVisible()` — Assert that the content area is visible.
 - `void assertContentNotVisible()` — Assert that the content area is not visible.
-- `void assertEnabled()` — Assert that the panel is enabled.
-- `void assertDisabled()` — Assert that the panel is disabled.
 
 ### AppLayoutElement  `<vaadin-app-layout>`
 
@@ -656,7 +655,7 @@ PlaywrightElement for <vaadin-date-time-picker>.
 PlaywrightElement for <vaadin-details>.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement, HasTooltipElement  
+**Implements:** HasStyleElement, HasThemeElement, HasTooltipElement, HasDisabledAttributeElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-details"`
 
@@ -670,8 +669,6 @@ PlaywrightElement for <vaadin-details>.
 
 **Methods:**
 
-- `void assertEnabled()` — Assert that the component is enabled.
-- `void assertDisabled()` — Assert that the component is disabled.
 - `void assertOpened()` — Assert that the details is opened.
 - `void assertClosed()` — Assert that the details is closed.
 - `boolean isOpen()` — Whether the details is opened.

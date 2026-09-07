@@ -2,6 +2,7 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
@@ -15,23 +16,13 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(DetailsElement.FIELD_TAG_NAME)
 public class DetailsElement extends VaadinElement implements HasStyleElement, HasThemeElement,
-        HasTooltipElement {
+        HasTooltipElement, HasDisabledAttributeElement {
 
     public static final String FIELD_TAG_NAME = "vaadin-details";
 
     /** Create a new {@code DetailsElement}. */
     public DetailsElement(Locator locator) {
         super(locator);
-    }
-
-    /** Assert that the component is enabled. */
-    public void assertEnabled() {
-        assertThat(getLocator()).not().hasAttribute("disabled", "");
-    }
-
-    /** Assert that the component is disabled. */
-    public void assertDisabled() {
-        assertThat(getLocator()).hasAttribute("disabled", "");
     }
 
     /** Assert that the details is opened. */
