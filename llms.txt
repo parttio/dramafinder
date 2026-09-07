@@ -78,6 +78,7 @@ TextFieldElement.getByLabel(formLocator, "Name")
 - Date/time pickers: `AriaRole.COMBOBOX`
 - Buttons: `AriaRole.BUTTON`
 - Checkboxes: `AriaRole.CHECKBOX`
+- Switches: `AriaRole.SWITCH`
 - Radio buttons: `AriaRole.RADIO`
 - Dialogs: `AriaRole.DIALOG`
 - List boxes: `AriaRole.LISTBOX`

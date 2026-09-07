@@ -37,6 +37,7 @@ VaadinElement (abstract)
     ├── SelectElement
     ├── SideNavigationElement
     ├── SideNavigationItemElement
+    ├── SwitchElement
     ├── TabElement
     ├── TabsElement
     ├── TabSheetElement

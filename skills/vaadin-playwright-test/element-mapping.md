@@ -23,6 +23,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `BigDecimalField` | `BigDecimalFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` |
 | `Button` | `ButtonElement` | `getByText(page, text)`, `click()`, `assertVisible()`, `assertEnabled()`, `assertDisabled()` |
 | `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
+| `Switch` (experimental, Vaadin 25.3) | `SwitchElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()` |
 | `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `open()`, `assertItemCount()` |
 | `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `assertSelectedItems()`, `assertSelectedCount()` |
