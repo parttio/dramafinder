@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 44 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 45 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -40,6 +40,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` |
 | `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* |
+| `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` |
 | `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` |
 | `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` |
@@ -60,7 +61,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractNumberFieldElement
 
@@ -1141,6 +1142,43 @@ PlaywrightElement for <vaadin-side-nav-item>.
 - `void assertNotCurrent()` — Asserts that the item is not current.
 - `void toggle()` — Toggles the expansion state of the item.
 - `void navigate()`
+
+### SliderElement  `<vaadin-slider>`
+
+PlaywrightElement for <vaadin-slider> (the Flow IntegerSlider and DecimalSlider components).
+
+**Extends:** VaadinElement  
+**Implements:** HasLabelElement, HasHelperElement, HasEnabledElement, HasReadOnlyElement, FocusableElement, HasThemeElement, HasStyleElement, HasTooltipElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-slider"`
+
+**Constructors:**
+
+- `SliderElement(Locator locator)` — Creates a new SliderElement.
+
+**Static factory methods:**
+
+- `SliderElement getByLabel(Page page, String label)` — Get the SliderElement by its label.
+- `SliderElement getByLabel(Locator locator, String label)` — Get the SliderElement by its label within a given scope.
+
+**Methods:**
+
+- `Locator getInputLocator()` — Locator for the native range input rendered in the slider's light DOM.
+- `double getValue()` — Get the current value.
+- `void setValue(double value)` — Set the value.
+- `void assertValue(double value)` — Assert that the value matches the expected one.
+- `Double getMin()` — Get the min constraint.
+- `void assertMin(double min)` — Assert that the min constraint matches the expected value.
+- `Double getMax()` — Get the max constraint.
+- `void assertMax(double max)` — Assert that the max constraint matches the expected value.
+- `Double getStep()` — Get the step constraint.
+- `void assertStep(double step)` — Assert that the step constraint matches the expected value.
+- `void increment()` — Increase the value by one step, as pressing the right arrow key does.
+- `void increment(int steps)` — Increase the value by the given number of steps.
+- `void decrement()` — Decrease the value by one step, as pressing the left arrow key does.
+- `void decrement(int steps)` — Decrease the value by the given number of steps.
+- `void moveToMin()` — Move the value to min, as pressing the Home key does.
+- `void moveToMax()` — Move the value to max, as pressing the End key does.
 
 ### SplitLayoutElement  `<vaadin-split-layout>`
 
