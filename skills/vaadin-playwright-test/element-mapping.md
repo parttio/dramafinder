@@ -53,6 +53,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Popover` | `PopoverElement` | `getByLabel(page, label)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
 | `SideNavigation` | `SideNavigationElement` | `getByLabel(page, label)`, `clickItem(label)`, `getItem(label)`, `assertCollapsed()`, `assertExpanded()` |
 | `Card` | `CardElement` | `getByTitle(page, title)`, `assertTitle()`, `assertSubtitle()` |
+| `Markdown` | `MarkdownElement` | `get(page)`, `getRenderedLocator()`, `getText()`, `assertContainsText()`, `getHeadings()`, `getLinks()`, `getCodeBlocks()`, `assertHeading(index, text)`, `assertLink(text, href)`, `assertCodeBlockLanguage(index, language)` |
+| `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
 
 ## Factory method conventions
 
