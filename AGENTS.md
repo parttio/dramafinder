@@ -187,6 +187,28 @@ public class TextFieldElement extends VaadinElement implements HasEnabledElement
   - Checkboxes: `CHECKBOX`
   - Radio buttons: `RADIO`
 
+#### 9. Theme Variant Order
+- **Pitfall**: Asserting a single theme variant with `assertTheme("primary")` on
+  a component that has several. Vaadin combines every applied variant into one
+  space-separated `theme` attribute, in an order that is not the order the
+  variants were added (`LUMO_PRIMARY, LUMO_SMALL` renders as `small primary`),
+  so a whole-attribute match is brittle and often plain wrong.
+- **Solution**: `assertTheme(...)` is for the whole attribute. To assert one
+  variant among several, use `HasThemeElement.assertHasThemeVariant(...)` /
+  `assertHasNoThemeVariant(...)`, which match the variant as a whole token
+  regardless of the others. Both are inherited by every element implementing
+  `HasThemeElement` — never re-implement the token regex per element.
+
+#### 10. Light-DOM Text vs `textContent`
+- **Pitfall**: Reading a component's own text with `locator.textContent()` (or
+  Playwright's `hasText`) when the component also renders content in its shadow
+  DOM or accepts slotted children. Both traverse the shadow DOM and include
+  slotted light-DOM text, so `vaadin-badge` with an icon and a number reports
+  the icon glyph and the number as part of its text.
+- **Solution**: Read only the child nodes that carry no `slot` attribute, e.g.
+  via `evaluate` over `childNodes` (see `BadgeElement.getText()`), or scope a
+  locator with `> :not([slot])` (see `CardElement.getContentLocator()`).
+
 ### Design Patterns
 
 #### 1. Factory Method Pattern

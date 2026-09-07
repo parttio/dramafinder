@@ -17,6 +17,7 @@ public class ButtonView extends Main {
 
     public ButtonView() {
         createBasicButtons();
+        createCombinedVariantsButton();
         createDisabledButton();
         createToggleButton();
         createVisibilityToggleButton();
@@ -31,6 +32,12 @@ public class ButtonView extends Main {
         button.addClassName("custom-button");
         button.focus();
         addExample("Enabled Button", button);
+    }
+
+    private void createCombinedVariantsButton() {
+        Button button = new Button("Combined Variants Button");
+        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
+        addExample("Combined Variants Button", button);
     }
 
     private void createDisabledButton() {

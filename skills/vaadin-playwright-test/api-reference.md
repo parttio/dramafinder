@@ -330,8 +330,6 @@ PlaywrightElement for <vaadin-badge>.
 - `void assertNumber(Integer number)` — Assert the badge's number.
 - `void assertHasIcon()` — Assert that the badge has content in its icon slot.
 - `void assertHasNoIcon()` — Assert that the badge has no content in its icon slot.
-- `void assertHasThemeVariant(String variant)` — Assert that the badge's theme attribute contains the given variant, ignoring any other variants that are also applied.
-- `void assertHasNoThemeVariant(String variant)` — Assert that the badge's theme attribute does not contain the given variant.
 
 ### BigDecimalFieldElement  `<vaadin-big-decimal-field>`
 
@@ -1986,6 +1984,8 @@ Mixin for components that support the theme attribute.
 
 - `String getTheme()` — Get the current theme attribute value.
 - `void assertTheme(String theme)` — Assert that the theme attribute matches, or is absent when null.
+- `void assertHasThemeVariant(String variant)` — Assert that the theme attribute contains the given variant, ignoring any other variants that are also applied.
+- `void assertHasNoThemeVariant(String variant)` — Assert that the theme attribute does not contain the given variant.
 
 ### HasTooltipElement
 

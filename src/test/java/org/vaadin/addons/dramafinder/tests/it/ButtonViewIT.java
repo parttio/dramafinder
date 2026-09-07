@@ -41,6 +41,19 @@ public class ButtonViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testHasThemeVariant() {
+        // assertHasThemeVariant comes from HasThemeElement, so it works on any
+        // themed component, not just the badge it was first written for.
+        ButtonElement button = ButtonElement.getByText(page, "Combined Variants Button");
+        // assertTheme has to match the whole attribute, including the order the
+        // variants happen to be applied in
+        button.assertTheme("small primary");
+        button.assertHasThemeVariant("primary");
+        button.assertHasThemeVariant("small");
+        button.assertHasNoThemeVariant("error");
+    }
+
+    @Test
     public void testDisabledButton() {
         ButtonElement button = ButtonElement.getByText(page, "Disabled Button");
         button.assertDisabled();
