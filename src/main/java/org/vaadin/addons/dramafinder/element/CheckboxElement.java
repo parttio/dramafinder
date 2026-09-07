@@ -161,4 +161,20 @@ public class CheckboxElement extends VaadinElement
                                         new Page.GetByRoleOptions().setName(label)))
                         ).first());
     }
+
+    /**
+     * Get a {@code CheckboxElement} by its accessible label within a given scope.
+     *
+     * @param locator the locator to search within (e.g. a checkbox group)
+     * @param label   the accessible label of the checkbox
+     * @return the matching {@code CheckboxElement}
+     */
+    public static CheckboxElement getByLabel(Locator locator, String label) {
+        return new CheckboxElement(
+                locator.locator(FIELD_TAG_NAME)
+                        .filter(new Locator.FilterOptions()
+                                .setHas(locator.page().getByRole(AriaRole.CHECKBOX,
+                                        new Page.GetByRoleOptions().setName(label)))
+                        ).first());
+    }
 }

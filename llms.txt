@@ -56,6 +56,7 @@ behaviour isn't obvious from the signatures:
 - [LoginElement](docs/specifications/LoginElement.md) - Login form/overlay lookups, i18n-driven assertions
 - [MarkdownElement](docs/specifications/MarkdownElement.md) - Rendered-output assertions, not Markdown source
 - [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
+- [CheckboxGroupElement](docs/specifications/CheckboxGroupElement.md) - Label-based selection, exhaustive assertSelected
 - [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group
 - [SliderElement](docs/specifications/SliderElement.md) - Keyboard-driven value changes, step snapping
 - [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
@@ -82,6 +83,7 @@ TextFieldElement.getByLabel(formLocator, "Name")
 - Buttons: `AriaRole.BUTTON`
 - Checkboxes: `AriaRole.CHECKBOX`
 - Switches: `AriaRole.SWITCH`
+- Checkbox groups / radio groups: `AriaRole.GROUP`, `AriaRole.RADIOGROUP`
 - Radio buttons: `AriaRole.RADIO`
 - Dialogs: `AriaRole.DIALOG`
 - List boxes: `AriaRole.LISTBOX`

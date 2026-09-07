@@ -21,6 +21,7 @@ VaadinElement (abstract)
     ├── ButtonElement
     ├── CardElement
     ├── CheckboxElement
+    ├── CheckboxGroupElement
     ├── ComboBoxElement
     ├── ContextMenuElement
     ├── DatePickerElement
