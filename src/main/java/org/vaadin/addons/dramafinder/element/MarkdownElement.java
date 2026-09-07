@@ -151,14 +151,20 @@ public class MarkdownElement extends VaadinElement implements HasThemeElement, H
     }
 
     /**
-     * Locator for the first rendered link with the given accessible name.
+     * Locator for the rendered link with the given accessible name. The name is
+     * matched exactly, so {@code getLink("docs")} does not match a link named
+     * {@code API docs}.
+     * <p>
+     * The locator is strict: if several links share the accessible name, using
+     * it fails instead of picking one of them. Use {@link #getLinks()} with
+     * {@code nth(int)} to address one of a set of same-named links.
      *
-     * @param text the link text
+     * @param text the link text, matched exactly
      * @return locator for the matching link
      */
     public Locator getLink(String text) {
         return getRenderedLocator().getByRole(AriaRole.LINK,
-                new Locator.GetByRoleOptions().setName(text)).first();
+                new Locator.GetByRoleOptions().setName(text).setExact(true));
     }
 
     /**
@@ -172,10 +178,11 @@ public class MarkdownElement extends VaadinElement implements HasThemeElement, H
     }
 
     /**
-     * Assert that a rendered link with the given text points to the given
-     * target.
+     * Assert that the rendered link with the given text points to the given
+     * target. The link text is matched exactly and must be unique within the
+     * rendered output, see {@link #getLink(String)}.
      *
-     * @param text the link text
+     * @param text the link text, matched exactly
      * @param href the expected {@code href} attribute value
      */
     public void assertLink(String text, String href) {

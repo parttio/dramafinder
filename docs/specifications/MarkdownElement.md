@@ -91,9 +91,15 @@ MarkdownElement second = new MarkdownElement(
 | Method | Description |
 |--------|-------------|
 | `getLinks()` | Locator for all rendered links, in document order |
-| `getLink(String text)` | Locator for the first link with the given accessible name |
+| `getLink(String text)` | Locator for the link with the given accessible name, matched **exactly**. Strict: fails if several links share the name |
 | `assertLinkCount(int count)` | Assert the number of links |
-| `assertLink(String text, String href)` | Assert a link's target |
+| `assertLink(String text, String href)` | Assert a link's target. The text is matched exactly and must be unique |
+
+The link name is matched exactly, so `getLink("docs")` does not match a link named
+`API docs`, and it is not disambiguated with `.first()`: several links with the same
+accessible name is an ambiguity in the test, and Playwright's strict mode reports it
+instead of picking an arbitrary one. To address one of a set of same-named links, use
+`getLinks().nth(int)`.
 
 ### Code Blocks
 
@@ -155,6 +161,10 @@ assertThat(markdown.getRenderedLocator().locator("br")).hasCount(1);
 - **Soft line breaks.** With `setLineBreaks(true)` on the server side, single newlines
   render as `<br>`; by default they collapse into a space.
 - **Inline code is not a code block.** `getCodeBlocks()` matches `pre > code` only.
+- **Link names are exact and unique.** `getLink(String)` matches the accessible name
+  exactly and does not pick a first match, so a name that is a substring of another
+  link's name no longer resolves to the wrong link. Two links with the same name make
+  the locator fail; use `getLinks().nth(int)` there.
 
 ## Related Elements
 

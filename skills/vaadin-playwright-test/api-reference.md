@@ -1005,9 +1005,9 @@ PlaywrightElement for <vaadin-markdown>.
 - `void assertHeadingCount(int count)` — Assert that the rendered output contains exactly the expected number of headings.
 - `void assertHeading(int index, String expected)` — Assert the text of the rendered heading at the given index.
 - `Locator getLinks()` — Locator for every rendered link, in document order.
-- `Locator getLink(String text)` — Locator for the first rendered link with the given accessible name.
+- `Locator getLink(String text)` — Locator for the rendered link with the given accessible name.
 - `void assertLinkCount(int count)` — Assert that the rendered output contains exactly the expected number of links.
-- `void assertLink(String text, String href)` — Assert that a rendered link with the given text points to the given target.
+- `void assertLink(String text, String href)` — Assert that the rendered link with the given text points to the given target.
 - `Locator getCodeBlocks()` — Locator for every rendered fenced or indented code block, in document order.
 - `Locator getCodeBlock(int index)` — Locator for the rendered code block at the given index.
 - `void assertCodeBlockCount(int count)` — Assert that the rendered output contains exactly the expected number of code blocks.
