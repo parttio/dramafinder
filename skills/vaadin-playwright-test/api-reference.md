@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 50 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 51 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -16,6 +16,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* |
 | `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` |
 | `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` |
+| `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` |
 | `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
@@ -66,7 +67,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -209,6 +210,50 @@ PlaywrightElement for <vaadin-avatar>.
 - `void assertAbbreviation(String abbr)` — Assert the avatar's abbreviation.
 - `void assertHasImage()` — Assert that the avatar has an image set.
 - `void assertHasNoImage()` — Assert that the avatar has no image set.
+
+### AvatarGroupElement  `<vaadin-avatar-group>`
+
+PlaywrightElement for <vaadin-avatar-group>.
+
+**Extends:** VaadinElement  
+**Implements:** HasStyleElement, HasThemeElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-avatar-group"`, `String FIELD_MENU_TAG_NAME = "vaadin-avatar-group-menu"`, `String FIELD_MENU_ITEM_TAG_NAME = "vaadin-avatar-group-menu-item"`
+
+**Constructors:**
+
+- `AvatarGroupElement(Locator locator)` — Create a new AvatarGroupElement.
+
+**Static factory methods:**
+
+- `AvatarGroupElement get(Page page)` — Get the first AvatarGroupElement on the page.
+- `AvatarGroupElement get(Locator locator)` — Get the first AvatarGroupElement within a scope.
+
+**Methods:**
+
+- `Locator getAvatarsLocator()` — Locator matching every visible avatar, in rendering order.
+- `List<AvatarElement> getAvatars()` — Get the visible avatars, in rendering order.
+- `AvatarElement getAvatar(int index)` — Get the avatar at the given position among the visible avatars.
+- `int getVisibleCount()` — Get the number of visible avatars, excluding the overflow avatar.
+- `List<String> getNames()` — Get the names of the visible avatars, in rendering order.
+- `Integer getMaxItemsVisible()` — Get the maximum number of avatars the group displays before overflowing.
+- `void setMaxItemsVisible(int maxItemsVisible)` — Set the maximum number of avatars to display before overflowing.
+- `AvatarElement getOverflowAvatar()` — Get the overflow avatar, the one summarising the hidden items as +N.
+- `boolean hasOverflow()` — Whether some avatars are hidden behind the overflow avatar.
+- `void openOverflow()` — Open the overflow overlay by clicking the overflow avatar, and wait until it is open.
+- `void closeOverflow()` — Close the overflow overlay with the Escape key, and wait until it is closed.
+- `boolean isOverflowOpen()` — Whether the overflow overlay is currently open.
+- `Locator getOverflowMenuLocator()` — Locator for the overflow overlay menu, which holds one menu item per hidden avatar.
+- `Locator getOverflowAvatarsLocator()` — Locator matching every avatar inside the overflow overlay, in rendering order.
+- `List<AvatarElement> getOverflowAvatars()` — Get the avatars hidden behind the overflow avatar, in rendering order.
+- `List<String> getOverflowNames()` — Get the names of the avatars hidden behind the overflow avatar, in rendering order.
+- `void assertNames(String... names)` — Assert the names of the visible avatars, in order.
+- `void assertOverflowNames(String... names)` — Assert the names of the avatars hidden behind the overflow avatar, in order.
+- `void assertVisibleCount(int count)` — Assert the number of visible avatars, excluding the overflow avatar.
+- `void assertHasOverflow()` — Assert that some avatars are hidden behind the overflow avatar.
+- `void assertHasNoOverflow()` — Assert that no avatar is hidden behind the overflow avatar.
+- `void assertOverflowOpen()` — Assert that the overflow overlay is open.
+- `void assertOverflowClosed()` — Assert that the overflow overlay is closed.
 
 ### BadgeElement  `<vaadin-badge>`
 
