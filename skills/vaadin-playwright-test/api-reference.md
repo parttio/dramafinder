@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 54 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 55 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -15,6 +15,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 |---|---|---|
 | `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* |
 | `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` |
+| `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
 | `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` |
 | `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` |
@@ -70,7 +71,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -178,6 +179,50 @@ PlaywrightElement for <vaadin-accordion-panel>.
 - `void assertContentNotVisible()` — Assert that the content area is not visible.
 - `void assertEnabled()` — Assert that the panel is enabled.
 - `void assertDisabled()` — Assert that the panel is disabled.
+
+### AppLayoutElement  `<vaadin-app-layout>`
+
+PlaywrightElement for <vaadin-app-layout>.
+
+**Extends:** VaadinElement  
+**Implements:** HasStyleElement, HasThemeElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-app-layout"`, `String DRAWER_TOGGLE_TAG_NAME = "vaadin-drawer-toggle"`, `String PRIMARY_SECTION_NAVBAR = "navbar"`, `String PRIMARY_SECTION_DRAWER = "drawer"`
+
+**Constructors:**
+
+- `AppLayoutElement(Locator locator)` — Create a new AppLayoutElement.
+
+**Static factory methods:**
+
+- `AppLayoutElement get(Page page)` — Get the first AppLayoutElement on the page.
+- `AppLayoutElement get(Locator parent)` — Get the first AppLayoutElement within a parent locator.
+- `AppLayoutElement getById(Page page, String id)` — Get an AppLayoutElement by its id attribute.
+
+**Methods:**
+
+- `Locator getNavbarLocator()` — Locator for the content slotted into the top navbar.
+- `Locator getBottomNavbarLocator()` — Locator for the content slotted into the bottom navbar.
+- `Locator getDrawerLocator()` — Locator for the content slotted into the drawer.
+- `Locator getContentLocator()` — Locator for the content area, that is, the children without a slot.
+- `Locator getBackdropLocator()` — Locator for the backdrop shown behind an opened drawer in overlay mode.
+- `ButtonElement getDrawerToggle()` — Get the drawer toggle button of this layout.
+- `void toggleDrawer()` — Click the drawer toggle, flipping the drawer state.
+- `boolean isDrawerOpened()` — Whether the drawer is opened.
+- `void openDrawer()` — Open the drawer by clicking the drawer toggle, unless it is already opened.
+- `void closeDrawer()` — Close the drawer, unless it is already closed.
+- `void setDrawerOpened(boolean opened)` — Set the drawer state, opening or closing it as needed.
+- `void clickBackdrop()` — Click the backdrop, which closes the drawer in overlay mode.
+- `void closeDrawerWithEscape()` — Press Escape, which closes the drawer in overlay mode.
+- `void assertDrawerOpened()` — Assert that the drawer is opened.
+- `void assertDrawerClosed()` — Assert that the drawer is closed.
+- `boolean isOverlayMode()` — Whether the drawer is displayed as an overlay on top of the content, which the component enables on small viewports.
+- `void assertOverlayMode()` — Assert that the layout is in overlay mode.
+- `void assertNotOverlayMode()` — Assert that the layout is not in overlay mode.
+- `String getPrimarySection()` — Get the primary section, that is, the area that comes first visually.
+- `void assertPrimarySection(String primarySection)` — Assert the primary section of the layout.
+- `void assertHasDrawer()` — Assert that the layout has content slotted into the drawer.
+- `void assertHasNavbar()` — Assert that the layout has content slotted into the navbar.
 
 ### AvatarElement  `<vaadin-avatar>`
 
