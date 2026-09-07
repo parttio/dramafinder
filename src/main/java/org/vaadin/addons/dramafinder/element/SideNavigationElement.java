@@ -19,11 +19,6 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
         super(locator);
     }
 
-    @Override
-    public Locator getLabelLocator() {
-        return getLocator().locator("> [slot='label']");
-    }
-
     /**
      * Checks if the side nav is collapsed.
      */

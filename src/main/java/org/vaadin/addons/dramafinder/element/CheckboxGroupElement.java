@@ -44,17 +44,6 @@ public class CheckboxGroupElement extends VaadinElement
         super(locator);
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Scoped to the group's own label so it does not match the label of the
-     * first checkbox in the group.
-     */
-    @Override
-    public Locator getLabelLocator() {
-        return getLocator().locator("> label[slot=\"label\"]").first();
-    }
-
     // ── Items ──────────────────────────────────────────────────────────
 
     /**

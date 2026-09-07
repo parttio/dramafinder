@@ -31,17 +31,6 @@ public class RadioButtonGroupElement extends VaadinElement
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * Scoped to the group's own label so it does not match the label of the
-     * first radio button in the group.
-     */
-    @Override
-    public Locator getLabelLocator() {
-        return getLocator().locator("> label[slot=\"label\"]").first();
-    }
-
-    /**
      * Select a radio by its label text.
      */
     public void selectByLabel(String label) {
