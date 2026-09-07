@@ -79,19 +79,19 @@ public class LoginOverlayElement extends AbstractLoginElement {
         assertThat(getOverlayLocator()).isHidden();
     }
 
-    /** {@inheritDoc} */
+    /** Whether the overlay (its content) is visible. */
     @Override
     public boolean isVisible() {
         return getOverlayLocator().isVisible();
     }
 
-    /** {@inheritDoc} */
+    /** Assert that the overlay content is visible. */
     @Override
     public void assertVisible() {
         assertThat(getOverlayLocator()).isVisible();
     }
 
-    /** {@inheritDoc} */
+    /** Assert that the overlay content is hidden. */
     @Override
     public void assertHidden() {
         assertThat(getOverlayLocator()).isHidden();

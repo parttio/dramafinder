@@ -39,6 +39,10 @@
   (especially for assertion helpers where `null` implies absence).
 - Use `{@inheritDoc}` on simple overrides (e.g., locator accessors) to avoid
   duplication.
+- An override that *changes* behaviour needs a sentence of its own instead of
+  a bare `{@inheritDoc}`: the generated `api-reference.md` lists an override
+  only when it documents itself or redefines a `VaadinElement` method, so an
+  undocumented one stays invisible to anyone reading the reference.
 - Keep Javadoc concise and consistent; prefer present tense and active voice.
 
 ## Testing Guidelines

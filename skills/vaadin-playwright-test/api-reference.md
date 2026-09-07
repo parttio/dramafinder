@@ -3,7 +3,7 @@
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
 > DramaFinder 1.1.7-SNAPSHOT — 55 element wrappers.
 
-Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
+Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
 **Do not download or unzip the DramaFinder jar to discover its API — it is all here.**
 
@@ -106,6 +106,7 @@ Base abstraction shared by <vaadin-login-form> and <vaadin-login-overlay>.
 - `Locator getFooterLocator()` — Locator for the footer, holding the additional information text.
 - `void assertAdditionalInformation(String additionalInformation)` — Assert that the footer contains the expected additional information.
 - `boolean isDisabled()` — Whether the login form is disabled.
+- `Locator getEnabledLocator()` — The disabled property is not reflected to an attribute on the host, so the enabled state is asserted on the submit button, which mirrors it.
 
 ### AbstractNumberFieldElement
 
@@ -325,6 +326,7 @@ PlaywrightElement for <vaadin-badge>.
 **Methods:**
 
 - `Locator getIconLocator()` — Locator for the content of the icon slot.
+- `String getText()` — Get the badge's own text content.
 - `Integer getNumber()` — Get the number displayed by the badge.
 - `void assertText(String text)` — Assert the badge's text content.
 - `void assertNumber(Integer number)` — Assert the badge's number.
@@ -417,6 +419,7 @@ PlaywrightElement for <vaadin-breadcrumbs-item>, a single entry of a Breadcrumbs
 - `boolean isLink()` — Whether the item renders as a link, which is the case when it has a path.
 - `void assertLink()` — Assert that the item renders as a link.
 - `void assertNotLink()` — Assert that the item renders as a non-link.
+- `void click()` — Click the item.
 - `boolean isCurrent()` — Whether the item represents the current page.
 - `void assertCurrent()` — Assert that the item represents the current page, both through the current host attribute and aria-current="page" on its [part='nolink'] element.
 - `void assertNotCurrent()` — Assert that the item does not represent the current page.
@@ -552,6 +555,9 @@ PlaywrightElement for <vaadin-combo-box>.
 
 **Methods:**
 
+- `String getValue()` — Get the selected value label.
+- `void assertValue(String expected)` — Assert that the displayed value equals the expected string.
+- `void setValue(String value)` — Select the item whose label equals value, by typing it as a filter and closing the overlay once the matching item is shown.
 - `void selectItem(String item)` — Select an item by its visible label.
 - `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item.
 - `void setFilter(String filter)` — Type into the input to trigger filtering.
@@ -618,6 +624,8 @@ PlaywrightElement for <vaadin-date-picker>.
 
 - `void setValue(LocalDate date)` — Set the value using a LocalDate formatted as ISO-8601.
 - `LocalDate getValueAsLocalDate()` — Get the current value as a LocalDate.
+- `void setValue(String value)` — Set the value of the input.
+- `void assertValue(String value)` — Assert that the input value equals the provided string.
 - `void assertValue(LocalDate value)` — Assert that the value equals the provided date.
 
 ### DateTimePickerElement  `<vaadin-date-time-picker>`
@@ -642,6 +650,8 @@ PlaywrightElement for <vaadin-date-time-picker>.
 
 - `void setValue(LocalDateTime date)` — Set the value using a LocalDateTime.
 - `LocalDateTime getValueAsLocalDateTime()` — Get the current value as a LocalDateTime.
+- `void setValue(String value)` — Set the value of the input.
+- `void assertValue(String value)` — Assert that the input value equals the provided string.
 - `void assertValue(LocalDateTime value)` — Assert that the value equals the provided date-time.
 - `void setDate(String date)` — Set only the date part (string input) and dispatch change events.
 - `void setTime(String date)` — Set only the time part (string input) and dispatch change events.
@@ -701,6 +711,9 @@ PlaywrightElement for <vaadin-dialog>.
 - `Locator getOverlayLocator()` — Locator for the overlay rendered in the dialog's shadow DOM.
 - `boolean isOpen()` — Whether the dialog is open (visible).
 - `void assertOpen()` — Assert that the dialog is open.
+- `boolean isVisible()` — Whether the dialog (its overlay) is visible.
+- `void assertVisible()` — Assert that the dialog overlay is visible.
+- `void assertHidden()` — Assert that the dialog overlay is hidden.
 - `boolean isModal()` — Whether the dialog is modal (i.e. not modeless).
 - `void assertModal()` — Assert that the dialog is modal.
 - `void assertModeless()` — Assert that the dialog is modeless.
@@ -966,6 +979,9 @@ PlaywrightElement for <vaadin-login-overlay>.
 - `boolean isOpen()` — Whether the overlay is open (visible).
 - `void assertOpen()` — Assert that the overlay is open.
 - `void assertClosed()` — Assert that the overlay is closed (its content is no longer visible).
+- `boolean isVisible()` — Whether the overlay (its content) is visible.
+- `void assertVisible()` — Assert that the overlay content is visible.
+- `void assertHidden()` — Assert that the overlay content is hidden.
 - `Locator getHeaderTitleLocator()` — Locator for the application title shown in the branding area.
 - `void assertHeaderTitle(String title)` — Assert that the application title matches the expected text.
 - `Locator getDescriptionLocator()` — Locator for the application description shown in the branding area.
@@ -992,6 +1008,7 @@ PlaywrightElement for <vaadin-markdown>.
 **Methods:**
 
 - `Locator getRenderedLocator()` — Locator for the root of the rendered Markdown output.
+- `String getText()` — Get the text of the rendered Markdown, with leading and trailing whitespace removed.
 - `void assertContainsText(String expected)` — Assert that the rendered Markdown contains the given text.
 - `void assertText(String expected)` — Assert the full text of the rendered Markdown.
 - `Locator getHeadings()` — Locator for every rendered heading (h1–h6), in document order.
@@ -1168,6 +1185,8 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 
 **Methods:**
 
+- `String getValue()` — Get the selected values as a comma-separated string from the selectedItems property.
+- `void assertValue(String expected)` — Assert that the displayed value equals the expected string.
 - `void selectItem(String item)` — Select an item by its visible label.
 - `void deselectItem(String item)` — Deselect an item by its visible label.
 - `void selectItems(String... items)` — Select multiple items in sequence.
@@ -1364,6 +1383,8 @@ PlaywrightElement for <vaadin-select>.
 **Methods:**
 
 - `void selectItem(String item)` — Select an item by its visible label.
+- `String getValue()` — Get the selected value label for single-select.
+- `void assertValue(String expected)` — Assert the selected value label equals the expected string.
 
 ### SideNavigationElement  `<vaadin-side-nav>`
 
@@ -1437,6 +1458,8 @@ PlaywrightElement for <vaadin-slider> (the Flow IntegerSlider and DecimalSlider 
 **Methods:**
 
 - `Locator getInputLocator()` — Locator for the native range input rendered in the slider's light DOM.
+- `Locator getFocusLocator()` — Focus lives on the native range input, not on the component root.
+- `Locator getEnabledLocator()` — The disabled state is carried by the native range input; the component root only mirrors it with an attribute.
 - `double getValue()` — Get the current value.
 - `void setValue(double value)` — Set the value.
 - `void assertValue(double value)` — Assert that the value matches the expected one.
@@ -1602,7 +1625,7 @@ PlaywrightElement for <vaadin-text-area>.
 
 **Methods:**
 
-- `Locator getInputLocator()` — {@inheritDoc}
+- `Locator getInputLocator()` — Locator for the native textarea slotted into the component.
 
 ### TextFieldElement  `<vaadin-text-field>`
 

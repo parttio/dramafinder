@@ -25,7 +25,7 @@ public class TextAreaElement extends TextFieldElement {
     }
 
     /**
-     * {@inheritDoc}
+     * Locator for the native {@code textarea} slotted into the component.
      */
     public Locator getInputLocator() {
         return getLocator().locator("*[slot=\"textarea\"]").first(); // slot="helper"
