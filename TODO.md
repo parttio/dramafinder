@@ -14,6 +14,8 @@
 - Email Field
 - Integer Field
 - ListBox (multiple and single)
+- Login Form
+- Login Overlay
 - Menu Bar
 - Notification
 - Password Field
@@ -22,7 +24,9 @@
 - Radio Button
 - Select
 - Side navigation
+- Slider (IntegerSlider and DecimalSlider)
 - Split Layout
+- Switch (experimental, Vaadin 25.3)
 - Tabs
 - TextArea
 - TextField

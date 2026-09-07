@@ -23,6 +23,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `BigDecimalField` | `BigDecimalFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` |
 | `Button` | `ButtonElement` | `getByText(page, text)`, `click()`, `assertVisible()`, `assertEnabled()`, `assertDisabled()` |
 | `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
+| `Switch` (experimental, Vaadin 25.3) | `SwitchElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()` |
 | `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `open()`, `assertItemCount()` |
 | `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `assertSelectedItems()`, `assertSelectedCount()` |
@@ -35,9 +36,12 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `TreeGrid` | `TreeGridElement` | `get(page)`, `expandRow()`, `collapseRow()`, `assertRowCount()`, `assertCellContent()` — extends `GridElement` |
 | `VirtualList` | `VirtualListElement` | `get(page)`, `assertRowCount()`, `assertItemRendered()`, `scrollToRow()` |
 | `Dialog` | `DialogElement` | `getByHeaderText(page, text)` or `new DialogElement(page)`, `assertOpen()`, `assertClosed()`, `assertHeaderText()`, `closeWithEscape()`, `getContentLocator()` |
+| `LoginForm` | `LoginFormElement` | `get(page)` or `get(locator)`, `login(username, password)`, `getUsernameField()`, `getPasswordField()`, `getSubmitButton()`, `getForgotPasswordButton()`, `assertTitle()`, `assertErrorVisible()`, `assertErrorTitle()`, `assertErrorMessage()`, `assertNoError()`, `isDisabled()` |
+| `LoginOverlay` | `LoginOverlayElement` | `get(page)`, `getByTitle(page, title)` or `new LoginOverlayElement(page)`, `login(username, password)`, `assertOpen()`, `assertClosed()`, `assertHeaderTitle()`, `assertDescription()`, `assertTitle()`, `assertErrorTitle()`, `assertErrorMessage()` |
 | `Notification` | `NotificationElement` | `getByText(page, text)`, `assertOpen()`, `assertClosed()`, `assertContent()` |
-| `Tabs` / `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `assertSelected()` |
-| `TabSheet` | `TabSheetElement` | `get(page)`, `selectTab(label)`, `getSelectedTab()`, `assertTabsCount()` |
+| `Tabs` | `TabsElement` | `get(page)`, `getById(page, id)`, `getTab(label)`, `getTab(index)`, `getTabs()`, `getTabCount()`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `getSelectedIndex()`, `assertSelectedTab()`, `assertTabCount()`, `getOrientation()`, `assertOrientation()` |
+| `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `getLabel()`, `assertSelected()`, `assertNotSelected()` |
+| `TabSheet` | `TabSheetElement` | `get(page)`, `getTabsElement()`, `getTab(label)`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `assertSelectedTab(label)`, `assertTabsCount()`, `getContentLocator()` |
 | `Accordion` | `AccordionElement` | `new AccordionElement(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `assertOpened()`, `assertClosed()` |
@@ -45,6 +49,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `ContextMenu` | `ContextMenuElement` | `ContextMenuElement.openOn(target)` then `new ContextMenuElement(page)`, `selectItem()`, `assertOpen()`, `assertClosed()` |
 | `SplitLayout` | `SplitLayoutElement` | `get(page)`, `assertHorizontal()`, `assertVertical()`, `dragSplitterBy()` |
 | `Upload` | `UploadElement` | `getByButtonText(page, text)`, `uploadFiles(Path...)`, `assertHasFile()`, `assertFileComplete()` |
+| `IntegerSlider` / `DecimalSlider` | `SliderElement` | `getByLabel(page, label)`, `getValue()`, `setValue(double)`, `assertValue()`, `assertMin()`, `assertMax()`, `assertStep()`, `increment()`, `decrement()`, `moveToMin()`, `moveToMax()` |
 | `ProgressBar` | `ProgressBarElement` | `new ProgressBarElement(locator)`, `assertValue()`, `assertIndeterminate()` |
 | `Avatar` | `AvatarElement` | `get(page)`, `getByName(page, name)`, `assertName()`, `assertAbbreviation()` |
 | `AvatarGroup` | `AvatarGroupElement` | `get(page)`, `getAvatars()`, `getAvatar(index)`, `getVisibleCount()`, `assertNames()`, `getOverflowAvatar()`, `assertHasOverflow()`, `openOverflow()`, `getOverflowAvatars()`, `assertOverflowNames()` |
@@ -53,6 +58,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Popover` | `PopoverElement` | `getByLabel(page, label)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
 | `SideNavigation` | `SideNavigationElement` | `getByLabel(page, label)`, `clickItem(label)`, `getItem(label)`, `assertCollapsed()`, `assertExpanded()` |
 | `Card` | `CardElement` | `getByTitle(page, title)`, `assertTitle()`, `assertSubtitle()` |
+| `Markdown` | `MarkdownElement` | `get(page)`, `getRenderedLocator()`, `getText()`, `assertContainsText()`, `getHeadings()`, `getLinks()`, `getCodeBlocks()`, `assertHeading(index, text)`, `assertLink(text, href)`, `assertCodeBlockLanguage(index, language)` |
+| `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
 
 ## Factory method conventions
 

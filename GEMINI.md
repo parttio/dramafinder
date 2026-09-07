@@ -75,6 +75,8 @@ Each element class wraps a Playwright `Locator` and provides typed helpers (gett
 | `EmailFieldElement` | EmailField | `vaadin-email-field` |
 | `IntegerFieldElement` | IntegerField | `vaadin-integer-field` |
 | `ListBoxElement` | ListBox | `vaadin-list-box` |
+| `LoginFormElement` | LoginForm | `vaadin-login-form` |
+| `LoginOverlayElement` | LoginOverlay | `vaadin-login-overlay` |
 | `MenuBarElement` | MenuBar | `vaadin-menu-bar` |
 | `NotificationElement` | Notification | `vaadin-notification-card` |
 | `NumberFieldElement` | NumberField | `vaadin-number-field` |
@@ -84,6 +86,8 @@ Each element class wraps a Playwright `Locator` and provides typed helpers (gett
 | `RadioButtonGroupElement` | RadioButtonGroup | `vaadin-radio-group` |
 | `SelectElement` | Select | `vaadin-select` |
 | `SideNavigationElement` | SideNav | `vaadin-side-nav` |
+| `SwitchElement` | Switch (experimental) | `vaadin-switch` |
+| `TabsElement` | Tabs | `vaadin-tabs` |
 | `TabSheetElement` | TabSheet | `vaadin-tabsheet` |
 | `TextAreaElement` | TextArea | `vaadin-text-area` |
 | `TextFieldElement` | TextField | `vaadin-text-field` |
