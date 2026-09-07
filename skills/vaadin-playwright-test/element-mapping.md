@@ -36,6 +36,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `TreeGrid` | `TreeGridElement` | `get(page)`, `expandRow()`, `collapseRow()`, `assertRowCount()`, `assertCellContent()` — extends `GridElement` |
 | `VirtualList` | `VirtualListElement` | `get(page)`, `assertRowCount()`, `assertItemRendered()`, `scrollToRow()` |
 | `Dialog` | `DialogElement` | `getByHeaderText(page, text)` or `new DialogElement(page)`, `assertOpen()`, `assertClosed()`, `assertHeaderText()`, `closeWithEscape()`, `getContentLocator()` |
+| `LoginForm` | `LoginFormElement` | `get(page)` or `get(locator)`, `login(username, password)`, `getUsernameField()`, `getPasswordField()`, `getSubmitButton()`, `getForgotPasswordButton()`, `assertTitle()`, `assertErrorVisible()`, `assertErrorTitle()`, `assertErrorMessage()`, `assertNoError()`, `isDisabled()` |
+| `LoginOverlay` | `LoginOverlayElement` | `get(page)`, `getByTitle(page, title)` or `new LoginOverlayElement(page)`, `login(username, password)`, `assertOpen()`, `assertClosed()`, `assertHeaderTitle()`, `assertDescription()`, `assertTitle()`, `assertErrorTitle()`, `assertErrorMessage()` |
 | `Notification` | `NotificationElement` | `getByText(page, text)`, `assertOpen()`, `assertClosed()`, `assertContent()` |
 | `Tabs` | `TabsElement` | `get(page)`, `getById(page, id)`, `getTab(label)`, `getTab(index)`, `getTabs()`, `getTabCount()`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `getSelectedIndex()`, `assertSelectedTab()`, `assertTabCount()`, `getOrientation()`, `assertOrientation()` |
 | `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `getLabel()`, `assertSelected()`, `assertNotSelected()` |

@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 47 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 50 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -29,6 +29,8 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
 | `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` |
+| `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` |
+| `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` |
 | `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` |
 | `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` |
@@ -51,6 +53,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` |
 | `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` |
+| — | [AbstractLoginElement](#abstractloginelement) | *constructor only* |
 | — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* |
 | — | [ContextMenuElement](#contextmenuelement) | *constructor only* |
 | — | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` |
@@ -63,7 +66,41 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+
+### AbstractLoginElement
+
+Base abstraction shared by <vaadin-login-form> and <vaadin-login-overlay>.
+
+*abstract* **Extends:** VaadinElement  
+**Implements:** HasEnabledElement, HasStyleElement, HasThemeElement  
+
+**Constants:** `String USERNAME_FIELD_ID = "vaadinLoginUsername"`, `String PASSWORD_FIELD_ID = "vaadinLoginPassword"`, `String FORM_WRAPPER_TAG_NAME = "vaadin-login-form-wrapper"`
+
+**Constructors:**
+
+- `AbstractLoginElement(Locator locator)` — Creates a new AbstractLoginElement.
+
+**Methods:**
+
+- `TextFieldElement getUsernameField()` — Get the username field of the login form.
+- `PasswordFieldElement getPasswordField()` — Get the password field of the login form.
+- `ButtonElement getSubmitButton()` — Get the submit button of the login form.
+- `ButtonElement getForgotPasswordButton()` — Get the forgot password button of the login form.
+- `void login(String username, String password)` — Fill in the credentials and submit the form.
+- `Locator getTitleLocator()` — Locator for the login form title.
+- `void assertTitle(String title)` — Assert that the login form title matches the expected text.
+- `Locator getErrorLocator()` — Locator for the error message container.
+- `Locator getErrorTitleLocator()` — Locator for the error message title.
+- `Locator getErrorMessageLocator()` — Locator for the error message description.
+- `boolean isErrorVisible()` — Whether the error message is currently shown.
+- `void assertErrorVisible()` — Assert that the error message is shown.
+- `void assertNoError()` — Assert that no error message is shown.
+- `void assertErrorTitle(String title)` — Assert that the error message title matches the expected text.
+- `void assertErrorMessage(String message)` — Assert that the error message description matches the expected text.
+- `Locator getFooterLocator()` — Locator for the footer, holding the additional information text.
+- `void assertAdditionalInformation(String additionalInformation)` — Assert that the footer contains the expected additional information.
+- `boolean isDisabled()` — Whether the login form is disabled.
 
 ### AbstractNumberFieldElement
 
@@ -699,6 +736,52 @@ PlaywrightElement for <vaadin-list-box>.
 - `boolean isMultiple()`
 - `void assertMultiple()` — Assert that multiple selection is enabled.
 - `void assertSingle()` — Assert that single selection mode is enabled.
+
+### LoginFormElement  `<vaadin-login-form>`
+
+PlaywrightElement for <vaadin-login-form>.
+
+**Extends:** AbstractLoginElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-login-form"`
+
+**Constructors:**
+
+- `LoginFormElement(Locator locator)` — Creates a new LoginFormElement.
+
+**Static factory methods:**
+
+- `LoginFormElement get(Page page)` — Get the first LoginFormElement on the page.
+- `LoginFormElement get(Locator locator)` — Get the first LoginFormElement within a scope.
+
+### LoginOverlayElement  `<vaadin-login-overlay>`
+
+PlaywrightElement for <vaadin-login-overlay>.
+
+**Extends:** AbstractLoginElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-login-overlay"`, `String OVERLAY_TAG_NAME = "vaadin-login-overlay-wrapper"`
+
+**Constructors:**
+
+- `LoginOverlayElement(Page page)` — Create a LoginOverlayElement by resolving the overlay with its ARIA role.
+- `LoginOverlayElement(Locator locator)` — Creates a new LoginOverlayElement.
+
+**Static factory methods:**
+
+- `LoginOverlayElement get(Page page)` — Get the first LoginOverlayElement on the page.
+- `LoginOverlayElement getByTitle(Page page, String title)` — Get a LoginOverlayElement by its application title, which is the overlay's accessible name.
+
+**Methods:**
+
+- `Locator getOverlayLocator()` — Locator for the overlay rendered in the component's shadow DOM.
+- `boolean isOpen()` — Whether the overlay is open (visible).
+- `void assertOpen()` — Assert that the overlay is open.
+- `void assertClosed()` — Assert that the overlay is closed (its content is no longer visible).
+- `Locator getHeaderTitleLocator()` — Locator for the application title shown in the branding area.
+- `void assertHeaderTitle(String title)` — Assert that the application title matches the expected text.
+- `Locator getDescriptionLocator()` — Locator for the application description shown in the branding area.
+- `void assertDescription(String description)` — Assert that the application description matches the expected text.
 
 ### MarkdownElement  `<vaadin-markdown>`
 
