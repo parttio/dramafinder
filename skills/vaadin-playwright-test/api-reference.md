@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 45 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 46 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element). Method one-liners come from Javadoc.
 
@@ -43,6 +43,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` |
 | `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` |
+| `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
 | `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` |
 | `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
@@ -61,7 +62,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AvatarElement](#avatarelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractNumberFieldElement
 
@@ -1249,11 +1250,49 @@ PlaywrightElement for <vaadin-tabsheet>.
 
 **Methods:**
 
+- `TabsElement getTabsElement()` — Get the embedded tab strip.
 - `void assertTabsCount(int count)` — Assert the count of tabs.
 - `TabElement getTab(String label)` — Get a tab by its label.
 - `TabElement getSelectedTab()` — Get the currently selected tab.
 - `void selectTab(String label)` — Select a tab by label text.
+- `void selectTab(int index)` — Select a tab by its zero-based index.
+- `void assertSelectedTab(String label)` — Assert that the tab with the given label is selected.
 - `Locator getContentLocator()` — Locator for the currently visible content panel.
+
+### TabsElement  `<vaadin-tabs>`
+
+PlaywrightElement for <vaadin-tabs>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-tabs"`, `String ORIENTATION_HORIZONTAL = "horizontal"`, `String ORIENTATION_VERTICAL = "vertical"`
+
+**Constructors:**
+
+- `TabsElement(Locator locator)` — Create a new TabsElement.
+
+**Static factory methods:**
+
+- `TabsElement get(Page page)` — Get the first TabsElement on the page.
+- `TabsElement get(Locator parent)` — Get the first TabsElement within a parent locator.
+- `TabsElement getById(Page page, String id)` — Get a TabsElement by its id attribute.
+
+**Methods:**
+
+- `Locator getTabs()` — Locator matching every tab of this tab strip, in DOM order.
+- `int getTabCount()` — Get the number of tabs currently in the tab strip.
+- `TabElement getTab(String label)` — Get a tab by its label.
+- `TabElement getTab(int index)` — Get a tab by its zero-based index.
+- `TabElement getSelectedTab()` — Get the currently selected tab.
+- `int getSelectedIndex()` — Get the zero-based index of the selected tab.
+- `String getOrientation()` — Get the current orientation.
+- `void selectTab(String label)` — Select a tab by its label.
+- `void selectTab(int index)` — Select a tab by its zero-based index.
+- `void assertTabCount(int count)` — Assert the number of tabs in the tab strip.
+- `void assertSelectedTab(String label)` — Assert that the tab with the given label is the selected one.
+- `void assertSelectedTab(int index)` — Assert that the tab at the given zero-based index is the selected one.
+- `void assertOrientation(String orientation)` — Assert the orientation of the tab strip.
 
 ### TextAreaElement  `<vaadin-text-area>`
 
