@@ -22,7 +22,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `IntegerField` | `IntegerFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()`, `assertMin()`, `assertMax()`, `assertStep()` |
 | `BigDecimalField` | `BigDecimalFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` |
 | `Button` | `ButtonElement` | `getByText(page, text)`, `click()`, `assertVisible()`, `assertEnabled()`, `assertDisabled()` |
-| `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
+| `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
 | `Switch` (experimental, Vaadin 25.3) | `SwitchElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `CheckboxGroup` | `CheckboxGroupElement` | `getByLabel(page, label)`, `getCheckboxes()`, `getCheckbox(label)`, `selectByLabel()`, `deselectByLabel()`, `deselectAll()`, `getSelectedValues()`, `assertSelected()` |
 | `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()` |

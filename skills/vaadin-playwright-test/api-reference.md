@@ -439,7 +439,7 @@ PlaywrightElement for <vaadin-card>.
 PlaywrightElement for <vaadin-checkbox>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasEnabledElement, HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-checkbox"`
 
@@ -454,13 +454,7 @@ PlaywrightElement for <vaadin-checkbox>.
 
 **Methods:**
 
-- `boolean isChecked()` — Whether the checkbox is currently checked.
-- `void assertChecked()` — Assert that the checkbox is checked.
-- `void assertNotChecked()` — Assert that the checkbox is not checked.
-- `void assertChecked(boolean checked)` — Assert the checkbox's checked state.
-- `void check()` — Check the checkbox.
-- `void uncheck()` — Uncheck the checkbox.
-- `void isChecked(boolean checked)` — Check or uncheck the checkbox.
+- `void isChecked(boolean checked)` *(deprecated)* — Check or uncheck the checkbox.
 - `boolean isIndeterminate()` — Whether the checkbox is in indeterminate state.
 - `void assertIndeterminate()` — Assert that the checkbox is indeterminate.
 - `void assertNotIndeterminate()` — Assert that the checkbox is not indeterminate.
@@ -1450,7 +1444,7 @@ PlaywrightElement for vaadin-split-layout.
 PlaywrightElement for <vaadin-switch>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasEnabledElement, HasHelperElement, HasValueElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-switch"`
 
@@ -1461,16 +1455,6 @@ PlaywrightElement for <vaadin-switch>.
 **Static factory methods:**
 
 - `SwitchElement getByLabel(Page page, String label)` — Get a SwitchElement by its accessible label.
-
-**Methods:**
-
-- `boolean isChecked()` — Whether the switch is currently checked (on).
-- `void assertChecked()` — Assert that the switch is checked.
-- `void assertNotChecked()` — Assert that the switch is not checked.
-- `void assertChecked(boolean checked)` — Assert the switch's checked state.
-- `void check()` — Switch on.
-- `void uncheck()` — Switch off.
-- `void setChecked(boolean checked)` — Switch on or off.
 
 ### TabElement  `<vaadin-tab>`
 
@@ -1790,6 +1774,23 @@ Mixin for components exposing an ARIA label.
 - `Locator getAriaLabelLocator()` — Locator where the aria-label is applied.
 - `String getAriaLabel()` — Get the current aria-label value.
 - `void assertAriaLabel(String ariaLabel)` — Assert that the aria-label matches the expected text, or is absent when null.
+
+### HasCheckedElement
+
+Mixin for components backed by a checkbox-like native input, i.e. one whose state is a boolean checked flag rather than a textual value (vaadin-checkbox, vaadin-radio-button, vaadin-switch).
+
+**Extends:** HasEnabledElement, HasAriaLabelElement, FocusableElement  
+
+**Methods:**
+
+- `Locator getInputLocator()` — Locator for the native input element inside the component.
+- `boolean isChecked()` — Whether the component is currently checked.
+- `void assertChecked()` — Assert that the component is checked.
+- `void assertNotChecked()` — Assert that the component is not checked.
+- `void assertChecked(boolean checked)` — Assert the component's checked state.
+- `void check()` — Check the component.
+- `void uncheck()` — Uncheck the component.
+- `void setChecked(boolean checked)` — Check or uncheck the component.
 
 ### HasClearButtonElement
 

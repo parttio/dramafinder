@@ -160,6 +160,7 @@ Element classes implement shared interfaces for cross-cutting concerns:
 |-----------|----------|
 | `FocusableElement` | `focus()`, `blur()`, `getTabIndex()`, `assertIsFocused()` |
 | `HasAriaLabelElement` | `getAriaLabel()`, `assertAriaLabel()` |
+| `HasCheckedElement` | `isChecked()`, `check()`, `uncheck()`, `setChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `HasClearButtonElement` | `assertClearButton()` |
 | `HasEnabledElement` | `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
 | `HasHelperElement` | `getHelper()`, `assertHelper()` |

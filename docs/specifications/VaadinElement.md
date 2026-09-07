@@ -173,4 +173,5 @@ public class MyElement extends VaadinElement {
 - `HasValidationPropertiesElement` - Validation support
 - `FocusableElement` - Focus operations
 - `HasEnabledElement` - Enabled/disabled state
+- `HasCheckedElement` - Boolean checked state of checkbox-like inputs
 - `HasThemeElement` - Theme variants
