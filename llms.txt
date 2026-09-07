@@ -51,6 +51,7 @@ behaviour isn't obvious from the signatures:
 - [TimePickerElement](docs/specifications/TimePickerElement.md) - String vs LocalTime value formats
 - [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Composite enabled/aria semantics
 - [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
+- [MarkdownElement](docs/specifications/MarkdownElement.md) - Rendered-output assertions, not Markdown source
 - [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
 - [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group
 - [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
