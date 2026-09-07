@@ -98,11 +98,6 @@ public class SelectElement extends VaadinElement
     }
 
     @Override
-    public Locator getLabelLocator() {
-        return getLocator().locator("label[slot=\"label\"]").first();
-    }
-
-    @Override
     public void assertPlaceholder(String placeholder) {
         assertThat(getInputLocator()).hasAttribute("placeholder", "");
         assertThat(getInputLocator()).hasText(placeholder);

@@ -12,9 +12,13 @@ public interface HasLabelElement extends HasLocatorElement {
 
     /**
      * Locator for the visible label element.
+     * <p>
+     * Uses the child combinator so that composite components (a checkbox group,
+     * a date-time picker, ...) resolve their own slotted label instead of the
+     * label of the first nested field.
      */
     default Locator getLabelLocator() {
-        return getLocator().locator("label").first();
+        return getLocator().locator("> [slot=\"label\"]").first();
     }
 
     /**

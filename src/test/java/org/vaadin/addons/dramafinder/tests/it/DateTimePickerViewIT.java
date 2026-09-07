@@ -34,6 +34,14 @@ public class DateTimePickerViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testLabelIsTheCompositesOwnLabel() {
+        DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Appointment date");
+        // The composite slots its own label; the nested date and time pickers
+        // must not be picked up instead.
+        dateTimePicker.assertLabel("Appointment date");
+    }
+
+    @Test
     public void testDateTimePicker() {
         DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Appointment date");
         dateTimePicker.assertVisible();
