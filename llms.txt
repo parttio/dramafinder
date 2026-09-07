@@ -42,6 +42,7 @@ The files below are hand-written prose docs, kept only for components whose
 behaviour isn't obvious from the signatures:
 
 - [VaadinElement](docs/specifications/VaadinElement.md) - Base class + how to extend it
+- [BadgeElement](docs/specifications/BadgeElement.md) - Text vs number vs icon, theme-variant assertions
 - [GridElement](docs/specifications/GridElement.md) - Auto-scroll & stale-element caveats, renderer/lazy examples
 - [TreeGridElement](docs/specifications/TreeGridElement.md) - Tree-state reading, hierarchy-column location
 - [VirtualListElement](docs/specifications/VirtualListElement.md) - Debouncer flush, typed component queries
@@ -50,8 +51,10 @@ behaviour isn't obvious from the signatures:
 - [TimePickerElement](docs/specifications/TimePickerElement.md) - String vs LocalTime value formats
 - [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Composite enabled/aria semantics
 - [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
+- [MarkdownElement](docs/specifications/MarkdownElement.md) - Rendered-output assertions, not Markdown source
 - [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
 - [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group
+- [SliderElement](docs/specifications/SliderElement.md) - Keyboard-driven value changes, step snapping
 - [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
 - [UploadElement](docs/specifications/UploadElement.md) - Hidden-file-input pattern
 
@@ -80,6 +83,7 @@ TextFieldElement.getByLabel(formLocator, "Name")
 - Dialogs: `AriaRole.DIALOG`
 - List boxes: `AriaRole.LISTBOX`
 - Menus: `AriaRole.MENU`, `AriaRole.MENUITEM`
+- Sliders: `AriaRole.SLIDER`
 
 ### Assertion Methods
 Each element provides assertion methods that auto-retry:

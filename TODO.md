@@ -22,6 +22,7 @@
 - Radio Button
 - Select
 - Side navigation
+- Slider (IntegerSlider and DecimalSlider)
 - Split Layout
 - Switch (experimental, Vaadin 25.3)
 - Tabs
