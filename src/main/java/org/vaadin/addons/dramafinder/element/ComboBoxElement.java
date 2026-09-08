@@ -83,6 +83,12 @@ public class ComboBoxElement extends VaadinElement
         assertThat(getInputLocator()).hasValue(expected != null ? expected : "");
     }
 
+    /**
+     * Select the item whose label equals {@code value}, by typing it as a filter
+     * and closing the overlay once the matching item is shown.
+     *
+     * @param value label of the item to select
+     */
     @Override
     public void setValue(String value) {
         getInputLocator().fill(value);

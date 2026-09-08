@@ -37,6 +37,12 @@ class GenerateApiReference {
     static final Path ELEMENT_DIR = REPO.resolve("src/main/java/org/vaadin/addons/dramafinder/element");
     static final Path OUT = REPO.resolve("skills/vaadin-playwright-test/api-reference.md");
 
+    // Method keys (name/arity) declared by the shared mixins and by VaadinElement.
+    // They are what tells a plain mixin implementation apart from an override
+    // that redefines documented behaviour — see includeMethod(MethodDeclaration).
+    static final Set<String> MIXIN_METHODS = new HashSet<>();
+    static final Set<String> BASE_METHODS = new HashSet<>();
+
     public static void main(String[] args) throws IOException {
         StaticJavaParser.getParserConfiguration().setLanguageLevel(LanguageLevel.JAVA_21);
 
@@ -64,6 +70,14 @@ class GenerateApiReference {
             }
         }
 
+        // Where each inherited method comes from, so an override can be classified.
+        mixins.values().forEach(t -> t.getMethods().forEach(m -> MIXIN_METHODS.add(methodKey(m))));
+        if (base != null) {
+            base.getMethods().stream()
+                    .filter(m -> !isOverride(m)) // VaadinElement's own mixin impls (getLocator)
+                    .forEach(m -> BASE_METHODS.add(methodKey(m)));
+        }
+
         StringBuilder md = new StringBuilder();
         String version = readVersion();
 
@@ -74,7 +88,9 @@ class GenerateApiReference {
           .append(elements.size()).append(" element wrappers.\n\n");
         md.append("Complete public API of every DramaFinder element wrapper. Each element lists ");
         md.append("the shared mixin interfaces it implements; those interfaces' methods are ");
-        md.append("documented once under **Shared mixins** at the end (not repeated per element). ");
+        md.append("documented once under **Shared mixins** at the end (not repeated per element) — ");
+        md.append("except where an element overrides one to change its behaviour, in which case ");
+        md.append("the element lists it again with the behaviour that applies there. ");
         md.append("Method one-liners come from Javadoc.\n\n");
         md.append("**Do not download or unzip the DramaFinder jar to discover its API — it is all here.**\n\n");
 
@@ -213,7 +229,7 @@ class GenerateApiReference {
         boolean isIface = t instanceof ClassOrInterfaceDeclaration c2 && c2.isInterface();
         List<MethodDeclaration> methods = t.getMethods().stream()
                 .filter(m -> m.isPublic() || (isIface && !m.isStatic() && !m.isPrivate()))
-                .filter(m -> !isOverride(m)) // mixin impls / internal locators — covered by the mixin section
+                .filter(GenerateApiReference::includeMethod)
                 .collect(Collectors.toList());
         List<MethodDeclaration> statics = methods.stream().filter(MethodDeclaration::isStatic).collect(Collectors.toList());
         List<MethodDeclaration> instance = methods.stream().filter(m -> !m.isStatic()).collect(Collectors.toList());
@@ -244,7 +260,7 @@ class GenerateApiReference {
             md.append("#".repeat(level + 1)).append(" ").append(name).append(".").append(saved).append("\n\n");
             firstSentence(n).ifPresent(s -> md.append(s).append("\n\n"));
             n.getMethods().stream()
-                    .filter(m -> m.isPublic() && !isOverride(m))
+                    .filter(m -> m.isPublic() && includeMethod(m))
                     .forEach(m -> appendMethod(md, m));
             md.append("\n");
         }
@@ -325,6 +341,37 @@ class GenerateApiReference {
         return List.of();
     }
 
+    /**
+     * Whether a method belongs in the reference.
+     *
+     * <p>Anything that is not an override does. Overrides are dropped by default:
+     * most are mixin implementations or internal locator hooks, already documented
+     * once in the mixin section. Two kinds of override do change what a caller
+     * sees, and are kept:
+     *
+     * <ul>
+     *   <li>one carrying Javadoc prose of its own — beyond a bare
+     *       {@code inheritDoc} — since an author bothering to describe an override
+     *       is the signal that its behaviour differs (e.g. MarkdownElement.getText()
+     *       returning trimmed text);</li>
+     *   <li>one redefining a concrete VaadinElement method that no mixin declares —
+     *       getText/isVisible/click and friends are what a reader otherwise takes
+     *       from the "Base class" section, so an element that changes them must
+     *       say so even when the override is documented with {@code inheritDoc}.</li>
+     * </ul>
+     */
+    static boolean includeMethod(MethodDeclaration m) {
+        if (!isOverride(m)) return true;
+        if (firstSentence(m).isPresent()) return true; // documents its own behaviour
+        if (MIXIN_METHODS.contains(methodKey(m))) return false; // mixin impl / locator hook
+        return BASE_METHODS.contains(methodKey(m));
+    }
+
+    /** Name + arity — enough to match an override against the method it overrides. */
+    static String methodKey(MethodDeclaration m) {
+        return m.getNameAsString() + "/" + m.getParameters().size();
+    }
+
     static boolean isOverride(MethodDeclaration m) {
         return m.getAnnotationByName("Override").isPresent();
     }
@@ -346,6 +393,10 @@ class GenerateApiReference {
         if (text == null || text.isBlank()) return Optional.empty();
         // Collapse whitespace, stop at the first blank line (before <p> details).
         text = text.replaceAll("\\s+", " ").trim();
+        // A bare {@inheritDoc} says nothing of its own — drop it, along with the
+        // <p> separating it from any elaboration that follows.
+        text = text.replaceAll("^\\{@inheritDoc}\\s*(<p>)?\\s*", "").trim();
+        if (text.isBlank()) return Optional.empty();
         // Strip leftover inline-tag braces that toText may keep.
         text = text.replaceAll("\\{@\\w+\\s+([^}]+)}", "$1");
         // Truncate at the first real sentence end, skipping "e.g." / "i.e." abbreviations.
