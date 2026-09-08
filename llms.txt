@@ -24,9 +24,21 @@ descriptions) is auto-generated from source into a single file:
 
 - [api-reference.md](https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md)
 
-**Do not download or unzip the DramaFinder jar/sources to find its API — fetch
-the file above (one request) instead.** It is regenerated on every release and
-cannot drift from the shipped code.
+**Do not decompile the DramaFinder jar to find its API — read the file above
+(one request) instead.** It is regenerated on every release and cannot drift
+from the shipped code.
+
+**No network?** The same file ships inside the jar, which is already in `~/.m2`
+once the dependency resolves:
+
+```
+JAR=$(ls ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar | tail -1)
+unzip -p "$JAR" META-INF/dramafinder/START-HERE.md    # short guide, ~4 KB
+unzip -p "$JAR" META-INF/dramafinder/api-reference.md # every signature, ~100 KB
+```
+
+Start with `START-HERE.md`: it has a working test skeleton, the tag-to-wrapper
+naming rule, and the handful of things that are easy to get wrong.
 
 ## Documentation
 

@@ -13,6 +13,11 @@
 // artifact that travels to consumer projects, so the reference must be inside
 // it (a copy in docs/ would not ship with the skill). llms.txt links to this
 // same path via a raw GitHub URL.
+//
+// The build also copies this file into the jar at
+// META-INF/dramafinder/api-reference.md (see maven-resources-plugin in pom.xml),
+// which is the only copy that reaches an agent working offline: the jar and the
+// pom are the only DramaFinder files a dependency resolve puts in ~/.m2.
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ParserConfiguration;
@@ -34,8 +39,14 @@ import java.util.stream.*;
 class GenerateApiReference {
 
     static final Path REPO = Paths.get(System.getProperty("repo.dir", "."));
-    static final Path ELEMENT_DIR = REPO.resolve("src/main/java/org/vaadin/addons/dramafinder/element");
+    static final Path PACKAGE_DIR = REPO.resolve("src/main/java/org/vaadin/addons/dramafinder");
+    static final Path ELEMENT_DIR = PACKAGE_DIR.resolve("element");
     static final Path OUT = REPO.resolve("skills/vaadin-playwright-test/api-reference.md");
+
+    // Top-level types in the root package, in the order a test author meets them.
+    // They are how you get a Page at all, so the reference is useless without
+    // them — leaving them out is what sent agents to `javap -c` on the jar.
+    static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "HasTestView");
 
     // Method keys (name/arity) declared by the shared mixins and by VaadinElement.
     // They are what tells a plain mixin implementation apart from an override
@@ -49,7 +60,16 @@ class GenerateApiReference {
         // Parse every top-level type, keyed by simple name.
         Map<String, TypeDeclaration<?>> elements = new TreeMap<>(); // element wrappers (alpha)
         Map<String, TypeDeclaration<?>> mixins = new TreeMap<>();    // element/shared/*
+        Map<String, TypeDeclaration<?>> setup = new LinkedHashMap<>(); // root package, SETUP_TYPES order
         TypeDeclaration<?> base = null;                              // VaadinElement
+
+        for (String name : SETUP_TYPES) {
+            Path f = PACKAGE_DIR.resolve(name + ".java");
+            if (!Files.exists(f)) continue;
+            StaticJavaParser.parse(f).getTypes().stream()
+                    .filter(TypeDeclaration::isPublic)
+                    .forEach(t -> setup.put(t.getNameAsString(), t));
+        }
 
         List<Path> files;
         try (Stream<Path> s = Files.walk(ELEMENT_DIR)) {
@@ -92,7 +112,16 @@ class GenerateApiReference {
         md.append("except where an element overrides one to change its behaviour, in which case ");
         md.append("the element lists it again with the behaviour that applies there. ");
         md.append("Method one-liners come from Javadoc.\n\n");
-        md.append("**Do not download or unzip the DramaFinder jar to discover its API — it is all here.**\n\n");
+        md.append("**Do not decompile the DramaFinder jar to discover its API — it is all here.** ");
+        md.append("This same file ships *inside* the jar, so it is readable with no network:\n\n");
+        md.append("```\n");
+        md.append("unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar \\\n");
+        md.append("  META-INF/dramafinder/api-reference.md\n");
+        md.append("```\n\n");
+
+        // How to get a Page in the first place. Without this an agent has no way
+        // in, and goes decompiling AbstractBasePlaywrightIT to find out.
+        renderSetup(md, setup);
 
         // Component tag → wrapper → factories index. Machine-derived from the
         // @PlaywrightElement annotation and each wrapper's static factory
@@ -128,6 +157,53 @@ class GenerateApiReference {
         Files.writeString(OUT, md.toString());
         System.out.println("Wrote " + OUT + " (" + elements.size() + " elements, "
                 + mixins.size() + " mixins)");
+    }
+
+    /**
+     * Render the "Test setup" section: the skeleton of a working integration
+     * test, then the API of the root-package types it names.
+     *
+     * <p>The skeleton is prose rather than generated, but everything it relies
+     * on — {@code getUrl()}, {@code getView()}, the {@code page} field, the
+     * {@code headless} property — is rendered underneath straight from source,
+     * so a signature change shows up here.
+     */
+    static void renderSetup(StringBuilder md, Map<String, TypeDeclaration<?>> setup) {
+        if (setup.isEmpty()) return;
+        md.append("## Test setup\n\n");
+        md.append("A DramaFinder test extends `AbstractBasePlaywrightIT`, which opens a Playwright ");
+        md.append("`Page`, navigates it to `getUrl() + getView()`, waits for Vaadin to go idle, and ");
+        md.append("closes it again. The `page` field is what every element factory below takes.\n\n");
+        md.append("```java\n");
+        md.append("@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)\n");
+        md.append("public class MyViewIT extends AbstractBasePlaywrightIT {\n\n");
+        md.append("    @LocalServerPort\n");
+        md.append("    private int port;\n\n");
+        md.append("    @Override\n");
+        md.append("    public String getUrl() {\n");
+        md.append("        return \"http://localhost:\" + port;\n");
+        md.append("    }\n\n");
+        md.append("    @Override\n");
+        md.append("    public String getView() {\n");
+        md.append("        return \"/my-view\"; // appended to getUrl() before each test\n");
+        md.append("    }\n\n");
+        md.append("    @Test\n");
+        md.append("    public void filtersTheGrid() {\n");
+        md.append("        TextFieldElement.getByLabel(page, \"Name\").setValue(\"ada\");\n");
+        md.append("        GridElement.get(page).assertRowCount(1);\n");
+        md.append("    }\n");
+        md.append("}\n");
+        md.append("```\n\n");
+        md.append("Notes:\n\n");
+        md.append("- The browser runs headless unless the `headless` system property or the ");
+        md.append("`HEADLESS` environment variable says otherwise.\n");
+        md.append("- `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / ");
+        md.append("`cleanupTest()` are `@BeforeEach` / `@AfterEach`. Overriding one means calling ");
+        md.append("`super` — the `page` field is null otherwise.\n");
+        md.append("- Playwright's own browser binaries must already be installed.\n\n");
+        for (var e : setup.entrySet()) {
+            renderType(md, e.getValue(), 3, false, true);
+        }
     }
 
     /** Render the tag → wrapper → factories index table. */
@@ -183,6 +259,17 @@ class GenerateApiReference {
 
     /** Render one type: heading, tag, javadoc, hierarchy, constants, constructors, methods, nested types. */
     static void renderType(StringBuilder md, TypeDeclaration<?> t, int level, boolean isElement) {
+        renderType(md, t, level, isElement, false);
+    }
+
+    /**
+     * As above, but {@code includeProtected} also renders the protected surface.
+     * Used for the test-setup base class, where protected members
+     * ({@code page}, {@code getPage()}, {@code isHeadless()}) are the API a
+     * subclass actually writes against.
+     */
+    static void renderType(StringBuilder md, TypeDeclaration<?> t, int level, boolean isElement,
+                           boolean includeProtected) {
         String name = t.getNameAsString();
         md.append("#".repeat(level)).append(" ").append(name);
         String tag = tagOf(t);
@@ -206,10 +293,23 @@ class GenerateApiReference {
                 .filter(f -> f.isPublic() && f.isStatic() && f.isFinal())
                 .flatMap(f -> f.getVariables().stream()
                         .map(v -> "`" + f.getElementType().asString() + " " + v.getNameAsString()
-                                + (v.getInitializer().map(i -> " = " + i).orElse("")) + "`"))
+                                + v.getInitializer().map(i -> " = " + initializer(i)).orElse("") + "`"))
                 .collect(Collectors.toList());
         if (!constants.isEmpty()) {
             md.append("**Constants:** ").append(String.join(", ", constants)).append("\n\n");
+        }
+
+        // Protected instance fields — only for the setup base class, where they
+        // are inherited API rather than implementation detail.
+        if (includeProtected) {
+            List<String> fields = t.getFields().stream()
+                    .filter(f -> f.isProtected() && !f.isStatic())
+                    .flatMap(f -> f.getVariables().stream()
+                            .map(v -> "`" + f.getElementType().asString() + " " + v.getNameAsString() + "`"))
+                    .collect(Collectors.toList());
+            if (!fields.isEmpty()) {
+                md.append("**Inherited fields:** ").append(String.join(", ", fields)).append("\n\n");
+            }
         }
 
         // Public constructors.
@@ -228,19 +328,22 @@ class GenerateApiReference {
         // Public methods, split into static factories and instance methods.
         boolean isIface = t instanceof ClassOrInterfaceDeclaration c2 && c2.isInterface();
         List<MethodDeclaration> methods = t.getMethods().stream()
-                .filter(m -> m.isPublic() || (isIface && !m.isStatic() && !m.isPrivate()))
+                .filter(m -> m.isPublic() || (includeProtected && m.isProtected())
+                        || (isIface && !m.isStatic() && !m.isPrivate()))
                 .filter(GenerateApiReference::includeMethod)
                 .collect(Collectors.toList());
         List<MethodDeclaration> statics = methods.stream().filter(MethodDeclaration::isStatic).collect(Collectors.toList());
         List<MethodDeclaration> instance = methods.stream().filter(m -> !m.isStatic()).collect(Collectors.toList());
 
         if (!statics.isEmpty()) {
-            md.append("**Static factory methods:**\n\n");
+            // Only element wrappers have static methods that are factories;
+            // the setup base class's statics are JUnit lifecycle hooks.
+            md.append(isElement ? "**Static factory methods:**\n\n" : "**Static methods:**\n\n");
             statics.forEach(m -> appendMethod(md, m));
             md.append("\n");
         }
         if (!instance.isEmpty()) {
-            md.append(isElement ? "**Methods:**\n\n" : "**Methods:**\n\n");
+            md.append("**Methods:**\n\n");
             instance.forEach(m -> appendMethod(md, m));
             md.append("\n");
         }
@@ -276,7 +379,20 @@ class GenerateApiReference {
     // ---- signature helpers -------------------------------------------------
 
     static String methodSig(MethodDeclaration m) {
-        return m.getType().asString() + " " + m.getNameAsString() + "(" + params(m.getParameters()) + ")";
+        // Public is the norm and left implicit; protected is worth spelling out,
+        // since it only shows up where a subclass inherits it.
+        return (m.isProtected() ? "protected " : "")
+                + m.getType().asString() + " " + m.getNameAsString() + "(" + params(m.getParameters()) + ")";
+    }
+
+    /**
+     * A constant's initializer, elided when it is too long to read inline —
+     * {@code WAIT_FOR_VAADIN_SCRIPT} is a page-long JavaScript concatenation,
+     * and its value tells a caller nothing its name does not.
+     */
+    static String initializer(Expression e) {
+        String s = e.toString().replaceAll("\\s+", " ").trim();
+        return s.length() <= 60 ? s : "…";
     }
 
     static String ctorSig(ConstructorDeclaration c) {

@@ -5,7 +5,76 @@
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
-**Do not download or unzip the DramaFinder jar to discover its API — it is all here.**
+**Do not decompile the DramaFinder jar to discover its API — it is all here.** This same file ships *inside* the jar, so it is readable with no network:
+
+```
+unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar \
+  META-INF/dramafinder/api-reference.md
+```
+
+## Test setup
+
+A DramaFinder test extends `AbstractBasePlaywrightIT`, which opens a Playwright `Page`, navigates it to `getUrl() + getView()`, waits for Vaadin to go idle, and closes it again. The `page` field is what every element factory below takes.
+
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class MyViewIT extends AbstractBasePlaywrightIT {
+
+    @LocalServerPort
+    private int port;
+
+    @Override
+    public String getUrl() {
+        return "http://localhost:" + port;
+    }
+
+    @Override
+    public String getView() {
+        return "/my-view"; // appended to getUrl() before each test
+    }
+
+    @Test
+    public void filtersTheGrid() {
+        TextFieldElement.getByLabel(page, "Name").setValue("ada");
+        GridElement.get(page).assertRowCount(1);
+    }
+}
+```
+
+Notes:
+
+- The browser runs headless unless the `headless` system property or the `HEADLESS` environment variable says otherwise.
+- `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / `cleanupTest()` are `@BeforeEach` / `@AfterEach`. Overriding one means calling `super` — the `page` field is null otherwise.
+- Playwright's own browser binaries must already be installed.
+
+### AbstractBasePlaywrightIT
+
+*abstract* **Implements:** HasTestView  
+
+**Constants:** `String WAIT_FOR_VAADIN_SCRIPT = …`
+
+**Inherited fields:** `Page page`
+
+**Static methods:**
+
+- `void cleanup()`
+- `void setup()`
+- `protected boolean isHeadless()`
+
+**Methods:**
+
+- `void setupTest()`
+- `void cleanupTest()`
+- `protected Page getPage()`
+- `protected Browser getBrowser()`
+- `protected Playwright getPlaywright()`
+
+### HasTestView
+
+**Methods:**
+
+- `String getUrl()`
+- `String getView()`
 
 ## Element index
 
@@ -635,7 +704,7 @@ PlaywrightElement for <vaadin-date-time-picker>.
 **Extends:** VaadinElement  
 **Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement  
 
-**Constants:** `String FIELD_TAG_NAME = "vaadin-date-time-picker"`, `DateTimeFormatter ISO_LOCAL_DATE_TIME = new DateTimeFormatterBuilder().parseCaseInsensitive().append(ISO_LOCAL_DATE).appendLiteral('T').append(TimePickerElement.LOCAL_TIME).toFormatter()`
+**Constants:** `String FIELD_TAG_NAME = "vaadin-date-time-picker"`, `DateTimeFormatter ISO_LOCAL_DATE_TIME = …`
 
 **Constructors:**
 
@@ -837,6 +906,8 @@ Represents a cell in the grid, providing access to the table cell (td or th), th
 - `Locator getTableCellLocator()` — Get the locator for the table cell (td or th).
 - `int getColumnIndex()` — Get the column index (0-based) of this cell.
 - `Locator getCellContentLocator()` — Get the locator for the cell content (vaadin-grid-cell-content) assigned to this cell.
+- `String getText()` — Get the rendered text of the cell content.
+- `void assertText(String expected)` — Assert that the cell content has the given text.
 - `String getContentSlotName()` — Get the name of the slot used for the cell content.
 - `void click()` — Click the cell content.
 

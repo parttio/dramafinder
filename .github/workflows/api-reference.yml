@@ -18,12 +18,18 @@ on:
       - 'issue-**'
     paths:
       - 'src/main/java/org/vaadin/addons/dramafinder/element/**'
+      # The root-package types (AbstractBasePlaywrightIT, HasTestView) are in
+      # the reference's "Test setup" section, so they trigger it too.
+      - 'src/main/java/org/vaadin/addons/dramafinder/*.java'
       - 'tools/generate-api-reference.java'
       - '.github/workflows/api-reference.yml'
   pull_request:
     branches: [ master ]
     paths:
       - 'src/main/java/org/vaadin/addons/dramafinder/element/**'
+      # The root-package types (AbstractBasePlaywrightIT, HasTestView) are in
+      # the reference's "Test setup" section, so they trigger it too.
+      - 'src/main/java/org/vaadin/addons/dramafinder/*.java'
       - 'tools/generate-api-reference.java'
       - '.github/workflows/api-reference.yml'
 

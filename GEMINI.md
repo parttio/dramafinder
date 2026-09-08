@@ -49,12 +49,14 @@ mvn -Pit verify
 
 ## Available Element Classes
 
-> **Never download or unzip the DramaFinder jar/sources to discover its API.**
+> **Never decompile the DramaFinder jar to discover its API.**
 > The complete, always-current public API (every element, its methods,
 > signatures and one-line descriptions) is in
 > `skills/vaadin-playwright-test/api-reference.md`, auto-generated from source.
 > Read that file — in a consumer project, fetch it from
-> `https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md`.
+> `https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md`,
+> or, with no network, read the copy bundled in the jar:
+> `unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar META-INF/dramafinder/api-reference.md`.
 > The table below is a component→class overview only.
 
 Each element class wraps a Playwright `Locator` and provides typed helpers (getters, actions, assertions) for a specific Vaadin component. They all extend `VaadinElement` and are annotated with `@PlaywrightElement`.
