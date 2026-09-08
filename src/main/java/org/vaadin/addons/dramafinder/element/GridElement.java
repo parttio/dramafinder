@@ -1219,6 +1219,24 @@ public class GridElement extends VaadinElement
         }
 
         /**
+         * Get the rendered text of the cell content.
+         *
+         * @return the text of the cell content
+         */
+        public String getText() {
+            return cellContent.innerText();
+        }
+
+        /**
+         * Assert that the cell content has the given text.
+         *
+         * @param expected the expected cell text content
+         */
+        public void assertText(String expected) {
+            assertThat(cellContent).hasText(expected);
+        }
+
+        /**
          * Get the name of the slot used for the cell content. This is used for accessing the cell content in the grid's shadow DOM.
          *
          * @return the slot name

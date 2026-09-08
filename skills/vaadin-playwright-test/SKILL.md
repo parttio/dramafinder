@@ -11,8 +11,8 @@ description: Generate Playwright integration tests for Vaadin 25 views using the
 > [TESTING.md](TESTING.md) — are bundled beside this file and only load into
 > context when the skill is *invoked*, not when you open `SKILL.md` by hand. If
 > you are reading this file directly, stop and invoke the skill instead. This is
-> also *why* the rule below ("never unzip the jar to discover the API") holds:
-> when invoked, the API reference is already in front of you.
+> also *why* the rule below ("never decompile the jar to discover the API")
+> holds: when invoked, the API reference is already in front of you.
 
 ## Best practices
 
@@ -95,12 +95,16 @@ the project pins an older `<dramafinder.version>`, a method documented there may
 not exist yet — if a call fails to compile, check the project's version before
 looking for alternatives.
 
-> **Never download or unzip the DramaFinder jar/sources to discover its API.**
+> **Never decompile the DramaFinder jar to discover its API.**
 > The complete, always-current signature reference is bundled beside this skill
 > in [api-reference.md](api-reference.md) (auto-generated from source). If a
 > method isn't there, it doesn't exist in this version — do not guess or dig
 > into the jar. The few components with non-obvious behaviour also have prose
 > docs in the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
+>
+> If you somehow have neither this skill nor a network, the same reference ships
+> inside the jar — read it, don't decompile:
+> `unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar META-INF/dramafinder/api-reference.md`
 >
 > To look up an element, **grep `api-reference.md` for the element name and read
 > only that section** (each is a `### <Name>Element` heading) — don't read the

@@ -4,6 +4,23 @@
 
 The documentation can be found in this repository and also deployed on https://parttio-dramafinder.mintlify.app/ if you find some errors please file an issue.
 
+### API reference (and offline agents)
+
+The complete public API — test setup, every element wrapper, every signature —
+is generated from source into
+[skills/vaadin-playwright-test/api-reference.md](skills/vaadin-playwright-test/api-reference.md).
+
+The same file ships **inside the jar**, so it is readable with no network and no
+checkout. That is the copy to reach for in a consumer project, and the reason
+there is never a need to run `javap` on the classes:
+
+```
+JAR=$(ls ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar | tail -1)
+unzip -p "$JAR" META-INF/dramafinder/START-HERE.md          # short guide, ~4 KB
+unzip -p "$JAR" META-INF/dramafinder/api-reference.md       # every signature
+unzip -p "$JAR" META-INF/dramafinder/agent-api-reference.md # screenshot helpers
+```
+
 ## Claude Code skills
 
 This repository ships two Claude Code skills. Install them as plugins:

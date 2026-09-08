@@ -9,7 +9,13 @@
     <url>https://github.com/parttio/dramafinder</url>
 
     <name>Drama Finder</name>
-    <description>Playwright utility classes for Vaadin</description>
+    <!-- The pom is one of only two DramaFinder files a dependency resolve puts
+         in ~/.m2, so it is where an offline reader looks first. Point them at
+         the docs bundled in the jar rather than let them decompile it. -->
+    <description>Playwright utility classes for Vaadin. The full API reference is bundled in the jar
+        at META-INF/dramafinder/api-reference.md, with a short guide beside it at
+        META-INF/dramafinder/START-HERE.md — read those instead of decompiling the classes.
+    </description>
 
     <properties>
         <vaadin.version>25.3.0-beta1</vaadin.version>
@@ -117,6 +123,65 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Bundle the generated agent-facing docs into the jar.
+
+                 An agent working offline has only the jar and the pom: Maven
+                 does not resolve -sources or any other classifier unless asked,
+                 so a separate docs artifact would never arrive. Shipping the
+                 references inside the main jar is what stops agents reaching
+                 for `jar xf` + `javap` to discover the API. They stay generated
+                 into skills/ (the copy that travels with the Claude Code
+                 plugin) and are copied from there, so there is one source of
+                 truth and no duplicate committed to git. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>bundle-agent-docs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF/dramafinder</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/skills/vaadin-playwright-test</directory>
+                                    <includes>
+                                        <include>api-reference.md</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/skills/vaadin-playwright-screenshot</directory>
+                                    <includes>
+                                        <include>agent-api-reference.md</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Name the bundled docs in the manifest, so `unzip -p <jar>
+                 META-INF/MANIFEST.MF` also leads to them. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Dramafinder-Start-Here>META-INF/dramafinder/START-HERE.md</Dramafinder-Start-Here>
+                            <Dramafinder-Api-Reference>META-INF/dramafinder/api-reference.md</Dramafinder-Api-Reference>
+                            <Dramafinder-Agent-Api-Reference>META-INF/dramafinder/agent-api-reference.md</Dramafinder-Agent-Api-Reference>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

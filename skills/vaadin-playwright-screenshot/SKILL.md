@@ -99,10 +99,12 @@ reference). This skill only adds the visual-capture concerns on top of it:
   responsive requirements.
 - For the exact API of `VisualVerificationTest` and the other agent helpers
   (`open`, `shot`, `baseUrl`, the report/snapshot types), read the bundled
-  **`agent-api-reference.md`** next to this file — **do not unzip the DramaFinder
-  sources jar**. In a consumer project where the skill isn't checked out, fetch
-  it (one request) from
-  `https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-screenshot/agent-api-reference.md`.
+  **`agent-api-reference.md`** next to this file — **do not decompile the
+  DramaFinder jar**. In a consumer project where the skill isn't checked out,
+  fetch it (one request) from
+  `https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-screenshot/agent-api-reference.md`,
+  or, with no network, read the copy bundled in the jar:
+  `unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar META-INF/dramafinder/agent-api-reference.md`.
 - `shot("name")` for each acceptance criterion and each **unique visual state**
   along the way — named after the criterion (`01-login-fields`,
   `02-invalid-login-error`, `03-order-list`). Screenshots are auto-numbered into

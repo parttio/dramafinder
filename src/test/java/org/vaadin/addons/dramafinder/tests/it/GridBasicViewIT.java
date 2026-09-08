@@ -107,6 +107,26 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testCellGetText() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+
+        var cell = grid.findCell(0, 1);
+
+        assertTrue(cell.isPresent());
+        assertEquals("Last1", cell.get().getText());
+    }
+
+    @Test
+    public void testCellAssertText() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+
+        var cell = grid.findCell(0, 1);
+
+        assertTrue(cell.isPresent());
+        cell.get().assertText("Last1");
+    }
+
+    @Test
     public void testCellContentByHeaderText() {
         GridElement grid = GridElement.getById(page, "basic-grid");
 
