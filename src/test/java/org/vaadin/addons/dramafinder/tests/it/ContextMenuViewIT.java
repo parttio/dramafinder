@@ -78,4 +78,18 @@ public class ContextMenuViewIT extends SpringPlaywrightIT implements HasTestView
         ContextMenuElement.openOn(page.locator("#checkable-target"));
         contextMenu.assertItemNotChecked("Project news");
     }
+
+    @Test
+    public void canReopenWhileSelectionRoundtripIsPending() {
+        ContextMenuElement contextMenu = new ContextMenuElement(page);
+        ContextMenuElement.openOn(page.locator("#checkable-target"));
+        contextMenu.selectItem("Security alerts");
+
+        // Reopen without waiting for the selection roundtrip first: the response
+        // re-renders the vaadin-context-menu element, so a context-click sent
+        // while it is in flight loses the menu it just opened.
+        ContextMenuElement.openOn(page.locator("#checkable-target"));
+        contextMenu.assertItemChecked("Security alerts");
+        assertThat(page.locator("#checkable-selection")).hasText("Project news, Security alerts");
+    }
 }
