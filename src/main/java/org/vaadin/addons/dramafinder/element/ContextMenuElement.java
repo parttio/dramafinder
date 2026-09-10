@@ -2,8 +2,10 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.assertions.LocatorAssertions;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.MouseButton;
+import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -19,6 +21,9 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
 
     public static final String FIELD_TAG_NAME = "vaadin-context-menu";
     public static final String FIELD_LIST_BOX_TAG_NAME = "vaadin-context-menu-list-box";
+
+    private static final int OPEN_ATTEMPTS = 3;
+    private static final double OPEN_TIMEOUT_MS = 2000;
 
     /**
      * Create a {@code ContextMenuElement} from the page overlay.
@@ -37,11 +42,32 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
 
     /**
      * Open the context menu by invoking a context-click on the provided target.
+     * <p>
+     * Flow renders the {@code vaadin-context-menu} element server-side, so a
+     * roundtrip that is still in flight — the one triggered by the previous
+     * selection, for instance — can replace that element and silently discard a
+     * menu that was opened while the response travelled. This waits for Flow to
+     * go idle before context-clicking, then waits for the overlay to show up,
+     * and repeats the context-click if the menu was lost anyway.
      *
      * @param target the element that triggers the context menu
      */
     public static void openOn(Locator target) {
-        target.click(new Locator.ClickOptions().setButton(MouseButton.RIGHT));
+        Page page = target.page();
+        Locator listBox = page.locator(FIELD_TAG_NAME + "[opened] " + FIELD_LIST_BOX_TAG_NAME).first();
+        AssertionError lastError = null;
+        for (int attempt = 0; attempt < OPEN_ATTEMPTS; attempt++) {
+            page.waitForFunction(AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT);
+            target.click(new Locator.ClickOptions().setButton(MouseButton.RIGHT));
+            try {
+                assertThat(listBox).isVisible(
+                        new LocatorAssertions.IsVisibleOptions().setTimeout(OPEN_TIMEOUT_MS));
+                return;
+            } catch (AssertionError e) {
+                lastError = e;
+            }
+        }
+        throw lastError;
     }
 
     /**
