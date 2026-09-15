@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -43,9 +44,16 @@ public class TabElement extends VaadinElement {
         assertThat(getLocator()).not().hasAttribute("selected", "");
     }
 
-    /** Get a tab by visible text within a scope. */
+    /**
+     * Get a tab by its full visible text within a scope.
+     * <p>
+     * The text must match the tab's whole label, so {@code "Tab 1"} does not
+     * resolve to {@code "Tab 10"}. Two tabs sharing the text fail with a
+     * Playwright strict-mode error.
+     */
     public static TabElement getTabByText(Locator locator, String summary) {
-        return new TabElement(locator.locator(FIELD_PARENT_TAG_NAME).locator(FIELD_TAG_NAME).getByText(summary));
+        return new TabElement(ItemLocator.byExactText(
+                locator.locator(FIELD_PARENT_TAG_NAME), FIELD_TAG_NAME, summary));
     }
 
     /** Get the currently selected tab within a scope. */

@@ -16,6 +16,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -238,9 +239,13 @@ public class ComboBoxElement extends VaadinElement
                 AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
     }
 
+    /**
+     * Locator for a dropdown item, matched on its full label. {@code "Option 1"}
+     * does not resolve to {@code "Option 10"}, and two visible items sharing the
+     * label fail with a Playwright strict-mode error.
+     */
     private Locator getOverlayItem(String label) {
-        return getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])")
-                .filter(new Locator.FilterOptions()
-                        .setHasText(label)).first();
+        return ItemLocator.byExactText(getLocator(),
+                FIELD_ITEM_TAG_NAME + ":not([hidden])", label);
     }
 }

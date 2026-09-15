@@ -7,6 +7,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasInputFieldElement;
@@ -113,10 +114,13 @@ public class SelectElement extends VaadinElement
         assertThat(getInputLocator()).hasText(Objects.requireNonNullElse(expected, ""));
     }
 
+    /**
+     * Locator for an overlay item, matched on its full label. {@code "Option 1"}
+     * does not resolve to {@code "Option 10"}, and two items sharing the label
+     * fail with a Playwright strict-mode error.
+     */
     private static Locator getSelectItem(Locator locator, String label) {
-        return locator.locator(FIELD_ITEM_TAG_NAME)
-                .filter(new Locator.FilterOptions()
-                        .setHasText(label)).first();
+        return ItemLocator.byExactText(locator, FIELD_ITEM_TAG_NAME, label);
     }
 
     /**

@@ -23,9 +23,11 @@ group.assertSelected(); // no argument asserts an empty selection
 ```
 
 Labels are matched by accessible name (ARIA role `checkbox`), the same way
-`CheckboxElement.getByLabel` matches, so the match is case-insensitive and
-partial. Use distinct labels when a group mixes items such as `Option 1` and
-`Option 10`.
+`CheckboxElement.getByLabel(Locator, String)` matches within a scope: the whole
+label, case-sensitively. `selectByLabel("Option 1")` therefore leaves an
+`Option 10` checkbox alone, and a partial label reaches nothing. Two checkboxes
+carrying the same label make the lookup fail with a Playwright strict-mode
+error; reach those through `getCheckboxes()` instead.
 
 ## assertSelected is exhaustive
 

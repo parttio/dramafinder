@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
@@ -73,14 +74,16 @@ public class UploadElement extends VaadinElement
 
     /**
      * Locator for a specific file row.
+     * <p>
+     * The name must match the file name exactly, so {@code "report.pdf"} does not
+     * resolve to {@code "report.pdf.bak"}. Two rows for the same file name fail
+     * with a Playwright strict-mode error.
      *
-     * @param fileName the file name to search
+     * @param fileName the full file name to search
      * @return the matching file row locator
      */
     public Locator getFileItemLocator(String fileName) {
-        return getLocator().locator(FILE_ITEM_TAG_NAME)
-                .filter(new Locator.FilterOptions().setHasText(fileName))
-                .first();
+        return ItemLocator.byExactText(getLocator(), FILE_ITEM_TAG_NAME, fileName);
     }
 
     /**

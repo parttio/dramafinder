@@ -66,7 +66,7 @@ The reference opens with an index table of every tag, its wrapper, and that wrap
 factory methods; then a section per element; then the shared mixins whose methods
 every element that implements them inherits.
 
-## Three things that are easy to get wrong
+## Four things that are easy to get wrong
 
 **Factory methods are not uniform.** Most fields have `getByLabel(Page, String)`,
 containers have `get(Page)`, and `getById(Page, String)` exists on only a few. An
@@ -79,6 +79,14 @@ content lives in a `<vaadin-grid-cell-content>` elsewhere in the DOM, reachable 
 `getCellContentLocator()`. `getLocator()`, inherited from `VaadinElement`, is the grid
 itself, not the cell. For text, prefer `CellElement.getText()` / `assertText(String)`,
 or `GridElement.assertCellContent(row, column, expected)`.
+
+**An item's label is matched in full.** Every lookup that picks one item out of a
+container — `group.getCheckbox("Cheese")`, `tabs.getTab("Details")`,
+`select.selectItem("Option 1")`, `nav.getItem("Admin")`, `menu.selectItem("Rename")` —
+matches the item's whole label, case-sensitively, and raises a strict-mode error if
+two items share it. Passing part of a label finds nothing. The page-level field
+factories (`TextFieldElement.getByLabel(page, "Name")`) are the exception: they still
+match case-insensitively on a substring and take the first hit.
 
 **Assertions retry; getters do not.** Every `assertX` method polls via
 `page.waitForCondition(...)`, so it tolerates a value the client has not rendered yet.

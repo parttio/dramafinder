@@ -1,7 +1,6 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
@@ -11,6 +10,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasHelperElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 
 /**
  * PlaywrightElement for {@code <vaadin-radio-button>} (package-private).
@@ -31,12 +31,15 @@ class RadioButtonElement extends VaadinElement
         super(locator);
     }
 
-    /** Get a radio by its label within a given scope. */
+    /**
+     * Get a radio by its full label within a given scope.
+     * <p>
+     * The label must match the radio button's whole accessible name, and two
+     * radios sharing it inside the scope fail with a Playwright strict-mode
+     * error rather than resolving to the first one in the DOM.
+     */
     static RadioButtonElement getByLabel(Locator locator, String label) {
         return new RadioButtonElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(locator.page().getByRole(AriaRole.RADIO,
-                                        new Page.GetByRoleOptions().setName(label)))).first());
+                AccessibleNameLocator.findExact(locator, FIELD_TAG_NAME, AriaRole.RADIO, label));
     }
 }

@@ -7,6 +7,7 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.MouseButton;
 import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -152,10 +153,13 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
                 .hasAttribute("menu-item-checked", "");
     }
 
+    /**
+     * Locator for a menu item, matched on its full accessible name. Two items
+     * sharing the label fail with a Playwright strict-mode error rather than
+     * resolving to the first one in the DOM.
+     */
     private Locator getItemLocator(String itemLabel) {
-        return getListBoxLocator()
-                .getByRole(AriaRole.MENUITEM, new Locator.GetByRoleOptions().setName(itemLabel))
-                .first();
+        return ItemLocator.byExactName(getListBoxLocator(), AriaRole.MENUITEM, itemLabel);
     }
 
 }
