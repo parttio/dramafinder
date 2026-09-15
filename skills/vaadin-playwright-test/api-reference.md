@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 55 element wrappers.
+> DramaFinder 1.1.7-SNAPSHOT — 56 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -125,6 +125,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-tooltip>` | [TooltipElement](#tooltipelement) | `get(Locator)`, `get(Page)`, `getByText(Page, String)` |
 | `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` |
 | `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` |
 | — | [AbstractLoginElement](#abstractloginelement) | *constructor only* |
@@ -140,7 +141,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -1752,6 +1753,39 @@ PlaywrightElement for <vaadin-time-picker>.
 - `LocalTime getValueAsLocalTime()` — Get the current value as a LocalTime.
 - `void assertValue(LocalTime value)` — Assert that the value equals the provided time.
 
+### TooltipElement  `<vaadin-tooltip>`
+
+PlaywrightElement for <vaadin-tooltip>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-tooltip"`
+
+**Constructors:**
+
+- `TooltipElement(Locator locator)` — Create a new TooltipElement.
+
+**Static factory methods:**
+
+- `TooltipElement get(Page page)` — Get the first TooltipElement on the page.
+- `TooltipElement get(Locator locator)` — Get the first TooltipElement within a scope, typically the component the tooltip is attached to.
+- `TooltipElement getByText(Page page, String text)` — Get a TooltipElement by its text.
+
+**Methods:**
+
+- `Locator getContentLocator()` — Locator for the element carrying the tooltip content, i.e. the role="tooltip" node.
+- `Locator getOverlayLocator()` — Locator for the <vaadin-tooltip-overlay> the tooltip renders in its shadow DOM.
+- `String getText()` — Get the tooltip text.
+- `void assertText(String text)` — Assert the tooltip text.
+- `boolean isOpened()` — Whether the tooltip is open.
+- `void assertOpened()` — Assert that the tooltip is open.
+- `void assertClosed()` — Assert that the tooltip is closed.
+- `String getPosition()` — Get the effective position of the tooltip relative to its target, e.g. top-start or bottom.
+- `void assertPosition(String position)` — Assert the effective position of the tooltip relative to its target.
+- `void hoverTarget()` — Hover the element the tooltip describes, which opens the tooltip unless it is in manual mode.
+- `void closeWithEscape()` — Close the tooltip by pressing Escape.
+
 ### TreeGridElement
 
 PlaywrightElement for Vaadin Tree Grid.
@@ -2083,15 +2117,16 @@ Mixin for components that support the theme attribute.
 
 ### HasTooltipElement
 
-Utilities to interact with components implementing Vaadin's HasTooltip the first child with role tooltip
+Utilities to interact with components implementing Vaadin's HasTooltip, i.e. components hosting a slotted <vaadin-tooltip>.
 
 **Extends:** HasLocatorElement  
 
 **Methods:**
 
+- `TooltipElement getTooltip()` — The component's tooltip.
 - `Locator getTooltipLocator()` — Locator for the tooltip content (role=tooltip).
 - `String getTooltipText()` — Tooltip text content.
-- `void assertTooltipHasText(String text)`
+- `void assertTooltipHasText(String text)` — Assert the tooltip text.
 
 ### HasValidationPropertiesElement
 

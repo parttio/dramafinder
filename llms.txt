@@ -73,6 +73,7 @@ behaviour isn't obvious from the signatures:
 - [SliderElement](docs/specifications/SliderElement.md) - Keyboard-driven value changes, step snapping
 - [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
 - [UploadElement](docs/specifications/UploadElement.md) - Hidden-file-input pattern
+- [TooltipElement](docs/specifications/TooltipElement.md) - Opened state without visibility, hover delay, position on the overlay
 
 ## Key Patterns
 

@@ -58,6 +58,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `MessageInput` | `MessageInputElement` | `get(page)`, `typeAndSubmit()`, `submit()`, `assertValue()` |
 | `MessageList` | `MessageListElement` | `get(page)`, `assertMessageCount()`, `assertMessageText(index, text)`, `assertMessageUserName(index, name)` |
 | `Popover` | `PopoverElement` | `getByLabel(page, label)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
+| `Tooltip` | `TooltipElement` | `get(page)`, `get(locator)` scoped to the target component, `getByText(page, text)`, or `someElement.getTooltip()`; `getText()`, `assertText()`, `isOpened()`, `assertOpened()`, `assertClosed()`, `getPosition()`, `assertPosition()`, `hoverTarget()`, `closeWithEscape()` |
 | `SideNavigation` | `SideNavigationElement` | `getByLabel(page, label)`, `clickItem(label)`, `getItem(label)`, `assertCollapsed()`, `assertExpanded()` |
 | `Card` | `CardElement` | `getByTitle(page, title)`, `assertTitle()`, `assertSubtitle()` |
 | `Markdown` | `MarkdownElement` | `get(page)`, `getRenderedLocator()`, `getText()`, `assertContainsText()`, `getHeadings()`, `getLinks()`, `getCodeBlocks()`, `assertHeading(index, text)`, `assertLink(text, href)`, `assertCodeBlockLanguage(index, language)` |
@@ -110,6 +111,7 @@ element.assertTheme("small");
 element.assertLabel("Expected label");
 element.assertHelperHasText("Helper text");
 element.assertTooltipHasText("Tooltip text");
+element.getTooltip(); // TooltipElement: opened state, position, hoverTarget()
 element.assertAriaLabel("Aria label");
 element.assertIsFocused();
 element.assertIsNotFocused();
