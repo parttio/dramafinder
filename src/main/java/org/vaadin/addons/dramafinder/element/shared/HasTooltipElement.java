@@ -1,34 +1,55 @@
 package org.vaadin.addons.dramafinder.element.shared;
 
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.assertions.LocatorAssertions;
-import com.microsoft.playwright.options.AriaRole;
-
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import org.vaadin.addons.dramafinder.element.TooltipElement;
 
 /**
- * Utilities to interact with components implementing
- * Vaadin's HasTooltip the first child with role tooltip
+ * Utilities to interact with components implementing Vaadin's
+ * {@code HasTooltip}, i.e. components hosting a slotted
+ * {@code <vaadin-tooltip>}.
+ * <p>
+ * Every method delegates to a {@link TooltipElement}, so the mixin and the
+ * standalone element stay one API: use {@link #getTooltip()} whenever more than
+ * the text is needed — opened state, position, or triggering the tooltip by
+ * hovering its target.
  */
 public interface HasTooltipElement extends HasLocatorElement {
 
-    /** Locator for the tooltip content (role=tooltip). */
+    /**
+     * The component's tooltip.
+     *
+     * @return a {@link TooltipElement} for the slotted {@code <vaadin-tooltip>};
+     *         its locator matches nothing when the component has no tooltip
+     */
+    default TooltipElement getTooltip() {
+        return TooltipElement.get(getLocator());
+    }
+
+    /**
+     * Locator for the tooltip content ({@code role=tooltip}).
+     *
+     * @return the tooltip content locator
+     */
     default Locator getTooltipLocator() {
-        return getLocator().getByRole(AriaRole.TOOLTIP,
-                new Locator.GetByRoleOptions()
-                        .setIncludeHidden(true)).first();
+        return getTooltip().getContentLocator();
     }
 
-    /** Tooltip text content. */
+    /**
+     * Tooltip text content.
+     *
+     * @return the tooltip text, or {@code null} when there is none
+     */
     default String getTooltipText() {
-        return getTooltipLocator().textContent();
+        return getTooltip().getText();
     }
 
+    /**
+     * Assert the tooltip text.
+     *
+     * @param text the expected text, or {@code null} to assert the component
+     *             shows no tooltip content
+     */
     default void assertTooltipHasText(String text) {
-        if (text != null) {
-            assertThat(getTooltipLocator()).hasText(text, new LocatorAssertions.HasTextOptions().setUseInnerText(true));
-        } else {
-            assertThat(getTooltipLocator()).not().isVisible();
-        }
+        getTooltip().assertText(text);
     }
 }
