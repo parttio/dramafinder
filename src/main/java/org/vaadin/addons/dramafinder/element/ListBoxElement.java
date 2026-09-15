@@ -9,6 +9,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -108,10 +109,13 @@ public class ListBoxElement extends VaadinElement
         assertThat(getLocator()).not().hasAttribute(MULTIPLE_ATTRIBUTE, "");
     }
 
+    /**
+     * Locator for an item, matched on its full label. {@code "Option 1"} does not
+     * resolve to {@code "Option 10"}, and two items sharing the label fail with a
+     * Playwright strict-mode error.
+     */
     private Locator getItem(String label) {
-        return locator.locator(FIELD_ITEM_TAG_NAME)
-                .filter(new Locator.FilterOptions()
-                        .setHasText(label)).first();
+        return ItemLocator.byExactText(locator, FIELD_ITEM_TAG_NAME, label);
     }
 
 

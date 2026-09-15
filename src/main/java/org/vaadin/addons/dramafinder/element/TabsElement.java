@@ -7,6 +7,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -94,16 +95,15 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
     /**
      * Get a tab by its label.
      * <p>
-     * The label is matched case-insensitively against the tab's accessible name,
-     * as a substring.
+     * The label must match the tab's full accessible name; {@code "Tab 1"} does
+     * not resolve to {@code "Tab 10"}. Two tabs sharing the label fail with a
+     * Playwright strict-mode error.
      *
-     * @param label the tab label
+     * @param label the full tab label
      * @return the matching {@code TabElement}
      */
     public TabElement getTab(String label) {
-        return new TabElement(getLocator()
-                .getByRole(AriaRole.TAB, new Locator.GetByRoleOptions().setName(label))
-                .first());
+        return new TabElement(ItemLocator.byExactName(getLocator(), AriaRole.TAB, label));
     }
 
     /**

@@ -11,6 +11,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasHelperElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
+import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -84,6 +85,9 @@ public class CheckboxElement extends VaadinElement
 
     /**
      * Get a {@code CheckboxElement} by its accessible label.
+     * <p>
+     * Page-level lookup: the label is matched case-insensitively as a substring
+     * and the first match wins.
      *
      * @param page  the Playwright page
      * @param label the accessible label of the checkbox
@@ -100,17 +104,18 @@ public class CheckboxElement extends VaadinElement
 
     /**
      * Get a {@code CheckboxElement} by its accessible label within a given scope.
+     * <p>
+     * Item-within-container lookup: the label must match the checkbox's full
+     * accessible name, so {@code "Option 1"} no longer resolves to
+     * {@code "Option 10"}. Two checkboxes sharing the label inside the scope fail
+     * with a Playwright strict-mode error.
      *
      * @param locator the locator to search within (e.g. a checkbox group)
-     * @param label   the accessible label of the checkbox
+     * @param label   the full accessible label of the checkbox
      * @return the matching {@code CheckboxElement}
      */
     public static CheckboxElement getByLabel(Locator locator, String label) {
         return new CheckboxElement(
-                locator.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(locator.page().getByRole(AriaRole.CHECKBOX,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                AccessibleNameLocator.findExact(locator, FIELD_TAG_NAME, AriaRole.CHECKBOX, label));
     }
 }

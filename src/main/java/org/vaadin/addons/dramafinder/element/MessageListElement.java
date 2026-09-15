@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -52,15 +53,23 @@ public class MessageListElement extends VaadinElement implements HasStyleElement
     }
 
     /**
-     * Locator for the first message whose author name contains the given text.
+     * Locator for the first message written by the given author.
+     * <p>
+     * The name must match the author name exactly, so {@code "Ann"} does not
+     * resolve to a message from {@code "Anna"}. Unlike the other item lookups
+     * this one keeps returning the first match: a message list is expected to
+     * hold several messages from the same author, so that is not an ambiguity.
+     * Use {@link #getMessage(int)} to reach a later one.
      *
-     * @param userName the user name to search for
-     * @return locator for the matching message
+     * @param userName the full author name to search for
+     * @return locator for the first matching message
      */
     public Locator getMessageByUserName(String userName) {
         return getMessages().filter(new Locator.FilterOptions()
                 .setHas(getLocator().page().locator("[part='name']")
-                        .filter(new Locator.FilterOptions().setHasText(userName)))).first();
+                        .filter(new Locator.FilterOptions()
+                                .setHas(ItemLocator.exactText(getLocator().page(), userName)))))
+                .first();
     }
 
     // --- Message content accessors ---

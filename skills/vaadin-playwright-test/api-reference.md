@@ -236,7 +236,7 @@ PlaywrightElement for <vaadin-accordion-panel>.
 
 **Static factory methods:**
 
-- `AccordionPanelElement getAccordionPanelBySummary(Locator locator, String summary)` — Get an accordion panel by its summary text within a scope.
+- `AccordionPanelElement getAccordionPanelBySummary(Locator locator, String summary)` — Get an accordion panel by its full summary text within a scope.
 - `AccordionPanelElement getOpenedAccordionPanel(Locator locator)` — Get the currently opened accordion panel within a scope.
 
 **Methods:**
@@ -1191,7 +1191,7 @@ PlaywrightElement for individual menu items <vaadin-menu-bar-button>.
 
 **Static factory methods:**
 
-- `MenuItemElement getByLabel(Locator locator, String label)` — Get a menu item by its accessible label within a scope.
+- `MenuItemElement getByLabel(Locator locator, String label)` — Get a menu item by its full accessible label within a scope.
 
 **Methods:**
 
@@ -1259,7 +1259,7 @@ PlaywrightElement for <vaadin-message-list>.
 
 - `Locator getMessages()` — Locator for all <vaadin-message> children.
 - `Locator getMessage(int index)` — Locator for a single message by index.
-- `Locator getMessageByUserName(String userName)` — Locator for the first message whose author name contains the given text.
+- `Locator getMessageByUserName(String userName)` — Locator for the first message written by the given author.
 - `String getMessageText(int index)` — Get the text content of the message at the given index.
 - `String getMessageUserName(int index)` — Get the user name of the message at the given index.
 - `String getMessageTime(int index)` — Get the time of the message at the given index.
@@ -1514,7 +1514,7 @@ PlaywrightElement for <vaadin-side-nav>.
 - `void assertExpanded()` — Asserts that the side nav is expanded.
 - `void assertCollapsible()` — Asserts that the side nav is collapsible.
 - `void assertNotCollapsible()` — Asserts that the side nav is not collapsible.
-- `SideNavigationItemElement getItem(String label)` — Gets a SideNavigationItemElement by its label text.
+- `SideNavigationItemElement getItem(String label)` — Gets a SideNavigationItemElement by its label text, at any nesting depth.
 - `void clickItem(String label)` — Clicks an item by its label.
 - `void toggle()` — Toggles the expansion state of the item.
 
@@ -1637,7 +1637,7 @@ PlaywrightElement for tabs <vaadin-tab>.
 
 **Static factory methods:**
 
-- `TabElement getTabByText(Locator locator, String summary)` — Get a tab by visible text within a scope.
+- `TabElement getTabByText(Locator locator, String summary)` — Get a tab by its full visible text within a scope.
 - `TabElement getSelectedTab(Locator locator)` — Get the currently selected tab within a scope.
 
 **Methods:**

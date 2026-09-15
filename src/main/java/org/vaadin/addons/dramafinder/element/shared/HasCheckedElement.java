@@ -22,9 +22,16 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 public interface HasCheckedElement extends HasEnabledElement, HasAriaLabelElement, FocusableElement {
 
-    /** Locator for the native input element inside the component. */
+    /**
+     * Locator for the native input element inside the component.
+     * <p>
+     * Deliberately not narrowed with {@code .first()}: a checkbox-like component
+     * holds exactly one input, so the only ambiguity this could hide is an
+     * ambiguous component locator — and a lookup that matched two checkboxes
+     * should fail with a strict-mode error rather than quietly act on the first.
+     */
     default Locator getInputLocator() {
-        return getLocator().locator("*[slot=\"input\"]").first();
+        return getLocator().locator("*[slot=\"input\"]");
     }
 
     /** {@inheritDoc} */

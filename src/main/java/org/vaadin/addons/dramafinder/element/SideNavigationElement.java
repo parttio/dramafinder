@@ -3,6 +3,7 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -55,28 +56,23 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
     }
 
     /**
-     * Gets a SideNavigationItemElement by its label text.
-     * This searches for a direct or nested vaadin-side-nav-item with the given
-     * text.
-     * Note: This strictly searches for the item that contains the text.
-     * Use care if multiple items have the same text.
-     * Your navigation item has to be visible, you'll need to open manually the parent.
+     * Gets a {@code SideNavigationItemElement} by its label text, at any nesting
+     * depth.
+     * <p>
+     * The label must match the item's own label exactly; the labels of nested
+     * items are not part of the match, so a parent is found by its own label and
+     * is never returned for one of its children's labels. Two items sharing the
+     * label fail with a Playwright strict-mode error instead of resolving to
+     * whichever comes first in the DOM.
+     * <p>
+     * The item has to be visible: a collapsed parent has to be expanded first.
      *
-     * @param label The label of the item.
+     * @param label The full label of the item.
      * @return The SideNavigationItemElement.
      */
     public SideNavigationItemElement getItem(String label) {
-        // Using locator with hasText might be too broad if parent contains child text.
-        // But vaadin-side-nav-item encapsulates its content.
-        // Let's try to match exact text or contains.
-        // A common strategy is to use the label content.
-
-        // We construct a locator that finds a vaadin-side-nav-item that has this text.
-        // Since text is inside the item's shadow or light dom slots.
-
-        return new SideNavigationItemElement(
-                getLocator().locator(SideNavigationItemElement.FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions().setHasText(label)).first());
+        return new SideNavigationItemElement(ItemLocator.byOwnExactText(
+                getLocator(), SideNavigationItemElement.FIELD_TAG_NAME, label));
     }
 
     /**

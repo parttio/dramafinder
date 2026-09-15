@@ -134,6 +134,11 @@ public class VirtualListElement extends VaadinElement
      * Get a rendered item containing the given text.
      * <p>
      * The target item must be currently rendered in the DOM.
+     * <p>
+     * Unlike the label-keyed item lookups elsewhere in the library this one
+     * matches a <em>substring</em>, case-insensitively, and returns the first
+     * match: a virtual list item renders an arbitrary component, so there is no
+     * single label to match in full. Pass enough text to be unambiguous.
      *
      * @param text the text to search for
      * @return locator for the first matching item

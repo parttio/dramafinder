@@ -203,7 +203,27 @@ public class TextFieldElement extends VaadinElement implements HasEnabledElement
   regardless of the others. Both are inherited by every element implementing
   `HasThemeElement` — never re-implement the token regex per element.
 
-#### 10. Light-DOM Text vs `textContent`
+#### 10. Substring Label Matching
+- **Pitfall**: Keying an item lookup on `setName(label)`, `getByText(label)` or
+  `setHasText(label)` and closing with `.first()`. All three are
+  case-insensitive substring matches, so `getCheckbox("Option 1")` happily
+  returns the `"Option 10"` checkbox when that one comes first in the DOM, and
+  `assertSelected("Option 1")` then passes against it — a green test over a
+  wrong UI state.
+- **Solution**: For item-within-container lookups use `ItemLocator` /
+  `AccessibleNameLocator.findExact`, which match the full label and leave the
+  locator unnarrowed so duplicates raise a strict-mode error. See "Exact vs
+  substring matching" under the Scoped Lookup Pattern for which lookups stay
+  substring-based.
+```java
+// Bad: "Option 1" also matches "Option 10", and .first() hides it
+locator.getByRole(AriaRole.TAB, new Locator.GetByRoleOptions().setName(label)).first();
+
+// Good: full label, strict-mode error on a real duplicate
+ItemLocator.byExactName(getLocator(), AriaRole.TAB, label);
+```
+
+#### 11. Light-DOM Text vs `textContent`
 - **Pitfall**: Reading a component's own text with `locator.textContent()` (or
   Playwright's `hasText`) when the component also renders content in its shadow
   DOM or accepts slotted children. Both traverse the shadow DOM and include
@@ -288,6 +308,53 @@ public static ButtonElement getByText(Page page, String text) { ... }
 // Scoped lookup (within a container)
 public static ButtonElement getByText(Locator locator, String text) { ... }
 ```
+
+##### Exact vs substring matching
+
+Playwright's `setName(...)`, `getByText(...)` and `setHasText(...)` all default to
+a **case-insensitive substring** match, so `"Option 1"` also matches
+`"Option 10"`. Combined with a trailing `.first()` that silently resolves to
+whichever matched element comes first in the DOM — and, because the assertion
+helper re-runs the same lookup, a test then goes green against the wrong
+element. The library therefore splits label-keyed lookups in two:
+
+- **Item-within-container lookups** — one option out of a combo box, select,
+  list box or checkbox/radio group, one tab, one menu item, one side-nav item,
+  one accordion panel, one breadcrumb item, one upload row. The caller passes the
+  item's whole label, so these match **exactly** and carry **no `.first()`**: a
+  genuine duplicate fails with a Playwright strict-mode error instead of being
+  masked. Build them with `ItemLocator` rather than hand-rolling the chain:
+  ```java
+  // ARIA role + exact accessible name
+  ItemLocator.byExactName(getLocator(), AriaRole.TAB, label);
+  // exact visible text, matching the item or an element inside it
+  ItemLocator.byExactText(getLocator(), FIELD_ITEM_TAG_NAME, label);
+  // exact visible text of the item ALONE, for items that nest items
+  ItemLocator.byOwnExactText(getLocator(), FIELD_TAG_NAME, label);
+  // exact accessible name of a field inside a container
+  AccessibleNameLocator.findExact(locator, FIELD_TAG_NAME, AriaRole.CHECKBOX, label);
+  ```
+  `byExactText` matches an element whose whole subtree text equals the label, so
+  it also finds a label wrapped in a renderer's `<span>`; `byOwnExactText`
+  matches only the item's own text nodes, which is what a container whose items
+  can hold items of the same kind (`vaadin-side-nav-item`) needs — matching the
+  subtree would read a parent as `"Parent Child 1 Child 2"`.
+- **Page-level factories and `getByText` helpers** — `getByLabel(Page, String)`
+  on a field, `AccessibleNameLocator.find(...)`, and the helpers whose Javadoc
+  says "contains" (`BadgeElement`, `NotificationElement`, `TooltipElement`,
+  `VirtualListElement.getItemByText`). These keep substring matching and
+  `.first()` as a deliberate convenience: a caller may want to pass part of a
+  long label, and a virtual-list item renders an arbitrary component with no
+  single label. Say so in the Javadoc — "matched case-insensitively as a
+  substring" — so it reads as a choice rather than a Playwright default that
+  leaked through.
+
+`MessageListElement.getMessageByUserName` is the documented exception among item
+lookups: it matches the author exactly but keeps `.first()`, because several
+messages from one author is normal data, not an ambiguity.
+
+Two consequences worth spelling out in the Javadoc of an exact lookup: the match
+becomes **case-sensitive**, and a lookup keyed on a partial label stops working.
 
 ### Best Practices
 

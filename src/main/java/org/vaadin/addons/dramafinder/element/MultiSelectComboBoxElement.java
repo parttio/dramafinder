@@ -9,6 +9,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAllowedCharPatternElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
@@ -387,10 +388,14 @@ public class MultiSelectComboBoxElement extends VaadinElement
 
     // ── Internal ───────────────────────────────────────────────────────
 
+    /**
+     * Locator for a dropdown item, matched on its full label. {@code "Option 1"}
+     * does not resolve to {@code "Option 10"}, and two visible items sharing the
+     * label fail with a Playwright strict-mode error.
+     */
     private Locator getOverlayItem(String label) {
-        return getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])")
-                .filter(new Locator.FilterOptions()
-                        .setHasText(label)).first();
+        return ItemLocator.byExactText(getLocator(),
+                FIELD_ITEM_TAG_NAME + ":not([hidden])", label);
     }
 
     private <T extends VaadinElement> T createComponent(Locator parent, Class<T> type) {
