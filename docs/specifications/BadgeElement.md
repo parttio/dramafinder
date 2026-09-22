@@ -64,14 +64,15 @@ Pass some of the badge's own text to avoid matching a number by accident.
 ## Theme variants combine into one attribute
 
 `Badge.addThemeVariants(...)` appends to a single space-separated `theme`
-attribute, so `assertTheme(...)` has to match the whole value. Use
+attribute, so `assertTheme(...)` has to list every applied variant — though
+their order does not matter, it compares them as an unordered set. Use
 `assertHasThemeVariant(...)` to assert one variant regardless of the others.
 Both live on `HasThemeElement`, so they are available on every themed element,
 not only the badge:
 
 ```java
 // badge.addThemeVariants(BadgeVariant.SUCCESS, BadgeVariant.SMALL)
-badge.assertTheme("success small");        // whole attribute
+badge.assertTheme("success small");        // whole attribute, any order
 badge.assertHasThemeVariant("success");    // one variant among several
 badge.assertHasNoThemeVariant("error");
 ```
