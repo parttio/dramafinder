@@ -194,11 +194,12 @@ public class TextFieldElement extends VaadinElement implements HasEnabledElement
 #### 9. Theme Variant Order
 - **Pitfall**: Asserting a single theme variant with `assertTheme("primary")` on
   a component that has several. Vaadin combines every applied variant into one
-  space-separated `theme` attribute, in an order that is not the order the
-  variants were added (`LUMO_PRIMARY, LUMO_SMALL` renders as `small primary`),
-  so a whole-attribute match is brittle and often plain wrong.
-- **Solution**: `assertTheme(...)` is for the whole attribute. To assert one
-  variant among several, use `HasThemeElement.assertHasThemeVariant(...)` /
+  space-separated `theme` attribute, so a component with `LUMO_PRIMARY` and
+  `LUMO_SMALL` fails `assertTheme("primary")` — the attribute holds both.
+- **Solution**: `assertTheme(...)` is for the whole attribute; it compares the
+  variants as an unordered set, so `"small primary"` and `"primary small"` both
+  pass, but every applied variant has to be listed. To assert one variant among
+  several, use `HasThemeElement.assertHasThemeVariant(...)` /
   `assertHasNoThemeVariant(...)`, which match the variant as a whole token
   regardless of the others. Both are inherited by every element implementing
   `HasThemeElement` — never re-implement the token regex per element.

@@ -2143,7 +2143,7 @@ Mixin for components that support the theme attribute.
 **Methods:**
 
 - `String getTheme()` — Get the current theme attribute value.
-- `void assertTheme(String theme)` — Assert that the theme attribute matches, or is absent when null.
+- `void assertTheme(String theme)` — Assert that the theme attribute holds exactly the given variants, in any order, or is absent when null.
 - `void assertHasThemeVariant(String variant)` — Assert that the theme attribute contains the given variant, ignoring any other variants that are also applied.
 - `void assertHasNoThemeVariant(String variant)` — Assert that the theme attribute does not contain the given variant.
 

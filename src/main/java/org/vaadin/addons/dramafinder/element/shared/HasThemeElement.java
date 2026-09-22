@@ -8,10 +8,12 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * Mixin for components that support the {@code theme} attribute.
  * <p>
  * Vaadin combines every applied theme variant into a single space-separated
- * {@code theme} attribute, so {@link #assertTheme(String)} — which matches the
- * whole attribute — needs every variant to be listed in the right order. Use
- * {@link #assertHasThemeVariant(String)} to assert a single variant regardless
- * of the others.
+ * {@code theme} attribute, in an order that is neither stable nor the order the
+ * variants were added. {@link #assertTheme(String)} therefore compares the
+ * variants as an unordered set: it still requires the attribute to hold exactly
+ * the variants given, but {@code "small primary"} and {@code "primary small"}
+ * are interchangeable. Use {@link #assertHasThemeVariant(String)} to assert a
+ * single variant regardless of the others.
  */
 public interface HasThemeElement extends HasLocatorElement {
 
@@ -20,10 +22,16 @@ public interface HasThemeElement extends HasLocatorElement {
         return getLocator().getAttribute("theme");
     }
 
-    /** Assert that the {@code theme} attribute matches, or is absent when null. */
+    /**
+     * Assert that the {@code theme} attribute holds exactly the given variants,
+     * in any order, or is absent when {@code null}.
+     *
+     * @param theme space-separated theme variants, or {@code null} to assert
+     *              that no {@code theme} attribute is present
+     */
     default void assertTheme(String theme) {
         if (theme != null) {
-            assertThat(getLocator()).hasAttribute("theme", theme);
+            assertThat(getLocator()).hasAttribute("theme", themeSetPattern(theme));
         } else {
             assertThat(getLocator()).not().hasAttribute("theme", Pattern.compile(".*"));
         }
@@ -50,14 +58,38 @@ public interface HasThemeElement extends HasLocatorElement {
     }
 
     /**
+     * Build a pattern matching an attribute value that holds exactly the given
+     * variants, in any order: one lookahead per variant, plus a token count so
+     * that extra variants still fail the assertion.
+     */
+    private static Pattern themeSetPattern(String theme) {
+        String trimmed = theme.trim();
+        if (trimmed.isEmpty()) {
+            return Pattern.compile("^\\s*$");
+        }
+        String[] variants = trimmed.split("\\s+");
+        StringBuilder pattern = new StringBuilder("^");
+        for (String variant : variants) {
+            pattern.append("(?=(?:.*\\s)?").append(escape(variant)).append("(?:\\s.*)?$)");
+        }
+        return Pattern.compile(pattern.append("(?:\\s*\\S+){").append(variants.length).append("}\\s*$").toString());
+    }
+
+    /**
      * Build a pattern matching {@code variant} as a whole token inside a
-     * space-separated attribute value. The escaping is done by hand because
-     * Playwright compiles the pattern into a JavaScript {@code RegExp}, which
-     * does not understand {@link Pattern#quote(String)}'s {@code \Q...\E}.
+     * space-separated attribute value.
      */
     private static Pattern themeVariantPattern(String variant) {
-        String quoted = variant.replaceAll("[\\\\^$.|?*+()\\[\\]{}]", "\\\\$0");
-        return Pattern.compile("(^|\\s)" + quoted + "($|\\s)");
+        return Pattern.compile("(^|\\s)" + escape(variant) + "($|\\s)");
+    }
+
+    /**
+     * Escape regex metacharacters by hand, because Playwright compiles the
+     * pattern into a JavaScript {@code RegExp}, which does not understand
+     * {@link Pattern#quote(String)}'s {@code \Q...\E}.
+     */
+    private static String escape(String literal) {
+        return literal.replaceAll("[\\\\^$.|?*+()\\[\\]{}]", "\\\\$0");
     }
 
 }
