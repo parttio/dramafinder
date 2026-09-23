@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vaadin.addons</groupId>
@@ -12,13 +14,16 @@
     <!-- The pom is one of only two DramaFinder files a dependency resolve puts
          in ~/.m2, so it is where an offline reader looks first. Point them at
          the docs bundled in the jar rather than let them decompile it. -->
-    <description>Playwright utility classes for Vaadin. The full API reference is bundled in the jar
-        at META-INF/dramafinder/api-reference.md, with a short guide beside it at
-        META-INF/dramafinder/START-HERE.md — read those instead of decompiling the classes.
+    <description>Playwright utility classes for Vaadin. The full API reference
+        is bundled in the jar
+        at META-INF/dramafinder/api-reference.md, with a short guide beside it
+        at
+        META-INF/dramafinder/START-HERE.md — read those instead of decompiling
+        the classes.
     </description>
 
     <properties>
-        <vaadin.version>25.3.0-rc1</vaadin.version>
+        <vaadin.version>25.3.0</vaadin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8
         </project.reporting.outputEncoding>
@@ -145,19 +150,26 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF/dramafinder</outputDirectory>
+                            <outputDirectory>
+                                ${project.build.outputDirectory}/META-INF/dramafinder
+                            </outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.basedir}/skills/vaadin-playwright-test</directory>
+                                    <directory>
+                                        ${project.basedir}/skills/vaadin-playwright-test
+                                    </directory>
                                     <includes>
                                         <include>api-reference.md</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
                                 <resource>
-                                    <directory>${project.basedir}/skills/vaadin-playwright-screenshot</directory>
+                                    <directory>
+                                        ${project.basedir}/skills/vaadin-playwright-screenshot
+                                    </directory>
                                     <includes>
-                                        <include>agent-api-reference.md</include>
+                                        <include>agent-api-reference.md
+                                        </include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
@@ -175,9 +187,15 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Dramafinder-Start-Here>META-INF/dramafinder/START-HERE.md</Dramafinder-Start-Here>
-                            <Dramafinder-Api-Reference>META-INF/dramafinder/api-reference.md</Dramafinder-Api-Reference>
-                            <Dramafinder-Agent-Api-Reference>META-INF/dramafinder/agent-api-reference.md</Dramafinder-Agent-Api-Reference>
+                            <Dramafinder-Start-Here>
+                                META-INF/dramafinder/START-HERE.md
+                            </Dramafinder-Start-Here>
+                            <Dramafinder-Api-Reference>
+                                META-INF/dramafinder/api-reference.md
+                            </Dramafinder-Api-Reference>
+                            <Dramafinder-Agent-Api-Reference>
+                                META-INF/dramafinder/agent-api-reference.md
+                            </Dramafinder-Agent-Api-Reference>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -261,7 +279,9 @@
                                  flags enabling experimental components live in
                                  the test resources instead of
                                  src/main/resources. -->
-                            <javaResourceFolder>${project.basedir}/src/test/resources</javaResourceFolder>
+                            <javaResourceFolder>
+                                ${project.basedir}/src/test/resources
+                            </javaResourceFolder>
                         </configuration>
                         <executions>
                             <execution>
