@@ -91,7 +91,7 @@ Add the addon as a test dependency.
 <dependency>
     <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -184,13 +184,15 @@ public class SimpleExampleViewIT extends AbstractBasePlaywrightIT {
 
 ## Note
 
-The API is in early stage of development.
+Drama Finder covers most of the Vaadin components (see [TODO.md](TODO.md) for
+the list of supported components and the remaining gaps) and follows semantic
+versioning since 1.0. It is built and tested against Vaadin 25.
 
 If you notice something missing please create a ticket or a Pull Request.
 
-The tests in the demo application is not meant to be a best practice since it's
-primarly here to test the API.
-For example it will test the getter like `getMinLength` without waiting which is
+The integration tests in this repository are not meant to be a best practice
+since they are primarily here to test the API.
+For example they test getters like `getMinLength` without waiting, which is
 a bad practice.
 
 ```java
@@ -206,14 +208,9 @@ public void testPattern() {
 
 ## Development instructions
 
-Starting the test/demo server:
-
-```bash
-mvn spring-boot:run
-```
-
-This deploys demo at http://localhost:8080
-The demo is only here to run the test
+There is no standalone demo application. The views used to exercise the
+library are test-only (`src/test/java/.../tests/testuis/`) and are served by the
+Spring Boot test harness (`@SpringBootTest`) when the `*IT.java` tests run.
 
 ### Javadoc
 
