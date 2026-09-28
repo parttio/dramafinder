@@ -474,74 +474,34 @@ public class GridElement extends VaadinElement
      */
     protected Optional<RowElement> findRow(int rowIndex, int headerRowCount) {
         var ariaRowIndex = rowIndex + 1 + headerRowCount;
-        // Attempt to find the row directly
         var foundRow = locator.locator("tbody tr[aria-rowIndex=\"" + ariaRowIndex + "\"]").first();
         if (foundRow.count() == 0) {
-            // Row not found, try scrolling to it
-            var foundRowByScrolling = findRowByScrolling(locator, ariaRowIndex);
-            if (foundRowByScrolling.isEmpty()) {
+            // Row not rendered: jump straight to it instead of paging through the
+            // rows in between, which could give up on a slow render
+            if (!scrollToFlatIndex(rowIndex)) {
                 return Optional.empty();
-            } else {
-                foundRow = foundRowByScrolling.get();
             }
-        } else {
-            foundRow.scrollIntoViewIfNeeded();
             waitForGridToStopLoading();
+            if (foundRow.count() == 0) {
+                return Optional.empty();
+            }
         }
+        foundRow.scrollIntoViewIfNeeded();
+        waitForGridToStopLoading();
 
         return Optional.of(new RowElement(foundRow, rowIndex));
     }
 
-    private Optional<Locator> findRowByScrolling(Locator grid, int ariaRowIndex) {
-        return findRowByScrolling(grid, null, ariaRowIndex);
-    }
-
-    private Optional<Locator> findRowByScrolling(Locator grid, RowRangeData previousRowRangeData, int ariaRowIndex) {
-        var visibleRows = grid.locator("tbody tr").all();
-        if (visibleRows.isEmpty()) {
-            return Optional.empty();
-        }
-
-        var rowRangeData = new RowRangeData(visibleRows);
-
-        if (!areNewRowsLoaded(previousRowRangeData, rowRangeData, ariaRowIndex)) {
-            return Optional.empty();
-        }
-
-        if (ariaRowIndex < rowRangeData.getMin()) {
-            // Scroll up
-            rowRangeData.getMinRowLocator().evaluate("el => el.scrollIntoView({ block: 'end', inline: 'nearest' })");
-        } else {
-            // Scroll down
-            rowRangeData.getMaxRowLocator().evaluate("el => el.scrollIntoView({ block: 'start', inline: 'nearest' })");
-        }
-
-        waitForGridToStopLoading();
-
-        // Attempt to find the required row after scrolling
-        var foundRow = grid.locator("tbody tr[aria-rowIndex=\"" + ariaRowIndex + "\"]").first();
-        if (foundRow.count() == 0) {
-            // Keep scrolling
-            return findRowByScrolling(grid, rowRangeData, ariaRowIndex);
-        } else {
-            foundRow.scrollIntoViewIfNeeded();
-            waitForGridToStopLoading();
-        }
-
-        return Optional.of(foundRow);
-    }
-
-    private static boolean areNewRowsLoaded(RowRangeData previousRowRangeData, RowRangeData currentRowRangeData, int targetAriaRowIndex) {
-        if (previousRowRangeData == null) {
-            return true;
-        }
-
-        // Check if the current row range has expanded in the direction of the target row index
-        if (targetAriaRowIndex < previousRowRangeData.getMin()) {
-            return currentRowRangeData.getMin() < previousRowRangeData.getMin();
-        } else {
-            return currentRowRangeData.getMax() > previousRowRangeData.getMax();
-        }
+    /**
+     * Scroll the grid so that the row at the given flat index gets rendered.
+     *
+     * @param flatIndex 0-based index among all rows, counting expanded children in a tree grid
+     * @return {@code false} if the index is beyond the last row, {@code true} otherwise
+     */
+    private boolean scrollToFlatIndex(int flatIndex) {
+        return (boolean) locator.evaluate(
+                "(g, i) => { if (i >= g._flatSize) return false; g._scrollToFlatIndex(i); return true; }",
+                flatIndex);
     }
 
     /**
@@ -1126,46 +1086,6 @@ public class GridElement extends VaadinElement
     public void assertDetailsClosed(int rowIndex) {
         locator.page().waitForCondition(
                 () -> findRow(rowIndex).map(row -> !row.isDetailsOpen()).orElse(false));
-    }
-
-    private class RowRangeData {
-        Integer min;
-        Locator minRow;
-        Integer max;
-        Locator maxRow;
-
-        public RowRangeData(List<Locator> rows) {
-            for (var row : rows) {
-                var rowIndexStr = row.getAttribute("aria-rowIndex");
-                if (rowIndexStr != null && !rowIndexStr.isEmpty()) {
-                    int rowIndex = Integer.parseInt(rowIndexStr);
-                    if (min == null || rowIndex < min) {
-                        min = rowIndex;
-                        minRow = row;
-                    }
-                    if (max == null || rowIndex > max) {
-                        max = rowIndex;
-                        maxRow = row;
-                    }
-                }
-            }
-        }
-
-        public Integer getMin() {
-            return min;
-        }
-
-        public Integer getMax() {
-            return max;
-        }
-
-        public Locator getMinRowLocator() {
-            return minRow;
-        }
-
-        public Locator getMaxRowLocator() {
-            return maxRow;
-        }
     }
 
     /**
