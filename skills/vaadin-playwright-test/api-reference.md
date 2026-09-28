@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.1.7-SNAPSHOT — 57 element wrappers.
+> DramaFinder 1.2.1-SNAPSHOT — 57 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
