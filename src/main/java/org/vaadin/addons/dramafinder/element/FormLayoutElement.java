@@ -44,8 +44,10 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
      * <p>
      * In auto-responsive mode the rendered CSS grid tracks are counted, skipping
      * the {@code 0px} auto columns the component uses as padding; labels are
-     * aside exactly when the component decided they fit. Otherwise the
-     * responsive steps are walked in order and the last one whose
+     * aside exactly when the component decided they fit, which it marks with
+     * {@code has-labels-aside} on the host (Vaadin 25.4+) or
+     * {@code fits-labels-aside} on the shadow {@code #layout} (earlier).
+     * Otherwise the responsive steps are walked in order and the last one whose
      * {@code minWidth} still fits the layout wins — {@code minWidth} is resolved
      * to pixels by parking it in an unrelated length property, which is how the
      * component converts {@code em} thresholds itself.
@@ -57,7 +59,8 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
                 return {
                   columns: getComputedStyle(layout).gridTemplateColumns
                       .split(' ').filter(track => track !== '0px' && track !== 'none').length,
-                  labelsPosition: layout.hasAttribute('fits-labels-aside') ? 'aside' : 'top'
+                  labelsPosition: el.hasAttribute('has-labels-aside')
+                      || layout.hasAttribute('fits-labels-aside') ? 'aside' : 'top'
                 };
               }
               const probe = 'background-position';
