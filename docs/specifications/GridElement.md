@@ -138,6 +138,16 @@ Both methods return `Optional<CellElement>` and **auto-scroll** the grid if the 
 | `checkSelectAll()` | Check the select-all checkbox (no-op if already checked) |
 | `uncheckSelectAll()` | Uncheck the select-all checkbox (no-op if already unchecked) |
 
+`select` and `deselect` click the row like a user would. In a multi-select grid
+they click the selection checkbox. Otherwise they click the first cell that has a
+spot where the click reaches the grid rather than a component rendered in the
+cell, usually the cell padding: the grid ignores clicks on links, buttons and
+other focusable content, so clicking the centre of a cell holding a link would
+follow the link instead of selecting the row. When every cell is covered by
+interactive content they throw an `IllegalStateException`; override the
+protected `clickRowForSelection(RowElement)` or `clickCellForSelection(CellElement)`
+to select such a row another way.
+
 ### Utility Methods
 
 | Method | Description |
