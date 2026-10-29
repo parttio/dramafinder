@@ -606,12 +606,13 @@ public class GridElement extends VaadinElement
      * Toggle the selection of a row by clicking it like a user would.
      * Clicks the selection checkbox of the first cell when there is one. Otherwise clicks the first
      * cell that has a spot where a click reaches the grid rather than a component rendered in the
-     * cell: the grid ignores clicks on links, buttons and other focusable content, which would only
-     * trigger that component.
+     * cell, usually its padding, so a cell holding a link or a button still selects the row: the grid
+     * ignores clicks on links, buttons and other focusable content, which would only trigger that
+     * component.
      * You can override this method to choose the cell to click yourself.
      *
      * @param row row to select or deselect
-     * @throws IllegalStateException if every cell of the row is covered by interactive content
+     * @throws IllegalStateException if interactive content covers every cell of the row, padding included
      */
     protected void clickRowForSelection(RowElement row) {
         var firstCell = row.getCell(0);
@@ -627,9 +628,9 @@ public class GridElement extends VaadinElement
                 return;
             }
         }
-        throw new IllegalStateException("Row " + row.getRowIndex() + " has no cell that can be clicked for "
-                + "selection without clicking a component rendered in it; override clickRowForSelection "
-                + "or clickCellForSelection to select it another way");
+        throw new IllegalStateException("Cannot select row " + row.getRowIndex() + ": interactive content "
+                + "covers every cell, padding included, so any click would hit a component rendered in it; "
+                + "override clickRowForSelection or clickCellForSelection to select it another way");
     }
 
     /**
@@ -639,7 +640,7 @@ public class GridElement extends VaadinElement
      * You can override this method to implement custom selection logic for given cell.
      *
      * @param cell the body cell to click
-     * @throws IllegalStateException if the cell is covered by interactive content
+     * @throws IllegalStateException if interactive content covers the whole cell, padding included
      */
     protected void clickCellForSelection(CellElement cell) {
         var checkbox = cell.getCellContentLocator().locator("vaadin-checkbox");
@@ -647,8 +648,8 @@ public class GridElement extends VaadinElement
             checkbox.click();
         } else {
             var position = findSelectionClickPosition(cell).orElseThrow(() -> new IllegalStateException(
-                    "Cell " + cell.getColumnIndex() + " has no spot that can be clicked for selection "
-                            + "without clicking a component rendered in it"));
+                    "Cannot click cell " + cell.getColumnIndex() + " for selection: interactive content "
+                            + "covers the whole cell, padding included"));
             cell.getCellContentLocator().click(new Locator.ClickOptions().setPosition(position));
         }
         waitForGridToStopLoading();

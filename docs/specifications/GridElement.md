@@ -143,8 +143,11 @@ they click the selection checkbox. Otherwise they click the first cell that has 
 spot where the click reaches the grid rather than a component rendered in the
 cell, usually the cell padding: the grid ignores clicks on links, buttons and
 other focusable content, so clicking the centre of a cell holding a link would
-follow the link instead of selecting the row. When every cell is covered by
-interactive content they throw an `IllegalStateException`; override the
+follow the link instead of selecting the row. A cell holding a link or a button
+therefore still selects the row through its padding. Only when interactive content
+covers every cell, padding included (for example a component with negative
+margins, or a theme without cell padding), do they throw an
+`IllegalStateException`; override the
 protected `clickRowForSelection(RowElement)` or `clickCellForSelection(CellElement)`
 to select such a row another way.
 

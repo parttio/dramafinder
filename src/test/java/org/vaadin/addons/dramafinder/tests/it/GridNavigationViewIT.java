@@ -41,6 +41,18 @@ public class GridNavigationViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testSelectWhenEveryCellIsALinkUsesPadding() {
+        // Any click outside the cell padding would hit a link and navigate
+        assertSelectsWithoutNavigating("all-links-grid");
+    }
+
+    @Test
+    public void testSelectSkipsCoveredFirstCell() {
+        // The first cell has no free spot, so only the text cell next to it can select the row
+        assertSelectsWithoutNavigating("first-covered-grid");
+    }
+
+    @Test
     public void testDeselectOnLinkCell() {
         GridElement grid = GridElement.getById(page, "router-link-grid");
         grid.select(1);

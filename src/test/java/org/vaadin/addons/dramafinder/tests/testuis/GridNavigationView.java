@@ -36,6 +36,13 @@ public class GridNavigationView extends Main {
         coveredGrid.getColumns().get(1).setRenderer(new ComponentRenderer<>(person -> coverCell(
                 new RouterLink(person.lastName(), GridNavigationTargetView.class))));
         add(new H2("Covered Link Grid"), coveredGrid);
+        Grid<GridPerson> allLinksGrid = createGrid("all-links-grid", person -> fillCell(
+                new RouterLink(person.firstName(), GridNavigationTargetView.class)));
+        allLinksGrid.getColumns().get(1).setRenderer(new ComponentRenderer<>(person -> fillCell(
+                new RouterLink(person.lastName(), GridNavigationTargetView.class))));
+        add(new H2("All Links Grid"), allLinksGrid);
+        add(new H2("First Cell Covered Grid"), createGrid("first-covered-grid", person -> coverCell(
+                new RouterLink(person.firstName(), GridNavigationTargetView.class))));
     }
 
     private Grid<GridPerson> createGrid(String id, Function<GridPerson, Component> linkFactory) {
