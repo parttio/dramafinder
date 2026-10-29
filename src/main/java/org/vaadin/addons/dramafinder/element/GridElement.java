@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
@@ -723,10 +724,23 @@ public class GridElement extends VaadinElement
 
     /**
      * Wait for the grid to finish loading after a scroll or other action that triggers loading of new rows.
+     * Returns without waiting when the grid is no longer in the DOM, e.g. because a click on a cell
+     * navigated to another view.
      */
     public void waitForGridToStopLoading() {
-        locator.page().waitForFunction("g => !g.hasAttribute('loading')", locator.elementHandle());
-        locator.evaluate("g => g.updateComplete.then(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))");
+        if (locator.count() == 0) {
+            return;
+        }
+        try {
+            var grid = locator.elementHandle();
+            locator.page().waitForFunction("g => !g.isConnected || !g.hasAttribute('loading')", grid);
+            grid.evaluate("g => g.isConnected && g.updateComplete.then(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))");
+        } catch (PlaywrightException e) {
+            // The grid was removed, or the page navigated, while waiting
+            if (locator.count() > 0) {
+                throw e;
+            }
+        }
     }
 
 
