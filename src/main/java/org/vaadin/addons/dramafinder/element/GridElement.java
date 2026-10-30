@@ -2,12 +2,14 @@ package org.vaadin.addons.dramafinder.element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.options.Position;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
@@ -572,7 +574,7 @@ public class GridElement extends VaadinElement
      */
     protected void select(RowElement row) {
         if (!row.isSelected()) {
-            clickCellForSelection(row.getCell(0));
+            clickRowForSelection(row);
         }
     }
 
@@ -596,21 +598,100 @@ public class GridElement extends VaadinElement
      */
     protected void deselect(RowElement row) {
         if (row.isSelected()) {
-            clickCellForSelection(row.getCell(0));
+            clickRowForSelection(row);
         }
     }
 
     /**
+     * Toggle the selection of a row by clicking it like a user would.
+     * Clicks the selection checkbox of the first cell when there is one. Otherwise clicks the first
+     * cell that has a spot where a click reaches the grid rather than a component rendered in the
+     * cell, usually its padding, so a cell holding a link or a button still selects the row: the grid
+     * ignores clicks on links, buttons and other focusable content, which would only trigger that
+     * component.
+     * You can override this method to choose the cell to click yourself.
+     *
+     * @param row row to select or deselect
+     * @throws IllegalStateException if interactive content covers every cell of the row, padding included
+     */
+    protected void clickRowForSelection(RowElement row) {
+        var firstCell = row.getCell(0);
+        if (firstCell.getCellContentLocator().locator("vaadin-checkbox").count() > 0) {
+            clickCellForSelection(firstCell);
+            return;
+        }
+        var cellCount = row.getRowLocator().locator("td:not(.details-cell)").count();
+        for (int i = 0; i < cellCount; i++) {
+            var cell = i == 0 ? firstCell : row.getCell(i);
+            if (findSelectionClickPosition(cell).isPresent()) {
+                clickCellForSelection(cell);
+                return;
+            }
+        }
+        throw new IllegalStateException("Cannot select row " + row.getRowIndex() + ": interactive content "
+                + "covers every cell, padding included, so any click would hit a component rendered in it; "
+                + "override clickRowForSelection or clickCellForSelection to select it another way");
+    }
+
+    /**
+     * Click the given cell to toggle the selection of its row.
+     * Clicks the selection checkbox when the cell holds one, otherwise a spot of the cell that is
+     * not covered by interactive content, typically its padding.
      * You can override this method to implement custom selection logic for given cell.
+     *
+     * @param cell the body cell to click
+     * @throws IllegalStateException if interactive content covers the whole cell, padding included
      */
     protected void clickCellForSelection(CellElement cell) {
         var checkbox = cell.getCellContentLocator().locator("vaadin-checkbox");
         if (checkbox.count() > 0) {
             checkbox.click();
         } else {
-            cell.click();
+            var position = findSelectionClickPosition(cell).orElseThrow(() -> new IllegalStateException(
+                    "Cannot click cell " + cell.getColumnIndex() + " for selection: interactive content "
+                            + "covers the whole cell, padding included"));
+            cell.getCellContentLocator().click(new Locator.ClickOptions().setPosition(position));
         }
         waitForGridToStopLoading();
+    }
+
+    /**
+     * Find a spot of the cell content where a click selects the row: one that hits the cell content
+     * itself or non-interactive content in it. Tries the middle of the left padding first, then the
+     * top left corner, then the centre.
+     *
+     * @param cell the body cell to check
+     * @return the position relative to the cell content, empty if every spot hits interactive content
+     */
+    private Optional<Position> findSelectionClickPosition(CellElement cell) {
+        var point = cell.getCellContentLocator().evaluate("""
+                c => {
+                    const r = c.getBoundingClientRect();
+                    if (!r.width || !r.height) return null;
+                    const padding = parseFloat(getComputedStyle(c).paddingLeft) || 0;
+                    const points = [[Math.max(1, padding / 2), r.height / 2], [1, 1], [r.width / 2, r.height / 2]];
+                    const interactive = 'a[href], button, input, select, textarea, label, [tabindex], [contenteditable]';
+                    for (const [x, y] of points) {
+                        const hit = document.elementFromPoint(r.left + x, r.top + y);
+                        if (!hit || !c.contains(hit)) continue;
+                        let safe = true;
+                        for (let e = hit; e !== c; e = e.parentElement) {
+                            // Custom elements may be interactive inside their shadow root
+                            if (e.matches(interactive) || e.localName.includes('-')) {
+                                safe = false;
+                                break;
+                            }
+                        }
+                        if (safe) return { x, y };
+                    }
+                    return null;
+                }
+                """);
+        if (point instanceof Map<?, ?> map) {
+            return Optional.of(new Position(((Number) map.get("x")).doubleValue(),
+                    ((Number) map.get("y")).doubleValue()));
+        }
+        return Optional.empty();
     }
 
     /**

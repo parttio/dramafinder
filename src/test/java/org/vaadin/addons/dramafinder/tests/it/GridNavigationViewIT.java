@@ -8,11 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.GridElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Clicking a cell whose content navigates away removes the grid from the DOM;
- * the grid's post-click wait must not wait for it to come back.
+ * Grids whose cells hold links: selecting a row must not click the link, and
+ * the grid's post-click wait must not wait for a grid that a link removed.
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GridNavigationViewIT extends SpringPlaywrightIT {
@@ -27,17 +31,43 @@ public class GridNavigationViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void testSelectOnRouterLinkCellNavigates() {
-        GridElement grid = GridElement.getById(page, "router-link-grid");
-        assertTimeout(MAX_DURATION, () -> grid.select(0));
-        assertThat(page.locator("#navigation-target")).isVisible();
+    public void testSelectOnRouterLinkCellSelectsRow() {
+        assertSelectsWithoutNavigating("router-link-grid");
     }
 
     @Test
-    public void testSelectOnReloadLinkCellNavigates() {
-        GridElement grid = GridElement.getById(page, "reload-link-grid");
-        assertTimeout(MAX_DURATION, () -> grid.select(0));
-        assertThat(page.locator("#navigation-target")).isVisible();
+    public void testSelectOnReloadLinkCellSelectsRow() {
+        assertSelectsWithoutNavigating("reload-link-grid");
+    }
+
+    @Test
+    public void testSelectWhenEveryCellIsALinkUsesPadding() {
+        // Any click outside the cell padding would hit a link and navigate
+        assertSelectsWithoutNavigating("all-links-grid");
+    }
+
+    @Test
+    public void testSelectSkipsCoveredFirstCell() {
+        // The first cell has no free spot, so only the text cell next to it can select the row
+        assertSelectsWithoutNavigating("first-covered-grid");
+    }
+
+    @Test
+    public void testDeselectOnLinkCell() {
+        GridElement grid = GridElement.getById(page, "router-link-grid");
+        grid.select(1);
+        grid.deselect(1);
+        assertFalse(grid.findRow(1).orElseThrow().isSelected());
+        assertEquals(0, grid.getSelectedItemCount());
+        assertThat(page.locator("#navigation-target")).hasCount(0);
+    }
+
+    @Test
+    public void testSelectOnCoveredCellsFails() {
+        GridElement grid = GridElement.getById(page, "covered-link-grid");
+        assertThrows(IllegalStateException.class, () -> grid.select(0));
+        assertEquals(0, grid.getSelectedItemCount());
+        assertThat(page.locator("#navigation-target")).hasCount(0);
     }
 
     @Test
@@ -47,5 +77,13 @@ public class GridNavigationViewIT extends SpringPlaywrightIT {
         assertThat(page.locator("#navigation-target")).isVisible();
         assertThat(grid.getLocator()).hasCount(0);
         assertTimeout(MAX_DURATION, grid::waitForGridToStopLoading);
+    }
+
+    private void assertSelectsWithoutNavigating(String gridId) {
+        GridElement grid = GridElement.getById(page, gridId);
+        grid.select(0);
+        assertTrue(grid.findRow(0).orElseThrow().isSelected());
+        assertEquals(1, grid.getSelectedItemCount());
+        assertThat(page.locator("#navigation-target")).hasCount(0);
     }
 }

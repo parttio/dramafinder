@@ -13,7 +13,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 
 /**
- * Grids whose first cell holds a link that navigates away, so clicking the cell
+ * Grids whose cells hold links that navigate away, so clicking such a link
  * removes the grid from the DOM.
  */
 @PageTitle("Grid Navigation Demo")
@@ -31,6 +31,18 @@ public class GridNavigationView extends Main {
             link.getElement().setAttribute("router-ignore", true);
             return fillCell(link);
         }));
+        Grid<GridPerson> coveredGrid = createGrid("covered-link-grid", person -> coverCell(
+                new RouterLink(person.firstName(), GridNavigationTargetView.class)));
+        coveredGrid.getColumns().get(1).setRenderer(new ComponentRenderer<>(person -> coverCell(
+                new RouterLink(person.lastName(), GridNavigationTargetView.class))));
+        add(new H2("Covered Link Grid"), coveredGrid);
+        Grid<GridPerson> allLinksGrid = createGrid("all-links-grid", person -> fillCell(
+                new RouterLink(person.firstName(), GridNavigationTargetView.class)));
+        allLinksGrid.getColumns().get(1).setRenderer(new ComponentRenderer<>(person -> fillCell(
+                new RouterLink(person.lastName(), GridNavigationTargetView.class))));
+        add(new H2("All Links Grid"), allLinksGrid);
+        add(new H2("First Cell Covered Grid"), createGrid("first-covered-grid", person -> coverCell(
+                new RouterLink(person.firstName(), GridNavigationTargetView.class))));
     }
 
     private Grid<GridPerson> createGrid(String id, Function<GridPerson, Component> linkFactory) {
@@ -46,6 +58,12 @@ public class GridNavigationView extends Main {
     // Make the link cover the whole cell, so a click on the cell lands on it
     private static Component fillCell(Component link) {
         link.getElement().getStyle().set("display", "block").set("width", "100%");
+        return link;
+    }
+
+    // Make the link also cover the padding of the cell, leaving no spot to click for selection
+    private static Component coverCell(Component link) {
+        link.getElement().getStyle().set("display", "block").set("margin", "-50px").set("padding", "50px");
         return link;
     }
 }
