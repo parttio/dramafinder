@@ -57,7 +57,10 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
                 return {
                   columns: getComputedStyle(layout).gridTemplateColumns
                       .split(' ').filter(track => track !== '0px' && track !== 'none').length,
-                  labelsPosition: layout.hasAttribute('fits-labels-aside') ? 'aside' : 'top'
+                  // 25.4+ reflects has-labels-aside on the host; earlier
+                  // versions set fits-labels-aside on the internal #layout.
+                  labelsPosition: el.hasAttribute('has-labels-aside')
+                      || layout.hasAttribute('fits-labels-aside') ? 'aside' : 'top'
                 };
               }
               const probe = 'background-position';
