@@ -10,6 +10,7 @@ import org.vaadin.addons.dramafinder.element.GridElement;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -328,5 +329,23 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
     public void testAssertRowIndexesWithColumnText() {
         GridElement grid = GridElement.getById(page, "basic-grid");
         grid.assertRowIndexesWithColumnText(0, "First1", 0);
+    }
+
+    @Test
+    public void testRowCountMismatchReportsExpectedAndActual() {
+        page.setDefaultTimeout(1000);
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        AssertionError error = assertThrows(AssertionError.class, () -> grid.assertRowCount(12));
+        assertEquals("Grid row count mismatch. Expected: <12>, actual: <100>", error.getMessage());
+    }
+
+    @Test
+    public void testHeaderMismatchReportsActualHeaders() {
+        page.setDefaultTimeout(1000);
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        AssertionError error = assertThrows(AssertionError.class,
+                () -> grid.assertColumnPresent("Phone"));
+        assertTrue(error.getMessage().contains("Phone"), error.getMessage());
+        assertTrue(error.getMessage().contains("[First Name, Last Name, Email]"), error.getMessage());
     }
 }

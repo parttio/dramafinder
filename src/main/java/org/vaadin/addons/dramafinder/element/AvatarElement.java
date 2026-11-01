@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.Objects;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
@@ -8,6 +10,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-avatar>}.
@@ -175,13 +178,13 @@ public class AvatarElement extends VaadinElement
      * Assert that the avatar has an image set.
      */
     public void assertHasImage() {
-        locator.page().waitForCondition(() -> getImage() != null);
+        assertEventually(locator.page(), "Avatar image", this::getImage, Objects::nonNull, "an image");
     }
 
     /**
      * Assert that the avatar has no image set.
      */
     public void assertHasNoImage() {
-        locator.page().waitForCondition(() -> getImage() == null);
+        assertEventually(locator.page(), "Avatar image", this::getImage, (String) null);
     }
 }

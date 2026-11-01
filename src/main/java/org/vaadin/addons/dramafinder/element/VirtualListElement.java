@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-virtual-list>}.
@@ -230,7 +231,7 @@ public class VirtualListElement extends VaadinElement
      * @param expected expected row count
      */
     public void assertRowCount(int expected) {
-        locator.page().waitForCondition(() -> getRowCount() == expected);
+        assertEventually(locator.page(), "Virtual list row count", this::getRowCount, expected);
     }
 
     /**
@@ -241,7 +242,7 @@ public class VirtualListElement extends VaadinElement
      * @param rowIndex the 0-based row index
      */
     public void assertRowInView(int rowIndex) {
-        locator.page().waitForCondition(() -> isRowInView(rowIndex));
+        assertEventually(locator.page(), "virtual list row " + rowIndex + " to be in view", () -> isRowInView(rowIndex));
     }
 
     /**
@@ -252,7 +253,7 @@ public class VirtualListElement extends VaadinElement
      * @param rowIndex the 0-based row index
      */
     public void assertRowNotInView(int rowIndex) {
-        locator.page().waitForCondition(() -> !isRowInView(rowIndex));
+        assertEventually(locator.page(), "virtual list row " + rowIndex + " not to be in view", () -> !isRowInView(rowIndex));
     }
 
     /**

@@ -1,10 +1,13 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
@@ -135,12 +138,79 @@ public class AgentReportingIT extends SpringPlaywrightIT {
         assertFalse(Files.exists(dir), "no report should be written on success");
     }
 
+    @Test
+    public void extensionWritesEachFailingTestToItsOwnDirectory() throws Exception {
+        Method testMethod = AgentReportingIT.class
+                .getMethod("extensionWritesEachFailingTestToItsOwnDirectory");
+        Path dir = AgentReport.defaultReportDirectory()
+                .resolve("AgentReportingIT")
+                .resolve("extensionWritesEachFailingTestToItsOwnDirectory");
+        deleteRecursively(dir);
+        try {
+            // Built-in provider: AbstractBasePlaywrightIT exposes the page.
+            ExtensionContext context = failingContext(this,
+                    new AssertionError("Grid row count mismatch"), testMethod,
+                    "extensionWritesEachFailingTestToItsOwnDirectory()");
+
+            new AgentReporting().afterTestExecution(context);
+
+            Path failureTxt = dir.resolve("failure.txt");
+            assertTrue(Files.exists(failureTxt), "failure.txt should be under " + dir);
+            assertTrue(Files.readString(failureTxt).contains("Grid row count mismatch"));
+            assertTrue(Files.exists(dir.resolve("component-snapshot.txt")));
+        } finally {
+            deleteRecursively(dir);
+        }
+    }
+
+    @Test
+    public void extensionCanBeTurnedOff() throws Exception {
+        Method testMethod = AgentReportingIT.class.getMethod("extensionCanBeTurnedOff");
+        Path dir = AgentReport.defaultReportDirectory()
+                .resolve("AgentReportingIT").resolve("extensionCanBeTurnedOff");
+        deleteRecursively(dir);
+        System.setProperty("dramafinder.agentReport", "false");
+        try {
+            ExtensionContext context = failingContext(this, new AssertionError("boom"),
+                    testMethod, "extensionCanBeTurnedOff()");
+
+            new AgentReporting().afterTestExecution(context);
+
+            assertFalse(Files.exists(dir), "no report should be written when turned off");
+        } finally {
+            System.clearProperty("dramafinder.agentReport");
+            deleteRecursively(dir);
+        }
+    }
+
+    private static void deleteRecursively(Path dir) throws Exception {
+        if (!Files.exists(dir)) {
+            return;
+        }
+        try (Stream<Path> paths = Files.walk(dir)) {
+            for (Path p : paths.sorted(Comparator.reverseOrder()).toList()) {
+                Files.delete(p);
+            }
+        }
+    }
+
     // Minimal ExtensionContext exposing only the execution exception and the
     // test instance, which is all AgentReporting reads.
     private static ExtensionContext failingContext(Object testInstance, Throwable error) {
+        return failingContext(testInstance, error, null, null);
+    }
+
+    // As above, plus the test class, method and display name AgentReporting
+    // uses to pick a per-test report directory.
+    private static ExtensionContext failingContext(Object testInstance, Throwable error,
+            Method testMethod, String displayName) {
         InvocationHandler handler = (proxy, method, args) -> switch (method.getName()) {
             case "getExecutionException" -> Optional.ofNullable(error);
             case "getTestInstance" -> Optional.ofNullable(testInstance);
+            case "getTestClass" -> Optional.ofNullable(
+                    testMethod == null ? null : testMethod.getDeclaringClass());
+            case "getTestMethod" -> Optional.ofNullable(testMethod);
+            case "getDisplayName" -> displayName;
             default -> method.getReturnType() == Optional.class ? Optional.empty() : null;
         };
         return (ExtensionContext) Proxy.newProxyInstance(

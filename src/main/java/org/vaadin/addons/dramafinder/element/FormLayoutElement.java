@@ -7,6 +7,9 @@ import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
+
+
 /**
  * PlaywrightElement for {@code <vaadin-form-layout>}.
  * <p>
@@ -214,7 +217,7 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
      * @param expected the expected column count
      */
     public void assertColumnCount(int expected) {
-        locator.page().waitForCondition(() -> getColumnCount() == expected);
+        assertEventually(locator.page(), "Form layout column count", this::getColumnCount, expected);
     }
 
     /**
@@ -224,7 +227,7 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
      * @param expected {@link #LABEL_POSITION_ASIDE} or {@link #LABEL_POSITION_TOP}
      */
     public void assertLabelPosition(String expected) {
-        locator.page().waitForCondition(() -> getLabelPosition().equals(expected));
+        assertEventually(locator.page(), "Form layout label position", this::getLabelPosition, expected);
     }
 
     /**
@@ -233,7 +236,7 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
      * @param expected the expected field count
      */
     public void assertFieldCount(int expected) {
-        locator.page().waitForCondition(() -> getFieldCount() == expected);
+        assertEventually(locator.page(), "Form layout field count", this::getFieldCount, expected);
     }
 
 }

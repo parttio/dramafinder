@@ -16,6 +16,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-grid>}.
@@ -858,7 +859,7 @@ public class GridElement extends VaadinElement
      * @param expected the expected total row count
      */
     public void assertRowCount(int expected) {
-        locator.page().waitForCondition(() -> getTotalRowCount() == expected);
+        assertEventually(locator.page(), "Grid row count", this::getTotalRowCount, expected);
     }
 
     /**
@@ -874,49 +875,49 @@ public class GridElement extends VaadinElement
      * @param expected the expected visible column count
      */
     public void assertColumnCount(int expected) {
-        locator.page().waitForCondition(() -> getColumnCount() == expected);
+        assertEventually(locator.page(), "Grid column count", this::getColumnCount, expected);
     }
 
     /**
      * Assert that {@code allRowsVisible} is enabled.
      */
     public void assertAllRowsVisible() {
-        locator.page().waitForCondition(this::isAllRowsVisible);
+        assertEventually(locator.page(), "grid to have all rows visible", this::isAllRowsVisible);
     }
 
     /**
      * Assert that {@code allRowsVisible} is not enabled.
      */
     public void assertNotAllRowsVisible() {
-        locator.page().waitForCondition(() -> !isAllRowsVisible());
+        assertEventually(locator.page(), "grid not to have all rows visible", () -> !isAllRowsVisible());
     }
 
     /**
      * Assert that multi-sort is enabled.
      */
     public void assertMultiSort() {
-        locator.page().waitForCondition(this::isMultiSort);
+        assertEventually(locator.page(), "grid to be multi-sort", this::isMultiSort);
     }
 
     /**
      * Assert that multi-sort is not enabled.
      */
     public void assertNotMultiSort() {
-        locator.page().waitForCondition(() -> !isMultiSort());
+        assertEventually(locator.page(), "grid not to be multi-sort", () -> !isMultiSort());
     }
 
     /**
      * Assert that column reordering is allowed.
      */
     public void assertColumnReorderingAllowed() {
-        locator.page().waitForCondition(this::isColumnReorderingAllowed);
+        assertEventually(locator.page(), "grid to allow column reordering", this::isColumnReorderingAllowed);
     }
 
     /**
      * Assert that column reordering is not allowed.
      */
     public void assertColumnReorderingNotAllowed() {
-        locator.page().waitForCondition(() -> !isColumnReorderingAllowed());
+        assertEventually(locator.page(), "grid not to allow column reordering", () -> !isColumnReorderingAllowed());
     }
 
     /**
@@ -958,7 +959,8 @@ public class GridElement extends VaadinElement
      * @param column column index, starting from 0.
      */
     public void assertCellPresent(int row, int column) {
-        locator.page().waitForCondition(() -> cellExists(row, column));
+        assertEventually(locator.page(), "grid cell at row " + row + ", column " + column + " to be present",
+                () -> cellExists(row, column));
     }
 
     /**
@@ -968,7 +970,8 @@ public class GridElement extends VaadinElement
      * @param column column index, starting from 0.
      */
     public void assertCellNotPresent(int row, int column) {
-        locator.page().waitForCondition(() -> !cellExists(row, column));
+        assertEventually(locator.page(), "grid cell at row " + row + ", column " + column + " not to be present",
+                () -> !cellExists(row, column));
     }
 
     /**
@@ -989,7 +992,8 @@ public class GridElement extends VaadinElement
      * @param expected the expected header cell text contents
      */
     public void assertHeaderCellContents(String... expected) {
-        locator.page().waitForCondition(() -> getHeaderCellContents().equals(List.of(expected)));
+        assertEventually(locator.page(), "Grid header cell contents", this::getHeaderCellContents,
+                List.of(expected));
     }
 
     /**
@@ -1012,7 +1016,9 @@ public class GridElement extends VaadinElement
      * @param headerText the header text to look for
      */
     public void assertColumnPresent(String headerText) {
-        locator.page().waitForCondition(() -> findHeaderCellByText(headerText).isPresent());
+        assertEventually(locator.page(), "Grid header texts", this::getHeaderCellContents,
+                contents -> findHeaderCellByText(headerText).isPresent(),
+                "a header cell with text \"" + headerText + "\"");
     }
 
     /**
@@ -1021,7 +1027,9 @@ public class GridElement extends VaadinElement
      * @param headerText the header text to look for
      */
     public void assertColumnNotPresent(String headerText) {
-        locator.page().waitForCondition(() -> !findHeaderCellByText(headerText).isPresent());
+        assertEventually(locator.page(), "Grid header texts", this::getHeaderCellContents,
+                contents -> findHeaderCellByText(headerText).isEmpty(),
+                "no header cell with text \"" + headerText + "\"");
     }
 
     /**
@@ -1030,7 +1038,8 @@ public class GridElement extends VaadinElement
      * @param expected the expected footer cell text contents
      */
     public void assertFooterCellContents(String... expected) {
-        locator.page().waitForCondition(() -> getFooterCellContents().equals(List.of(expected)));
+        assertEventually(locator.page(), "Grid footer cell contents", this::getFooterCellContents,
+                List.of(expected));
     }
 
     /**
@@ -1053,7 +1062,9 @@ public class GridElement extends VaadinElement
      * @param footerText the footer text to look for
      */
     public void assertFooterPresent(String footerText) {
-        locator.page().waitForCondition(() -> findFooterCellByText(footerText).isPresent());
+        assertEventually(locator.page(), "Grid footer texts", this::getFooterCellContents,
+                contents -> findFooterCellByText(footerText).isPresent(),
+                "a footer cell with text \"" + footerText + "\"");
     }
 
     /**
@@ -1062,7 +1073,9 @@ public class GridElement extends VaadinElement
      * @param footerText the footer text to look for
      */
     public void assertFooterNotPresent(String footerText) {
-        locator.page().waitForCondition(() -> !findFooterCellByText(footerText).isPresent());
+        assertEventually(locator.page(), "Grid footer texts", this::getFooterCellContents,
+                contents -> findFooterCellByText(footerText).isEmpty(),
+                "no footer cell with text \"" + footerText + "\"");
     }
 
     /**
@@ -1071,7 +1084,8 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertRowPresent(int rowIndex) {
-        locator.page().waitForCondition(() -> findRow(rowIndex).isPresent());
+        assertEventually(locator.page(), "Grid row count", this::getTotalRowCount,
+                count -> findRow(rowIndex).isPresent(), "a row at index " + rowIndex);
     }
 
     /**
@@ -1080,7 +1094,8 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertRowNotPresent(int rowIndex) {
-        locator.page().waitForCondition(() -> !findRow(rowIndex).isPresent());
+        assertEventually(locator.page(), "Grid row count", this::getTotalRowCount,
+                count -> findRow(rowIndex).isEmpty(), "no row at index " + rowIndex);
     }
 
     /**
@@ -1089,7 +1104,7 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertRowInView(int rowIndex) {
-        locator.page().waitForCondition(() -> isRowInView(rowIndex));
+        assertEventually(locator.page(), "grid row " + rowIndex + " to be in view", () -> isRowInView(rowIndex));
     }
 
     /**
@@ -1098,7 +1113,7 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertRowNotInView(int rowIndex) {
-        locator.page().waitForCondition(() -> !isRowInView(rowIndex));
+        assertEventually(locator.page(), "grid row " + rowIndex + " not to be in view", () -> !isRowInView(rowIndex));
     }
 
     /**
@@ -1109,8 +1124,9 @@ public class GridElement extends VaadinElement
      * @param expected the expected row indexes (in order)
      */
     public void assertRowIndexesWithColumnText(int column, String text, Integer... expected) {
-        locator.page().waitForCondition(
-                () -> findRowIndexesWithColumnText(column, text).equals(List.of(expected)));
+        assertEventually(locator.page(),
+                "Grid row indexes with text \"" + text + "\" in column " + column,
+                () -> findRowIndexesWithColumnText(column, text), List.of(expected));
     }
 
     /**
@@ -1119,7 +1135,7 @@ public class GridElement extends VaadinElement
      * @param expected the expected selected item count
      */
     public void assertSelectedItemCount(int expected) {
-        locator.page().waitForCondition(() -> getSelectedItemCount() == expected);
+        assertEventually(locator.page(), "Grid selected item count", this::getSelectedItemCount, expected);
     }
 
     /**
@@ -1128,7 +1144,7 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertRowSelected(int rowIndex) {
-        locator.page().waitForCondition(
+        assertEventually(locator.page(), "grid row " + rowIndex + " to be selected",
                 () -> findRow(rowIndex).map(RowElement::isSelected).orElse(false));
     }
 
@@ -1138,7 +1154,7 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertRowNotSelected(int rowIndex) {
-        locator.page().waitForCondition(
+        assertEventually(locator.page(), "grid row " + rowIndex + " to be present and not selected",
                 () -> findRow(rowIndex).map(row -> !row.isSelected()).orElse(false));
     }
 
@@ -1146,21 +1162,21 @@ public class GridElement extends VaadinElement
      * Assert that the select-all checkbox is checked.
      */
     public void assertSelectAllChecked() {
-        locator.page().waitForCondition(this::isSelectAllChecked);
+        assertEventually(locator.page(), "grid select-all checkbox to be checked", this::isSelectAllChecked);
     }
 
     /**
      * Assert that the select-all checkbox is unchecked.
      */
     public void assertSelectAllUnchecked() {
-        locator.page().waitForCondition(this::isSelectAllUnchecked);
+        assertEventually(locator.page(), "grid select-all checkbox to be unchecked", this::isSelectAllUnchecked);
     }
 
     /**
      * Assert that the select-all checkbox is indeterminate.
      */
     public void assertSelectAllIndeterminate() {
-        locator.page().waitForCondition(this::isSelectAllIndeterminate);
+        assertEventually(locator.page(), "grid select-all checkbox to be indeterminate", this::isSelectAllIndeterminate);
     }
 
     /**
@@ -1169,7 +1185,7 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertDetailsOpen(int rowIndex) {
-        locator.page().waitForCondition(
+        assertEventually(locator.page(), "grid row " + rowIndex + " to have its details open",
                 () -> findRow(rowIndex).map(RowElement::isDetailsOpen).orElse(false));
     }
 
@@ -1179,7 +1195,7 @@ public class GridElement extends VaadinElement
      * @param rowIndex row index, starting from 0.
      */
     public void assertDetailsClosed(int rowIndex) {
-        locator.page().waitForCondition(
+        assertEventually(locator.page(), "grid row " + rowIndex + " to be present with its details closed",
                 () -> findRow(rowIndex).map(row -> !row.isDetailsOpen()).orElse(false));
     }
 
@@ -1332,35 +1348,39 @@ public class GridElement extends VaadinElement
          * Assert that the column is sorted in ascending order.
          */
         public void assertSortAscending() {
-            locator.page().waitForCondition(this::isSortAscending);
+            assertEventually(locator.page(), "Sort direction of column " + getColumnIndex(),
+                    this::sortDirectionForMessage, "asc"::equals, "asc");
         }
 
         /**
          * Assert that the column is sorted in descending order.
          */
         public void assertSortDescending() {
-            locator.page().waitForCondition(this::isSortDescending);
+            assertEventually(locator.page(), "Sort direction of column " + getColumnIndex(),
+                    this::sortDirectionForMessage, "desc"::equals, "desc");
         }
 
         /**
          * Assert that the column is not sorted.
          */
         public void assertNotSorted() {
-            locator.page().waitForCondition(this::isNotSorted);
+            assertEventually(locator.page(), "Sort direction of column " + getColumnIndex(),
+                    this::sortDirectionForMessage, "none"::equals, "none");
         }
 
         /**
          * Assert that the header cell supports sorting.
          */
         public void assertSortable() {
-            locator.page().waitForCondition(this::isSortable);
+            assertEventually(locator.page(), "column " + getColumnIndex() + " to be sortable", this::isSortable);
         }
 
         /**
          * Assert that the header cell does not support sorting.
          */
         public void assertNotSortable() {
-            locator.page().waitForCondition(() -> !isSortable());
+            assertEventually(locator.page(), "column " + getColumnIndex() + " not to be sortable",
+                    () -> !isSortable());
         }
 
         /**
@@ -1369,6 +1389,11 @@ public class GridElement extends VaadinElement
          *
          * @return the sort direction, or null/empty if not sorted
          */
+        // The sort direction as shown in an assertion message: "none" when unsorted.
+        private String sortDirectionForMessage() {
+            return isNotSorted() ? "none" : getSortDirection();
+        }
+
         private String getSortDirection() {
             var sorterLocator = getSorterLocator();
             if (sorterLocator.count() == 0) {
@@ -1539,28 +1564,28 @@ public class GridElement extends VaadinElement
          * Assert that this row is selected.
          */
         public void assertSelected() {
-            locator.page().waitForCondition(this::isSelected);
+            assertEventually(locator.page(), "grid row " + rowIndex + " to be selected", this::isSelected);
         }
 
         /**
          * Assert that this row is not selected.
          */
         public void assertNotSelected() {
-            locator.page().waitForCondition(() -> !isSelected());
+            assertEventually(locator.page(), "grid row " + rowIndex + " not to be selected", () -> !isSelected());
         }
 
         /**
          * Assert that this row's details panel is open.
          */
         public void assertDetailsOpen() {
-            locator.page().waitForCondition(this::isDetailsOpen);
+            assertEventually(locator.page(), "grid row " + rowIndex + " to have its details open", this::isDetailsOpen);
         }
 
         /**
          * Assert that this row's details panel is closed.
          */
         public void assertDetailsClosed() {
-            locator.page().waitForCondition(() -> !isDetailsOpen());
+            assertEventually(locator.page(), "grid row " + rowIndex + " to have its details closed", () -> !isDetailsOpen());
         }
     }
 }

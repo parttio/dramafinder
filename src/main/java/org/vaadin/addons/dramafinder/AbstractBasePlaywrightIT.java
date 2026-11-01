@@ -8,8 +8,27 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.vaadin.addons.dramafinder.agent.AgentReportProvider;
+import org.vaadin.addons.dramafinder.agent.AgentReporting;
 
-public abstract class AbstractBasePlaywrightIT implements HasTestView {
+/**
+ * Base class for Playwright integration tests of a Vaadin view.
+ * <p>
+ * Launches one Chromium browser per test class (headless unless the
+ * {@code headless} system property or {@code HEADLESS} environment variable says
+ * otherwise), opens a fresh {@link #page} before each test, navigates it to
+ * {@code getUrl() + getView()} and waits for Vaadin to go idle.
+ * <p>
+ * Every failing test writes an {@link AgentReporting agent report} to
+ * {@code target/agent-report/<TestClass>/<testMethod>/} ({@code build/} for
+ * Gradle): {@code failure.txt} with the assertion message and a trimmed stack
+ * trace, {@code failure.png} with the page at failure time, and
+ * {@code component-snapshot.txt} describing the Vaadin components on the page.
+ * Set {@code -Ddramafinder.agentReport=false} to turn it off.
+ */
+@ExtendWith(AgentReporting.class)
+public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentReportProvider {
 
     public static final String WAIT_FOR_VAADIN_SCRIPT =
             // @formatter:off
@@ -71,6 +90,17 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView {
     }
 
     protected Page getPage() {
+        return page;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Returns the test's {@code page}, so a failing test is captured in the
+     * state it failed in.
+     */
+    @Override
+    public Page agentPage() {
         return page;
     }
 

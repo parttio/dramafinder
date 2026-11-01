@@ -4,11 +4,11 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.PlaywrightException;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-badge>}.
@@ -182,12 +182,7 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
      */
     public void assertText(String text) {
         String expected = text == null ? "" : text;
-        try {
-            locator.page().waitForCondition(() -> expected.equals(getText()));
-        } catch (PlaywrightException e) {
-            throw new AssertionError("Badge text mismatch. Expected: <" + expected
-                    + ">, actual: <" + getText() + ">", e);
-        }
+        assertEventually(locator.page(), "Badge text", this::getText, expected);
     }
 
     /**

@@ -294,3 +294,20 @@ Run with `mvn verify -Dit.test=<ViewName>IT`.
   decide.
 - **Autonomous execution**: run it directly and fix any failures before
   finishing.
+
+### When a test fails
+
+Tests extending `AbstractBasePlaywrightIT` (including `SpringPlaywrightIT`)
+write a failure bundle per failing test to
+`target/agent-report/<TestClass>/<testMethod>/` (`build/` for Gradle). Read it
+before changing the test:
+
+- `failure.txt` — the assertion message, trimmed stack trace and page URL.
+  DramaFinder assertions state the expected and actual value, e.g.
+  `Grid row count mismatch. Expected: <12>, actual: <100>`.
+- `component-snapshot.txt` — the Vaadin components on the page at failure time
+  (labels, values, grid columns and row counts). Use it to check the labels
+  your lookups rely on instead of rereading the view's source.
+- `failure.png` — a full-page screenshot.
+
+Pass `-Ddramafinder.agentReport=false` to turn the capture off.
