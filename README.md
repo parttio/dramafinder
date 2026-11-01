@@ -37,11 +37,14 @@ This repository ships two Claude Code skills. Install them as plugins:
   writing a temporary Drama Finder test that batch-captures every key visual
   state against the running app in one run. Backed by the
   `org.vaadin.addons.dramafinder.agent` helpers (`VisualVerificationTest`,
-  `AgentReporting`, `ComponentSnapshot`), which write a screenshot, semantic
-  component snapshot, and stack trace to `target/agent-report/` on failure.
+  `AgentReporting`, `ComponentSnapshot`, `ViewOutline`), which write a
+  screenshot, semantic component snapshot, view outline (each component with a
+  verified DramaFinder lookup), and stack trace to `target/agent-report/` on
+  failure.
   Tests extending `AbstractBasePlaywrightIT` get the same failure report, per
   test, under `target/agent-report/<TestClass>/<testMethod>/`; disable it with
-  `-Ddramafinder.agentReport=false`.
+  `-Ddramafinder.agentReport=false`. Call `ViewOutline.write(page)` in a
+  throwaway test to get `view-outline.txt` before writing lookups for a view.
 
 To get later updates, run `/plugin marketplace update dramafinder`.
 

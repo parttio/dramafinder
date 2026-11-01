@@ -1,7 +1,7 @@
 # DramaFinder Agent Helpers API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-agent-api-reference.java`.
-> DramaFinder 1.2.4-SNAPSHOT — 5 agent helper types.
+> DramaFinder 1.2.4-SNAPSHOT — 6 agent helper types.
 
 Public API of the `org.vaadin.addons.dramafinder.agent` helpers used by the **vaadin-playwright-screenshot** skill. Method one-liners come from Javadoc.
 
@@ -11,7 +11,7 @@ A temp verification test extends `VisualVerificationTest`; the other types are i
 
 ## Types
 
-[VisualVerificationTest](#visualverificationtest) · [AgentReport](#agentreport) · [AgentReportProvider](#agentreportprovider) · [AgentReporting](#agentreporting) · [ComponentSnapshot](#componentsnapshot)
+[VisualVerificationTest](#visualverificationtest) · [AgentReport](#agentreport) · [AgentReportProvider](#agentreportprovider) · [AgentReporting](#agentreporting) · [ComponentSnapshot](#componentsnapshot) · [ViewOutline](#viewoutline)
 
 ## VisualVerificationTest
 
@@ -40,7 +40,7 @@ Writes agent-oriented verification artifacts for a single test into a report dir
 
 **Methods:**
 
-- `void captureFailure(Throwable error)` — Write the failure bundle for a failed test: failure.txt (message + trimmed stack trace + page URL), failure.png (full-page screenshot), and component-snapshot.txt (semantic snapshot).
+- `void captureFailure(Throwable error)` — Write the failure bundle for a failed test: failure.txt (message + trimmed stack trace + page URL), failure.png (full-page screenshot), component-snapshot.txt (semantic snapshot), and view-outline.txt (each component with its verified lookup).
 - `Path directory()` — The directory this report writes to.
 - `Path shot(String name)` — Capture a numbered screenshot of the current page state.
 
@@ -68,4 +68,16 @@ Produces a compact, human- and agent-readable summary of the Vaadin components c
 **Static methods:**
 
 - `String capture(Page page)` — Capture a compact snapshot of all meaningful Vaadin components on the page.
+
+## ViewOutline
+
+Lists the Vaadin components of the page that is open in a Page, each with the DramaFinder lookup a test should use to reach it.
+
+**Constants:** `String FILE_NAME`
+
+**Static methods:**
+
+- `String capture(Page page)` — Capture the outline of the page as text: one entry per component, with the verified lookup on the line below it.
+- `Path write(Page page)` — Capture the outline and write it to #FILE_NAME in the default report directory (target/agent-report/, or build/ under Gradle).
+- `Path write(Page page, Path directory)` — Capture the outline and write it to #FILE_NAME in the given directory, creating the directory if needed.
 

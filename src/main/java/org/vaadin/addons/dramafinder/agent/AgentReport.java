@@ -20,9 +20,10 @@ import com.microsoft.playwright.Page;
  *       interaction points ({@code 01-login.png}, {@code 02-order-list.png}, …);</li>
  *   <li>a failure bundle via {@link #captureFailure(Throwable)} — the assertion
  *       message and a trimmed stack trace ({@code failure.txt}), a screenshot of
- *       the page at failure time ({@code failure.png}), and a semantic
+ *       the page at failure time ({@code failure.png}), a semantic
  *       {@link ComponentSnapshot component snapshot}
- *       ({@code component-snapshot.txt}).</li>
+ *       ({@code component-snapshot.txt}), and a {@link ViewOutline view outline}
+ *       with the verified lookup of each component ({@code view-outline.txt}).</li>
  * </ul>
  * A far cheaper agent loop than driving Playwright MCP interactively: one run
  * batches every action and screenshot, then the agent reads a terse report.
@@ -102,7 +103,8 @@ public class AgentReport {
     /**
      * Write the failure bundle for a failed test: {@code failure.txt} (message
      * + trimmed stack trace + page URL), {@code failure.png} (full-page
-     * screenshot), and {@code component-snapshot.txt} (semantic snapshot).
+     * screenshot), {@code component-snapshot.txt} (semantic snapshot), and
+     * {@code view-outline.txt} (each component with its verified lookup).
      * <p>
      * Best-effort: a failure to capture the screenshot or snapshot (e.g. the
      * page is already closed) never masks the original test failure.
@@ -136,6 +138,13 @@ public class AgentReport {
         } catch (RuntimeException e) {
             write(directory.resolve("component-snapshot.txt"),
                     "Component snapshot failed: " + e.getMessage());
+        }
+
+        try {
+            write(directory.resolve(ViewOutline.FILE_NAME), ViewOutline.capture(page));
+        } catch (RuntimeException e) {
+            write(directory.resolve(ViewOutline.FILE_NAME),
+                    "View outline failed: " + e.getMessage());
         }
     }
 
