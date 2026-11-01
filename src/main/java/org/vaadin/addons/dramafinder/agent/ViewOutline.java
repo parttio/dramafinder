@@ -28,6 +28,7 @@ import org.vaadin.addons.dramafinder.element.CardElement;
 import org.vaadin.addons.dramafinder.element.CheckboxElement;
 import org.vaadin.addons.dramafinder.element.CheckboxGroupElement;
 import org.vaadin.addons.dramafinder.element.ComboBoxElement;
+import org.vaadin.addons.dramafinder.element.ConfirmDialogElement;
 import org.vaadin.addons.dramafinder.element.ContextMenuElement;
 import org.vaadin.addons.dramafinder.element.DatePickerElement;
 import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
@@ -117,7 +118,8 @@ public final class ViewOutline {
             AvatarElement.class, AvatarGroupElement.class, BadgeElement.class,
             BigDecimalFieldElement.class, BreadcrumbsElement.class, BreadcrumbsItemElement.class,
             ButtonElement.class, CardElement.class, CheckboxElement.class,
-            CheckboxGroupElement.class, ComboBoxElement.class, ContextMenuElement.class,
+            CheckboxGroupElement.class, ComboBoxElement.class, ConfirmDialogElement.class,
+            ContextMenuElement.class,
             DatePickerElement.class, DateTimePickerElement.class, DetailsElement.class,
             DialogElement.class, EmailFieldElement.class, FormLayoutElement.class,
             GridElement.class, IntegerFieldElement.class, ListBoxElement.class,
@@ -167,14 +169,15 @@ public final class ViewOutline {
           // Overlays that only exist while open.
           // Components whose own text is their name.
           const TEXT_TAGS = new Set(['vaadin-button', 'vaadin-badge', 'vaadin-breadcrumbs-item']);
-          const OPENABLE = new Set(['vaadin-dialog', 'vaadin-popover', 'vaadin-login-overlay']);
+          const OPENABLE = new Set(['vaadin-dialog', 'vaadin-confirm-dialog', 'vaadin-popover',
+            'vaadin-login-overlay']);
           const ITEM_OVERLAYS = 'vaadin-combo-box-overlay,vaadin-multi-select-combo-box-overlay,'
             + 'vaadin-select-overlay,vaadin-menu-bar-overlay,vaadin-context-menu-overlay';
           // Structural or internal tags that are not worth reporting as missing a wrapper.
           const INTERNAL = /^vaadin-(horizontal-layout|vertical-layout|scroller|icon|item|form-item|form-row|dev-tools|connection-indicator|tooltip|drawer-toggle|grid-.*|.*-(overlay|container|content|item|chip|summary|heading|toggle|column|sorter|list-box|button|wrapper|card|header|footer|layout|scroller|submenu|icon|file|file-list))$/;
           // Composite components whose inner components are driven through the composite's API.
           const COMPOSITES = 'vaadin-upload,vaadin-login-form,vaadin-login-overlay,'
-            + 'vaadin-message-input,vaadin-date-time-picker,vaadin-avatar-group';
+            + 'vaadin-message-input,vaadin-date-time-picker,vaadin-avatar-group,vaadin-confirm-dialog';
 
           const clean = (s) => (s || '').toString().replace(/\\s+/g, ' ').trim();
           const ownText = (el) => clean(Array.from(el.childNodes)
@@ -249,7 +252,7 @@ public final class ViewOutline {
               placeholder: clean(el.placeholder),
               text: tag === 'vaadin-notification-card' ? clean(el.textContent)
                 : TEXT_TAGS.has(tag) ? ownText(el) : '',
-              header: tag === 'vaadin-dialog'
+              header: tag === 'vaadin-dialog' || tag === 'vaadin-confirm-dialog'
                 ? clean(el.headerTitle) || clean(el.getAttribute('aria-label')) : '',
               title: tag === 'vaadin-card'
                 ? clean(el.cardTitle) || clean(el.querySelector(':scope > [slot="title"]')?.textContent)

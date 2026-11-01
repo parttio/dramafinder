@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.agent.ViewOutline;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
+import org.vaadin.addons.dramafinder.element.ConfirmDialogElement;
 import org.vaadin.addons.dramafinder.element.DialogElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -114,5 +115,16 @@ public class ViewOutlineIT extends SpringPlaywrightIT {
         Path file = ViewOutline.write(page, tempDir);
         assertEquals(tempDir.resolve("view-outline.txt"), file);
         assertTrue(Files.readString(file).contains("GridElement.getById(page, \"basic-grid\")"));
+    }
+
+    @Test
+    public void listsOpenConfirmDialogWithoutItsButtons() {
+        page.navigate(getUrl() + "confirm-dialog");
+        page.waitForFunction(WAIT_FOR_VAADIN_SCRIPT);
+        ButtonElement.getByText(page, "Open alert").click();
+        ConfirmDialogElement.getByHeaderText(page, "Export failed").assertOpen();
+        String outline = ViewOutline.capture(page);
+        assertContains(outline, "ConfirmDialogElement.getByHeaderText(page, \"Export failed\")");
+        assertFalse(outline.contains("vaadin-button \"OK\""), outline);
     }
 }
