@@ -1,11 +1,14 @@
 {
   "name": "dramafinder/vaadin-playwright-test",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": false,
-  "summary": "Generate Playwright integration tests for Vaadin 25 views using the DramaFinder library. Use when the user wants to write IT tests for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.",
+  "summary": "Write and debug Playwright integration tests for Vaadin 25 views with the DramaFinder library, and capture screenshots of a running Vaadin app in one batch run. Use when the user wants IT tests or screenshots for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.",
   "skills": {
     "vaadin-playwright-test": {
       "path": "skills/vaadin-playwright-test/SKILL.md"
+    },
+    "vaadin-playwright-screenshot": {
+      "path": "skills/vaadin-playwright-screenshot/SKILL.md"
     }
   }
 }
