@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.2.4-SNAPSHOT — 57 element wrappers.
+> DramaFinder 1.2.4-SNAPSHOT — 58 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -99,6 +99,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
+| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` |
 | `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
 | `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` |
@@ -145,7 +146,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [FormLayoutElement](#formlayoutelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ConfirmDialogElement](#confirmdialogelement) · [ContextMenuElement](#contextmenuelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [FormLayoutElement](#formlayoutelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -645,6 +646,54 @@ PlaywrightElement for <vaadin-combo-box>.
 - `void clickToggleButton()` — Click the dropdown toggle button.
 - `int getOverlayItemCount()` — Count visible overlay items.
 - `void assertItemCount(int expected)` — Assert that the overlay contains exactly the expected number of items.
+
+### ConfirmDialogElement  `<vaadin-confirm-dialog>`
+
+PlaywrightElement for <vaadin-confirm-dialog>.
+
+**Extends:** VaadinElement  
+**Implements:** HasThemeElement, HasStyleElement  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-confirm-dialog"`
+
+**Constructors:**
+
+- `ConfirmDialogElement(Locator locator)` — Create a ConfirmDialogElement from an existing locator.
+
+**Static factory methods:**
+
+- `ConfirmDialogElement get(Page page)` — Get the open confirm dialog, found by its alertdialog role.
+- `ConfirmDialogElement getByHeaderText(Page page, String header)` — Get an open confirm dialog by its header, which is the dialog's accessible name (alertdialog role).
+
+**Methods:**
+
+- `Locator getOverlayLocator()` — Locator for the overlay rendered in the dialog's shadow DOM.
+- `boolean isOpen()` — Whether the dialog is open.
+- `void assertOpen()` — Assert that the dialog is open.
+- `void assertClosed()` — Assert that the dialog is closed.
+- `boolean isVisible()` — Whether the dialog overlay is visible.
+- `void assertVisible()` — Assert that the dialog overlay is visible.
+- `void assertHidden()` — Assert that the dialog overlay is hidden, or that the dialog is gone.
+- `Locator getHeaderLocator()` — Locator for the header, the element in the header slot.
+- `String getHeaderText()` — Get the header text.
+- `void assertHeaderText(String header)` — Assert the header text.
+- `Locator getMessageLocator()` — Locator for the message: the dialog's children that are not in a named slot.
+- `String getMessage()` — Get the message text: the text of the dialog's unslotted children, with whitespace collapsed.
+- `void assertMessage(String message)` — Assert the message text, compared with #getMessage() after collapsing whitespace.
+- `ButtonElement getConfirmButton()` — The confirm button.
+- `ButtonElement getCancelButton()` — The cancel button.
+- `ButtonElement getRejectButton()` — The reject button.
+- `void confirm()` — Click the confirm button.
+- `void cancel()` — Click the cancel button.
+- `void reject()` — Click the reject button.
+- `void closeWithEscape()` — Close the dialog with the Escape key, which fires the dialog's cancel event.
+- `void assertConfirmText(String text)` — Assert the confirm button's text.
+- `void assertCancelText(String text)` — Assert the cancel button's text.
+- `void assertRejectText(String text)` — Assert the reject button's text.
+- `void assertCancelable()` — Assert that the cancel button is shown.
+- `void assertNotCancelable()` — Assert that the cancel button is not shown.
+- `void assertRejectable()` — Assert that the reject button is shown.
+- `void assertNotRejectable()` — Assert that the reject button is not shown.
 
 ### ContextMenuElement
 

@@ -36,6 +36,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Grid` | `GridElement` | `get(page)`, `getById(page, id)`, `assertRowCount()`, `assertCellContent(row, col, text)`, `assertHeaderCellContents()`, `select(rowIndex)`, `assertRowSelected()`, `scrollToRow()`, `findRow()`, `findCell()`; sorting via `findHeaderCellByText(text)` → `HeaderCellElement.clickSort()` / `assertSortAscending()` |
 | `TreeGrid` | `TreeGridElement` | `get(page)`, `expandRow()`, `collapseRow()`, `assertRowCount()`, `assertCellContent()` — extends `GridElement` |
 | `VirtualList` | `VirtualListElement` | `get(page)`, `assertRowCount()`, `assertItemRendered()`, `scrollToRow()` |
+| `ConfirmDialog` | `ConfirmDialogElement` | `getByHeaderText(page, header)` or `get(page)`, `assertMessage()`, `assertHeaderText()`, `confirm()`, `cancel()`, `reject()`, `closeWithEscape()`, `assertConfirmText()`, `assertCancelable()`, `assertRejectable()`, `assertClosed()` |
 | `Dialog` | `DialogElement` | `getByHeaderText(page, text)` or `new DialogElement(page)`, `assertOpen()`, `assertClosed()`, `assertHeaderText()`, `closeWithEscape()`, `getContentLocator()` |
 | `LoginForm` | `LoginFormElement` | `get(page)` or `get(locator)`, `login(username, password)`, `getUsernameField()`, `getPasswordField()`, `getSubmitButton()`, `getForgotPasswordButton()`, `assertTitle()`, `assertErrorVisible()`, `assertErrorTitle()`, `assertErrorMessage()`, `assertNoError()`, `isDisabled()` |
 | `LoginOverlay` | `LoginOverlayElement` | `get(page)`, `getByTitle(page, title)` or `new LoginOverlayElement(page)`, `login(username, password)`, `assertOpen()`, `assertClosed()`, `assertHeaderTitle()`, `assertDescription()`, `assertTitle()`, `assertErrorTitle()`, `assertErrorMessage()` |
@@ -87,7 +88,8 @@ GridElement grid = GridElement.getById(page, "my-grid-id");
 // Some elements have a bespoke factory (check the index), e.g.
 ButtonElement save = ButtonElement.getByText(page, "Save");
 NotificationElement toast = NotificationElement.getByText(page, "Saved");
-DialogElement dialog = DialogElement.getByHeaderText(page, "Confirm");
+DialogElement dialog = DialogElement.getByHeaderText(page, "Edit person");
+ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Unsaved changes");
 
 // A few elements have no static factory at all (AccordionElement,
 // ProgressBarElement, SideNavigationItemElement, ...) — construct them

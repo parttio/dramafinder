@@ -80,6 +80,7 @@ behaviour isn't obvious from the signatures:
 - [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
 - [LoginElement](docs/specifications/LoginElement.md) - Login form/overlay lookups, i18n-driven assertions
 - [MarkdownElement](docs/specifications/MarkdownElement.md) - Rendered-output assertions, not Markdown source
+- [ConfirmDialogElement](docs/specifications/ConfirmDialogElement.md) - Detached when closed, message vs header/button text
 - [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
 - [CheckboxGroupElement](docs/specifications/CheckboxGroupElement.md) - Label-based selection, exhaustive assertSelected
 - [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group

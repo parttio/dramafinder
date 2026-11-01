@@ -1,6 +1,6 @@
 {
   "name": "dramafinder/vaadin-playwright-test",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": false,
   "summary": "Write and debug Playwright integration tests for Vaadin 25 views with the DramaFinder library, and capture screenshots of a running Vaadin app in one batch run. Use when the user wants IT tests or screenshots for a Vaadin view, mentions DramaFinder, or asks about Playwright testing in a Vaadin project.",
   "skills": {
