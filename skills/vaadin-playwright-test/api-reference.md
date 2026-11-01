@@ -49,7 +49,9 @@ Notes:
 
 ### AbstractBasePlaywrightIT
 
-*abstract* **Implements:** HasTestView  
+Base class for Playwright integration tests of a Vaadin view.
+
+*abstract* **Implements:** HasTestView, AgentReportProvider  
 
 **Constants:** `String WAIT_FOR_VAADIN_SCRIPT = …`
 
@@ -66,6 +68,7 @@ Notes:
 - `void setupTest()`
 - `void cleanupTest()`
 - `protected Page getPage()`
+- `Page agentPage()` — Returns the test's page, so a failing test is captured in the state it failed in.
 - `protected Browser getBrowser()`
 - `protected Playwright getPlaywright()`
 
@@ -1311,7 +1314,7 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 - `Locator getOverflowChipLocator()` — Get the locator for the overflow chip.
 - `List<String> getSelectedItems()` — Get the labels of all currently selected items by reading the selectedItems property from the web component.
 - `int getSelectedItemCount()` — Get the count of currently selected items from the selectedItems property.
-- `void assertSelectedItems(String... expected)` — Assert that the selected item labels match the expected values.
+- `void assertSelectedItems(String... expected)` — Assert that the selected item labels match the expected values, in any order: the selection holds exactly as many items as expected and contains each of them.
 - `void assertSelectedCount(int expected)` — Assert that the number of selected items matches.
 - `T getOverlayItemComponent(String itemText, Class<T> type)` — Get a typed component element from an overlay item matching the given text.
 - `T getOverlayItemComponent(int index, Class<T> type)` — Get a typed component element from an overlay item at the given visible index.

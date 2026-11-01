@@ -24,6 +24,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-multi-select-combo-box>}.
@@ -86,9 +87,10 @@ public class MultiSelectComboBoxElement extends VaadinElement
     @Override
     public void assertValue(String expected) {
         if (expected == null || expected.isEmpty()) {
-            getLocator().page().waitForCondition(() -> getSelectedItemCount() == 0);
+            assertEventually(getLocator().page(), "Multi-select combo box selected items", this::getSelectedItems,
+                    List::isEmpty, "[]");
         } else {
-            getLocator().page().waitForCondition(() -> expected.equals(getValue()));
+            assertEventually(getLocator().page(), "Multi-select combo box value", this::getValue, expected);
         }
     }
 
@@ -305,17 +307,18 @@ public class MultiSelectComboBoxElement extends VaadinElement
     }
 
     /**
-     * Assert that the selected item labels match the expected values.
+     * Assert that the selected item labels match the expected values, in any
+     * order: the selection holds exactly as many items as {@code expected} and
+     * contains each of them.
      *
      * @param expected expected item labels
      */
     public void assertSelectedItems(String... expected) {
-        getLocator().page().waitForCondition(() -> getSelectedItemCount() == expected.length);
-        List<String> actual = getSelectedItems();
-        for (String exp : expected) {
-            assert actual.contains(exp)
-                    : "Expected item '" + exp + "' in " + actual;
-        }
+        List<String> expectedItems = List.of(expected);
+        assertEventually(getLocator().page(), "Multi-select combo box selected items",
+                this::getSelectedItems,
+                actual -> actual.size() == expectedItems.size() && actual.containsAll(expectedItems),
+                expectedItems + " (in any order)");
     }
 
     /**
@@ -324,7 +327,8 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * @param expected expected number of selected items
      */
     public void assertSelectedCount(int expected) {
-        getLocator().page().waitForCondition(() -> getSelectedItemCount() == expected);
+        assertEventually(getLocator().page(), "Multi-select combo box selected item count",
+                this::getSelectedItemCount, expected);
     }
 
     // ── Overlay item component queries ─────────────────────────────────

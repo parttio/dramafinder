@@ -39,6 +39,9 @@ This repository ships two Claude Code skills. Install them as plugins:
   `org.vaadin.addons.dramafinder.agent` helpers (`VisualVerificationTest`,
   `AgentReporting`, `ComponentSnapshot`), which write a screenshot, semantic
   component snapshot, and stack trace to `target/agent-report/` on failure.
+  Tests extending `AbstractBasePlaywrightIT` get the same failure report, per
+  test, under `target/agent-report/<TestClass>/<testMethod>/`; disable it with
+  `-Ddramafinder.agentReport=false`.
 
 To get later updates, run `/plugin marketplace update dramafinder`.
 
