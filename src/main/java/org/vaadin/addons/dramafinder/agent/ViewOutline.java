@@ -30,6 +30,7 @@ import org.vaadin.addons.dramafinder.element.CheckboxGroupElement;
 import org.vaadin.addons.dramafinder.element.ComboBoxElement;
 import org.vaadin.addons.dramafinder.element.ConfirmDialogElement;
 import org.vaadin.addons.dramafinder.element.ContextMenuElement;
+import org.vaadin.addons.dramafinder.element.CustomFieldElement;
 import org.vaadin.addons.dramafinder.element.DatePickerElement;
 import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.element.DetailsElement;
@@ -119,7 +120,7 @@ public final class ViewOutline {
             BigDecimalFieldElement.class, BreadcrumbsElement.class, BreadcrumbsItemElement.class,
             ButtonElement.class, CardElement.class, CheckboxElement.class,
             CheckboxGroupElement.class, ComboBoxElement.class, ConfirmDialogElement.class,
-            ContextMenuElement.class,
+            ContextMenuElement.class, CustomFieldElement.class,
             DatePickerElement.class, DateTimePickerElement.class, DetailsElement.class,
             DialogElement.class, EmailFieldElement.class, FormLayoutElement.class,
             GridElement.class, IntegerFieldElement.class, ListBoxElement.class,
@@ -177,7 +178,8 @@ public final class ViewOutline {
           const INTERNAL = /^vaadin-(horizontal-layout|vertical-layout|scroller|icon|item|form-item|form-row|dev-tools|connection-indicator|tooltip|drawer-toggle|grid-.*|.*-(overlay|container|content|item|chip|summary|heading|toggle|column|sorter|list-box|button|wrapper|card|header|footer|layout|scroller|submenu|icon|file|file-list))$/;
           // Composite components whose inner components are driven through the composite's API.
           const COMPOSITES = 'vaadin-upload,vaadin-login-form,vaadin-login-overlay,'
-            + 'vaadin-message-input,vaadin-date-time-picker,vaadin-avatar-group,vaadin-confirm-dialog';
+            + 'vaadin-message-input,vaadin-date-time-picker,vaadin-avatar-group,vaadin-confirm-dialog,'
+            + 'vaadin-custom-field';
 
           const clean = (s) => (s || '').toString().replace(/\\s+/g, ' ').trim();
           const ownText = (el) => clean(Array.from(el.childNodes)
@@ -244,8 +246,19 @@ public final class ViewOutline {
                 .filter(t => t);
             }
 
+            // A custom field's wrapped fields, reached through getField(type, label | index).
+            let fields = [];
+            if (tag === 'vaadin-custom-field') {
+              fields = Array.from(el.children)
+                .filter(f => f.localName.startsWith('vaadin-') && !f.hasAttribute('slot'))
+                .map(f => ({ tag: f.localName,
+                  name: clean(f.label) || clean(f.accessibleName) || clean(f.getAttribute('aria-label'))
+                    || clean(f.querySelector(':scope > [slot="sr-label"]')?.textContent)
+                    || clean(f.querySelector(':scope > input')?.getAttribute('aria-label')) }));
+            }
+
             out.push({
-              index, tag, tree, items, flags, state,
+              index, tag, tree, items, fields, flags, state,
               id: el.id || '',
               label: clean(el.label),
               ariaLabel: clean(el.getAttribute('aria-label')) || clean(el.accessibleName),
@@ -355,6 +368,11 @@ public final class ViewOutline {
                 }
                 sb.append(nl());
             }
+            List<?> fields = (List<?>) c.get("fields");
+            if (fields != null && !fields.isEmpty()) {
+                sb.append("    fields (getField(Type.class, label or index)): ")
+                        .append(describeFields(fields, classes)).append(nl());
+            }
         }
         if (other != null && !other.isEmpty()) {
             List<String> tags = new ArrayList<>();
@@ -363,6 +381,25 @@ public final class ViewOutline {
                     .append(" — use a Playwright locator or extend VaadinElement.").append(nl());
         }
         return sb.toString().stripTrailing();
+    }
+
+    // "SelectElement \"Country code\", TextFieldElement \"Number\"", with the
+    // position among fields of the same type when a field has no name.
+    @SuppressWarnings("unchecked")
+    private static String describeFields(List<?> fields,
+            Map<String, Class<? extends VaadinElement>> classes) {
+        Map<String, Integer> seen = new LinkedHashMap<>();
+        List<String> parts = new ArrayList<>();
+        for (Object field : fields) {
+            Map<String, Object> f = (Map<String, Object>) field;
+            String tag = str(f, "tag");
+            int position = seen.merge(tag, 1, Integer::sum) - 1;
+            Class<? extends VaadinElement> type = classes.get(tag);
+            String typeName = type != null ? type.getSimpleName() : tag;
+            String name = str(f, "name");
+            parts.add(typeName + " " + (name.isEmpty() ? "#" + position : quote(name)));
+        }
+        return String.join(", ", parts);
     }
 
     private static String describe(Map<String, Object> c) {
