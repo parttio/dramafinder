@@ -87,6 +87,47 @@ Read the target view source provided by the user. Extract:
 - Grids → column headers and row content to assert against.
 - Navigation triggers → button labels or menu items that cause route changes.
 
+### Outline the running view (when the app runs in the test harness)
+
+The source gives you intent; the running page gives you the labels a lookup
+actually matches. Before writing lookups, run a throwaway test that writes a
+**view outline** — every Vaadin component on the page with the DramaFinder
+lookup that reaches it, verified against the live page:
+
+```java
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // omit if not Spring Boot
+public class <ViewName>OutlineIT extends SpringPlaywrightIT { // or AbstractBasePlaywrightIT
+
+    @Override
+    public String getView() {
+        return "/<route-path>";
+    }
+
+    @Test
+    public void outline() {
+        // Open dialogs/menus first if the test needs their contents.
+        org.vaadin.addons.dramafinder.agent.ViewOutline.write(page);
+    }
+}
+```
+
+Run it with `mvn verify -Dit.test=<ViewName>OutlineIT`, read
+`target/agent-report/view-outline.txt` (`build/` under Gradle), then delete the
+test. Each entry looks like:
+
+```
+vaadin-text-field "Name" = "ada" (required)
+    TextFieldElement.getByLabel(page, "Name")
+vaadin-tabs #order-tabs
+    TabsElement.getById(page, "order-tabs")
+    items (full label, case-sensitive): "Details", "Payment"
+```
+
+Copy the lookups as given. An entry ending in `// … matches 2 components` or
+`// no factory singles it out` has no unique page-level lookup: scope it to a
+container, or ask whether the component can get an id. Skip this step when the
+view can't start in the test harness, or for a one-field change.
+
 See [element-mapping.md](element-mapping.md) for the full component → element
 class table, and [api-reference.md](api-reference.md) for the **complete public
 API** (every element, its methods, signatures and one-line descriptions) of the

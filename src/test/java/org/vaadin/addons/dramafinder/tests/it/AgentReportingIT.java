@@ -87,6 +87,11 @@ public class AgentReportingIT extends SpringPlaywrightIT {
         assertTrue(Files.exists(snapshot), "component-snapshot.txt should exist");
         assertTrue(Files.readString(snapshot).contains("vaadin-grid"),
                 "component snapshot should describe the page");
+
+        Path outline = dir.resolve("view-outline.txt");
+        assertTrue(Files.exists(outline), "view-outline.txt should exist");
+        assertTrue(Files.readString(outline).contains("GridElement.getById(page, \"basic-grid\")"),
+                "view outline should give the grid's lookup");
     }
 
     @Test

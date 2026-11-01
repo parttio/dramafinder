@@ -66,6 +66,12 @@ The reference opens with an index table of every tag, its wrapper, and that wrap
 factory methods; then a section per element; then the shared mixins whose methods
 every element that implements them inherits.
 
+**Let the page tell you.** `org.vaadin.addons.dramafinder.agent.ViewOutline.write(page)`
+in a throwaway test writes `target/agent-report/view-outline.txt`: every Vaadin
+component on the page with the factory call that reaches it, each one verified
+against the live page, plus the full labels of container items (tabs, side-nav
+items, checkboxes of a group). Copy lookups from it rather than guessing labels.
+
 ## Four things that are easy to get wrong
 
 **Factory methods are not uniform.** Most fields have `getByLabel(Page, String)`,
