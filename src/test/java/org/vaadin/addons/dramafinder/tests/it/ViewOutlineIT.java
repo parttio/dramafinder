@@ -127,4 +127,13 @@ public class ViewOutlineIT extends SpringPlaywrightIT {
         assertContains(outline, "ConfirmDialogElement.getByHeaderText(page, \"Export failed\")");
         assertFalse(outline.contains("vaadin-button \"OK\""), outline);
     }
+
+    @Test
+    public void listsCustomFieldWithItsWrappedFields() {
+        String outline = outlineOf("custom-field");
+        assertContains(outline, "CustomFieldElement.getByLabel(page, \"Office phone\")");
+        assertContains(outline,
+                "fields (getField(Type.class, label or index)): SelectElement \"Country code\", TextFieldElement \"Number\"");
+        assertFalse(outline.contains("TextFieldElement.getByLabel(page, \"Number\")"), outline);
+    }
 }
