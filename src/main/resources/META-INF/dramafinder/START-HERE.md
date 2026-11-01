@@ -103,9 +103,10 @@ loaded grid or a debounced field. Reach for the `assertX` method.
 
 Every failing test built on `AbstractBasePlaywrightIT` writes a report to
 `target/agent-report/<TestClass>/<testMethod>/` (`build/` under Gradle):
-`failure.txt` (assertion message, trimmed stack trace, URL), `failure.png`, and
+`failure.txt` (assertion message, trimmed stack trace, URL), `failure.png`,
 `component-snapshot.txt` listing the Vaadin components on the page with their labels
-and values. Read it before editing the test. Turn it off with
+and values, and `view-outline.txt` with a verified lookup for each of them. Read it
+before editing the test. Turn it off with
 `-Ddramafinder.agentReport=false`.
 
 ## More

@@ -308,6 +308,9 @@ before changing the test:
 - `component-snapshot.txt` — the Vaadin components on the page at failure time
   (labels, values, grid columns and row counts). Use it to check the labels
   your lookups rely on instead of rereading the view's source.
+- `view-outline.txt` — the same components, each with the DramaFinder lookup
+  that reaches it, verified against the page. When a lookup found nothing,
+  replace it with the one listed here.
 - `failure.png` — a full-page screenshot.
 
 Pass `-Ddramafinder.agentReport=false` to turn the capture off.
