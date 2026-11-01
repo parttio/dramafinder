@@ -93,6 +93,15 @@ match case-insensitively on a substring and take the first hit.
 A bare `getX()` compared with `assertEquals` does not, and is flaky against a lazily
 loaded grid or a debounced field. Reach for the `assertX` method.
 
+## When a test fails
+
+Every failing test built on `AbstractBasePlaywrightIT` writes a report to
+`target/agent-report/<TestClass>/<testMethod>/` (`build/` under Gradle):
+`failure.txt` (assertion message, trimmed stack trace, URL), `failure.png`, and
+`component-snapshot.txt` listing the Vaadin components on the page with their labels
+and values. Read it before editing the test. Turn it off with
+`-Ddramafinder.agentReport=false`.
+
 ## More
 
 - Full API reference: `META-INF/dramafinder/api-reference.md` (in this jar)
