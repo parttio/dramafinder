@@ -40,10 +40,23 @@ unzip -p "$JAR" META-INF/dramafinder/api-reference.md # every signature, ~100 KB
 Start with `START-HERE.md`: it has a working test skeleton, the tag-to-wrapper
 naming rule, and the handful of things that are easy to get wrong.
 
+## Agent helpers
+
+- `ViewOutline.write(page)` (package `org.vaadin.addons.dramafinder.agent`) writes
+  `target/agent-report/view-outline.txt`: every Vaadin component on the open page
+  with the DramaFinder lookup that reaches it, verified against the page. Run it
+  in a throwaway test before writing lookups for a view.
+- Every failing test extending `AbstractBasePlaywrightIT` writes a report to
+  `target/agent-report/<TestClass>/<testMethod>/` (`failure.txt`, `failure.png`,
+  `component-snapshot.txt`, `view-outline.txt`).
+- Claude Code skills: `/plugin marketplace add parttio/dramafinder`, then
+  `/plugin install vaadin-playwright-test@dramafinder` and
+  `/plugin install vaadin-playwright-screenshot@dramafinder`.
+
 ## Documentation
 
 - [AGENTS.md](AGENTS.md) - Repository guidelines, coding conventions, pitfalls & patterns
-- [TESTING.md](TESTING.md) - Testing guide and instructions
+- [TESTING.md](skills/vaadin-playwright-test/TESTING.md) - How to write DramaFinder tests (one assert per test, user-facing locators)
 - [README.md](README.md) - Project overview and setup
 
 ## Element Specifications
@@ -135,7 +148,7 @@ Common behaviors are provided via interfaces:
 ./mvnw clean install
 
 # Run integration tests
-./mvnw -B verify --file pom.xml
+./mvnw -Pit verify
 
 # Run single IT test
 ./mvnw -Dit.test=MyViewIT -Pit verify
