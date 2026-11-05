@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The documentation can be found in this repository and also deployed on https://parttio-dramafinder.mintlify.app/ if you find some errors please file an issue.
+The documentation can be found in this repository.
 
 ### API reference (and offline agents)
 
