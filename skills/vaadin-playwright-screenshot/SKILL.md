@@ -79,8 +79,9 @@ cheap. Before running the capture test:
    `build/agent-report/` (Gradle): it holds each numbered screenshot
    (`01-…png`, `02-…png`, …). On failure the `AgentReporting` extension also
    writes `failure.txt` (assertion message + trimmed stack trace + URL),
-   `failure.png` (full-page screenshot), and `component-snapshot.txt` (semantic
-   component snapshot). Review the captured images against the acceptance
+   `failure.png` (full-page screenshot), `component-snapshot.txt` (semantic
+   component snapshot), and `view-outline.txt` (each component with a verified
+   DramaFinder lookup — use it to fix a lookup that found nothing). Review the captured images against the acceptance
    criteria.
 5. Record, per criterion, whether its screenshot confirms it. Delete or
    overwrite the temp test when done.

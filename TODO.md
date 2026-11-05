@@ -14,6 +14,8 @@
 - Checkbox
 - Checkbox Group
 - Combo Box
+- Confirm Dialog
+- Custom Field
 - Context Menu
 - Date Picker
 - Date Time Picker
@@ -54,8 +56,6 @@
 
 ## Components not implemented
 
-- Confirm Dialog
-- Custom Field ?
 
 ## Shared interfaces implemented
 

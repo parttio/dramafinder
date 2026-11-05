@@ -403,3 +403,14 @@ becomes **case-sensitive**, and a lookup keyed on a partial label stops working.
   rule). After changing that package's public API, regenerate and commit it.
 - Refer to `docs/specifications/` for the prose docs on components with
   non-obvious behaviour (Grid, TreeGrid, VirtualList, and extension guidance).
+- The skills in `skills/` ship three ways: as Claude Code plugins
+  (`.claude-plugin/marketplace.json` plus each skill's
+  `.claude-plugin/plugin.json`), as a Tessl tile (`tile.json`), and through
+  `llms.txt`. When a change alters what a skill tells agents (its `SKILL.md`, a
+  file beside it, or the generated references it bundles), bump that skill's
+  `plugin.json` version — Claude Code uses it to decide whether an installed
+  plugin needs updating — and keep `tile.json`'s version equal to
+  `vaadin-playwright-test`'s. A new skill goes into `marketplace.json` and
+  `tile.json`; `SkillDistributionTest` fails when one is missing or the tile
+  version drifts.
+- `GEMINI.md` only imports this file; put agent instructions here.

@@ -66,6 +66,12 @@ The reference opens with an index table of every tag, its wrapper, and that wrap
 factory methods; then a section per element; then the shared mixins whose methods
 every element that implements them inherits.
 
+**Let the page tell you.** `org.vaadin.addons.dramafinder.agent.ViewOutline.write(page)`
+in a throwaway test writes `target/agent-report/view-outline.txt`: every Vaadin
+component on the page with the factory call that reaches it, each one verified
+against the live page, plus the full labels of container items (tabs, side-nav
+items, checkboxes of a group). Copy lookups from it rather than guessing labels.
+
 ## Four things that are easy to get wrong
 
 **Factory methods are not uniform.** Most fields have `getByLabel(Page, String)`,
@@ -97,9 +103,10 @@ loaded grid or a debounced field. Reach for the `assertX` method.
 
 Every failing test built on `AbstractBasePlaywrightIT` writes a report to
 `target/agent-report/<TestClass>/<testMethod>/` (`build/` under Gradle):
-`failure.txt` (assertion message, trimmed stack trace, URL), `failure.png`, and
+`failure.txt` (assertion message, trimmed stack trace, URL), `failure.png`,
 `component-snapshot.txt` listing the Vaadin components on the page with their labels
-and values. Read it before editing the test. Turn it off with
+and values, and `view-outline.txt` with a verified lookup for each of them. Read it
+before editing the test. Turn it off with
 `-Ddramafinder.agentReport=false`.
 
 ## More
