@@ -4,13 +4,14 @@ import com.microsoft.playwright.Locator;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
 
 /**
- * Query for labelled fields without a placeholder, such as {@code vaadin-checkbox} or
- * {@code vaadin-radio-group}: adds label and accessible-name filters.
+ * Query for components with a visible label and no placeholder, such as
+ * {@code vaadin-checkbox}, {@code vaadin-radio-group} or {@code vaadin-side-nav}:
+ * adds the label filters.
  *
  * @param <T> the element type the terminals return
  */
 public class FieldQuery<T extends VaadinElement> extends ElementQuery<T, FieldQuery<T>>
-        implements LabelFilters<FieldQuery<T>>, AccessibleNameFilters<FieldQuery<T>> {
+        implements LabelFilters<FieldQuery<T>> {
 
     /**
      * Create a query over the given candidates; called by

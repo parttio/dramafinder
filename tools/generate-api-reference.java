@@ -284,7 +284,8 @@ class GenerateApiReference {
         md.append("inside a component) returns the query listed for `X` in the element index, ");
         md.append("filters narrow it, and a terminal returns the element. Only the filters that ");
         md.append("fit the component compile — `withLabel` on a field, `withText` on a button. ");
-        md.append("Every query has `withId`, `withTestId`, `withAttribute` and `withClassName`; ");
+        md.append("Every query has `withId`, `withTestId`, `withAttribute`, `withClassName` and ");
+        md.append("`withAccessibleName` (read on the component or its own input, never a nested one); ");
         md.append("filters return new queries, and the result stays a lazy Playwright locator.\n\n");
         md.append("```java\n");
         md.append("import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;\n\n");
@@ -294,7 +295,9 @@ class GenerateApiReference {
         md.append("```\n\n");
         md.append("`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the ");
         md.append("**whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` ");
-        md.append("match a case-insensitive substring. `single()` fails with a strict-mode error ");
+        md.append("match a case-insensitive substring. Text filters read the component's own ");
+        md.append("text: slotted children (icons, tooltips) and shadow-rendered content are left out. ");
+        md.append("`single()` fails with a strict-mode error ");
         md.append("when several components match; `first()`, `get(int)`, `all()`, `count()` and ");
         md.append("`exists()` do not.\n\n");
         for (var e : queries.entrySet()) {

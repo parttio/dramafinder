@@ -92,40 +92,40 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
 | `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` | `TextQuery` |
 | `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
-| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)` | `ComponentQuery` |
 | `<vaadin-breadcrumbs-item>` | [BreadcrumbsItemElement](#breadcrumbsitemelement) | `getByText(Locator, String)`, `getByText(Page, String)` | `TextQuery` |
 | `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` | `ButtonQuery` |
 | `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` | `ComponentQuery` |
 | `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
 | `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
 | `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
-| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` | `NamedQuery` |
+| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` | `ComponentQuery` |
 | `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
 | `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
 | `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
 | `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` | `ComponentQuery` |
-| `<vaadin-dialog>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` | `NamedQuery` |
+| `<vaadin-dialog>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` | `ComponentQuery` |
 | `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
 | `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
 | `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
 | `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
-| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` | `ComponentQuery` |
 | `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
 | `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` | `ComponentQuery` |
 | `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
-| `<vaadin-menu-bar>` | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-menu-bar>` | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)` | `ComponentQuery` |
 | `<vaadin-menu-bar-button>` | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` | `TextQuery` |
 | `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
 | `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
 | `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
 | `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
 | `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Page, String)` | `InputFieldQuery` |
-| `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)` | `ComponentQuery` |
 | `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | *constructor only* | `ComponentQuery` |
 | `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Page, String)` | `FieldQuery` |
 | `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
-| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` | `ComponentQuery` |
-| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* | `ComponentQuery` |
+| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* | `SideNavItemQuery` |
 | `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
 | `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` | `ComponentQuery` |
 | `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Page, String)` | `FieldQuery` |
@@ -135,7 +135,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
 | `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
 | `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
-| `<vaadin-tooltip>` | [TooltipElement](#tooltipelement) | `get(Locator)`, `get(Page)`, `getByText(Page, String)` | `TextQuery` |
+| `<vaadin-tooltip>` | [TooltipElement](#tooltipelement) | `get(Locator)`, `get(Page)`, `getByText(Page, String)` | `TooltipQuery` |
 | `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` | `ComponentQuery` |
 | `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` | `ComponentQuery` |
 | — | [AbstractLoginElement](#abstractloginelement) | *constructor only* | — |
@@ -147,7 +147,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 ## Typed queries
 
-An alternative to the static factories with one grammar for every element: `ElementQueries.find(page, X.class)` (or `element.find(X.class)` to search inside a component) returns the query listed for `X` in the element index, filters narrow it, and a terminal returns the element. Only the filters that fit the component compile — `withLabel` on a field, `withText` on a button. Every query has `withId`, `withTestId`, `withAttribute` and `withClassName`; filters return new queries, and the result stays a lazy Playwright locator.
+An alternative to the static factories with one grammar for every element: `ElementQueries.find(page, X.class)` (or `element.find(X.class)` to search inside a component) returns the query listed for `X` in the element index, filters narrow it, and a terminal returns the element. Only the filters that fit the component compile — `withLabel` on a field, `withText` on a button. Every query has `withId`, `withTestId`, `withAttribute`, `withClassName` and `withAccessibleName` (read on the component or its own input, never a nested one); filters return new queries, and the result stays a lazy Playwright locator.
 
 ```java
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
@@ -157,24 +157,24 @@ DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delet
 dialog.find(ButtonElement.class).withText("Delete").single().click();
 ```
 
-`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the **whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` match a case-insensitive substring. `single()` fails with a strict-mode error when several components match; `first()`, `get(int)`, `all()`, `count()` and `exists()` do not.
+`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the **whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` match a case-insensitive substring. Text filters read the component's own text: slotted children (icons, tooltips) and shadow-rendered content are left out. `single()` fails with a strict-mode error when several components match; `first()`, `get(int)`, `all()`, `count()` and `exists()` do not.
 
 ### AccessibleNameFilters
 
-Filter by accessible name for components named through a label, aria-label or aria-labelledby.
+Filter by accessible name, available on every query.
 
 **Extends:** Refinable  
 
 **Methods:**
 
-- `Q withAccessibleName(String name)` — Keep components that are, or contain, an element whose label, aria-label or aria-labelledby text is exactly name (case-sensitive, whitespace-normalized).
+- `Q withAccessibleName(String name)` — Keep components whose accessible name is exactly name (case-sensitive, whitespace-normalized).
 
 ### ButtonQuery
 
 Query for vaadin-button: adds text filters and an accessible-name filter that, unlike the field one, also reads a button's name from its text.
 
 **Extends:** ElementQuery  
-**Implements:** TextFilters, AccessibleNameFilters  
+**Implements:** TextFilters  
 
 **Constructors:**
 
@@ -186,7 +186,7 @@ Query for vaadin-button: adds text filters and an accessible-name filter that, u
 
 ### ComponentQuery
 
-Query offering only the filters every component supports (id, test id, attributes, class name).
+Query offering only the filters every component supports: id, test id, attributes, class name and accessible name.
 
 **Extends:** ElementQuery  
 
@@ -207,7 +207,7 @@ Entry point of the typed query builder: find(page, TextFieldElement.class).withL
 
 Base class of the typed queries returned by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
 
-*abstract* **Implements:** Refinable  
+*abstract* **Implements:** Refinable, AccessibleNameFilters  
 
 **Methods:**
 
@@ -226,10 +226,10 @@ Base class of the typed queries returned by ElementQueries#find(com.microsoft.pl
 
 ### FieldQuery
 
-Query for labelled fields without a placeholder, such as vaadin-checkbox or vaadin-radio-group: adds label and accessible-name filters.
+Query for components with a visible label and no placeholder, such as vaadin-checkbox, vaadin-radio-group or vaadin-side-nav: adds the label filters.
 
 **Extends:** ElementQuery  
-**Implements:** LabelFilters, AccessibleNameFilters  
+**Implements:** LabelFilters  
 
 **Constructors:**
 
@@ -243,10 +243,10 @@ Marker that ties an element class to the query type returned by ElementQueries#f
 
 ### InputFieldQuery
 
-Query for input fields, such as vaadin-text-field or vaadin-combo-box: adds label, accessible-name and placeholder filters.
+Query for input fields, such as vaadin-text-field or vaadin-combo-box: adds label and placeholder filters.
 
 **Extends:** ElementQuery  
-**Implements:** LabelFilters, AccessibleNameFilters, PlaceholderFilters  
+**Implements:** LabelFilters, PlaceholderFilters  
 
 **Constructors:**
 
@@ -262,17 +262,6 @@ Filters for components that render a visible label in their slot="label" child, 
 
 - `Q withLabel(String label)` — Keep components whose visible label is exactly label.
 - `Q withLabelContaining(String text)` — Keep components whose visible label contains text, matched case-insensitively as a substring.
-
-### NamedQuery
-
-Query for components named by aria-label or aria-labelledby, such as vaadin-dialog or vaadin-menu-bar: adds the accessible-name filter.
-
-**Extends:** ElementQuery  
-**Implements:** AccessibleNameFilters  
-
-**Constructors:**
-
-- `NamedQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
 
 ### PlaceholderFilters
 
@@ -292,6 +281,22 @@ Base contract of the query filter mixins: a query that can be narrowed by transf
 
 - `Q refine(UnaryOperator<Locator> refinement)` — Return a query whose candidates are narrowed by refinement.
 
+### SideNavItemQuery
+
+Query for vaadin-side-nav-item: the label filters read the item's own text, without its prefix, suffix or nested child items.
+
+**Extends:** ElementQuery  
+**Implements:** LabelFilters  
+
+**Constructors:**
+
+- `SideNavItemQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+**Methods:**
+
+- `SideNavItemQuery<T> withLabel(String label)` — Keep items whose own label text is exactly label (case-sensitive, whitespace-normalized); a parent item does not match its children's labels.
+- `SideNavItemQuery<T> withLabelContaining(String text)` — Keep items whose own label text contains text, ignoring the case of ASCII letters.
+
 ### TextFilters
 
 Filters for components identified by the text they show, such as vaadin-button or vaadin-tab.
@@ -300,12 +305,12 @@ Filters for components identified by the text they show, such as vaadin-button o
 
 **Methods:**
 
-- `Q withText(String text)` — Keep components whose text is exactly text.
-- `Q withTextContaining(String text)` — Keep components whose text contains text, matched case-insensitively as a substring.
+- `Q withText(String text)` — Keep components whose own text is exactly text.
+- `Q withTextContaining(String text)` — Keep components whose own text contains text, ignoring the case of ASCII letters.
 
 ### TextQuery
 
-Query for components identified by the text they show, such as vaadin-badge or vaadin-tab: adds text filters.
+Query for components identified by the text they show, such as vaadin-badge or vaadin-tab: adds text filters, and reads the accessible name from the text when no aria-label or aria-labelledby is set.
 
 **Extends:** ElementQuery  
 **Implements:** TextFilters  
@@ -313,6 +318,27 @@ Query for components identified by the text they show, such as vaadin-badge or v
 **Constructors:**
 
 - `TextQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+**Methods:**
+
+- `TextQuery<T> withAccessibleName(String name)` — Keep components whose accessible name is exactly name (case-sensitive, whitespace-normalized): the aria-label or aria-labelledby text when set, otherwise the component's own text.
+
+### TooltipQuery
+
+Query for vaadin-tooltip: the text filters read the tooltip text, which lives in the role="tooltip" overlay child rather than in the host; it is also the tooltip's accessible name.
+
+**Extends:** ElementQuery  
+**Implements:** TextFilters  
+
+**Constructors:**
+
+- `TooltipQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+**Methods:**
+
+- `TooltipQuery<T> withText(String text)` — Keep tooltips whose text is exactly text (case-sensitive, whitespace-normalized), whether or not the tooltip is showing.
+- `TooltipQuery<T> withTextContaining(String text)` — Keep tooltips whose text contains text, ignoring the case of ASCII letters.
+- `TooltipQuery<T> withAccessibleName(String name)` — Keep tooltips whose accessible name — their text — is exactly name; same as #withText(String).
 
 ## Elements
 

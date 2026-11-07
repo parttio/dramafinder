@@ -15,8 +15,9 @@ import org.vaadin.addons.dramafinder.element.VaadinElement;
  * them with filters; it never touches the browser until a terminal such as
  * {@link #exists()} needs a count. Queries are immutable — each filter returns
  * a new query — so one can be kept and branched. The filters every component
- * supports live here; component-specific ones come from the mixins a subclass
- * implements ({@link LabelFilters}, {@link TextFilters}, ...).
+ * supports live here, including {@link AccessibleNameFilters#withAccessibleName};
+ * component-specific ones come from the mixins a subclass implements
+ * ({@link LabelFilters}, {@link TextFilters}, ...).
  * <p>
  * To support a custom component, subclass this (or reuse
  * {@link ComponentQuery}), give it a public {@code (Class, Locator)}
@@ -26,7 +27,7 @@ import org.vaadin.addons.dramafinder.element.VaadinElement;
  * @param <Q> the concrete query type, returned by every filter
  */
 public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQuery<T, Q>>
-        implements Refinable<Q> {
+        implements Refinable<Q>, AccessibleNameFilters<Q> {
 
     private final Class<T> type;
     private final Locator candidates;

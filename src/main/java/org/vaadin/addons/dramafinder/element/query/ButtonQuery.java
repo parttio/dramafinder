@@ -12,7 +12,7 @@ import org.vaadin.addons.dramafinder.element.VaadinElement;
  * @param <T> the element type the terminals return
  */
 public class ButtonQuery<T extends VaadinElement> extends ElementQuery<T, ButtonQuery<T>>
-        implements TextFilters<ButtonQuery<T>>, AccessibleNameFilters<ButtonQuery<T>> {
+        implements TextFilters<ButtonQuery<T>> {
 
     /**
      * Create a query over the given candidates; called by

@@ -8,7 +8,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.query.Findable;
-import org.vaadin.addons.dramafinder.element.query.TextQuery;
+import org.vaadin.addons.dramafinder.element.query.TooltipQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
@@ -40,7 +40,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(TooltipElement.FIELD_TAG_NAME)
 public class TooltipElement extends VaadinElement implements HasThemeElement, HasStyleElement,
-        Findable<TextQuery<TooltipElement>> {
+        Findable<TooltipQuery<TooltipElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-tooltip";
 

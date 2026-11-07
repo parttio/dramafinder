@@ -2,8 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.AriaRole;
-import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.SideNavItemQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
@@ -16,7 +16,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(SideNavigationItemElement.FIELD_TAG_NAME)
 public class SideNavigationItemElement extends VaadinElement implements HasDisabledAttributeElement, HasPrefixElement, HasSuffixElement, HasLabelElement,
-        Findable<ComponentQuery<SideNavigationItemElement>> {
+        Findable<SideNavItemQuery<SideNavigationItemElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-side-nav-item";
 

@@ -6,21 +6,32 @@ import com.microsoft.playwright.PlaywrightException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.vaadin.addons.dramafinder.element.BadgeElement;
 import org.vaadin.addons.dramafinder.element.BigDecimalFieldElement;
+import org.vaadin.addons.dramafinder.element.BreadcrumbsElement;
+import org.vaadin.addons.dramafinder.element.BreadcrumbsItemElement;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CheckboxElement;
 import org.vaadin.addons.dramafinder.element.ComboBoxElement;
 import org.vaadin.addons.dramafinder.element.ConfirmDialogElement;
+import org.vaadin.addons.dramafinder.element.CustomFieldElement;
 import org.vaadin.addons.dramafinder.element.DatePickerElement;
+import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.element.DialogElement;
 import org.vaadin.addons.dramafinder.element.EmailFieldElement;
 import org.vaadin.addons.dramafinder.element.IntegerFieldElement;
+import org.vaadin.addons.dramafinder.element.ListBoxElement;
+import org.vaadin.addons.dramafinder.element.MenuBarElement;
+import org.vaadin.addons.dramafinder.element.MenuItemElement;
 import org.vaadin.addons.dramafinder.element.MultiSelectComboBoxElement;
 import org.vaadin.addons.dramafinder.element.NumberFieldElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
+import org.vaadin.addons.dramafinder.element.SideNavigationElement;
+import org.vaadin.addons.dramafinder.element.SideNavigationItemElement;
 import org.vaadin.addons.dramafinder.element.TabElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.element.TimePickerElement;
+import org.vaadin.addons.dramafinder.element.TooltipElement;
 import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -107,11 +118,9 @@ public class ElementQueryIT extends SpringPlaywrightIT {
 
     @Test
     public void commonFilters() {
-        assertThat(find(page, ButtonElement.class).withTestId("save-btn").single().getLocator()).hasText("Save");
-        assertThat(find(page, ButtonElement.class).withClassName("primary-action").single().getLocator())
-                .hasText("Save");
-        assertThat(find(page, ButtonElement.class).withAttribute("theme", "primary").single().getLocator())
-                .hasText("Save");
+        assertEquals(1, find(page, ButtonElement.class).withTestId("save-btn").withText("Save").count());
+        assertEquals(1, find(page, ButtonElement.class).withClassName("primary-action").withText("Save").count());
+        assertEquals(1, find(page, ButtonElement.class).withAttribute("theme", "primary").withText("Save").count());
         assertEquals(1, find(page, ButtonElement.class).withAttribute("data-testid").count());
     }
 
@@ -163,6 +172,65 @@ public class ElementQueryIT extends SpringPlaywrightIT {
         TextFieldElement email = find(page, EmailFieldElement.class).withLabel("Email").single();
         assertInstanceOf(EmailFieldElement.class, email);
         assertThat(email.getLocator()).isVisible();
+    }
+
+    @Test
+    public void withText_readsOwnTextOnly() {
+        // icon slot, shadow-rendered number and a slotted glyph are not part of the text
+        assertEquals(1, find(page, BadgeElement.class).withText("New").count());
+        assertEquals(1, find(page, BadgeElement.class).withText("Inbox").count());
+        assertEquals(1, find(page, BadgeElement.class).withText("Verified").count());
+        assertEquals(2, find(page, BadgeElement.class).withTextContaining("new").count());
+        assertEquals(0, find(page, BadgeElement.class).withTextContaining("5").count());
+        // the tooltip slotted into the button is not part of its text either
+        assertEquals(1, find(page, ButtonElement.class).withText("Save").count());
+        assertEquals(1, find(page, BreadcrumbsItemElement.class).withText("Home").count());
+    }
+
+    @Test
+    public void menuItems_byTextAndName() {
+        assertEquals(1, find(page, MenuItemElement.class).withText("File").count());
+        assertEquals(1, find(page, MenuItemElement.class).withAccessibleName("Edit").count());
+        assertEquals(1, find(page, MenuItemElement.class).withAccessibleName("More options").count());
+        assertEquals(1, find(page, MenuBarElement.class).withAccessibleName("Main menu").count());
+    }
+
+    @Test
+    public void tooltip_withText() {
+        assertEquals(1, find(page, TooltipElement.class).withText("Saves the form").count());
+        assertEquals(1, find(page, TooltipElement.class).withTextContaining("saves").count());
+        assertEquals(1, find(page, TooltipElement.class).withAccessibleName("Saves the form").count());
+    }
+
+    @Test
+    public void withAccessibleName_onEveryType() {
+        assertEquals(1, find(page, TabElement.class).withAccessibleName("Home").count());
+        assertEquals(1, find(page, BreadcrumbsElement.class).withAccessibleName("Trail").count());
+        assertEquals(1, find(page, ListBoxElement.class).withAccessibleName("Sizes").count());
+        assertEquals(1, find(page, SideNavigationElement.class).withAccessibleName("Main nav").count());
+        assertEquals(1, find(page, DateTimePickerElement.class).withAccessibleName("Appointment").count());
+    }
+
+    @Test
+    public void withAccessibleName_ignoresNestedComponents() {
+        assertEquals(1, find(page, CustomFieldElement.class).withAccessibleName("Phone").count());
+        assertEquals(0, find(page, CustomFieldElement.class).withAccessibleName("Number").count());
+        assertEquals(1, find(page, TextFieldElement.class).withAccessibleName("Number").count());
+
+        find(page, ButtonElement.class).withText("Open dialog").single().click();
+        find(page, DialogElement.class).withAccessibleName("Delete account?").single().assertOpen();
+        assertThat(find(page, TextFieldElement.class).withAccessibleName("Reason").getLocator()).hasCount(1);
+        assertEquals(0, find(page, DialogElement.class).withAccessibleName("Reason").count());
+    }
+
+    @Test
+    public void sideNav_withLabel() {
+        assertEquals(1, find(page, SideNavigationElement.class).withLabel("Main nav").count());
+        // a parent item is labelled by its own text, not its children's
+        assertEquals(1, find(page, SideNavigationItemElement.class).withLabel("Dashboard").count());
+        assertEquals(1, find(page, SideNavigationItemElement.class).withLabel("Reports").count());
+        assertEquals(1, find(page, SideNavigationItemElement.class).withLabel("Dash").count());
+        assertEquals(2, find(page, SideNavigationItemElement.class).withLabelContaining("dash").count());
     }
 
     @Test

@@ -28,6 +28,8 @@ class FilterCompilationTest {
                 ButtonElement save = find(page, ButtonElement.class)
                         .withText("Save").withAccessibleName("Save").withId("save").single();
                 CheckboxElement accept = find(page, CheckboxElement.class).withLabel("Accept").single();
+                GridElement grid = find(page, GridElement.class).withAccessibleName("People").single();
+                TooltipElement tip = find(page, TooltipElement.class).withText("Saves").single();
                 ButtonElement delete = new DialogElement(page).find(ButtonElement.class).withText("Delete").single();
                 """);
         assertTrue(diagnostics.isEmpty(), diagnostics);

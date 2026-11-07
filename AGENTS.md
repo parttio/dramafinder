@@ -368,10 +368,18 @@ TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").sin
 dialog.find(ButtonElement.class).withText("Delete").single().click();
 find(page, ButtonElement.class).withLabel("Save"); // compile error
 ```
-- Filters come from mixins (`LabelFilters`, `TextFilters`, `PlaceholderFilters`,
-  `AccessibleNameFilters`) composed by small query classes (`InputFieldQuery`,
-  `FieldQuery`, `ButtonQuery`, `TextQuery`, `NamedQuery`, `ComponentQuery`).
-  A mixin's default methods only call `refine(...)`.
+- Filters come from mixins (`LabelFilters`, `TextFilters`, `PlaceholderFilters`)
+  composed by small query classes (`InputFieldQuery`, `FieldQuery`, `ButtonQuery`,
+  `TextQuery`, `TooltipQuery`, `SideNavItemQuery`, `ComponentQuery`). A mixin's
+  default methods only call `refine(...)`; a query whose component keeps its
+  text or label elsewhere overrides them (`TooltipQuery`, `SideNavItemQuery`).
+- `withAccessibleName` is on every query (`ElementQuery` implements
+  `AccessibleNameFilters`). It reads the host or the field's own
+  `slot="input|textarea|value"` child — never a nested component, so a dialog
+  is not matched by a field it holds. `ButtonQuery` and `TextQuery` fall back to
+  the component's own text, as name-from-content roles do.
+- Text filters read the component's **own** text (pitfall 11): light DOM only,
+  via XPath, with named-slot children left out — never Playwright `hasText`.
 - A new element gets `@PlaywrightElement` and `implements Findable<...>` with the
   query whose filters really match it — verify each filter in an IT before
   binding (e.g. `vaadin-select` does not reflect `placeholder` on its host, so

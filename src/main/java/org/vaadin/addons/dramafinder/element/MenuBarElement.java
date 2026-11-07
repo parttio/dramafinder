@@ -3,8 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
-import org.vaadin.addons.dramafinder.element.query.NamedQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
@@ -16,7 +16,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
  */
 @PlaywrightElement(MenuBarElement.FIELD_TAG_NAME)
 public class MenuBarElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement,
-        Findable<NamedQuery<MenuBarElement>> {
+        Findable<ComponentQuery<MenuBarElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-menu-bar";
 

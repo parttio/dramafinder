@@ -5,13 +5,12 @@ import org.vaadin.addons.dramafinder.element.VaadinElement;
 
 /**
  * Query for input fields, such as {@code vaadin-text-field} or {@code vaadin-combo-box}:
- * adds label, accessible-name and placeholder filters.
+ * adds label and placeholder filters.
  *
  * @param <T> the element type the terminals return
  */
 public class InputFieldQuery<T extends VaadinElement> extends ElementQuery<T, InputFieldQuery<T>>
-        implements LabelFilters<InputFieldQuery<T>>, AccessibleNameFilters<InputFieldQuery<T>>,
-        PlaceholderFilters<InputFieldQuery<T>> {
+        implements LabelFilters<InputFieldQuery<T>>, PlaceholderFilters<InputFieldQuery<T>> {
 
     /**
      * Create a query over the given candidates; called by

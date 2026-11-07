@@ -120,6 +120,14 @@ class ElementQueriesTest {
     }
 
     @Test
+    void ownTextSelectorQuotesAndNormalizesText() {
+        assertTrue(QueryText.ownTextIs("  Save   draft ").contains("normalize-space()='Save draft'"));
+        assertTrue(QueryText.ownTextIs("It's").contains("\"It's\""));
+        assertTrue(QueryText.ownTextIs("It's \"x\"").contains("concat('It', \"'\", 's \"x\"')"));
+        assertTrue(QueryText.ownTextContains("New").contains("'new'"));
+    }
+
+    @Test
     void attributeSelectorEscapesQuotes() {
         assertEquals("[title=\"say \\\"hi\\\"\"]", QueryText.attributeSelector("title", "say \"hi\""));
         assertEquals("[class~=\"primary\"]", QueryText.attributeWordSelector("class", "primary"));

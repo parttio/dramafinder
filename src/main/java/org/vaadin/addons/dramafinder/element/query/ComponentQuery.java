@@ -4,7 +4,8 @@ import com.microsoft.playwright.Locator;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
 
 /**
- * Query offering only the filters every component supports (id, test id, attributes, class name).
+ * Query offering only the filters every component supports: id, test id,
+ * attributes, class name and accessible name.
  *
  * @param <T> the element type the terminals return
  */
