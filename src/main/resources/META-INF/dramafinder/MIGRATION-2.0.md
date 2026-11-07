@@ -224,3 +224,10 @@ dialog.find(ButtonElement.class).withText("Delete").single().click();
 
 It sits alongside the factories; nothing has to move to it. See "Typed queries"
 in `META-INF/dramafinder/api-reference.md`.
+
+Every element now also has `getById(Page|Locator, String)` and
+`getByTestId(Page|Locator, String)` (issue #203), so
+`new XElement(page.locator("#id"))` can become `XElement.getById(page, "id")`. The test
+id is the `data-testid` attribute Flow's `setTestId(...)` sets. The five 1.x `getById`
+methods (AppLayout, FormLayout, Grid, TreeGrid, Tabs) now also check the element's tag
+and accept ids that are not valid CSS identifiers.

@@ -137,4 +137,12 @@ public class ViewOutlineIT extends SpringPlaywrightIT {
                 "fields (getField(Type.class, label or index)): SelectElement \"Country code\", TextFieldElement \"Number\"");
         assertFalse(outline.contains("TextFieldElement.getByLabel(page, \"Number\")"), outline);
     }
+
+    @Test
+    public void fallsBackToTheTestIdForAComponentWithoutAName() {
+        String outline = outlineOf("id-lookup");
+        // a progress bar has no label, so the test id is its first unique lookup
+        assertContains(outline, "ProgressBarElement.getByTestId(page, \"ProgressBarElement-tid\")");
+        assertContains(outline, "TextFieldElement.getByLabel(page, \"Text\")");
+    }
 }

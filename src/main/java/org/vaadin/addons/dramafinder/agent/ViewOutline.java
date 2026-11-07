@@ -148,6 +148,7 @@ public final class ViewOutline {
         FACTORIES.put("getBySummaryText", List.of("summary"));
         FACTORIES.put("getByName", List.of("name"));
         FACTORIES.put("getByButtonText", List.of("buttonText"));
+        FACTORIES.put("getByTestId", List.of("testId"));
         FACTORIES.put("getById", List.of("id"));
         FACTORIES.put("get", List.of());
     }
@@ -260,6 +261,7 @@ public final class ViewOutline {
             out.push({
               index, tag, tree, items, fields, flags, state,
               id: el.id || '',
+              testId: el.getAttribute('data-testid') || '',
               label: clean(el.label),
               ariaLabel: clean(el.getAttribute('aria-label')) || clean(el.accessibleName),
               placeholder: clean(el.placeholder),

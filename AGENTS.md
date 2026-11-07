@@ -262,6 +262,13 @@ Label- and name-keyed factories match the **whole** name with no `.first()`; eac
 `getByLabel` has a `getByLabelContaining` sibling for partial matches (see "Exact vs
 substring matching").
 
+Every public element also has `getById` and `getByTestId`, each with a `Page` and a
+`Locator` overload, built on `IdLocator` (issue #203): exact, scoped to the element's
+tag, no `.first()`. They are fallbacks for components without a user-visible name. A
+new element gets all four; `IdFactoriesTest` fails otherwise. The exceptions are
+wrappers whose tag is not where Flow puts the id (notification card, tooltip, menu
+overlays, menu-bar button) — listed in that test.
+
 #### 2. Mixin Interfaces (Composition)
 Shared behavior is extracted into interfaces with default implementations:
 ```java
