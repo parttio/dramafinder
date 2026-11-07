@@ -28,10 +28,28 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withAccessibleName(String name) {
-        return refine(candidates -> {
-            Locator named = candidates.page().getByLabel(name, new Page.GetByLabelOptions().setExact(true));
-            return candidates.and(named).or(candidates.filter(new Locator.FilterOptions()
-                    .setHas(candidates.page().locator(QueryText.OWN_INPUT).and(named))));
-        });
+        return refine(candidates -> named(candidates, name, true));
+    }
+
+    /**
+     * Keep components whose accessible name — as read by
+     * {@link #withAccessibleName(String)} — contains {@code text}, matched
+     * case-insensitively as a substring.
+     * <p>
+     * The closest equivalent of the 1.x {@code getByLabel}, which matched the
+     * label or {@code aria-label} this way; unlike it, several matches are not
+     * reduced to the first one.
+     *
+     * @param text part of the accessible name
+     * @return a new, narrowed query
+     */
+    default Q withAccessibleNameContaining(String text) {
+        return refine(candidates -> named(candidates, text, false));
+    }
+
+    private static Locator named(Locator candidates, String name, boolean exact) {
+        Locator named = candidates.page().getByLabel(name, new Page.GetByLabelOptions().setExact(exact));
+        return candidates.and(named).or(candidates.filter(new Locator.FilterOptions()
+                .setHas(candidates.page().locator(QueryText.OWN_INPUT).and(named))));
     }
 }

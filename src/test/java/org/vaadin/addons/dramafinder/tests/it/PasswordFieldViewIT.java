@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.PasswordFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -203,14 +204,14 @@ public class PasswordFieldViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        PasswordFieldElement passwordField = PasswordFieldElement.getByLabel(page, "Invisible label");
+        PasswordFieldElement passwordField = new PasswordFieldElement(find(page, PasswordFieldElement.class).withAccessibleName("Invisible label").getLocator());
         passwordField.assertVisible();
         passwordField.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        PasswordFieldElement passwordField = PasswordFieldElement.getByLabel(page, "Labelled by");
+        PasswordFieldElement passwordField = new PasswordFieldElement(find(page, PasswordFieldElement.class).withAccessibleName("Labelled by").getLocator());
         passwordField.assertVisible();
         passwordField.assertAriaLabel(null);
     }
@@ -230,7 +231,7 @@ public class PasswordFieldViewIT extends SpringPlaywrightIT {
         PasswordFieldElement passwordFieldWithLabel = PasswordFieldElement.getByLabel(page, "PasswordField");
         passwordFieldWithLabel.assertVisible();
         passwordFieldWithLabel.assertLabel("PasswordField");
-        PasswordFieldElement passwordField = PasswordFieldElement.getByLabel(page, "Invisible label");
+        PasswordFieldElement passwordField = new PasswordFieldElement(find(page, PasswordFieldElement.class).withAccessibleName("Invisible label").getLocator());
         passwordField.assertVisible();
         passwordField.assertLabel(null);
     }

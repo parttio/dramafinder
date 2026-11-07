@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -122,14 +123,14 @@ public class SelectViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        SelectElement select = SelectElement.getByLabel(page, "Invisible label");
+        SelectElement select = find(page, SelectElement.class).withAccessibleName("Invisible label").single();
         select.assertVisible();
         select.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        SelectElement textfield = SelectElement.getByLabel(page, "Labelled by");
+        SelectElement textfield = find(page, SelectElement.class).withAccessibleName("Labelled by").single();
         textfield.assertVisible();
         textfield.assertAriaLabel(null);
     }
@@ -149,7 +150,7 @@ public class SelectViewIT extends SpringPlaywrightIT {
         SelectElement select = SelectElement.getByLabel(page, "Sort by");
         select.assertVisible();
         select.assertLabel("Sort by");
-        SelectElement ariaLabel = SelectElement.getByLabel(page, "Invisible label");
+        SelectElement ariaLabel = find(page, SelectElement.class).withAccessibleName("Invisible label").single();
         ariaLabel.assertVisible();
         ariaLabel.assertLabel(null);
     }

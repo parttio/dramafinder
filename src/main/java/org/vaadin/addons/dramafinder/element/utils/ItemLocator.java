@@ -19,9 +19,6 @@ import com.microsoft.playwright.options.AriaRole;
  * library that is worse than a misdirected click — an assertion keyed on the same
  * lookup passes against the wrong element. Without {@code .first()}, a genuine
  * duplicate fails loudly with a Playwright strict-mode error instead.
- *
- * @see AccessibleNameLocator for the substring-matching lookups used by the
- *      page-level field factories
  */
 public final class ItemLocator {
 

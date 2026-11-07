@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DateTimePickerGetByLabelIT extends SpringPlaywrightIT {
@@ -17,15 +18,17 @@ public class DateTimePickerGetByLabelIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void getByLabel_page_placeholder() {
-        DateTimePickerElement field = DateTimePickerElement.getByLabel(page, "My Placeholder");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_placeholderIsNotALabel() {
+        // a placeholder is not a label: withPlaceholder is the replacement
+        assertThat(DateTimePickerElement.getByLabel(page, "My Placeholder").getLocator()).hasCount(0);
+        assertThat(find(page, DateTimePickerElement.class).withPlaceholder("My Placeholder").getLocator()).isVisible();
     }
 
     @Test
-    public void getByLabel_page_ariaLabel() {
-        DateTimePickerElement field = DateTimePickerElement.getByLabel(page, "My AriaLabel");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_ariaLabelIsNotALabel() {
+        // an aria-label is not a label: withAccessibleName is the replacement
+        assertThat(DateTimePickerElement.getByLabel(page, "My AriaLabel").getLocator()).hasCount(0);
+        assertThat(find(page, DateTimePickerElement.class).withAccessibleName("My AriaLabel").getLocator()).isVisible();
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.TextAreaElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -203,14 +204,14 @@ public class TextAreaViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        TextAreaElement textArea = TextAreaElement.getByLabel(page, "Invisible label");
+        TextAreaElement textArea = new TextAreaElement(find(page, TextAreaElement.class).withAccessibleName("Invisible label").getLocator());
         textArea.assertVisible();
         textArea.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        TextAreaElement textArea = TextAreaElement.getByLabel(page, "Labelled by");
+        TextAreaElement textArea = new TextAreaElement(find(page, TextAreaElement.class).withAccessibleName("Labelled by").getLocator());
         textArea.assertVisible();
         textArea.assertAriaLabel(null);
     }
@@ -230,7 +231,7 @@ public class TextAreaViewIT extends SpringPlaywrightIT {
         TextAreaElement textAreaWithLabel = TextAreaElement.getByLabel(page, "TextArea");
         textAreaWithLabel.assertVisible();
         textAreaWithLabel.assertLabel("TextArea");
-        TextAreaElement textArea = TextAreaElement.getByLabel(page, "Invisible label");
+        TextAreaElement textArea = new TextAreaElement(find(page, TextAreaElement.class).withAccessibleName("Invisible label").getLocator());
         textArea.assertVisible();
         textArea.assertLabel(null);
     }

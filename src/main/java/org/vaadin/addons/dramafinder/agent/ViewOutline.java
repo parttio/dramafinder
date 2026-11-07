@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.AccordionElement;
 import org.vaadin.addons.dramafinder.element.AccordionPanelElement;
@@ -71,6 +72,9 @@ import org.vaadin.addons.dramafinder.element.TreeGridElement;
 import org.vaadin.addons.dramafinder.element.UploadElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
 import org.vaadin.addons.dramafinder.element.VirtualListElement;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
+import org.vaadin.addons.dramafinder.element.query.ElementQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 
 /**
  * Lists the Vaadin components of the page that is open in a {@link Page}, each
@@ -88,9 +92,14 @@ import org.vaadin.addons.dramafinder.element.VirtualListElement;
  *     TabsElement.get(page)
  *     items (full label, case-sensitive): "Details", "Payment"
  * </pre>
+ * A component found by its visible label gets {@code getByLabel}; one named only
+ * by an {@code aria-label}, or known only by its placeholder, gets the typed query
+ * {@code find(page, X.class).withAccessibleName(..)} or {@code .withPlaceholder(..)}
+ * ({@code find} being {@code ElementQueries.find}).
+ * <p>
  * Every suggested lookup is <strong>verified</strong>: the outline calls the
- * factory method on the live page and keeps it only when it resolves to exactly
- * that component. A component no factory can single out (two fields with the
+ * factory method or query on the live page and keeps it only when it resolves to
+ * exactly that component. A component no factory can single out (two fields with the
  * same label, a second grid without an id) gets a constructor over a positional
  * locator instead, which is a hint to scope the lookup to a container or give the
  * component an id. Items of a container (tabs, side-nav items, checkboxes of a
@@ -136,18 +145,23 @@ public final class ViewOutline {
             TextAreaElement.class, TextFieldElement.class, TimePickerElement.class, TreeGridElement.class,
             UploadElement.class, VirtualListElement.class);
 
-    // Factory methods to try, most user-facing first, each with the keys of the
-    // component data its String argument may come from.
+    // Lookups to try, most user-facing first, each with the keys of the component
+    // data its String argument may come from. A name starting with "with" is a
+    // filter of the element's typed query (find(page, X.class)) rather than a
+    // static factory: an aria-label is an accessible name and a placeholder is
+    // neither, so neither feeds getByLabel.
     private static final Map<String, List<String>> FACTORIES = new LinkedHashMap<>();
 
     static {
-        FACTORIES.put("getByLabel", List.of("label", "ariaLabel", "placeholder"));
+        FACTORIES.put("getByLabel", List.of("label"));
         FACTORIES.put("getByText", List.of("text", "label", "ariaLabel"));
         FACTORIES.put("getByHeaderText", List.of("header"));
         FACTORIES.put("getByTitle", List.of("title"));
         FACTORIES.put("getBySummaryText", List.of("summary"));
         FACTORIES.put("getByName", List.of("name"));
         FACTORIES.put("getByButtonText", List.of("buttonText"));
+        FACTORIES.put("withAccessibleName", List.of("ariaLabel"));
+        FACTORIES.put("withPlaceholder", List.of("placeholder"));
         FACTORIES.put("getByTestId", List.of("testId"));
         FACTORIES.put("getById", List.of("id"));
         FACTORIES.put("get", List.of());
@@ -439,13 +453,18 @@ public final class ViewOutline {
                 }
                 continue;
             }
-            Method method = findFactory(type, methodName, Page.class, String.class);
+            boolean filter = methodName.startsWith("with");
+            Method method = filter ? findFilter(page, type, methodName)
+                    : findFactory(type, methodName, Page.class, String.class);
             if (method == null) {
                 continue;
             }
             for (String value : candidates(c, factory.getValue())) {
-                String call = simpleName + "." + methodName + "(page, " + quote(value) + ")";
-                int matches = matchCount(page, method, index, value);
+                String call = filter
+                        ? "find(page, " + simpleName + ".class)." + methodName + "(" + quote(value) + ").single()"
+                        : simpleName + "." + methodName + "(page, " + quote(value) + ")";
+                int matches = filter ? filterMatchCount(page, type, method, index, value)
+                        : matchCount(page, method, index, value);
                 if (matches == 0) {
                     return call;
                 }
@@ -478,7 +497,7 @@ public final class ViewOutline {
     private static Method findFactory(Class<?> type, String name, Class<?>... parameters) {
         try {
             Method method = type.getMethod(name, parameters);
-            if (Modifier.isStatic(method.getModifiers())
+            if (Modifier.isStatic(method.getModifiers()) && !method.isAnnotationPresent(Deprecated.class)
                     && type.isAssignableFrom(method.getReturnType())) {
                 return method;
             }
@@ -486,6 +505,34 @@ public final class ViewOutline {
             // This wrapper has no such factory.
         }
         return null;
+    }
+
+    // The String filter of the element's typed query, or null when the element
+    // has no query or its query lacks the filter.
+    private static Method findFilter(Page page, Class<?> type, String name) {
+        if (!Findable.class.isAssignableFrom(type)) {
+            return null;
+        }
+        try {
+            return query(page, type).getClass().getMethod(name, String.class);
+        } catch (NoSuchMethodException | RuntimeException e) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static Object query(Page page, Class<?> type) {
+        return ElementQueries.find(page, (Class) type);
+    }
+
+    // As matchCount, for a filter of the element's typed query.
+    private static int filterMatchCount(Page page, Class<?> type, Method filter, String index, String value) {
+        try {
+            ElementQuery<?, ?> query = (ElementQuery<?, ?>) filter.invoke(query(page, type), value);
+            return resolve(query.getLocator(), index);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return -1;
+        }
     }
 
     // Calls the factory and reports what its locator resolves to: 0 when it is
@@ -498,15 +545,18 @@ public final class ViewOutline {
             callArgs[0] = page;
             System.arraycopy(args, 0, callArgs, 1, args.length);
             VaadinElement element = (VaadinElement) factory.invoke(null, callArgs);
-            Object markers = element.getLocator().evaluateAll(
-                    "(els, m) => els.map(e => e.getAttribute(m))", MARKER);
-            if (!(markers instanceof List<?> list) || list.isEmpty()) {
-                return -1;
-            }
-            return list.size() == 1 && index.equals(list.get(0)) ? 0 : list.size();
+            return resolve(element.getLocator(), index);
         } catch (ReflectiveOperationException | RuntimeException e) {
             return -1;
         }
+    }
+
+    private static int resolve(Locator locator, String index) {
+        Object markers = locator.evaluateAll("(els, m) => els.map(e => e.getAttribute(m))", MARKER);
+        if (!(markers instanceof List<?> list) || list.isEmpty()) {
+            return -1;
+        }
+        return list.size() == 1 && index.equals(list.get(0)) ? 0 : list.size();
     }
 
     // Position of the component among everything page.locator(tag) matches,

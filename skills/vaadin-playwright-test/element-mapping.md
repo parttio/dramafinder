@@ -29,7 +29,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `open()`, `assertItemCount()` |
 | `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `assertSelectedItems()`, `assertSelectedCount()` |
 | `Select` | `SelectElement` | `getByLabel(page, label)`, `selectItem()`, `assertValue()` |
-| `ListBox` | `ListBoxElement` | `getByLabel(page, label)`, `selectItem()`, `assertSelectedValue()`, `assertItemEnabled()`, `assertItemDisabled()` |
+| `ListBox` | `ListBoxElement` | `find(page, ListBoxElement.class).withAccessibleName(name)`, `selectItem()`, `assertSelectedValue()`, `assertItemEnabled()`, `assertItemDisabled()` |
 | `DatePicker` | `DatePickerElement` | `getByLabel(page, label)`, `setValue(LocalDate)`, `assertValue(LocalDate)`, `assertValid()`, `assertInvalid()` |
 | `TimePicker` | `TimePickerElement` | `getByLabel(page, label)`, `setValue(LocalTime)`, `assertValue(LocalTime)` |
 | `DateTimePicker` | `DateTimePickerElement` | `getByLabel(page, label)`, `setValue(LocalDateTime)`, `assertValue(LocalDateTime)`, `setDate()`, `setTime()` |
@@ -48,7 +48,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Accordion` | `AccordionElement` | `new AccordionElement(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `assertOpened()`, `assertClosed()` |
-| `MenuBar` | `MenuBarElement` | `getByLabel(page, label)` or `new MenuBarElement(page)`, `getMenuItemElement(name)`, `openSubMenu(name)` |
+| `MenuBar` | `MenuBarElement` | `find(page, MenuBarElement.class).withAccessibleName(name)` or `new MenuBarElement(page)`, `getMenuItemElement(name)`, `openSubMenu(name)` |
 | `ContextMenu` | `ContextMenuElement` | `ContextMenuElement.openOn(target)` then `new ContextMenuElement(page)`, `selectItem()`, `assertOpen()`, `assertClosed()` |
 | `SplitLayout` | `SplitLayoutElement` | `get(page)`, `assertHorizontal()`, `assertVertical()`, `dragSplitterBy()` |
 | `FormLayout` | `FormLayoutElement` | `get(page)`, `get(locator)`, `getById(page, id)`, `getFields()`, `getField(index)`, `getFieldCount()`, `getFormItems()`, `getColumnCount()`, `getLabelPosition()`, `assertColumnCount(int)`, `assertLabelPosition(String)`, `assertFieldCount(int)` |
@@ -60,13 +60,13 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `AvatarGroup` | `AvatarGroupElement` | `get(page)`, `getAvatars()`, `getAvatar(index)`, `getVisibleCount()`, `assertNames()`, `getOverflowAvatar()`, `assertHasOverflow()`, `openOverflow()`, `getOverflowAvatars()`, `assertOverflowNames()` |
 | `MessageInput` | `MessageInputElement` | `get(page)`, `typeAndSubmit()`, `submit()`, `assertValue()` |
 | `MessageList` | `MessageListElement` | `get(page)`, `assertMessageCount()`, `assertMessageText(index, text)`, `assertMessageUserName(index, name)` |
-| `Popover` | `PopoverElement` | `getByLabel(page, label)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
+| `Popover` | `PopoverElement` | `find(page, PopoverElement.class).withAccessibleName(name)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
 | `Tooltip` | `TooltipElement` | `get(page)`, `get(locator)` scoped to the target component, `getByText(page, text)`, or `someElement.getTooltip()`; `getText()`, `assertText()`, `isOpened()`, `assertOpened()`, `assertClosed()`, `getPosition()`, `assertPosition()`, `hoverTarget()`, `closeWithEscape()` |
 | `SideNavigation` | `SideNavigationElement` | `getByLabel(page, label)`, `clickItem(label)`, `getItem(label)`, `assertCollapsed()`, `assertExpanded()` |
 | `Card` | `CardElement` | `getByTitle(page, title)`, `assertTitle()`, `assertSubtitle()` |
 | `Markdown` | `MarkdownElement` | `get(page)`, `getRenderedLocator()`, `getText()`, `assertContainsText()`, `getHeadings()`, `getLinks()`, `getCodeBlocks()`, `assertHeading(index, text)`, `assertLink(text, href)`, `assertCodeBlockLanguage(index, language)` |
 | `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
-| `Breadcrumbs` | `BreadcrumbsElement` | `get(page)`, `getByLabel(page, label)`, `getItems()`, `getItem(text)`, `getCurrentItem()`, `assertItemTexts()`, `assertItemCount()`, `hasOverflow()`, `openOverflow()`, `getOverflowItems()` |
+| `Breadcrumbs` | `BreadcrumbsElement` | `get(page)`, `find(page, BreadcrumbsElement.class).withAccessibleName(name)`, `getItems()`, `getItem(text)`, `getCurrentItem()`, `assertItemTexts()`, `assertItemCount()`, `hasOverflow()`, `openOverflow()`, `getOverflowItems()` |
 | `BreadcrumbsItem` | `BreadcrumbsItemElement` | `getByText(page, text)`, `getText()`, `getPath()`, `isLink()`, `click()`, `isCurrent()`, `assertCurrent()`, `assertHasPrefix()`, `assertDisabled()` |
 
 ## Factory method conventions
@@ -77,8 +77,11 @@ element has `get`, `getByLabel`, and `getById`. The **Element index** in
 provides. The common shapes are:
 
 ```java
-// Fields (TextField, ComboBox, DatePicker, ...) — by aria-label or visible label
+// Fields (TextField, ComboBox, DatePicker, ...) — by their visible label
 TextFieldElement field = TextFieldElement.getByLabel(page, "My Label");
+// …named only by an aria-label, or known only by a placeholder: the query builder
+TextFieldElement search = find(page, TextFieldElement.class).withAccessibleName("Search").single();
+TextFieldElement street = find(page, TextFieldElement.class).withPlaceholder("Street").single();
 
 // Containers (Grid, VirtualList, TabSheet, ...) — first matching element on the page
 GridElement grid = GridElement.get(page);

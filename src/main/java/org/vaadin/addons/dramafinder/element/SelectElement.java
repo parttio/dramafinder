@@ -5,8 +5,9 @@ import java.util.Objects;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.Findable;
-import org.vaadin.addons.dramafinder.element.query.FieldQuery;
+import org.vaadin.addons.dramafinder.element.query.SelectQuery;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
@@ -32,7 +33,7 @@ public class SelectElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasInputFieldElement,
         HasPrefixElement, HasThemeElement, HasPlaceholderElement,
         HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement,
-        Findable<FieldQuery<SelectElement>> {
+        Findable<SelectQuery<SelectElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-select";
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-select-item";
@@ -128,79 +129,75 @@ public class SelectElement extends VaadinElement
     }
 
     /**
-     * Get the {@code SelectElement} by its label, searching the entire page.
+     * Get the {@code SelectElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * Matches the visible label or the {@code aria-label} of the select. Unlike the
-     * other fields the select's accessible name is not used as such, because it also
-     * includes the selected value or placeholder, and would change on selection.
-     * <p>
-     * The label must match in full, case-sensitively, and no {@code .first()} is
-     * applied: two selects with the same label fail with a strict-mode error. Use
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(page, SelectElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, SelectElement.class).withLabel(label)}; use
      * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the full label of the select
+     * @param label the full visible label
      * @return the matching {@code SelectElement}
      */
     public static SelectElement getByLabel(Page page, String label) {
-        return new SelectElement(byLabel(page.locator(FIELD_TAG_NAME), page, label, true));
+        return new SelectElement(ElementQueries.find(page, SelectElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code SelectElement} whose label contains {@code text}, searching the
-     * entire page.
+     * Get the {@code SelectElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The visible label or {@code aria-label} is matched case-insensitively as a
-     * substring. No {@code .first()} is applied: several matching selects fail with a
-     * strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, SelectElement.class).withLabelContaining(text)}.
      *
-     * @param page the Playwright page
-     * @param text part of the label of the select
+     * @param page  the Playwright page
+     * @param text  part of the visible label
      * @return the matching {@code SelectElement}
      */
     public static SelectElement getByLabelContaining(Page page, String text) {
-        return new SelectElement(byLabel(page.locator(FIELD_TAG_NAME), page, text, false));
+        return new SelectElement(ElementQueries.find(page, SelectElement.class).withLabelContaining(text).getLocator());
     }
 
     /**
-     * Get the {@code SelectElement} by its label within a given scope.
+     * Get the {@code SelectElement} whose visible label is exactly {@code label}, scoped to the given locator.
      * <p>
-     * Matches the visible label or the {@code aria-label} of the select, in full and
-     * case-sensitively; two selects with the same label fail with a strict-mode error.
-     * Use {@link #getByLabelContaining(Locator, String)} to match part of the label.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(locator, SelectElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, SelectElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
      *
-     * @param locator the locator to search within
-     * @param label   the full label of the select
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
      * @return the matching {@code SelectElement}
      */
     public static SelectElement getByLabel(Locator locator, String label) {
-        return new SelectElement(byLabel(locator.locator(FIELD_TAG_NAME), locator.page(), label, true));
+        return new SelectElement(ElementQueries.find(locator, SelectElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code SelectElement} whose label contains {@code text}, scoped to the
-     * given locator.
+     * Get the {@code SelectElement} whose visible label contains {@code text}, scoped to the given locator.
      * <p>
-     * The visible label or {@code aria-label} is matched case-insensitively as a
-     * substring. No {@code .first()} is applied: several matching selects fail with a
-     * strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, SelectElement.class).withLabelContaining(text)}.
      *
-     * @param locator the locator defining the search scope
-     * @param text    part of the label of the select
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
      * @return the matching {@code SelectElement}
      */
     public static SelectElement getByLabelContaining(Locator locator, String text) {
-        return new SelectElement(byLabel(locator.locator(FIELD_TAG_NAME), locator.page(), text, false));
+        return new SelectElement(ElementQueries.find(locator, SelectElement.class).withLabelContaining(text).getLocator());
     }
 
-    /** Selects whose own visible label, or whose value button's aria-label, matches. */
-    private static Locator byLabel(Locator selects, Page page, String label, boolean exact) {
-        Locator visibleLabel = page.locator(":scope > [slot='label']")
-                .and(page.getByText(label, new Page.GetByTextOptions().setExact(exact)));
-        Locator ariaLabel = page.locator(":scope > [slot='value']")
-                .and(page.getByLabel(label, new Page.GetByLabelOptions().setExact(exact)));
-        return selects.filter(new Locator.FilterOptions().setHas(visibleLabel.or(ariaLabel)));
-    }
 
     // ── Lookup by id or test id ────────────────────────────────────────
 

@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.element.ComboBoxElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -123,14 +124,14 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Invisible label");
+        ComboBoxElement comboBox = find(page, ComboBoxElement.class).withAccessibleName("Invisible label").single();
         comboBox.assertVisible();
         comboBox.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Labelled by");
+        ComboBoxElement comboBox = find(page, ComboBoxElement.class).withAccessibleName("Labelled by").single();
         comboBox.assertVisible();
         comboBox.assertAriaLabel(null);
     }
@@ -150,7 +151,7 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Sort by");
         comboBox.assertVisible();
         comboBox.assertLabel("Sort by");
-        ComboBoxElement ariaLabel = ComboBoxElement.getByLabel(page, "Invisible label");
+        ComboBoxElement ariaLabel = find(page, ComboBoxElement.class).withAccessibleName("Invisible label").single();
         ariaLabel.assertVisible();
         ariaLabel.assertLabel(null);
     }

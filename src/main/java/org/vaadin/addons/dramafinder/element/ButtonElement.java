@@ -131,7 +131,10 @@ public class ButtonElement extends VaadinElement
 
     /**
      * Alias for {@link #getByText(Page, String)}.
+     * @deprecated A button has no visible label: this is an alias kept from 1.x.
+     *             Use {@link #getByText(Page, String)}. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static ButtonElement getByLabel(Page page, String text) {
         return getByText(page, text);
     }
@@ -142,7 +145,10 @@ public class ButtonElement extends VaadinElement
      * @param page the Playwright page
      * @param text part of the button's accessible name or text content
      * @return the matching {@code ButtonElement}
+     * @deprecated A button has no visible label: this is an alias kept from 1.x.
+     *             Use {@link #getByTextContaining(Page, String)}. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static ButtonElement getByLabelContaining(Page page, String text) {
         return getByTextContaining(page, text);
     }

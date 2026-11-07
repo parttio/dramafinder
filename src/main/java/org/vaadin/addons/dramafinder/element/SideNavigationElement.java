@@ -2,7 +2,7 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.FieldQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
@@ -90,40 +90,73 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
     }
 
     /**
-     * Get the {@code SideNavigationElement} by its accessible name (ARIA role {@code navigation}),
-     * searching the entire page.
+     * Get the {@code SideNavigationElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two matching components fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(page, SideNavigationElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, SideNavigationElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the full accessible name
+     * @param label the full visible label
      * @return the matching {@code SideNavigationElement}
      */
     public static SideNavigationElement getByLabel(Page page, String label) {
-        return new SideNavigationElement(
-                page.getByRole(AriaRole.NAVIGATION,
-                        new Page.GetByRoleOptions().setName(label).setExact(true)
-                ).and(page.locator(FIELD_TAG_NAME)));
+        return new SideNavigationElement(ElementQueries.find(page, SideNavigationElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code SideNavigationElement} whose accessible name (ARIA role {@code navigation}) contains
-     * {@code text}, searching the entire page.
+     * Get the {@code SideNavigationElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The name is matched case-insensitively as a substring. No {@code .first()} is
-     * applied: several matching components fail with a strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, SideNavigationElement.class).withLabelContaining(text)}.
      *
      * @param page  the Playwright page
-     * @param text  part of the accessible name
+     * @param text  part of the visible label
      * @return the matching {@code SideNavigationElement}
      */
     public static SideNavigationElement getByLabelContaining(Page page, String text) {
-        return new SideNavigationElement(
-                page.getByRole(AriaRole.NAVIGATION,
-                        new Page.GetByRoleOptions().setName(text)
-                ).and(page.locator(FIELD_TAG_NAME)));
+        return new SideNavigationElement(ElementQueries.find(page, SideNavigationElement.class).withLabelContaining(text).getLocator());
+    }
+
+    /**
+     * Get the {@code SideNavigationElement} whose visible label is exactly {@code label}, scoped to the given locator.
+     * <p>
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(locator, SideNavigationElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, SideNavigationElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
+     * @return the matching {@code SideNavigationElement}
+     */
+    public static SideNavigationElement getByLabel(Locator locator, String label) {
+        return new SideNavigationElement(ElementQueries.find(locator, SideNavigationElement.class).withLabel(label).getLocator());
+    }
+
+    /**
+     * Get the {@code SideNavigationElement} whose visible label contains {@code text}, scoped to the given locator.
+     * <p>
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, SideNavigationElement.class).withLabelContaining(text)}.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
+     * @return the matching {@code SideNavigationElement}
+     */
+    public static SideNavigationElement getByLabelContaining(Locator locator, String text) {
+        return new SideNavigationElement(ElementQueries.find(locator, SideNavigationElement.class).withLabelContaining(text).getLocator());
     }
 
     /**

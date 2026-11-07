@@ -38,6 +38,12 @@ Always follow [@TESTING.md](TESTING.md) when generating tests. Key rules:
   the other label lookups match the full name, case-sensitively, and fail on
   duplicates. Copy the label exactly from the view; use `getByLabelContaining`
   only when the label is long or generated
+- **A label is the visible label** — `getByLabel` matches the text a component
+  shows as its label, never an `aria-label` or a placeholder. A field named only
+  by `setAriaLabel` is found with
+  `find(page, TextFieldElement.class).withAccessibleName("Search").single()`, one
+  known only by its placeholder with `.withPlaceholder(..)` (`find` is
+  `ElementQueries.find`)
 - **No `Thread.sleep()`** — use Playwright auto-waiting or `waitFor` methods
   instead
 - **Assert on user-visible state** — check visibility, text, or

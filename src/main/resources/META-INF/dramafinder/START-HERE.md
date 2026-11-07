@@ -104,7 +104,11 @@ or `GridElement.assertCellContent(row, column, expected)`.
 case-sensitively, and raises a strict-mode error if two components share it. Passing
 part of a label finds nothing: use `getByLabelContaining(page, "Name")` (or
 `ButtonElement.getByTextContaining`) for a case-insensitive partial match, which also
-fails rather than guessing when several components match.
+fails rather than guessing when several components match. A label is the
+**visible** label: `getByLabel` never matches an `aria-label` or a placeholder. Find
+those with the query builder, `find(page, TextFieldElement.class).withAccessibleName("Search")`
+or `.withPlaceholder("Street")`; components without a visible label (menu bar,
+list box, popover, breadcrumbs) are found by accessible name the same way.
 
 **Assertions retry; getters do not.** Every `assertX` method polls via
 `page.waitForCondition(...)`, so it tolerates a value the client has not rendered yet.

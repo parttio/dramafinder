@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.element.MultiSelectComboBoxElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -111,14 +112,14 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Invisible label");
+        MultiSelectComboBoxElement comboBox = find(page, MultiSelectComboBoxElement.class).withAccessibleName("Invisible label").single();
         comboBox.assertVisible();
         comboBox.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Labelled by");
+        MultiSelectComboBoxElement comboBox = find(page, MultiSelectComboBoxElement.class).withAccessibleName("Labelled by").single();
         comboBox.assertVisible();
         comboBox.assertAriaLabel(null);
     }
@@ -138,7 +139,7 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
         MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
         comboBox.assertVisible();
         comboBox.assertLabel("Fruits");
-        MultiSelectComboBoxElement ariaLabel = MultiSelectComboBoxElement.getByLabel(page, "Invisible label");
+        MultiSelectComboBoxElement ariaLabel = find(page, MultiSelectComboBoxElement.class).withAccessibleName("Invisible label").single();
         ariaLabel.assertVisible();
         ariaLabel.assertLabel(null);
     }

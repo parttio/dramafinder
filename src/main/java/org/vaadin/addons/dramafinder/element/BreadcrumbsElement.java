@@ -266,7 +266,11 @@ public class BreadcrumbsElement extends VaadinElement
      * @param page  the Playwright page
      * @param label the full accessible name
      * @return the matching {@code BreadcrumbsElement}
+     * @deprecated A {@code BreadcrumbsElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, BreadcrumbsElement.class).withAccessibleName(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static BreadcrumbsElement getByLabel(Page page, String label) {
         return new BreadcrumbsElement(
                 page.getByRole(AriaRole.NAVIGATION, new Page.GetByRoleOptions().setName(label).setExact(true))
@@ -283,7 +287,11 @@ public class BreadcrumbsElement extends VaadinElement
      * @param page  the Playwright page
      * @param text  part of the accessible name
      * @return the matching {@code BreadcrumbsElement}
+     * @deprecated A {@code BreadcrumbsElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, BreadcrumbsElement.class).withAccessibleNameContaining(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static BreadcrumbsElement getByLabelContaining(Page page, String text) {
         return new BreadcrumbsElement(
                 page.getByRole(AriaRole.NAVIGATION, new Page.GetByRoleOptions().setName(text))

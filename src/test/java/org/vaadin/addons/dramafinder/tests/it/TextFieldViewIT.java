@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -199,14 +200,14 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Invisible label");
+        TextFieldElement textfield = find(page, TextFieldElement.class).withAccessibleName("Invisible label").single();
         textfield.assertVisible();
         textfield.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Labelled by");
+        TextFieldElement textfield = find(page, TextFieldElement.class).withAccessibleName("Labelled by").single();
         textfield.assertVisible();
         textfield.assertAriaLabel(null);
     }
@@ -240,7 +241,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
         TextFieldElement textfieldWithLabel = TextFieldElement.getByLabel(page, "Textfield");
         textfieldWithLabel.assertVisible();
         textfieldWithLabel.assertLabel("Textfield");
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Invisible label");
+        TextFieldElement textfield = find(page, TextFieldElement.class).withAccessibleName("Invisible label").single();
         textfield.assertVisible();
         textfield.assertLabel(null);
     }

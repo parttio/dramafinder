@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.PasswordFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PasswordFieldGetByLabelIT extends SpringPlaywrightIT {
@@ -17,14 +18,16 @@ public class PasswordFieldGetByLabelIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void getByLabel_page_placeholder() {
-        PasswordFieldElement field = PasswordFieldElement.getByLabel(page, "My Placeholder");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_placeholderIsNotALabel() {
+        // a placeholder is not a label: withPlaceholder is the replacement
+        assertThat(PasswordFieldElement.getByLabel(page, "My Placeholder").getLocator()).hasCount(0);
+        assertThat(find(page, PasswordFieldElement.class).withPlaceholder("My Placeholder").getLocator()).isVisible();
     }
 
     @Test
-    public void getByLabel_page_ariaLabel() {
-        PasswordFieldElement field = PasswordFieldElement.getByLabel(page, "My AriaLabel");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_ariaLabelIsNotALabel() {
+        // an aria-label is not a label: withAccessibleName is the replacement
+        assertThat(PasswordFieldElement.getByLabel(page, "My AriaLabel").getLocator()).hasCount(0);
+        assertThat(find(page, PasswordFieldElement.class).withAccessibleName("My AriaLabel").getLocator()).isVisible();
     }
 }

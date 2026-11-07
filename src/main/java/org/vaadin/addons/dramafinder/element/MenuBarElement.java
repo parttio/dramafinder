@@ -33,7 +33,7 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
 
     /** Get a menu item by visible label. */
     public MenuItemElement getMenuItemElement(String name) {
-        return MenuItemElement.getByLabel(getLocator(), name);
+        return MenuItemElement.byName(getLocator(), name);
     }
 
     /**
@@ -58,7 +58,11 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * @param page  the Playwright page
      * @param label the full accessible name
      * @return the matching {@code MenuBarElement}
+     * @deprecated A {@code MenuBarElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, MenuBarElement.class).withAccessibleName(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static MenuBarElement getByLabel(Page page, String label) {
         return new MenuBarElement(
                 page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName(label).setExact(true))
@@ -76,7 +80,11 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * @param page  the Playwright page
      * @param text  part of the accessible name
      * @return the matching {@code MenuBarElement}
+     * @deprecated A {@code MenuBarElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, MenuBarElement.class).withAccessibleNameContaining(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static MenuBarElement getByLabelContaining(Page page, String text) {
         return new MenuBarElement(
                 page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName(text))
