@@ -39,6 +39,8 @@ class RadioButtonElement extends VaadinElement
      * error rather than resolving to the first one in the DOM.
      */
     static RadioButtonElement getByLabel(Locator locator, String label) {
+        // Not ItemLocator.byExactName: that returns the inner role=radio input,
+        // and this wrapper needs the vaadin-radio-button host around it.
         return new RadioButtonElement(locator.locator(FIELD_TAG_NAME).filter(new Locator.FilterOptions()
                 .setHas(locator.page().getByRole(AriaRole.RADIO,
                         new Page.GetByRoleOptions().setName(label).setExact(true)))));

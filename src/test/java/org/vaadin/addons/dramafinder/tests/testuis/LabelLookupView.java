@@ -18,6 +18,7 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.sidenav.SideNav;
+import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.component.slider.IntegerSlider;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -76,6 +77,7 @@ public class LabelLookupView extends Main {
             return group;
         });
         COMPONENTS.put("SideNavigation", SideNav::new);
+        COMPONENTS.put("SideNavigationItem", () -> new SideNavItem(""));
     }
 
     public LabelLookupView() {
@@ -84,7 +86,7 @@ public class LabelLookupView extends Main {
             call(labelled, "setLabel", "label " + name);
             labelled.setId(name + "-label");
 
-            add(labelled);
+            place(labelled);
             // vaadin-custom-field drops an aria-label, so it has no aria-named instance
             if (!(labelled instanceof CustomField<?>)) {
                 Component named = factory.get();
@@ -92,16 +94,27 @@ public class LabelLookupView extends Main {
                     named.getElement().setAttribute("aria-label", "aria " + name);
                 }
                 named.setId(name + "-aria");
-                add(named);
+                place(named);
             }
 
             Component placeholder = factory.get();
             String text = "placeholder " + name;
             if (call(placeholder, "setPlaceholder", text) || call(placeholder, "setDatePlaceholder", text)) {
                 placeholder.setId(name + "-placeholder");
-                add(placeholder);
+                place(placeholder);
             }
         });
+    }
+
+    /** Adds the component, inside a side nav when it is a side-nav item. */
+    private void place(Component component) {
+        if (component instanceof SideNavItem item) {
+            SideNav nav = new SideNav();
+            nav.addItem(item);
+            add(nav);
+        } else {
+            add(component);
+        }
     }
 
     private static boolean call(Component component, String setter, String value) {

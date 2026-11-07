@@ -93,9 +93,8 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
      * Get the {@code SideNavigationElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
      * The label is the text of the component's own {@code label} slot, matched in
-     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
-     * label: use {@code find(page, SideNavigationElement.class).withAccessibleName(..)} or
-     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(page, SideNavigationElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
      * with that label fail with a strict-mode error. Same as
      * {@code find(page, SideNavigationElement.class).withLabel(label)}; use
      * {@link #getByLabelContaining(Page, String)} to match part of the label.
@@ -112,7 +111,7 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
      * Get the {@code SideNavigationElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
      * The label is matched case-insensitively as a substring; an {@code aria-label}
-     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * is not a label. No {@code .first()} is applied: several
      * matching components fail with a strict-mode error. Same as
      * {@code find(page, SideNavigationElement.class).withLabelContaining(text)}.
      *
@@ -128,9 +127,8 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
      * Get the {@code SideNavigationElement} whose visible label is exactly {@code label}, scoped to the given locator.
      * <p>
      * The label is the text of the component's own {@code label} slot, matched in
-     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
-     * label: use {@code find(locator, SideNavigationElement.class).withAccessibleName(..)} or
-     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(locator, SideNavigationElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
      * with that label fail with a strict-mode error. Same as
      * {@code find(locator, SideNavigationElement.class).withLabel(label)}; use
      * {@link #getByLabelContaining(Locator, String)} to match part of the label.
@@ -147,7 +145,7 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
      * Get the {@code SideNavigationElement} whose visible label contains {@code text}, scoped to the given locator.
      * <p>
      * The label is matched case-insensitively as a substring; an {@code aria-label}
-     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * is not a label. No {@code .first()} is applied: several
      * matching components fail with a strict-mode error. Same as
      * {@code find(locator, SideNavigationElement.class).withLabelContaining(text)}.
      *

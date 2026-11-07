@@ -22,7 +22,9 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
      * (case-sensitive, whitespace-normalized).
      * <p>
      * Unlike {@code withLabel} this also finds a component named only by
-     * {@code aria-label}; a field's placeholder is not its name.
+     * {@code aria-label}. A field's placeholder is not its name, with one
+     * exception: a {@code vaadin-select} with no label announces its
+     * placeholder as its name, so it matches it here.
      *
      * @param name the full accessible name
      * @return a new, narrowed query
