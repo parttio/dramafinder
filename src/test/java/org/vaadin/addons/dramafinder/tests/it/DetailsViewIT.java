@@ -73,7 +73,7 @@ public class DetailsViewIT extends SpringPlaywrightIT implements HasTestView {
 
     @Test
     public void testButtonInSummary() {
-        DetailsElement details = DetailsElement.getBySummaryText(page, "Summary Component");
+        DetailsElement details = DetailsElement.getBySummaryText(page, "Summary Component test");
         ButtonElement buttonElement = ButtonElement.getByText(details.getSummaryLocator(), "test");
         buttonElement.isVisible();
         details.assertClosed();

@@ -393,7 +393,9 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `AccessibleNameFilters`). It reads the host or the field's own
   `slot="input|textarea|value"` child — never a nested component, so a dialog
   is not matched by a field it holds. `ButtonQuery` and `TextQuery` fall back to
-  the component's own text, as name-from-content roles do.
+  the component's own text, as name-from-content roles do — never Playwright's
+  role name, which grows by the tooltip text while a slotted tooltip is open
+  (`ButtonElement.getByText` relies on this).
 - Text filters read the component's **own** text (pitfall 11): light DOM only,
   via XPath, with named-slot children left out — never Playwright `hasText`.
 - A new element gets `@PlaywrightElement` and `implements Findable<...>` with the

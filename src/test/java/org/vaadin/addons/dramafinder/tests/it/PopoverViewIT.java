@@ -35,10 +35,10 @@ public class PopoverViewIT extends SpringPlaywrightIT implements HasTestView {
         ButtonElement openComponentPopover = ButtonElement.getByText(page, "Open component Popover");
         openComponentPopover.click();
 
-        PopoverElement popoverElement = PopoverElement.getByLabel(page, "Component Popover");
+        PopoverElement popoverElement = PopoverElement.getByLabel(page, "Stay component Popover");
         popoverElement.assertOpen();
 
-        ButtonElement closePopover = ButtonElement.getByText(popoverElement.getContentLocator(), "Close");
+        ButtonElement closePopover = ButtonElement.getByText(popoverElement.getContentLocator(), "Close component Popover");
         closePopover.click();
         popoverElement.assertClosed();
     }
@@ -54,12 +54,12 @@ public class PopoverViewIT extends SpringPlaywrightIT implements HasTestView {
         ButtonElement openComponentPopover = ButtonElement.getByText(page, "Open component Popover");
         openComponentPopover.click();
 
-        PopoverElement componentPopover = PopoverElement.getByLabel(page, "Component Popover");
+        PopoverElement componentPopover = PopoverElement.getByLabel(page, "Stay component Popover");
         componentPopover.assertOpen();
         assertThat(popoverElement.getContentLocator()).hasText("This is a popover");
         assertThat(componentPopover.getContentLocator()).hasText("This is a popoverClose component Popover");
 
-        ButtonElement closePopover = ButtonElement.getByText(componentPopover.getContentLocator(), "Close");
+        ButtonElement closePopover = ButtonElement.getByText(componentPopover.getContentLocator(), "Close component Popover");
         closePopover.click();
         componentPopover.assertClosed();
     }
@@ -70,7 +70,7 @@ public class PopoverViewIT extends SpringPlaywrightIT implements HasTestView {
         ButtonElement openComponentPopover = ButtonElement.getByText(page, "Open component Popover");
         openComponentPopover.click();
 
-        PopoverElement popoverElement = PopoverElement.getByLabel(page, "Component Popover");
+        PopoverElement popoverElement = PopoverElement.getByLabel(page, "Stay component Popover");
         popoverElement.assertCssClass("component-popover");
     }
 
@@ -79,7 +79,7 @@ public class PopoverViewIT extends SpringPlaywrightIT implements HasTestView {
         ButtonElement openComponentPopover = ButtonElement.getByText(page, "Open component Popover");
         openComponentPopover.click();
 
-        PopoverElement popoverElement = PopoverElement.getByLabel(page, "Component Popover");
+        PopoverElement popoverElement = PopoverElement.getByLabel(page, "Stay component Popover");
         popoverElement.assertTheme("arrow");
     }
 }

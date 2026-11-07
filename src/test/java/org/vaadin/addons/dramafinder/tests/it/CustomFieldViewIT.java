@@ -54,8 +54,14 @@ public class CustomFieldViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void labelMatchesAsCaseInsensitiveSubstring() {
-        CustomFieldElement.getByLabel(page, "office").assertLabel("Office phone");
+    public void labelMatchesInFull() {
+        CustomFieldElement.getByLabel(page, "Office phone").assertLabel("Office phone");
+        assertThat(CustomFieldElement.getByLabel(page, "Office").getLocator()).hasCount(0);
+    }
+
+    @Test
+    public void labelContainingMatchesAsCaseInsensitiveSubstring() {
+        CustomFieldElement.getByLabelContaining(page, "office").assertLabel("Office phone");
     }
 
     @Test

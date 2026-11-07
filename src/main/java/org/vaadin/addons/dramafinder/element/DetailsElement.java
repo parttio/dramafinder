@@ -2,13 +2,13 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
-import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -70,8 +70,9 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
     /**
      * Get a details component by its summary text.
      * <p>
-     * The summary must match in full, case-sensitively; two details with that
-     * summary fail with a strict-mode error.
+     * The summary's accessible name — its text, including the text of any
+     * component in it — must match in full, case-sensitively; two details with
+     * that summary fail with a strict-mode error.
      *
      * @param page    the Playwright page
      * @param summary the full summary text
@@ -81,7 +82,8 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
         return new DetailsElement(
                 page.locator(FIELD_TAG_NAME).filter(
                         new Locator.FilterOptions().setHas(
-                                page.locator("vaadin-details-summary").and(ItemLocator.exactText(page, summary))
+                                page.locator(":scope > vaadin-details-summary").and(page.getByRole(AriaRole.BUTTON,
+                                        new Page.GetByRoleOptions().setName(summary).setExact(true)))
                         )
                 )
         );

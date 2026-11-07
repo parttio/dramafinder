@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.AccordionElement;
+import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CheckboxGroupElement;
 import org.vaadin.addons.dramafinder.element.ComboBoxElement;
 import org.vaadin.addons.dramafinder.element.ContextMenuElement;
@@ -18,6 +19,7 @@ import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.element.SideNavigationElement;
 import org.vaadin.addons.dramafinder.element.SideNavigationItemElement;
 import org.vaadin.addons.dramafinder.element.TabsElement;
+import org.vaadin.addons.dramafinder.element.TextFieldElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,10 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Regression coverage for issue #149: every container on the view holds an item
- * whose label is a prefix of an earlier item's label, so a case-insensitive
- * substring lookup followed by {@code .first()} silently resolves to the wrong
- * item — and the assertion keyed on the same lookup then passes against it.
+ * Regression coverage for issues #149 and #201: every container on the view
+ * holds an item whose label is a prefix of an earlier item's label, and the view
+ * has a "Nickname" field before a "Name" field, so a case-insensitive substring
+ * lookup followed by {@code .first()} would silently resolve to the wrong
+ * component — and the assertion keyed on the same lookup then pass against it.
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AmbiguousLabelIT extends SpringPlaywrightIT implements HasTestView {
@@ -154,5 +157,39 @@ public class AmbiguousLabelIT extends SpringPlaywrightIT implements HasTestView 
 
         accordion.assertPanelOpened("Panel 1");
         accordion.assertPanelClosed("Panel 10");
+    }
+
+    // ── Page-level label lookups (#201) ────────────────────────────────
+
+    @Test
+    public void getByLabelMatchesTheWholeLabel() {
+        // "Nickname" comes first in the DOM and contains "name"
+        TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+        assertThat(name.getLocator()).hasAttribute("id", "name-field");
+    }
+
+    @Test
+    public void getByLabelIsCaseSensitive() {
+        assertThat(TextFieldElement.getByLabel(page, "name").getLocator()).hasCount(0);
+    }
+
+    @Test
+    public void getByLabelContainingMatchesPartOfTheLabel() {
+        TextFieldElement nickname = TextFieldElement.getByLabelContaining(page, "nick");
+        assertThat(nickname.getLocator()).hasAttribute("id", "nickname-field");
+    }
+
+    @Test
+    public void getByLabelContainingFailsLoudlyWhenAmbiguous() {
+        TextFieldElement ambiguous = TextFieldElement.getByLabelContaining(page, "name");
+        PlaywrightException e = assertThrows(PlaywrightException.class, () -> ambiguous.setValue("x"));
+        assertTrue(e.getMessage().contains("strict mode violation"), e.getMessage());
+    }
+
+    @Test
+    public void duplicateButtonLabelsFailLoudly() {
+        ButtonElement duplicate = ButtonElement.getByText(page, "Duplicate");
+        PlaywrightException e = assertThrows(PlaywrightException.class, duplicate::click);
+        assertTrue(e.getMessage().contains("strict mode violation"), e.getMessage());
     }
 }

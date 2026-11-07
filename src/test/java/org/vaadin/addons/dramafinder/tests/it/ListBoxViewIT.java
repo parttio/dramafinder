@@ -93,7 +93,7 @@ public class ListBoxViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testMultipleValueData() {
-        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple data");
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple databean");
         listBox.assertVisible();
         listBox.assertSelectedValue();
         // Item lookups match the item's full label exactly, so the rendered
