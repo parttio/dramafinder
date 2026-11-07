@@ -117,5 +117,6 @@ before editing the test. Turn it off with
 ## More
 
 - Full API reference: `META-INF/dramafinder/api-reference.md` (in this jar)
+- Upgrading tests written for 1.x: `META-INF/dramafinder/MIGRATION-2.0.md` (in this jar)
 - Source and issues: https://github.com/parttio/dramafinder
 - Claude Code skills: `/plugin marketplace add parttio/dramafinder`

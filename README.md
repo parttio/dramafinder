@@ -19,7 +19,16 @@ JAR=$(ls ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar | ta
 unzip -p "$JAR" META-INF/dramafinder/START-HERE.md          # short guide, ~4 KB
 unzip -p "$JAR" META-INF/dramafinder/api-reference.md       # every signature
 unzip -p "$JAR" META-INF/dramafinder/agent-api-reference.md # screenshot helpers
+unzip -p "$JAR" META-INF/dramafinder/MIGRATION-2.0.md       # upgrading from 1.x
 ```
+
+### Upgrading from 1.x
+
+DramaFinder 2.0 matches label lookups exactly by default: the whole label,
+case-sensitively, with no first-match fallback. Tests compile unchanged, but a
+lookup that passed part of a label now fails at runtime. The
+[migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) lists
+every changed method and how to rewrite each lookup.
 
 ## Claude Code skills
 

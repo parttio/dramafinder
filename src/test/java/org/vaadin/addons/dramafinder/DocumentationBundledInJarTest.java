@@ -56,6 +56,16 @@ class DocumentationBundledInJarTest {
                 "START-HERE.md no longer points at the full reference");
     }
 
+    /** Hand-written, lives in {@code src/main/resources}. */
+    @Test
+    void migrationGuideIsBundled() throws IOException {
+        String content = bundled("MIGRATION-2.0.md");
+        assertTrue(content.startsWith("# Migrating to DramaFinder 2.0"),
+                "MIGRATION-2.0.md does not look like the migration guide");
+        assertTrue(content.contains("getByLabelContaining"),
+                "MIGRATION-2.0.md no longer names the partial-match replacement");
+    }
+
     private static String bundled(String name) throws IOException {
         String path = "/META-INF/dramafinder/" + name;
         try (InputStream in = DocumentationBundledInJarTest.class.getResourceAsStream(path)) {

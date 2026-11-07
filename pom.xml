@@ -194,6 +194,9 @@
                             <Dramafinder-Agent-Api-Reference>
                                 META-INF/dramafinder/agent-api-reference.md
                             </Dramafinder-Agent-Api-Reference>
+                            <Dramafinder-Migration-2-0>
+                                META-INF/dramafinder/MIGRATION-2.0.md
+                            </Dramafinder-Migration-2-0>
                         </manifestEntries>
                     </archive>
                 </configuration>
