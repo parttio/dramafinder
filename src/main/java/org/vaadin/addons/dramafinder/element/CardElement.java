@@ -6,6 +6,7 @@ import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -31,33 +32,39 @@ public class CardElement extends VaadinElement implements HasThemeElement, HasSt
     }
 
     /**
-     * Get a card by title
+     * Get a card by its title.
+     * <p>
+     * The title must match in full, case-sensitively; two cards with that title
+     * fail with a strict-mode error.
      *
      * @param page  the Playwright page
-     * @param title the card's accessible name or title text
+     * @param title the card's full title text
      * @return the matching {@code CardElement}
      */
     public static CardElement getByTitle(Page page, String title) {
         return new CardElement(
                 page.locator(FIELD_TAG_NAME).filter(
                         new Locator.FilterOptions().setHas(
-                                page.locator("[slot='title']", new Page.LocatorOptions().setHasText(title))
+                                page.locator("[slot='title']").and(ItemLocator.exactText(page, title))
                         ))
         );
     }
 
     /**
-     * Get a card by title
+     * Get a card by its title.
+     * <p>
+     * The title must match in full, case-sensitively; two cards with that title
+     * fail with a strict-mode error.
      *
      * @param locator the scope to search within
-     * @param title   the card's accessible name or title text
+     * @param title   the card's full title text
      * @return the matching {@code CardElement}
      */
     public static CardElement getByTitle(Locator locator, String title) {
         return new CardElement(
                 locator.locator(FIELD_TAG_NAME).filter(
                         new Locator.FilterOptions().setHas(
-                                locator.page().locator("[slot='title']", new Page.LocatorOptions().setHasText(title))
+                                locator.page().locator("[slot='title']").and(ItemLocator.exactText(locator.page(), title))
                         ))
         );
     }

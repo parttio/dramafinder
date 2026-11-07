@@ -44,13 +44,15 @@ public class SwitchElement extends VaadinElement
     }
 
     /**
-     * Get a {@code SwitchElement} by its accessible label.
+     * Get the {@code SwitchElement} by its accessible name (ARIA role {@code switch}),
+     * searching the entire page.
      * <p>
-     * The switch is located through its inner input, which uses the
-     * {@code switch} ARIA role.
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the switch
+     * @param label the full accessible name
      * @return the matching {@code SwitchElement}
      */
     public static SwitchElement getByLabel(Page page, String label) {
@@ -58,7 +60,27 @@ public class SwitchElement extends VaadinElement
                 page.locator(FIELD_TAG_NAME)
                         .filter(new Locator.FilterOptions()
                                 .setHas(page.getByRole(AriaRole.SWITCH,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                                        new Page.GetByRoleOptions().setName(label).setExact(true)))
+                        ));
+    }
+
+    /**
+     * Get the {@code SwitchElement} whose accessible name (ARIA role {@code switch}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code SwitchElement}
+     */
+    public static SwitchElement getByLabelContaining(Page page, String text) {
+        return new SwitchElement(
+                page.locator(FIELD_TAG_NAME)
+                        .filter(new Locator.FilterOptions()
+                                .setHas(page.getByRole(AriaRole.SWITCH,
+                                        new Page.GetByRoleOptions().setName(text)))
+                        ));
     }
 }

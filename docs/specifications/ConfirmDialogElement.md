@@ -24,9 +24,9 @@ dialog.assertClosed();
 ## Lookup
 
 The host has the `alertdialog` role and takes the header as its accessible name.
-`getByHeaderText(page, header)` matches that name case-insensitively as a
-substring and is not narrowed with `first()`, so two open dialogs that both match
-raise a strict-mode error. `get(page)` returns the open confirm dialog when there
+`getByHeaderText(page, header)` matches that name in full, case-sensitively, and
+is not narrowed with `first()`, so two open dialogs with that header raise a
+strict-mode error. `get(page)` returns the open confirm dialog when there
 is only one.
 
 ## Message vs header and buttons

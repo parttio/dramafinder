@@ -23,7 +23,7 @@ phone.getField(TextFieldElement.class, "Number").setValue("40 1234567");
 - `getField(type, label)` calls the type's own `getByLabel(Locator, String)`
   factory scoped to the custom field. Wrapped fields rarely have a visible label;
   give them an `aria-label` (Flow: `setAriaLabel`) and pass that. Matching follows
-  the factory: case-insensitive, by substring. A type without that factory
+  the factory: the whole name, case-sensitively. A type without that factory
   (e.g. `ButtonElement`) throws `IllegalArgumentException`.
 - `getField(type, index)` takes the n-th direct child of that type, for fields
   with no accessible name. The type must carry `@PlaywrightElement`.

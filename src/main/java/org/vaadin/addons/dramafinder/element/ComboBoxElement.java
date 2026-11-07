@@ -220,6 +220,10 @@ public class ComboBoxElement extends VaadinElement
 
     /**
      * Get the {@code ComboBoxElement} by its label.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two fields with the same name fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
      * @param label the accessible label of the field
@@ -231,7 +235,28 @@ public class ComboBoxElement extends VaadinElement
     }
 
     /**
+     * Get the {@code ComboBoxElement} whose accessible name contains {@code text},
+     * searching the entire page.
+     * <p>
+     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
+     * substring. No {@code .first()} is applied: several matching fields fail with a
+     * strict-mode error.
+     *
+     * @param page the Playwright page
+     * @param text part of the accessible name of the field
+     * @return the matching {@code ComboBoxElement}
+     */
+    public static ComboBoxElement getByLabelContaining(Page page, String text) {
+        return new ComboBoxElement(
+                AccessibleNameLocator.findContaining(page, FIELD_TAG_NAME, AriaRole.COMBOBOX, text));
+    }
+
+    /**
      * Get the {@code ComboBoxElement} by its label within a given scope.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two fields with the same name fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
      *
      * @param locator the locator to search within
      * @param label   the accessible label of the field
@@ -240,6 +265,23 @@ public class ComboBoxElement extends VaadinElement
     public static ComboBoxElement getByLabel(Locator locator, String label) {
         return new ComboBoxElement(
                 AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
+    }
+
+    /**
+     * Get the {@code ComboBoxElement} whose accessible name contains {@code text},
+     * scoped to the given locator.
+     * <p>
+     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
+     * substring. No {@code .first()} is applied: several matching fields fail with a
+     * strict-mode error.
+     *
+     * @param locator the locator defining the search scope
+     * @param text    part of the accessible name of the field
+     * @return the matching {@code ComboBoxElement}
+     */
+    public static ComboBoxElement getByLabelContaining(Locator locator, String text) {
+        return new ComboBoxElement(
+                AccessibleNameLocator.findContaining(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, text));
     }
 
     /**

@@ -45,10 +45,39 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
         return new MenuElement(getLocator().page());
     }
 
-    /** Get a menu bar by its accessible label. */
+    /**
+     * Get the {@code MenuBarElement} by its accessible name (ARIA role {@code menubar}),
+     * searching the entire page.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     *
+     * @param page  the Playwright page
+     * @param label the full accessible name
+     * @return the matching {@code MenuBarElement}
+     */
     public static MenuBarElement getByLabel(Page page, String label) {
         return new MenuBarElement(
-                page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName(label))
+                page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName(label).setExact(true))
+                        .and(page.locator(FIELD_TAG_NAME))
+        );
+    }
+
+    /**
+     * Get the {@code MenuBarElement} whose accessible name (ARIA role {@code menubar}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code MenuBarElement}
+     */
+    public static MenuBarElement getByLabelContaining(Page page, String text) {
+        return new MenuBarElement(
+                page.getByRole(AriaRole.MENUBAR, new Page.GetByRoleOptions().setName(text))
                         .and(page.locator(FIELD_TAG_NAME))
         );
     }

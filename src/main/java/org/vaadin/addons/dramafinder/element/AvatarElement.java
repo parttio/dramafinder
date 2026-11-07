@@ -60,6 +60,9 @@ public class AvatarElement extends VaadinElement
 
     /**
      * Get an {@code AvatarElement} by its name attribute.
+     * <p>
+     * The name must match in full; two avatars with that name fail with a
+     * strict-mode error.
      *
      * @param page the Playwright page
      * @param name the avatar's name attribute value
@@ -67,11 +70,14 @@ public class AvatarElement extends VaadinElement
      */
     public static AvatarElement getByName(Page page, String name) {
         return new AvatarElement(
-                page.locator(FIELD_TAG_NAME + "[name='" + name + "']").first());
+                page.locator(FIELD_TAG_NAME + "[name='" + name + "']"));
     }
 
     /**
      * Get an {@code AvatarElement} by its name attribute within a scope.
+     * <p>
+     * The name must match in full; two avatars with that name fail with a
+     * strict-mode error.
      *
      * @param locator the scope containing the avatar
      * @param name    the avatar's name attribute value
@@ -79,7 +85,7 @@ public class AvatarElement extends VaadinElement
      */
     public static AvatarElement getByName(Locator locator, String name) {
         return new AvatarElement(
-                locator.locator(FIELD_TAG_NAME + "[name='" + name + "']").first());
+                locator.locator(FIELD_TAG_NAME + "[name='" + name + "']"));
     }
 
     // ── Properties ─────────────────────────────────────────────────────

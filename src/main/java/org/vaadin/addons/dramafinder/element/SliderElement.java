@@ -236,6 +236,10 @@ public class SliderElement extends VaadinElement
      * Get the {@code SliderElement} by its label.
      *
      * <p>Matches the internal range input by ARIA role {@code slider} and accessible name.</p>
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two fields with the same name fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
      * @param label the accessible label of the slider
@@ -247,9 +251,30 @@ public class SliderElement extends VaadinElement
     }
 
     /**
+     * Get the {@code SliderElement} whose accessible name contains {@code text},
+     * searching the entire page.
+     * <p>
+     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
+     * substring. No {@code .first()} is applied: several matching fields fail with a
+     * strict-mode error.
+     *
+     * @param page the Playwright page
+     * @param text part of the accessible name of the field
+     * @return the matching {@code SliderElement}
+     */
+    public static SliderElement getByLabelContaining(Page page, String text) {
+        return new SliderElement(
+                AccessibleNameLocator.findContaining(page, FIELD_TAG_NAME, AriaRole.SLIDER, text));
+    }
+
+    /**
      * Get the {@code SliderElement} by its label within a given scope.
      *
      * <p>Searches under the provided locator and matches by accessible label.</p>
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two fields with the same name fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
      *
      * @param locator the locator to search within
      * @param label   the accessible label of the slider
@@ -258,5 +283,22 @@ public class SliderElement extends VaadinElement
     public static SliderElement getByLabel(Locator locator, String label) {
         return new SliderElement(
                 AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.SLIDER, label));
+    }
+
+    /**
+     * Get the {@code SliderElement} whose accessible name contains {@code text},
+     * scoped to the given locator.
+     * <p>
+     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
+     * substring. No {@code .first()} is applied: several matching fields fail with a
+     * strict-mode error.
+     *
+     * @param locator the locator defining the search scope
+     * @param text    part of the accessible name of the field
+     * @return the matching {@code SliderElement}
+     */
+    public static SliderElement getByLabelContaining(Locator locator, String text) {
+        return new SliderElement(
+                AccessibleNameLocator.findContaining(locator, FIELD_TAG_NAME, AriaRole.SLIDER, text));
     }
 }

@@ -253,16 +253,37 @@ public class BreadcrumbsElement extends VaadinElement
     }
 
     /**
-     * Get the {@code <vaadin-breadcrumbs>} by its accessible name, using the
-     * ARIA role {@code navigation}.
+     * Get the {@code BreadcrumbsElement} by its accessible name (ARIA role {@code navigation}),
+     * searching the entire page.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the breadcrumbs
+     * @param label the full accessible name
      * @return the matching {@code BreadcrumbsElement}
      */
     public static BreadcrumbsElement getByLabel(Page page, String label) {
         return new BreadcrumbsElement(
-                page.getByRole(AriaRole.NAVIGATION, new Page.GetByRoleOptions().setName(label))
-                        .and(page.locator(FIELD_TAG_NAME)).first());
+                page.getByRole(AriaRole.NAVIGATION, new Page.GetByRoleOptions().setName(label).setExact(true))
+                        .and(page.locator(FIELD_TAG_NAME)));
+    }
+
+    /**
+     * Get the {@code BreadcrumbsElement} whose accessible name (ARIA role {@code navigation}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code BreadcrumbsElement}
+     */
+    public static BreadcrumbsElement getByLabelContaining(Page page, String text) {
+        return new BreadcrumbsElement(
+                page.getByRole(AriaRole.NAVIGATION, new Page.GetByRoleOptions().setName(text))
+                        .and(page.locator(FIELD_TAG_NAME)));
     }
 }

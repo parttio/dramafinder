@@ -87,13 +87,15 @@ public class CheckboxElement extends VaadinElement
     }
 
     /**
-     * Get a {@code CheckboxElement} by its accessible label.
+     * Get the {@code CheckboxElement} by its accessible name (ARIA role {@code checkbox}),
+     * searching the entire page.
      * <p>
-     * Page-level lookup: the label is matched case-insensitively as a substring
-     * and the first match wins.
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the checkbox
+     * @param label the full accessible name
      * @return the matching {@code CheckboxElement}
      */
     public static CheckboxElement getByLabel(Page page, String label) {
@@ -101,8 +103,28 @@ public class CheckboxElement extends VaadinElement
                 page.locator(FIELD_TAG_NAME)
                         .filter(new Locator.FilterOptions()
                                 .setHas(page.getByRole(AriaRole.CHECKBOX,
-                                        new Page.GetByRoleOptions().setName(label)))
-                        ).first());
+                                        new Page.GetByRoleOptions().setName(label).setExact(true)))
+                        ));
+    }
+
+    /**
+     * Get the {@code CheckboxElement} whose accessible name (ARIA role {@code checkbox}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code CheckboxElement}
+     */
+    public static CheckboxElement getByLabelContaining(Page page, String text) {
+        return new CheckboxElement(
+                page.locator(FIELD_TAG_NAME)
+                        .filter(new Locator.FilterOptions()
+                                .setHas(page.getByRole(AriaRole.CHECKBOX,
+                                        new Page.GetByRoleOptions().setName(text)))
+                        ));
     }
 
     /**

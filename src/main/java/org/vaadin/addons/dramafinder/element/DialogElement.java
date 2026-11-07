@@ -126,10 +126,19 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         return getLocator().locator("> [slot='footer']");
     }
 
-    /** Get a dialog by its header text (accessible name). */
-    public static DialogElement getByHeaderText(Page page, String summary) {
+    /**
+     * Get a dialog by its header text, which is its accessible name.
+     * <p>
+     * The header must match in full, case-sensitively; two open dialogs with that
+     * header fail with a strict-mode error.
+     *
+     * @param page   the Playwright page
+     * @param header the full header text
+     * @return the matching {@code DialogElement}
+     */
+    public static DialogElement getByHeaderText(Page page, String header) {
         return new DialogElement(
-                page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(summary))
+                page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(header).setExact(true))
                         .and(page.locator(FIELD_TAG_NAME))
         );
     }

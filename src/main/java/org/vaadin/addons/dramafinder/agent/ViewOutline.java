@@ -448,9 +448,8 @@ public final class ViewOutline {
                     return call;
                 }
                 if (matches > 0 && misdirected == null) {
-                    misdirected = call + (matches == 1 ? " finds another component first"
-                            : " matches " + matches + " components")
-                            + " (labels match as substrings)";
+                    misdirected = call + (matches == 1 ? " finds another component"
+                            : " matches " + matches + " components");
                 }
             }
         }

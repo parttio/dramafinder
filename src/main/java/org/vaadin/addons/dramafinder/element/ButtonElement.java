@@ -39,12 +39,29 @@ public class ButtonElement extends VaadinElement
 
     /**
      * Get a {@code ButtonElement} by its accessible name or visible text.
+     * <p>
+     * The name must match in full, case-sensitively, and two matching buttons fail
+     * with a strict-mode error. Use {@link #getByTextContaining(Page, String)} to
+     * match part of it.
      *
      * @param page the Playwright page
-     * @param text the button's accessible name or text content
+     * @param text the button's full accessible name or text content
      * @return the matching {@code ButtonElement}
      */
     public static ButtonElement getByText(Page page, String text) {
+        return getByText(page, new Page.GetByRoleOptions().setName(text).setExact(true));
+    }
+
+    /**
+     * Get a {@code ButtonElement} whose accessible name or visible text contains
+     * {@code text}, matched case-insensitively as a substring. Several matching
+     * buttons fail with a strict-mode error.
+     *
+     * @param page the Playwright page
+     * @param text part of the button's accessible name or text content
+     * @return the matching {@code ButtonElement}
+     */
+    public static ButtonElement getByTextContaining(Page page, String text) {
         return getByText(page, new Page.GetByRoleOptions().setName(text));
     }
 
@@ -66,12 +83,29 @@ public class ButtonElement extends VaadinElement
 
     /**
      * Get a {@code ButtonElement} by its accessible name or visible text within a scope.
+     * <p>
+     * The name must match in full, case-sensitively, and two matching buttons fail
+     * with a strict-mode error. Use {@link #getByTextContaining(Locator, String)} to
+     * match part of it.
      *
      * @param locator the scope containing the button (not the button itself)
-     * @param text    the button's accessible name or text content
+     * @param text    the button's full accessible name or text content
      * @return the matching {@code ButtonElement}
      */
     public static ButtonElement getByText(Locator locator, String text) {
+        return getByText(locator, new Locator.GetByRoleOptions().setName(text).setExact(true));
+    }
+
+    /**
+     * Get a {@code ButtonElement} within a scope whose accessible name or visible
+     * text contains {@code text}, matched case-insensitively as a substring.
+     * Several matching buttons fail with a strict-mode error.
+     *
+     * @param locator the scope containing the button (not the button itself)
+     * @param text    part of the button's accessible name or text content
+     * @return the matching {@code ButtonElement}
+     */
+    public static ButtonElement getByTextContaining(Locator locator, String text) {
         return getByText(locator, new Locator.GetByRoleOptions().setName(text));
     }
 
@@ -96,6 +130,17 @@ public class ButtonElement extends VaadinElement
      */
     public static ButtonElement getByLabel(Page page, String text) {
         return getByText(page, text);
+    }
+
+    /**
+     * Alias for {@link #getByTextContaining(Page, String)}.
+     *
+     * @param page the Playwright page
+     * @param text part of the button's accessible name or text content
+     * @return the matching {@code ButtonElement}
+     */
+    public static ButtonElement getByLabelContaining(Page page, String text) {
+        return getByTextContaining(page, text);
     }
 
 }

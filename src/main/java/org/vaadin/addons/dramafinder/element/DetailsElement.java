@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -66,12 +67,21 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
         return getLocator().locator("> div[aria-hidden='false']");
     }
 
-    /** Get a details component by its summary text. */
+    /**
+     * Get a details component by its summary text.
+     * <p>
+     * The summary must match in full, case-sensitively; two details with that
+     * summary fail with a strict-mode error.
+     *
+     * @param page    the Playwright page
+     * @param summary the full summary text
+     * @return the matching {@code DetailsElement}
+     */
     public static DetailsElement getBySummaryText(Page page, String summary) {
         return new DetailsElement(
                 page.locator(FIELD_TAG_NAME).filter(
                         new Locator.FilterOptions().setHas(
-                                page.locator("vaadin-details-summary", new Page.LocatorOptions().setHasText(summary))
+                                page.locator("vaadin-details-summary").and(ItemLocator.exactText(page, summary))
                         )
                 )
         );

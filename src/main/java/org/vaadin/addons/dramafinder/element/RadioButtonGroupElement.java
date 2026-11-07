@@ -55,14 +55,42 @@ public class RadioButtonGroupElement extends VaadinElement
     }
 
     /**
-     * Get the group by its accessible label.
+     * Get the {@code RadioButtonGroupElement} by its accessible name (ARIA role {@code radiogroup}),
+     * searching the entire page.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     *
+     * @param page  the Playwright page
+     * @param label the full accessible name
+     * @return the matching {@code RadioButtonGroupElement}
      */
     public static RadioButtonGroupElement getByLabel(Page page, String label) {
         return new RadioButtonGroupElement(
                 page.locator(FIELD_TAG_NAME).and(
                         page.getByRole(AriaRole.RADIOGROUP,
-                                new Page.GetByRoleOptions().setName(label)
-                        )).first());
+                                new Page.GetByRoleOptions().setName(label).setExact(true)
+                        )));
+    }
+
+    /**
+     * Get the {@code RadioButtonGroupElement} whose accessible name (ARIA role {@code radiogroup}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code RadioButtonGroupElement}
+     */
+    public static RadioButtonGroupElement getByLabelContaining(Page page, String text) {
+        return new RadioButtonGroupElement(
+                page.locator(FIELD_TAG_NAME).and(
+                        page.getByRole(AriaRole.RADIOGROUP,
+                                new Page.GetByRoleOptions().setName(text)
+                        )));
     }
 
     /**
