@@ -10,44 +10,29 @@
 
 ## Class Hierarchy
 
+Every public element wrapper extends `VaadinElement`, most of them directly. The
+exceptions share a base with a sibling:
+
 ```
 VaadinElement (abstract)
-    ├── AbstractNumberFieldElement
-    ├── AccordionElement
-    ├── AccordionPanelElement
-    ├── BigDecimalFieldElement
-    ├── BreadcrumbsElement
-    ├── BreadcrumbsItemElement
-    ├── ButtonElement
-    ├── CardElement
-    ├── CheckboxElement
-    ├── CheckboxGroupElement
-    ├── ComboBoxElement
-    ├── ContextMenuElement
-    ├── DatePickerElement
-    ├── DateTimePickerElement
-    ├── DetailsElement
-    ├── DialogElement
-    ├── ListBoxElement
-    ├── MenuBarElement
-    ├── MenuElement
-    ├── MenuItemElement
-    ├── NotificationElement
-    ├── PopoverElement
-    ├── ProgressBarElement
-    ├── RadioButtonElement
-    ├── RadioButtonGroupElement
-    ├── SelectElement
-    ├── SideNavigationElement
-    ├── SideNavigationItemElement
-    ├── SwitchElement
-    ├── TabElement
-    ├── TabsElement
-    ├── TabSheetElement
     ├── TextFieldElement
-    ├── TimePickerElement
-    └── UploadElement
+    │     ├── EmailFieldElement
+    │     ├── PasswordFieldElement
+    │     └── TextAreaElement
+    ├── AbstractNumberFieldElement
+    │     ├── IntegerFieldElement
+    │     └── NumberFieldElement
+    ├── AbstractLoginElement
+    │     ├── LoginFormElement
+    │     └── LoginOverlayElement
+    ├── GridElement
+    │     └── TreeGridElement
+    └── … every other wrapper
 ```
+
+The complete, generated list of wrappers, with the tag each one wraps and its
+factory methods, is the
+[Element index](../../skills/vaadin-playwright-test/api-reference.md#element-index).
 
 ## Implemented Interfaces
 
@@ -168,13 +153,14 @@ public class MyElement extends VaadinElement {
 
 ## Related Interfaces
 
-- `HasLocatorElement` - Base locator interface
-- `HasInputFieldElement` - Input field operations
-- `HasValidationPropertiesElement` - Validation support
-- `FocusableElement` - Focus operations
-- `HasEnabledElement` - Enabled/disabled state
-- `HasDisabledAttributeElement` - Enabled/disabled state read from the host's
-  `disabled` attribute, for hosts whose ARIA role Playwright does not treat as
-  disableable
-- `HasCheckedElement` - Boolean checked state of checkbox-like inputs
-- `HasThemeElement` - Theme variants
+Elements add behaviour by implementing shared mixin interfaces, such as
+`HasEnabledElement`, `HasValueElement` or `HasThemeElement`. The full, generated
+list with every default method is
+[Shared mixins](../../skills/vaadin-playwright-test/api-reference.md#shared-mixins).
+Two choices need care:
+
+- `HasEnabledElement` or `HasDisabledAttributeElement`: use the second when the
+  host's ARIA role is one Playwright does not treat as disableable (see pitfall 7
+  in `AGENTS.md`).
+- `HasLocatorElement` is the base of every mixin: it provides `getLocator()` and
+  `waitAfterAction()`.

@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class SliderViewIT extends SpringPlaywrightIT {
@@ -110,6 +111,10 @@ public class SliderViewIT extends SpringPlaywrightIT {
         slider.assertVisible();
         slider.assertDisabled();
         slider.assertValue(20);
+
+        // setValue refuses a disabled slider instead of writing a value no user could set
+        assertThrows(IllegalStateException.class, () -> slider.setValue(70));
+        slider.assertValue(20);
     }
 
     @Test
@@ -121,6 +126,10 @@ public class SliderViewIT extends SpringPlaywrightIT {
 
         // A read-only slider ignores the keyboard
         slider.increment();
+        slider.assertValue(30);
+
+        // setValue refuses a read-only slider instead of relying on the server to revert it
+        assertThrows(IllegalStateException.class, () -> slider.setValue(50));
         slider.assertValue(30);
     }
 
