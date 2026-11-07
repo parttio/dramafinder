@@ -65,6 +65,7 @@ public class TextFieldElement extends VaadinElement
      */
     public void setMinLength(int min) {
         getLocator().evaluate("(el, v) => el.minLength = v", min);
+        waitAfterAction();
     }
 
     /**
@@ -97,6 +98,7 @@ public class TextFieldElement extends VaadinElement
      */
     public void setMaxLength(int max) {
         getLocator().evaluate("(el, v) => el.maxLength = v", max);
+        waitAfterAction();
     }
 
     /**
@@ -128,6 +130,7 @@ public class TextFieldElement extends VaadinElement
      */
     public void setPattern(String pattern) {
         getInputLocator().evaluate("(el, p) => el.pattern = p", pattern);
+        waitAfterAction();
     }
 
     /**

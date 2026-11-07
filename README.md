@@ -24,11 +24,20 @@ unzip -p "$JAR" META-INF/dramafinder/MIGRATION-2.0.md       # upgrading from 1.x
 
 ### Upgrading from 1.x
 
-DramaFinder 2.0 matches label lookups exactly by default: the whole label,
-case-sensitively, with no first-match fallback. Tests compile unchanged, but a
-lookup that passed part of a label now fails at runtime. The
-[migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) lists
-every changed method and how to rewrite each lookup.
+DramaFinder 2.0 changes how components are found:
+
+- label lookups match exactly by default: the whole label, case-sensitively,
+  with no first-match fallback;
+- a label is the **visible** label: `getByLabel` no longer matches an
+  `aria-label` or a placeholder. Find those with the query builder,
+  `find(page, TextFieldElement.class).withAccessibleName("Search")` or
+  `.withPlaceholder("Street")`;
+- every element action waits for the Vaadin server round-trip it triggers.
+
+Most 1.x tests compile unchanged; lookups that relied on the old matching fail at
+runtime. The [migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md)
+lists every changed method, what no longer compiles, and how to rewrite each
+lookup.
 
 ### Spring Boot
 
@@ -113,7 +122,7 @@ Add the addon as a test dependency.
 <dependency>
     <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
-    <version>1.2.0</version>
+    <version>2.0.0</version>
     <scope>test</scope>
 </dependency>
 ```

@@ -84,6 +84,7 @@ public class CheckboxElement extends VaadinElement
      */
     public void setIndeterminate(boolean indeterminate) {
         getLocator().evaluate("(el, val) => el.indeterminate = val", indeterminate);
+        waitAfterAction();
     }
 
     /**

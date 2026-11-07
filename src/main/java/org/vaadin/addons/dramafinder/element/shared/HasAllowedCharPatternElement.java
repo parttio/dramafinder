@@ -25,6 +25,7 @@ public interface HasAllowedCharPatternElement extends HasLocatorElement {
      */
     default void setAllowedCharPattern(String pattern) {
         getLocator().evaluate("(el, p) => el.allowedCharPattern = p", pattern);
+        waitAfterAction();
     }
 
     /**

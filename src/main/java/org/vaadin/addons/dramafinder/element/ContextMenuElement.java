@@ -5,7 +5,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.MouseButton;
-import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
+import org.vaadin.addons.dramafinder.AutoWait;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
@@ -58,11 +58,14 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
         Locator listBox = page.locator(FIELD_TAG_NAME + "[opened] " + FIELD_LIST_BOX_TAG_NAME).first();
         AssertionError lastError = null;
         for (int attempt = 0; attempt < OPEN_ATTEMPTS; attempt++) {
-            page.waitForFunction(AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT);
+            // Deliberately before the click and regardless of the AutoWait opt-out:
+            // a response still in flight can discard the menu (see above).
+            AutoWait.waitForVaadinIdle(page);
             target.click(new Locator.ClickOptions().setButton(MouseButton.RIGHT));
             try {
                 assertThat(listBox).isVisible(
                         new LocatorAssertions.IsVisibleOptions().setTimeout(OPEN_TIMEOUT_MS));
+                AutoWait.afterAction(page);
                 return;
             } catch (AssertionError e) {
                 lastError = e;

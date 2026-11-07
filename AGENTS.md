@@ -130,7 +130,10 @@ assertThat(getLocator()).hasAttribute("opened", "");
   Playwright action — before any wait specific to the component (e.g. Grid's
   `waitForGridToStopLoading()`). A new action must do the same; never call
   `waitForVaadinIdle()` there, because it ignores the opt-out
-  (`AutoWait.withoutWaiting(...)`, `-Ddramafinder.autoWait=false`). The server
+  (`AutoWait.withoutWaiting(...)`, `-Ddramafinder.autoWait=false`).
+  `ActionsWaitForTheServerTest` scans the element sources and fails on an action
+  (a Playwright action on a locator, or a DOM property written from a script)
+  without the wait. The server
   half only: client-side rendering after the response (an overlay opening, a
   grid re-rendering) still needs a retrying assertion.
 

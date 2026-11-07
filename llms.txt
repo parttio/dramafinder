@@ -59,7 +59,7 @@ naming rule, and the handful of things that are easy to get wrong.
 - [AGENTS.md](AGENTS.md) - Repository guidelines, coding conventions, pitfalls & patterns
 - [TESTING.md](skills/vaadin-playwright-test/TESTING.md) - How to write DramaFinder tests (one assert per test, user-facing locators)
 - [README.md](README.md) - Project overview and setup
-- [MIGRATION-2.0.md](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) - Upgrading 1.x tests: label lookups are exact by default, every changed method
+- [MIGRATION-2.0.md](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) - Upgrading 1.x tests: label lookups are exact by default, a label is the visible label (aria-labels and placeholders go through the query builder), every changed method
 
 ## Element Specifications
 

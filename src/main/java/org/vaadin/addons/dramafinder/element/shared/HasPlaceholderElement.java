@@ -10,6 +10,7 @@ public interface HasPlaceholderElement extends HasLocatorElement {
     /** Set the {@code placeholder} attribute. */
     default void setPlaceholder(String placeholder) {
         getLocator().evaluate("(el, placeholder) => el.placeholder = placeholder", placeholder);
+        waitAfterAction();
     }
 
     /** Get the current {@code placeholder} text. */
