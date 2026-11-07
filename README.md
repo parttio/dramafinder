@@ -30,6 +30,13 @@ lookup that passed part of a label now fails at runtime. The
 [migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) lists
 every changed method and how to rewrite each lookup.
 
+### Spring Boot
+
+A Spring Boot app's tests extend `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`,
+which starts the app on a random port and builds `getUrl()` from it. Spring is
+optional: DramaFinder declares it `provided` and never adds it to the classpath; a
+project without Spring extends `AbstractBasePlaywrightIT` and overrides `getUrl()`.
+
 ## Claude Code skills
 
 This repository ships two Claude Code skills. Install them as plugins:

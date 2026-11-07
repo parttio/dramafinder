@@ -62,9 +62,13 @@ Inside `<dependencies>`, add (skip whichever is already present):
 
 Note the groupId is `org.vaadin.addons` (not `org.vaadin.addons.dramafinder`).
 
-## Step 3 — Copy `SpringPlaywrightIT` (Spring Boot projects only)
+## Step 3 — Copy `SpringPlaywrightIT` (Spring Boot projects, DramaFinder before 2.0)
 
-Skip this step entirely if the project is not a Spring Boot project.
+Skip this step entirely if the project is not a Spring Boot project, or if the
+resolved DramaFinder version is 2.0 or later: the library then ships
+`org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`, and tests extend it
+directly. It needs `spring-boot-starter-test` (test scope), which every Spring Boot
+project already has; DramaFinder itself never adds Spring to the classpath.
 
 If `find src/test/java -name SpringPlaywrightIT.java` already returns a result,
 skip — the file exists and will be used as-is.

@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.AccordionElement;
 import org.vaadin.addons.dramafinder.element.AccordionPanelElement;
-import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

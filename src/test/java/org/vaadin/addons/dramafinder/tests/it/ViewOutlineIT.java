@@ -11,6 +11,7 @@ import org.vaadin.addons.dramafinder.agent.ViewOutline;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.ConfirmDialogElement;
 import org.vaadin.addons.dramafinder.element.DialogElement;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

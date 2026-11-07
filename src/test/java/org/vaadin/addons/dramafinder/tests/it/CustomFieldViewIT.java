@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CustomFieldElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

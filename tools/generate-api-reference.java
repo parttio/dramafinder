@@ -46,8 +46,8 @@ class GenerateApiReference {
     // Top-level types in the root package, in the order a test author meets them.
     // They are how you get a Page at all, so the reference is useless without
     // them — leaving them out is what sent agents to `javap -c` on the jar.
-    static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "HasTestView", "AutoWait",
-            "RouteNavigation");
+    static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "spring/SpringPlaywrightIT",
+            "HasTestView", "AutoWait", "RouteNavigation");
 
     // Method keys (name/arity) declared by the shared mixins and by VaadinElement.
     // They are what tells a plain mixin implementation apart from an override
@@ -181,18 +181,14 @@ class GenerateApiReference {
         md.append("A DramaFinder test extends `AbstractBasePlaywrightIT`, which opens a Playwright ");
         md.append("`Page`, navigates it to `getUrl() + getView()`, waits for Vaadin to go idle, and ");
         md.append("closes it again. The `page` field is what every element factory below takes.\n\n");
+        md.append("A Spring Boot app extends `spring.SpringPlaywrightIT`, which starts it on a random ");
+        md.append("port and builds `getUrl()`; without Spring Boot, extend `AbstractBasePlaywrightIT` ");
+        md.append("and override `getUrl()`.\n\n");
         md.append("```java\n");
-        md.append("@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)\n");
-        md.append("public class MyViewIT extends AbstractBasePlaywrightIT {\n\n");
-        md.append("    @LocalServerPort\n");
-        md.append("    private int port;\n\n");
-        md.append("    @Override\n");
-        md.append("    public String getUrl() {\n");
-        md.append("        return \"http://localhost:\" + port;\n");
-        md.append("    }\n\n");
+        md.append("public class MyViewIT extends SpringPlaywrightIT {\n\n");
         md.append("    @Override\n");
         md.append("    public String getView() {\n");
-        md.append("        return \"/my-view\"; // appended to getUrl() before each test\n");
+        md.append("        return \"my-view\"; // appended to getUrl() before each test\n");
         md.append("    }\n\n");
         md.append("    @Test\n");
         md.append("    public void filtersTheGrid() {\n");
@@ -202,6 +198,8 @@ class GenerateApiReference {
         md.append("}\n");
         md.append("```\n\n");
         md.append("Notes:\n\n");
+        md.append("- `SpringPlaywrightIT` needs `spring-boot-starter-test` (test scope), which a Spring ");
+        md.append("Boot project already has; DramaFinder declares Spring `provided` and never adds it.\n");
         md.append("- The browser runs headless unless the `headless` system property or the ");
         md.append("`HEADLESS` environment variable says otherwise.\n");
         md.append("- `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / ");

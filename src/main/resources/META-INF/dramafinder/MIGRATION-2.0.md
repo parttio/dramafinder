@@ -13,7 +13,9 @@ factory that finds a component by its label, text, header, title or name now:
 Whitespace is still normalized: leading, trailing and repeated spaces do not
 matter.
 
-No method was removed or renamed, so a 1.x test suite still **compiles**. Lookups
+No method was removed or renamed, so a 1.x test suite still **compiles**, with one
+exception: a test class that declares its own `navigate`, `assertAt`, `assertPath`
+or `assertQueryParameter` (see "New methods on `AbstractBasePlaywrightIT`"). Lookups
 that relied on the old matching fail at **runtime**. Partial matching is still
 available, but you now ask for it explicitly with `getByLabelContaining` /
 `getByTextContaining`.
@@ -208,6 +210,30 @@ assertThat(page.locator(".spinner")).isVisible();
 `-Ddramafinder.autoWait=false` turns the waiting off for a whole run.
 `waitForVaadinIdle()` still waits explicitly, and is what to call after an action
 on a raw Playwright `Locator`, which the element API does not see.
+
+## New methods on `AbstractBasePlaywrightIT`
+
+`AbstractBasePlaywrightIT` gains five protected methods for navigation by route
+class (issue #204): `navigate(Class<?>)`, `navigate(Class<?>, Object)`,
+`assertAt(Class<?>)`, `assertPath(String)` and `assertQueryParameter(String, String)`.
+A test class that already declares a method with one of these signatures now
+overrides it. If its return type differs, or it is `private`, the class no longer
+compiles. Rename the test's method, or use the inherited one.
+
+## The Spring Boot base class moved into the library
+
+Spring Boot projects copied a `SpringPlaywrightIT` from the skill's template. 2.0
+ships it as `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT` (issue #205):
+
+1. Delete the project's copy.
+2. Switch the imports to `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`.
+3. Optionally drop `@SpringBootTest(webEnvironment = RANDOM_PORT)` from the tests:
+   the base class carries it. Keep the annotation where a test sets properties or
+   another web environment.
+
+The library class also adds the servlet context path to `getUrl()`. The copy can
+stay instead; nothing forces the switch. DramaFinder declares Spring as `provided`,
+so projects without Spring see no change.
 
 ## Also new in 2.0
 

@@ -16,21 +16,14 @@ unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar \
 
 A DramaFinder test extends `AbstractBasePlaywrightIT`, which opens a Playwright `Page`, navigates it to `getUrl() + getView()`, waits for Vaadin to go idle, and closes it again. The `page` field is what every element factory below takes.
 
+A Spring Boot app extends `spring.SpringPlaywrightIT`, which starts it on a random port and builds `getUrl()`; without Spring Boot, extend `AbstractBasePlaywrightIT` and override `getUrl()`.
+
 ```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MyViewIT extends AbstractBasePlaywrightIT {
-
-    @LocalServerPort
-    private int port;
-
-    @Override
-    public String getUrl() {
-        return "http://localhost:" + port;
-    }
+public class MyViewIT extends SpringPlaywrightIT {
 
     @Override
     public String getView() {
-        return "/my-view"; // appended to getUrl() before each test
+        return "my-view"; // appended to getUrl() before each test
     }
 
     @Test
@@ -43,6 +36,7 @@ public class MyViewIT extends AbstractBasePlaywrightIT {
 
 Notes:
 
+- `SpringPlaywrightIT` needs `spring-boot-starter-test` (test scope), which a Spring Boot project already has; DramaFinder declares Spring `provided` and never adds it.
 - The browser runs headless unless the `headless` system property or the `HEADLESS` environment variable says otherwise.
 - `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / `cleanupTest()` are `@BeforeEach` / `@AfterEach`. Overriding one means calling `super` — the `page` field is null otherwise.
 - Element actions (`click`, `setValue`, `selectItem`, ...) return only once the Vaadin server round-trip they trigger has finished; see `AutoWait` below to observe an in-flight state.
@@ -78,6 +72,16 @@ Base class for Playwright integration tests of a Vaadin view.
 - `Page agentPage()` — Returns the test's page, so a failing test is captured in the state it failed in.
 - `protected Browser getBrowser()`
 - `protected Playwright getPlaywright()`
+
+### SpringPlaywrightIT
+
+Base class for Playwright integration tests of a Spring Boot Vaadin app.
+
+*abstract* **Extends:** AbstractBasePlaywrightIT  
+
+**Methods:**
+
+- `String getUrl()` — The URL of the running application, e.g. http://localhost:54321/ or http://localhost:54321/ctx/ with a servlet context path.
 
 ### HasTestView
 

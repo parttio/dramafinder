@@ -110,6 +110,16 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Spring Boot integration (spring.SpringPlaywrightIT). Provided: a
+             Spring Boot project already has it through spring-boot-starter-test,
+             and DramaFinder never adds Spring to anyone's classpath.
+             DependencyScopeTest keeps Spring and Vaadin out of compile scope. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- test deps -->
         <dependency>
             <groupId>com.vaadin</groupId>
