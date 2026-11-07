@@ -94,13 +94,24 @@ public class SliderElement extends VaadinElement
      * Set the value.
      * <p>
      * The value is applied to the native input and committed with {@code input}
-     * and {@code change} events, so the component reacts exactly as it does to a
-     * user interaction. Values are snapped to {@code step} and clamped to
-     * {@code min}/{@code max} by the component itself.
+     * and {@code change} events, the events a drag or a key press fires. Values
+     * are snapped to {@code step} and clamped to {@code min}/{@code max} by the
+     * component itself.
+     * <p>
+     * A script write is not gated by the input's state the way a user is, so a
+     * disabled or read-only slider is refused up front rather than left showing a
+     * value the server never accepted.
      *
      * @param value the value to apply
+     * @throws IllegalStateException if the slider is disabled or read-only
      */
     public void setValue(double value) {
+        if (!isEnabled()) {
+            throw new IllegalStateException("Cannot set the value of a disabled slider");
+        }
+        if (isReadOnly()) {
+            throw new IllegalStateException("Cannot set the value of a read-only slider");
+        }
         getInputLocator().evaluate("""
                 (el, v) => {
                     el.value = v;

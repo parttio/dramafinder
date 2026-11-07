@@ -235,6 +235,16 @@ The library class also adds the servlet context path to `getUrl()`. The copy can
 stay instead; nothing forces the switch. DramaFinder declares Spring as `provided`,
 so projects without Spring see no change.
 
+## `SliderElement.setValue` refuses a disabled or read-only slider
+
+`SliderElement.setValue(double)` writes to the native input from a script, which
+a disabled input does not block. In 1.x the value landed in the browser while the
+server ignored it, so `assertValue` passed on a slider no user could move. 2.0
+throws `IllegalStateException` for a disabled or read-only slider (issue #166). A
+test that set a locked slider expecting nothing to happen should assert the lock
+instead: `assertDisabled()` or `assertReadOnly()`, then `assertValue(...)` with
+the unchanged value.
+
 ## Also new in 2.0
 
 The typed query builder (issue #200) gives every element the same lookup grammar.
