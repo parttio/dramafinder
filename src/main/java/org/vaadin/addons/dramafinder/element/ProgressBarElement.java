@@ -42,6 +42,7 @@ public class ProgressBarElement extends VaadinElement implements HasThemeElement
      */
     public void setValue(double min) {
         getLocator().evaluate("(el, v) => el.value = v", min);
+        waitAfterAction();
     }
 
     /**
@@ -68,6 +69,7 @@ public class ProgressBarElement extends VaadinElement implements HasThemeElement
      */
     public void setMin(double min) {
         getLocator().evaluate("(el, v) => el.min = v", min);
+        waitAfterAction();
     }
 
     /**
@@ -90,6 +92,7 @@ public class ProgressBarElement extends VaadinElement implements HasThemeElement
      */
     public void setMax(double max) {
         getLocator().evaluate("(el, v) => el.max = v", max);
+        waitAfterAction();
     }
 
     /**
@@ -125,6 +128,7 @@ public class ProgressBarElement extends VaadinElement implements HasThemeElement
      */
     public void setIndeterminate(boolean indeterminate) {
         getLocator().evaluate("(el, val) => el.indeterminate = val", indeterminate);
+        waitAfterAction();
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

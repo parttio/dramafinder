@@ -48,6 +48,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public void setStep(double step) {
         getInputLocator().evaluate("(el, v) => el.step = v", step);
+        waitAfterAction();
     }
 
     /**
@@ -80,6 +81,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public void setMin(double min) {
         getInputLocator().evaluate("(el, v) => el.min = v", min);
+        waitAfterAction();
     }
 
     /**
@@ -112,6 +114,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public void setMax(double max) {
         getInputLocator().evaluate("(el, v) => el.max = v", max);
+        waitAfterAction();
     }
 
     /**

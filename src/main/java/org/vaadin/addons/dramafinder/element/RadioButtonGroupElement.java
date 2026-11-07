@@ -47,6 +47,7 @@ public class RadioButtonGroupElement extends VaadinElement
      */
     public void selectByValue(String value) {
         getLocator().evaluate("(el, value) => el.value = value", value);
+        waitAfterAction();
     }
 
     /**
