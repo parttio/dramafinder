@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CustomFieldElement;
+import org.vaadin.addons.dramafinder.element.NotificationElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
@@ -104,10 +105,10 @@ public class CustomFieldViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void fieldByLabelNeedsAScopedFactory() {
+    public void fieldByNameNeedsAFindableType() {
         CustomFieldElement phone = CustomFieldElement.getByLabel(page, "Phone");
         IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
-                () -> phone.getField(ButtonElement.class, "Country code"));
-        assertTrue(error.getMessage().contains("getByLabel(Locator, String)"), error.getMessage());
+                () -> phone.getField(NotificationElement.class, "Country code"));
+        assertTrue(error.getMessage().contains("getField(type, index)"), error.getMessage());
     }
 }
