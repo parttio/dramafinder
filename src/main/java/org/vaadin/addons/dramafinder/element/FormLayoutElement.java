@@ -4,6 +4,8 @@ import java.util.Map;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -25,7 +27,8 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  * grid are counted, and labels are aside only while they fit.
  */
 @PlaywrightElement(FormLayoutElement.FIELD_TAG_NAME)
-public class FormLayoutElement extends VaadinElement implements HasThemeElement, HasStyleElement {
+public class FormLayoutElement extends VaadinElement implements HasThemeElement, HasStyleElement,
+        Findable<ComponentQuery<FormLayoutElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-form-layout";
 

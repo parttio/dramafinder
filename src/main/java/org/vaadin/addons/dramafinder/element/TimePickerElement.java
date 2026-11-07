@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
@@ -29,7 +31,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(TimePickerElement.FIELD_TAG_NAME)
 public class TimePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
-        HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement {
+        HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement,
+        Findable<InputFieldQuery<TimePickerElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-time-picker";
     public static final DateTimeFormatter LOCAL_TIME = DateTimeFormatter.ofPattern("HH:mm");

@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 
@@ -19,7 +21,8 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  */
 @PlaywrightElement(VirtualListElement.FIELD_TAG_NAME)
 public class VirtualListElement extends VaadinElement
-        implements FocusableElement, HasStyleElement {
+        implements FocusableElement, HasStyleElement,
+        Findable<ComponentQuery<VirtualListElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-virtual-list";
 

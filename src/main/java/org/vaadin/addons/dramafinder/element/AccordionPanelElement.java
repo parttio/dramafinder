@@ -1,6 +1,8 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
@@ -12,7 +14,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * Offers utilities to toggle open state, read summary and access content.
  */
 @PlaywrightElement(AccordionPanelElement.FIELD_TAG_NAME)
-public class AccordionPanelElement extends VaadinElement implements HasDisabledAttributeElement {
+public class AccordionPanelElement extends VaadinElement implements HasDisabledAttributeElement,
+        Findable<ComponentQuery<AccordionPanelElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-accordion-panel";
     public static final String FIELD_HEADING_TAG_NAME = "vaadin-accordion-heading";

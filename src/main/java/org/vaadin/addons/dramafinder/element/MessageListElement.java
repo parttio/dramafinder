@@ -2,6 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
@@ -17,7 +19,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * {@code name}, {@code time} and {@code message} for content access.
  */
 @PlaywrightElement(MessageListElement.FIELD_TAG_NAME)
-public class MessageListElement extends VaadinElement implements HasStyleElement, HasThemeElement {
+public class MessageListElement extends VaadinElement implements HasStyleElement, HasThemeElement,
+        Findable<ComponentQuery<MessageListElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-message-list";
     public static final String FIELD_MESSAGE_TAG_NAME = "vaadin-message";

@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.TextQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPrefixElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
@@ -22,7 +24,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(BreadcrumbsItemElement.FIELD_TAG_NAME)
 public class BreadcrumbsItemElement extends VaadinElement
-        implements HasDisabledAttributeElement, HasPrefixElement, HasStyleElement {
+        implements HasDisabledAttributeElement, HasPrefixElement, HasStyleElement,
+        Findable<TextQuery<BreadcrumbsItemElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-breadcrumbs-item";
 

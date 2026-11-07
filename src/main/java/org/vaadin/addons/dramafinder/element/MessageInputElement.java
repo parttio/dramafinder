@@ -2,6 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
@@ -19,7 +21,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(MessageInputElement.FIELD_TAG_NAME)
 public class MessageInputElement extends VaadinElement
         implements FocusableElement, HasEnabledElement, HasStyleElement,
-        HasThemeElement, HasTooltipElement {
+        HasThemeElement, HasTooltipElement,
+        Findable<ComponentQuery<MessageInputElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-message-input";
 

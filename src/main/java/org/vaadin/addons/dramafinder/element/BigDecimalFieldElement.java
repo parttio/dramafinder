@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAllowedCharPatternElement;
@@ -24,7 +26,8 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 public class BigDecimalFieldElement extends VaadinElement
         implements HasValidationPropertiesElement, HasInputFieldElement,
         HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement,
-        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement {
+        HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement,
+        Findable<InputFieldQuery<BigDecimalFieldElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-big-decimal-field";
 

@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
@@ -20,7 +22,8 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  */
 @PlaywrightElement(AvatarElement.FIELD_TAG_NAME)
 public class AvatarElement extends VaadinElement
-        implements FocusableElement, HasStyleElement, HasThemeElement, HasTooltipElement {
+        implements FocusableElement, HasStyleElement, HasThemeElement, HasTooltipElement,
+        Findable<ComponentQuery<AvatarElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-avatar";
 

@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.NamedQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -13,7 +15,9 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * <p>
  * Provides access to header/content/footer slots, modal flags and open state.
  */
-public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement {
+@PlaywrightElement(DialogElement.FIELD_TAG_NAME)
+public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement,
+        Findable<NamedQuery<DialogElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-dialog";
 

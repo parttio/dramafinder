@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 
@@ -12,7 +14,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * PlaywrightElement for {@code <vaadin-side-nav>}.
  */
 @PlaywrightElement(SideNavigationElement.FIELD_TAG_NAME)
-public class SideNavigationElement extends VaadinElement implements HasLabelElement {
+public class SideNavigationElement extends VaadinElement implements HasLabelElement,
+        Findable<ComponentQuery<SideNavigationElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-side-nav";
 

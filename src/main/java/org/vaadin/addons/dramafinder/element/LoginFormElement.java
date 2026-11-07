@@ -2,6 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 
 /**
  * PlaywrightElement for {@code <vaadin-login-form>}.
@@ -13,7 +15,7 @@ import com.microsoft.playwright.Page;
  * {@link AbstractLoginElement} take the expected text as a parameter.
  */
 @PlaywrightElement(LoginFormElement.FIELD_TAG_NAME)
-public class LoginFormElement extends AbstractLoginElement {
+public class LoginFormElement extends AbstractLoginElement implements Findable<ComponentQuery<LoginFormElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-login-form";
 

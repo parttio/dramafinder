@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -17,7 +19,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * overlay shows a branding area with an application title and description.
  */
 @PlaywrightElement(LoginOverlayElement.FIELD_TAG_NAME)
-public class LoginOverlayElement extends AbstractLoginElement {
+public class LoginOverlayElement extends AbstractLoginElement implements Findable<ComponentQuery<LoginOverlayElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-login-overlay";
 

@@ -2,6 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
@@ -16,7 +18,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(DetailsElement.FIELD_TAG_NAME)
 public class DetailsElement extends VaadinElement implements HasStyleElement, HasThemeElement,
-        HasTooltipElement, HasDisabledAttributeElement {
+        HasTooltipElement, HasDisabledAttributeElement,
+        Findable<ComponentQuery<DetailsElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-details";
 

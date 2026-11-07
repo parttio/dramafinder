@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.FieldQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
@@ -32,7 +34,8 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 @PlaywrightElement(DateTimePickerElement.FIELD_TAG_NAME)
 public class DateTimePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
         HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement,
-        HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement {
+        HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement,
+        Findable<FieldQuery<DateTimePickerElement>> {
 
     private final DatePickerElement datePickerElement;
     private final TimePickerElement timePickerElement;

@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.utils.NumberUtils;
 
@@ -16,7 +18,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * its accessible label.
  */
 @PlaywrightElement(NumberFieldElement.FIELD_TAG_NAME)
-public class NumberFieldElement extends AbstractNumberFieldElement {
+public class NumberFieldElement extends AbstractNumberFieldElement implements Findable<InputFieldQuery<NumberFieldElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-number-field";
 

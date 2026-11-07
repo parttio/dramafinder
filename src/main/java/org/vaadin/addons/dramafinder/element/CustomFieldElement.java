@@ -7,6 +7,8 @@ import java.lang.reflect.Modifier;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.FieldQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasHelperElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
@@ -35,7 +37,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(CustomFieldElement.FIELD_TAG_NAME)
 public class CustomFieldElement extends VaadinElement
         implements HasLabelElement, HasHelperElement, HasValidationPropertiesElement,
-        HasDisabledAttributeElement, HasThemeElement, HasStyleElement, HasTooltipElement {
+        HasDisabledAttributeElement, HasThemeElement, HasStyleElement, HasTooltipElement,
+        Findable<FieldQuery<CustomFieldElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-custom-field";
 

@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.FieldQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasHelperElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
@@ -17,7 +19,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(RadioButtonGroupElement.FIELD_TAG_NAME)
 public class RadioButtonGroupElement extends VaadinElement
-        implements HasLabelElement, HasEnabledElement, HasHelperElement, HasValidationPropertiesElement {
+        implements HasLabelElement, HasEnabledElement, HasHelperElement, HasValidationPropertiesElement,
+        Findable<FieldQuery<RadioButtonGroupElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-radio-group";
 

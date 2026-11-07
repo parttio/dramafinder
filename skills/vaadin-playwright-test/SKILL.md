@@ -151,6 +151,15 @@ looking for alternatives.
 > only that section** (each is a `### <Name>Element` heading) — don't read the
 > whole file. Shared mixin methods are documented once under "Shared mixins".
 
+Besides the per-element factories, every wrapper in the index with a `find`
+query can be looked up with one grammar —
+`find(page, TextFieldElement.class).withLabel("Name").single()`, or
+`dialog.find(ButtonElement.class).withText("Delete").single()` to search inside a
+component (static import `ElementQueries.find`). Use it to combine filters
+(label **and** test id) or to scope a lookup; only filters that fit the component
+compile, and `withLabel` / `withText` match the whole value. See "Typed queries"
+in [api-reference.md](api-reference.md).
+
 Before writing any raw locator, confirm there is genuinely no wrapper: check
 [element-mapping.md](element-mapping.md) **and** scan `src/main/java` for
 `*Element.java` files (custom extensions not in the table). Only if neither

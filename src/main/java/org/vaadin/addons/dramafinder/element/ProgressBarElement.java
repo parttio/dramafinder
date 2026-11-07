@@ -1,6 +1,8 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.utils.NumberUtils;
@@ -13,7 +15,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * Supports value/min/max setters and assertions and indeterminate state.
  */
 @PlaywrightElement(ProgressBarElement.FIELD_TAG_NAME)
-public class ProgressBarElement extends VaadinElement implements HasThemeElement, HasStyleElement {
+public class ProgressBarElement extends VaadinElement implements HasThemeElement, HasStyleElement,
+        Findable<ComponentQuery<ProgressBarElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-progress-bar";
     public static final String INDETERMINATE_ATTRIBUTE = "indeterminate";

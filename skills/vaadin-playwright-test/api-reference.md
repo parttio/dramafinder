@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 1.2.4-SNAPSHOT — 59 element wrappers.
+> DramaFinder 1.2.5-SNAPSHOT — 59 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -81,69 +81,238 @@ Base class for Playwright integration tests of a Vaadin view.
 
 ## Element index
 
-Wrapped web-component tag, its wrapper class, and the wrapper's actual static factory methods. **Factory methods are not uniform** — an element only has the factories listed here (e.g. most fields use `getByLabel`, containers use `get`; `getById` exists on only a few). Do not assume a factory that isn't listed. Every wrapper is also constructible via `new <Name>(Locator)`.
+Wrapped web-component tag, its wrapper class, and the wrapper's actual static factory methods. **Factory methods are not uniform** — an element only has the factories listed here (e.g. most fields use `getByLabel`, containers use `get`; `getById` exists on only a few). Do not assume a factory that isn't listed. Every wrapper is also constructible via `new <Name>(Locator)`. The last column is the query that `find(page, <Name>.class)` returns (see **Typed queries**); a wrapper without one cannot be used with `find`.
 
-| Web-component tag | Element wrapper | Static factory methods |
-|---|---|---|
-| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* |
-| `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` |
-| `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
-| `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` |
-| `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` |
-| `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` |
-| `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)` |
-| `<vaadin-breadcrumbs-item>` | [BreadcrumbsItemElement](#breadcrumbsitemelement) | `getByText(Locator, String)`, `getByText(Page, String)` |
-| `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` |
-| `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` |
-| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` |
-| `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` |
-| `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
-| `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
-| `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` |
-| `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` |
-| `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` |
-| `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` |
-| `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` |
-| `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` |
-| `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Page, String)` |
-| `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | *constructor only* |
-| `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Page, String)` |
-| `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` |
-| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* |
-| `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` |
-| `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Page, String)` |
-| `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` |
-| `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
-| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` |
-| `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` |
-| `<vaadin-tooltip>` | [TooltipElement](#tooltipelement) | `get(Locator)`, `get(Page)`, `getByText(Page, String)` |
-| `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` |
-| `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` |
-| — | [AbstractLoginElement](#abstractloginelement) | *constructor only* |
-| — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* |
-| — | [ContextMenuElement](#contextmenuelement) | *constructor only* |
-| — | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` |
-| — | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)` |
-| — | [MenuElement](#menuelement) | `getByLabel(Page, String)` |
-| — | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` |
-| — | [NotificationElement](#notificationelement) | `getByText(Page, String)` |
-| — | [PopoverElement](#popoverelement) | `getByLabel(Page, String)` |
-| — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` |
+| Web-component tag | Element wrapper | Static factory methods | `find` query |
+|---|---|---|---|
+| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* | `ComponentQuery` |
+| `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` | `ComponentQuery` |
+| `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
+| `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` | `ComponentQuery` |
+| `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
+| `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` | `TextQuery` |
+| `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-breadcrumbs-item>` | [BreadcrumbsItemElement](#breadcrumbsitemelement) | `getByText(Locator, String)`, `getByText(Page, String)` | `TextQuery` |
+| `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)` | `ButtonQuery` |
+| `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` | `ComponentQuery` |
+| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` | `NamedQuery` |
+| `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` | `ComponentQuery` |
+| `<vaadin-dialog>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` | `NamedQuery` |
+| `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
+| `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
+| `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
+| `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` | `ComponentQuery` |
+| `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
+| `<vaadin-menu-bar>` | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-menu-bar-button>` | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` | `TextQuery` |
+| `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
+| `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
+| `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)` | `NamedQuery` |
+| `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | *constructor only* | `ComponentQuery` |
+| `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)` | `ComponentQuery` |
+| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* | `ComponentQuery` |
+| `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` | `ComponentQuery` |
+| `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Page, String)` | `FieldQuery` |
+| `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` | `TextQuery` |
+| `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
+| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` | `ComponentQuery` |
+| `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)` | `InputFieldQuery` |
+| `<vaadin-tooltip>` | [TooltipElement](#tooltipelement) | `get(Locator)`, `get(Page)`, `getByText(Page, String)` | `TextQuery` |
+| `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` | `ComponentQuery` |
+| `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` | `ComponentQuery` |
+| — | [AbstractLoginElement](#abstractloginelement) | *constructor only* | — |
+| — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* | — |
+| — | [ContextMenuElement](#contextmenuelement) | *constructor only* | — |
+| — | [MenuElement](#menuelement) | `getByLabel(Page, String)` | — |
+| — | [NotificationElement](#notificationelement) | `getByText(Page, String)` | — |
+| — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
+
+## Typed queries
+
+An alternative to the static factories with one grammar for every element: `ElementQueries.find(page, X.class)` (or `element.find(X.class)` to search inside a component) returns the query listed for `X` in the element index, filters narrow it, and a terminal returns the element. Only the filters that fit the component compile — `withLabel` on a field, `withText` on a button. Every query has `withId`, `withTestId`, `withAttribute` and `withClassName`; filters return new queries, and the result stays a lazy Playwright locator.
+
+```java
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delete account?").single();
+dialog.find(ButtonElement.class).withText("Delete").single().click();
+```
+
+`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the **whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` match a case-insensitive substring. `single()` fails with a strict-mode error when several components match; `first()`, `get(int)`, `all()`, `count()` and `exists()` do not.
+
+### AccessibleNameFilters
+
+Filter by accessible name for components named through a label, aria-label or aria-labelledby.
+
+**Extends:** Refinable  
+
+**Methods:**
+
+- `Q withAccessibleName(String name)` — Keep components that are, or contain, an element whose label, aria-label or aria-labelledby text is exactly name (case-sensitive, whitespace-normalized).
+
+### ButtonQuery
+
+Query for vaadin-button: adds text filters and an accessible-name filter that, unlike the field one, also reads a button's name from its text.
+
+**Extends:** ElementQuery  
+**Implements:** TextFilters, AccessibleNameFilters  
+
+**Constructors:**
+
+- `ButtonQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+**Methods:**
+
+- `ButtonQuery<T> withAccessibleName(String name)` — Keep buttons whose accessible name is exactly name (case-sensitive, whitespace-normalized): the aria-label when set, otherwise the button text — so it finds icon-only buttons too.
+
+### ComponentQuery
+
+Query offering only the filters every component supports (id, test id, attributes, class name).
+
+**Extends:** ElementQuery  
+
+**Constructors:**
+
+- `ComponentQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+### ElementQueries
+
+Entry point of the typed query builder: find(page, TextFieldElement.class).withLabel("Name").single().
+
+**Static methods:**
+
+- `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Page page, Class<T> type)` — Start a query for every type component on the page.
+- `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Locator scope, Class<T> type)` — Start a query for every type component inside scope.
+
+### ElementQuery
+
+Base class of the typed queries returned by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+*abstract* **Implements:** Refinable  
+
+**Methods:**
+
+- `Q withId(String id)` — Keep components whose id is id.
+- `Q withTestId(String testId)` — Keep components whose test id is testId.
+- `Q withAttribute(String name)` — Keep components that carry the attribute name, whatever its value.
+- `Q withAttribute(String name, String value)` — Keep components whose attribute name is exactly value.
+- `Q withClassName(String className)` — Keep components that have className among their CSS classes.
+- `T single()` — The element matched by this query, which must match exactly one component.
+- `T first()` — The first matching element in DOM order, without checking for others.
+- `T get(int index)` — The matching element at index in DOM order.
+- `List<T> all()` — Every element matching right now, in DOM order.
+- `boolean exists()` — Whether at least one component matches right now.
+- `int count()` — The number of components matching right now, read without waiting.
+- `Locator getLocator()` — The locator over every component matching this query, e.g. for assertThat(query.getLocator()).hasCount(2).
+
+### FieldQuery
+
+Query for labelled fields without a placeholder, such as vaadin-checkbox or vaadin-radio-group: adds label and accessible-name filters.
+
+**Extends:** ElementQuery  
+**Implements:** LabelFilters, AccessibleNameFilters  
+
+**Constructors:**
+
+- `FieldQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+### Findable
+
+Marker that ties an element class to the query type returned by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+*Marker interface — composes the mixins listed above; no own methods.*
+
+### InputFieldQuery
+
+Query for input fields, such as vaadin-text-field or vaadin-combo-box: adds label, accessible-name and placeholder filters.
+
+**Extends:** ElementQuery  
+**Implements:** LabelFilters, AccessibleNameFilters, PlaceholderFilters  
+
+**Constructors:**
+
+- `InputFieldQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+### LabelFilters
+
+Filters for components that render a visible label in their slot="label" child, such as vaadin-text-field or vaadin-checkbox.
+
+**Extends:** Refinable  
+
+**Methods:**
+
+- `Q withLabel(String label)` — Keep components whose visible label is exactly label.
+- `Q withLabelContaining(String text)` — Keep components whose visible label contains text, matched case-insensitively as a substring.
+
+### NamedQuery
+
+Query for components named by aria-label or aria-labelledby, such as vaadin-dialog or vaadin-menu-bar: adds the accessible-name filter.
+
+**Extends:** ElementQuery  
+**Implements:** AccessibleNameFilters  
+
+**Constructors:**
+
+- `NamedQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
+
+### PlaceholderFilters
+
+Filter for components with a placeholder attribute on their host, such as vaadin-text-field or vaadin-combo-box.
+
+**Extends:** Refinable  
+
+**Methods:**
+
+- `Q withPlaceholder(String placeholder)` — Keep components whose placeholder is exactly placeholder (case-sensitive).
+
+### Refinable
+
+Base contract of the query filter mixins: a query that can be narrowed by transforming its candidate locator.
+
+**Methods:**
+
+- `Q refine(UnaryOperator<Locator> refinement)` — Return a query whose candidates are narrowed by refinement.
+
+### TextFilters
+
+Filters for components identified by the text they show, such as vaadin-button or vaadin-tab.
+
+**Extends:** Refinable  
+
+**Methods:**
+
+- `Q withText(String text)` — Keep components whose text is exactly text.
+- `Q withTextContaining(String text)` — Keep components whose text contains text, matched case-insensitively as a substring.
+
+### TextQuery
+
+Query for components identified by the text they show, such as vaadin-badge or vaadin-tab: adds text filters.
+
+**Extends:** ElementQuery  
+**Implements:** TextFilters  
+
+**Constructors:**
+
+- `TextQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by ElementQueries#find(com.microsoft.playwright.Page, Class) find.
 
 ## Elements
 
@@ -207,7 +376,7 @@ Base abstraction for Vaadin number-like fields.
 PlaywrightElement for <vaadin-accordion>.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement  
+**Implements:** HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-accordion"`
 
@@ -231,7 +400,7 @@ PlaywrightElement for <vaadin-accordion>.
 PlaywrightElement for <vaadin-accordion-panel>.
 
 **Extends:** VaadinElement  
-**Implements:** HasDisabledAttributeElement  
+**Implements:** HasDisabledAttributeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-accordion-panel"`, `String FIELD_HEADING_TAG_NAME = "vaadin-accordion-heading"`
 
@@ -261,7 +430,7 @@ PlaywrightElement for <vaadin-accordion-panel>.
 PlaywrightElement for <vaadin-app-layout>.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement  
+**Implements:** HasStyleElement, HasThemeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-app-layout"`, `String DRAWER_TOGGLE_TAG_NAME = "vaadin-drawer-toggle"`, `String PRIMARY_SECTION_NAVBAR = "navbar"`, `String PRIMARY_SECTION_DRAWER = "drawer"`
 
@@ -305,7 +474,7 @@ PlaywrightElement for <vaadin-app-layout>.
 PlaywrightElement for <vaadin-avatar>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasStyleElement, HasThemeElement, HasTooltipElement  
+**Implements:** FocusableElement, HasStyleElement, HasThemeElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-avatar"`
 
@@ -340,7 +509,7 @@ PlaywrightElement for <vaadin-avatar>.
 PlaywrightElement for <vaadin-avatar-group>.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement  
+**Implements:** HasStyleElement, HasThemeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-avatar-group"`, `String FIELD_MENU_TAG_NAME = "vaadin-avatar-group-menu"`, `String FIELD_MENU_ITEM_TAG_NAME = "vaadin-avatar-group-menu-item"`
 
@@ -384,7 +553,7 @@ PlaywrightElement for <vaadin-avatar-group>.
 PlaywrightElement for <vaadin-badge>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-badge"`
 
@@ -414,7 +583,7 @@ PlaywrightElement for <vaadin-badge>.
 PlaywrightElement for <vaadin-big-decimal-field>.
 
 **Extends:** VaadinElement  
-**Implements:** HasValidationPropertiesElement, HasInputFieldElement, HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement  
+**Implements:** HasValidationPropertiesElement, HasInputFieldElement, HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-big-decimal-field"`
 
@@ -432,7 +601,7 @@ PlaywrightElement for <vaadin-big-decimal-field>.
 PlaywrightElement for <vaadin-breadcrumbs>.
 
 **Extends:** VaadinElement  
-**Implements:** HasAriaLabelElement, HasStyleElement, HasThemeElement  
+**Implements:** HasAriaLabelElement, HasStyleElement, HasThemeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-breadcrumbs"`
 
@@ -473,7 +642,7 @@ PlaywrightElement for <vaadin-breadcrumbs>.
 PlaywrightElement for <vaadin-breadcrumbs-item>, a single entry of a BreadcrumbsElement trail.
 
 **Extends:** VaadinElement  
-**Implements:** HasDisabledAttributeElement, HasPrefixElement, HasStyleElement  
+**Implements:** HasDisabledAttributeElement, HasPrefixElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-breadcrumbs-item"`
 
@@ -508,7 +677,7 @@ PlaywrightElement for <vaadin-breadcrumbs-item>, a single entry of a Breadcrumbs
 PlaywrightElement for <vaadin-button>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasEnabledElement, HasPrefixElement, HasStyleElement, HasSuffixElement, HasThemeElement, HasTooltipElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasEnabledElement, HasPrefixElement, HasStyleElement, HasSuffixElement, HasThemeElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-button"`
 
@@ -529,7 +698,7 @@ PlaywrightElement for <vaadin-button>.
 PlaywrightElement for <vaadin-card>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-card"`
 
@@ -560,7 +729,7 @@ PlaywrightElement for <vaadin-card>.
 PlaywrightElement for <vaadin-checkbox>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-checkbox"`
 
@@ -586,7 +755,7 @@ PlaywrightElement for <vaadin-checkbox>.
 PlaywrightElement for <vaadin-checkbox-group>.
 
 **Extends:** VaadinElement  
-**Implements:** HasLabelElement, HasHelperElement, HasValidationPropertiesElement, HasEnabledElement, HasThemeElement, HasStyleElement, HasTooltipElement  
+**Implements:** HasLabelElement, HasHelperElement, HasValidationPropertiesElement, HasEnabledElement, HasThemeElement, HasStyleElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-checkbox-group"`
 
@@ -616,7 +785,7 @@ PlaywrightElement for <vaadin-checkbox-group>.
 PlaywrightElement for <vaadin-combo-box>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasPrefixElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasPrefixElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-combo-box"`, `String FIELD_ITEM_TAG_NAME = "vaadin-combo-box-item"`
 
@@ -653,7 +822,7 @@ PlaywrightElement for <vaadin-combo-box>.
 PlaywrightElement for <vaadin-confirm-dialog>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-confirm-dialog"`
 
@@ -731,7 +900,7 @@ PlaywrightElement for context menu overlays <vaadin-context-menu-overlay>.
 PlaywrightElement for <vaadin-custom-field>.
 
 **Extends:** VaadinElement  
-**Implements:** HasLabelElement, HasHelperElement, HasValidationPropertiesElement, HasDisabledAttributeElement, HasThemeElement, HasStyleElement, HasTooltipElement  
+**Implements:** HasLabelElement, HasHelperElement, HasValidationPropertiesElement, HasDisabledAttributeElement, HasThemeElement, HasStyleElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-custom-field"`
 
@@ -746,8 +915,8 @@ PlaywrightElement for <vaadin-custom-field>.
 
 **Methods:**
 
-- `T getField(Class<T> type, String label)` — Get a wrapped field by its own accessible name, using that element's getByLabel(Locator, String) factory scoped to this custom field.
-- `T getField(Class<T> type, int index)` — Get a wrapped field by its position among the wrapped fields of the same type, in DOM order.
+- `<T extends VaadinElement> T getField(Class<T> type, String label)` — Get a wrapped field by its own accessible name, using that element's getByLabel(Locator, String) factory scoped to this custom field.
+- `<T extends VaadinElement> T getField(Class<T> type, int index)` — Get a wrapped field by its position among the wrapped fields of the same type, in DOM order.
 - `Locator getHelperLocator()` — Only the custom field's own helper: a wrapped field's helper text is not matched.
 - `TooltipElement getTooltip()` — Only the custom field's own tooltip: a wrapped field's tooltip is not matched.
 - `void assertRequired()` — Assert that the field is marked required.
@@ -761,7 +930,7 @@ PlaywrightElement for <vaadin-custom-field>.
 PlaywrightElement for <vaadin-date-picker>.
 
 **Extends:** VaadinElement  
-**Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement  
+**Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-date-picker"`
 
@@ -787,7 +956,7 @@ PlaywrightElement for <vaadin-date-picker>.
 PlaywrightElement for <vaadin-date-time-picker>.
 
 **Extends:** VaadinElement  
-**Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement  
+**Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-date-time-picker"`, `DateTimeFormatter ISO_LOCAL_DATE_TIME = …`
 
@@ -817,7 +986,7 @@ PlaywrightElement for <vaadin-date-time-picker>.
 PlaywrightElement for <vaadin-details>.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement, HasTooltipElement, HasDisabledAttributeElement  
+**Implements:** HasStyleElement, HasThemeElement, HasTooltipElement, HasDisabledAttributeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-details"`
 
@@ -841,12 +1010,12 @@ PlaywrightElement for <vaadin-details>.
 - `void assertContentVisible()` — Assert that the content is visible.
 - `void assertContentNotVisible()` — Assert that the content is not visible.
 
-### DialogElement
+### DialogElement  `<vaadin-dialog>`
 
 PlaywrightElement for <vaadin-dialog>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-dialog"`
 
@@ -900,7 +1069,7 @@ PlaywrightElement for <vaadin-email-field>.
 PlaywrightElement for <vaadin-form-layout>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-form-layout"`, `String FORM_ITEM_TAG_NAME = "vaadin-form-item"`, `String FORM_ROW_TAG_NAME = "vaadin-form-row"`, `String LABEL_POSITION_ASIDE = "aside"`, `String LABEL_POSITION_TOP = "top"`
 
@@ -931,7 +1100,7 @@ PlaywrightElement for <vaadin-form-layout>.
 PlaywrightElement for <vaadin-grid>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasStyleElement, HasThemeElement, HasEnabledElement  
+**Implements:** FocusableElement, HasStyleElement, HasThemeElement, HasEnabledElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-grid"`
 
@@ -1072,6 +1241,7 @@ Represents a row in the grid, providing access to the row locator, row index, an
 PlaywrightElement for <vaadin-integer-field>.
 
 **Extends:** AbstractNumberFieldElement  
+**Implements:** Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-integer-field"`
 
@@ -1101,7 +1271,7 @@ PlaywrightElement for <vaadin-integer-field>.
 PlaywrightElement for <vaadin-list-box>.
 
 **Extends:** VaadinElement  
-**Implements:** HasAriaLabelElement, HasStyleElement, HasTooltipElement, HasDisabledAttributeElement  
+**Implements:** HasAriaLabelElement, HasStyleElement, HasTooltipElement, HasDisabledAttributeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-list-box"`, `String FIELD_ITEM_TAG_NAME = "vaadin-item"`, `String MULTIPLE_ATTRIBUTE = "multiple"`
 
@@ -1130,6 +1300,7 @@ PlaywrightElement for <vaadin-list-box>.
 PlaywrightElement for <vaadin-login-form>.
 
 **Extends:** AbstractLoginElement  
+**Implements:** Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-login-form"`
 
@@ -1147,6 +1318,7 @@ PlaywrightElement for <vaadin-login-form>.
 PlaywrightElement for <vaadin-login-overlay>.
 
 **Extends:** AbstractLoginElement  
+**Implements:** Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-login-overlay"`, `String OVERLAY_TAG_NAME = "vaadin-login-overlay-wrapper"`
 
@@ -1179,7 +1351,7 @@ PlaywrightElement for <vaadin-login-overlay>.
 PlaywrightElement for <vaadin-markdown>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-markdown"`
 
@@ -1213,12 +1385,12 @@ PlaywrightElement for <vaadin-markdown>.
 - `void assertCodeBlock(int index, String expected)` — Assert the text of the rendered code block at the given index.
 - `void assertCodeBlockLanguage(int index, String language)` — Assert the language of the rendered code block at the given index.
 
-### MenuBarElement
+### MenuBarElement  `<vaadin-menu-bar>`
 
 PlaywrightElement for <vaadin-menu-bar>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement  
+**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-menu-bar"`
 
@@ -1259,12 +1431,12 @@ PlaywrightElement for the menu overlay list <vaadin-menu-bar-list-box>.
 - `MenuItemElement getMenuItemElement(String name)` — Get a menu item by its visible label within this menu.
 - `MenuElement openSubMenu(String name)` — Click a menu item to open its submenu and return the next overlay.
 
-### MenuItemElement
+### MenuItemElement  `<vaadin-menu-bar-button>`
 
 PlaywrightElement for individual menu items <vaadin-menu-bar-button>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement  
+**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-menu-bar-button"`
 
@@ -1286,7 +1458,7 @@ PlaywrightElement for individual menu items <vaadin-menu-bar-button>.
 PlaywrightElement for <vaadin-message-input>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasEnabledElement, HasStyleElement, HasThemeElement, HasTooltipElement  
+**Implements:** FocusableElement, HasEnabledElement, HasStyleElement, HasThemeElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-message-input"`
 
@@ -1325,7 +1497,7 @@ PlaywrightElement for <vaadin-message-input>.
 PlaywrightElement for <vaadin-message-list>.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement  
+**Implements:** HasStyleElement, HasThemeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-message-list"`, `String FIELD_MESSAGE_TAG_NAME = "vaadin-message"`
 
@@ -1357,7 +1529,7 @@ PlaywrightElement for <vaadin-message-list>.
 PlaywrightElement for <vaadin-multi-select-combo-box>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, HasClearButtonElement, HasAllowedCharPatternElement, HasReadOnlyElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-multi-select-combo-box"`, `String FIELD_ITEM_TAG_NAME = "vaadin-multi-select-combo-box-item"`, `String FIELD_CHIP_TAG_NAME = "vaadin-multi-select-combo-box-chip"`
 
@@ -1396,8 +1568,8 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 - `int getSelectedItemCount()` — Get the count of currently selected items from the selectedItems property.
 - `void assertSelectedItems(String... expected)` — Assert that the selected item labels match the expected values, in any order: the selection holds exactly as many items as expected and contains each of them.
 - `void assertSelectedCount(int expected)` — Assert that the number of selected items matches.
-- `T getOverlayItemComponent(String itemText, Class<T> type)` — Get a typed component element from an overlay item matching the given text.
-- `T getOverlayItemComponent(int index, Class<T> type)` — Get a typed component element from an overlay item at the given visible index.
+- `<T extends VaadinElement> T getOverlayItemComponent(String itemText, Class<T> type)` — Get a typed component element from an overlay item matching the given text.
+- `<T extends VaadinElement> T getOverlayItemComponent(int index, Class<T> type)` — Get a typed component element from an overlay item at the given visible index.
 
 ### NotificationElement
 
@@ -1430,6 +1602,7 @@ PlaywrightElement for notification cards <vaadin-notification-card>.
 PlaywrightElement for <vaadin-number-field>.
 
 **Extends:** AbstractNumberFieldElement  
+**Implements:** Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-number-field"`
 
@@ -1470,12 +1643,12 @@ PlaywrightElement for <vaadin-password-field>.
 
 - `PasswordFieldElement getByLabel(Page page, String label)` — Get the PasswordFieldElement by its accessible name, searching the entire page.
 
-### PopoverElement
+### PopoverElement  `<vaadin-popover>`
 
 PlaywrightElement for <vaadin-popover>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement  
+**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-popover"`
 
@@ -1500,7 +1673,7 @@ PlaywrightElement for <vaadin-popover>.
 PlaywrightElement for <vaadin-progress-bar>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-progress-bar"`, `String INDETERMINATE_ATTRIBUTE = "indeterminate"`
 
@@ -1529,7 +1702,7 @@ PlaywrightElement for <vaadin-progress-bar>.
 PlaywrightElement for <vaadin-radio-group>.
 
 **Extends:** VaadinElement  
-**Implements:** HasLabelElement, HasEnabledElement, HasHelperElement, HasValidationPropertiesElement  
+**Implements:** HasLabelElement, HasEnabledElement, HasHelperElement, HasValidationPropertiesElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-radio-group"`
 
@@ -1554,7 +1727,7 @@ PlaywrightElement for <vaadin-radio-group>.
 PlaywrightElement for <vaadin-select>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasPrefixElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasInputFieldElement, HasPrefixElement, HasThemeElement, HasPlaceholderElement, HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-select"`, `String FIELD_ITEM_TAG_NAME = "vaadin-select-item"`, `String FIELD_OVERLAY_TAG_NAME = "vaadin-select-list-box"`
 
@@ -1578,7 +1751,7 @@ PlaywrightElement for <vaadin-select>.
 PlaywrightElement for <vaadin-side-nav>.
 
 **Extends:** VaadinElement  
-**Implements:** HasLabelElement  
+**Implements:** HasLabelElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-side-nav"`
 
@@ -1606,7 +1779,7 @@ PlaywrightElement for <vaadin-side-nav>.
 PlaywrightElement for <vaadin-side-nav-item>.
 
 **Extends:** VaadinElement  
-**Implements:** HasDisabledAttributeElement, HasPrefixElement, HasSuffixElement, HasLabelElement  
+**Implements:** HasDisabledAttributeElement, HasPrefixElement, HasSuffixElement, HasLabelElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-side-nav-item"`
 
@@ -1629,7 +1802,7 @@ PlaywrightElement for <vaadin-side-nav-item>.
 PlaywrightElement for <vaadin-slider> (the Flow IntegerSlider and DecimalSlider components).
 
 **Extends:** VaadinElement  
-**Implements:** HasLabelElement, HasHelperElement, HasEnabledElement, HasReadOnlyElement, FocusableElement, HasThemeElement, HasStyleElement, HasTooltipElement  
+**Implements:** HasLabelElement, HasHelperElement, HasEnabledElement, HasReadOnlyElement, FocusableElement, HasThemeElement, HasStyleElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-slider"`
 
@@ -1668,7 +1841,7 @@ PlaywrightElement for <vaadin-slider> (the Flow IntegerSlider and DecimalSlider 
 PlaywrightElement for vaadin-split-layout.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement  
+**Implements:** HasStyleElement, HasThemeElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-split-layout"`
 
@@ -1694,7 +1867,7 @@ PlaywrightElement for vaadin-split-layout.
 PlaywrightElement for <vaadin-switch>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-switch"`
 
@@ -1711,6 +1884,7 @@ PlaywrightElement for <vaadin-switch>.
 PlaywrightElement for tabs <vaadin-tab>.
 
 **Extends:** VaadinElement  
+**Implements:** Findable  
 
 **Constants:** `String FIELD_PARENT_TAG_NAME = "vaadin-tabs"`, `String FIELD_TAG_NAME = "vaadin-tab"`
 
@@ -1736,6 +1910,7 @@ PlaywrightElement for tabs <vaadin-tab>.
 PlaywrightElement for <vaadin-tabsheet>.
 
 **Extends:** VaadinElement  
+**Implements:** Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-tabsheet"`
 
@@ -1763,7 +1938,7 @@ PlaywrightElement for <vaadin-tabsheet>.
 PlaywrightElement for <vaadin-tabs>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-tabs"`, `String ORIENTATION_HORIZONTAL = "horizontal"`, `String ORIENTATION_VERTICAL = "vertical"`
 
@@ -1819,7 +1994,7 @@ PlaywrightElement for <vaadin-text-area>.
 PlaywrightElement for <vaadin-text-field>
 
 **Extends:** VaadinElement  
-**Implements:** HasValidationPropertiesElement, HasInputFieldElement, HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasReadOnlyElement, HasTooltipElement  
+**Implements:** HasValidationPropertiesElement, HasInputFieldElement, HasPrefixElement, HasSuffixElement, HasClearButtonElement, HasPlaceholderElement, HasAllowedCharPatternElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasReadOnlyElement, HasTooltipElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-text-field"`, `String MAXLENGTH_ATTRIBUTE = "maxlength"`, `String PATTERN_ATTRIBUTE = "pattern"`, `String MIN_LENGTH_ATTRIBUTE = "minLength"`
 
@@ -1849,7 +2024,7 @@ PlaywrightElement for <vaadin-text-field>
 PlaywrightElement for <vaadin-time-picker>.
 
 **Extends:** VaadinElement  
-**Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement  
+**Implements:** HasInputFieldElement, HasValidationPropertiesElement, HasClearButtonElement, HasPlaceholderElement, HasThemeElement, FocusableElement, HasAriaLabelElement, HasEnabledElement, HasTooltipElement, HasLabelElement, HasHelperElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-time-picker"`, `DateTimeFormatter LOCAL_TIME = DateTimeFormatter.ofPattern("HH:mm")`
 
@@ -1873,7 +2048,7 @@ PlaywrightElement for <vaadin-time-picker>.
 PlaywrightElement for <vaadin-tooltip>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-tooltip"`
 
@@ -1949,7 +2124,7 @@ Represents a row in a TreeGrid, extending GridElement.RowElement with tree-speci
 PlaywrightElement for vaadin-upload.
 
 **Extends:** VaadinElement  
-**Implements:** HasEnabledElement, HasValidationPropertiesElement, HasThemeElement, FocusableElement  
+**Implements:** HasEnabledElement, HasValidationPropertiesElement, HasThemeElement, FocusableElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-upload"`, `String FILE_ITEM_TAG_NAME = "vaadin-upload-file"`
 
@@ -1979,7 +2154,7 @@ PlaywrightElement for vaadin-upload.
 PlaywrightElement for <vaadin-virtual-list>.
 
 **Extends:** VaadinElement  
-**Implements:** FocusableElement, HasStyleElement  
+**Implements:** FocusableElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-virtual-list"`
 
@@ -2001,9 +2176,9 @@ PlaywrightElement for <vaadin-virtual-list>.
 - `Locator getRenderedItems()` — Get a locator matching all currently rendered child elements.
 - `Locator getItemByIndex(int index)` — Get the rendered DOM element at the given virtual index.
 - `Locator getItemByText(String text)` — Get a rendered item containing the given text.
-- `T getItemComponent(int index, Class<T> type)` — Get a typed component element from the rendered item at the given virtual index.
-- `T getItemComponentByText(String text, Class<T> type)` — Get a typed component element from the rendered item whose text matches.
-- `T getComponent(Class<T> type)` — Get the first typed component element found anywhere in the currently rendered items.
+- `<T extends VaadinElement> T getItemComponent(int index, Class<T> type)` — Get a typed component element from the rendered item at the given virtual index.
+- `<T extends VaadinElement> T getItemComponentByText(String text, Class<T> type)` — Get a typed component element from the rendered item whose text matches.
+- `<T extends VaadinElement> T getComponent(Class<T> type)` — Get the first typed component element found anywhere in the currently rendered items.
 - `void scrollToRow(int rowIndex)` — Scroll the list so that the given row index becomes visible.
 - `void scrollToStart()` — Scroll to the very beginning of the list.
 - `void scrollToEnd()` — Scroll to the very end of the list.
@@ -2288,6 +2463,7 @@ Base class for typed Playwright wrappers around Vaadin components.
 
 - `void click()` — Click the component root.
 - `String getText()` — Get the textual content of the component root.
+- `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for type components inside this component, e.g. dialog.find(ButtonElement.class).withText("Delete").single().
 - `void setProperty(String name, Object value)` — Set a DOM property on the underlying element (e.g. value, disabled).
 - `Object getProperty(String name)` — Get a DOM property from the underlying element.
 - `boolean isVisible()` — Whether the component is visible.

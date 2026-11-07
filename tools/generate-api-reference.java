@@ -60,6 +60,7 @@ class GenerateApiReference {
         // Parse every top-level type, keyed by simple name.
         Map<String, TypeDeclaration<?>> elements = new TreeMap<>(); // element wrappers (alpha)
         Map<String, TypeDeclaration<?>> mixins = new TreeMap<>();    // element/shared/*
+        Map<String, TypeDeclaration<?>> queries = new TreeMap<>();   // element/query/*
         Map<String, TypeDeclaration<?>> setup = new LinkedHashMap<>(); // root package, SETUP_TYPES order
         TypeDeclaration<?> base = null;                              // VaadinElement
 
@@ -84,7 +85,9 @@ class GenerateApiReference {
                 String name = t.getNameAsString();
                 if (t instanceof AnnotationDeclaration) continue;      // @PlaywrightElement marker
                 boolean shared = f.getParent().getFileName().toString().equals("shared");
+                boolean query = f.getParent().getFileName().toString().equals("query");
                 if (shared) { mixins.put(name, t); }
+                else if (query) { queries.put(name, t); }
                 else if (name.equals("VaadinElement")) { base = t; }
                 else { elements.put(name, t); }
             }
@@ -128,6 +131,9 @@ class GenerateApiReference {
         // methods, so it can never drift: factory methods are NOT uniform
         // across elements, and this table is the authoritative list.
         renderIndex(md, elements);
+
+        // The typed query builder: find(page, X.class).withLabel(..).single().
+        renderQueries(md, queries);
 
         // Table of contents for the elements.
         md.append("## Elements\n\n");
@@ -214,9 +220,11 @@ class GenerateApiReference {
         md.append("only has the factories listed here (e.g. most fields use `getByLabel`, ");
         md.append("containers use `get`; `getById` exists on only a few). Do not assume a ");
         md.append("factory that isn't listed. Every wrapper is also constructible via ");
-        md.append("`new <Name>(Locator)`.\n\n");
-        md.append("| Web-component tag | Element wrapper | Static factory methods |\n");
-        md.append("|---|---|---|\n");
+        md.append("`new <Name>(Locator)`. The last column is the query that ");
+        md.append("`find(page, <Name>.class)` returns (see **Typed queries**); a wrapper ");
+        md.append("without one cannot be used with `find`.\n\n");
+        md.append("| Web-component tag | Element wrapper | Static factory methods | `find` query |\n");
+        md.append("|---|---|---|---|\n");
         // Sort by tag (untagged composites last), then by name.
         elements.entrySet().stream()
                 .sorted(Comparator
@@ -234,9 +242,64 @@ class GenerateApiReference {
                       .append(factories.isEmpty()
                               ? "*constructor only*"
                               : factories.stream().map(s -> "`" + s + "`").collect(Collectors.joining(", ")))
+                      .append(" | ")
+                      .append(Optional.ofNullable(queryOf(t, elements)).map(q -> "`" + q + "`").orElse("—"))
                       .append(" |\n");
                 });
         md.append("\n");
+    }
+
+    /**
+     * The query class an element binds through {@code Findable<Q>}, following
+     * the superclass chain the way Java inheritance does; {@code null} if none.
+     */
+    static String queryOf(TypeDeclaration<?> t, Map<String, TypeDeclaration<?>> elements) {
+        if (!(t instanceof ClassOrInterfaceDeclaration cid)) return null;
+        for (var type : cid.getImplementedTypes()) {
+            if (type.getNameAsString().equals("Findable")) {
+                return type.getTypeArguments()
+                        .filter(args -> !args.isEmpty())
+                        .map(args -> args.get(0).isClassOrInterfaceType()
+                                ? args.get(0).asClassOrInterfaceType().getNameAsString()
+                                : args.get(0).asString())
+                        .orElse(null);
+            }
+        }
+        for (var parent : cid.getExtendedTypes()) {
+            TypeDeclaration<?> p = elements.get(parent.getNameAsString());
+            if (p != null) return queryOf(p, elements);
+        }
+        return null;
+    }
+
+    /**
+     * Render the "Typed queries" section: how {@code find} works, then the API
+     * of every type in the {@code element.query} package.
+     */
+    static void renderQueries(StringBuilder md, Map<String, TypeDeclaration<?>> queries) {
+        if (queries.isEmpty()) return;
+        md.append("## Typed queries\n\n");
+        md.append("An alternative to the static factories with one grammar for every element: ");
+        md.append("`ElementQueries.find(page, X.class)` (or `element.find(X.class)` to search ");
+        md.append("inside a component) returns the query listed for `X` in the element index, ");
+        md.append("filters narrow it, and a terminal returns the element. Only the filters that ");
+        md.append("fit the component compile — `withLabel` on a field, `withText` on a button. ");
+        md.append("Every query has `withId`, `withTestId`, `withAttribute` and `withClassName`; ");
+        md.append("filters return new queries, and the result stays a lazy Playwright locator.\n\n");
+        md.append("```java\n");
+        md.append("import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;\n\n");
+        md.append("TextFieldElement name = find(page, TextFieldElement.class).withLabel(\"Name\").single();\n");
+        md.append("DialogElement dialog = find(page, DialogElement.class).withAccessibleName(\"Delete account?\").single();\n");
+        md.append("dialog.find(ButtonElement.class).withText(\"Delete\").single().click();\n");
+        md.append("```\n\n");
+        md.append("`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the ");
+        md.append("**whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` ");
+        md.append("match a case-insensitive substring. `single()` fails with a strict-mode error ");
+        md.append("when several components match; `first()`, `get(int)`, `all()`, `count()` and ");
+        md.append("`exists()` do not.\n\n");
+        for (var e : queries.entrySet()) {
+            renderType(md, e.getValue(), 3, false);
+        }
     }
 
     /** Public static methods that return the element's own type — i.e. its factory methods. */
@@ -381,8 +444,11 @@ class GenerateApiReference {
     static String methodSig(MethodDeclaration m) {
         // Public is the norm and left implicit; protected is worth spelling out,
         // since it only shows up where a subclass inherits it.
+        String typeParams = m.getTypeParameters().isEmpty() ? ""
+                : m.getTypeParameters().stream().map(Object::toString)
+                        .collect(Collectors.joining(", ", "<", "> "));
         return (m.isProtected() ? "protected " : "")
-                + m.getType().asString() + " " + m.getNameAsString() + "(" + params(m.getParameters()) + ")";
+                + typeParams + m.getType().asString() + " " + m.getNameAsString() + "(" + params(m.getParameters()) + ")";
     }
 
     /**
