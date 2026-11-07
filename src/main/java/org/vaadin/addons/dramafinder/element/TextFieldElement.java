@@ -148,6 +148,10 @@ public class TextFieldElement extends VaadinElement
      * <p>
      * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
      * placeholder text (used as a fallback when no label is present).
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two fields with the same name fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
      * @param label the accessible name of the text field
@@ -159,11 +163,32 @@ public class TextFieldElement extends VaadinElement
     }
 
     /**
+     * Get the {@code TextFieldElement} whose accessible name contains {@code text},
+     * searching the entire page.
+     * <p>
+     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
+     * substring. No {@code .first()} is applied: several matching fields fail with a
+     * strict-mode error.
+     *
+     * @param page the Playwright page
+     * @param text part of the accessible name of the field
+     * @return the matching {@code TextFieldElement}
+     */
+    public static TextFieldElement getByLabelContaining(Page page, String text) {
+        return new TextFieldElement(
+                AccessibleNameLocator.findContaining(page, FIELD_TAG_NAME, AriaRole.TEXTBOX, text));
+    }
+
+    /**
      * Get the {@code TextFieldElement} by its accessible name, scoped to the given locator.
      * <p>
      * Matches fields identified by a visible label, an {@code aria-label} attribute, or a
      * placeholder text (used as a fallback when no label is present). Only fields within
      * the subtree of the provided locator are considered.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two fields with the same name fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
      *
      * @param locator the locator defining the search scope
      * @param label   the accessible name of the text field
@@ -172,6 +197,23 @@ public class TextFieldElement extends VaadinElement
     public static TextFieldElement getByLabel(Locator locator, String label) {
         return new TextFieldElement(
                 AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.TEXTBOX, label));
+    }
+
+    /**
+     * Get the {@code TextFieldElement} whose accessible name contains {@code text},
+     * scoped to the given locator.
+     * <p>
+     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
+     * substring. No {@code .first()} is applied: several matching fields fail with a
+     * strict-mode error.
+     *
+     * @param locator the locator defining the search scope
+     * @param text    part of the accessible name of the field
+     * @return the matching {@code TextFieldElement}
+     */
+    public static TextFieldElement getByLabelContaining(Locator locator, String text) {
+        return new TextFieldElement(
+                AccessibleNameLocator.findContaining(locator, FIELD_TAG_NAME, AriaRole.TEXTBOX, text));
     }
 
     /**

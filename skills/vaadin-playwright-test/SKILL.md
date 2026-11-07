@@ -30,6 +30,10 @@ Always follow [@TESTING.md](TESTING.md) when generating tests. Key rules:
   implementation details — the wrapper already exposes the count, content, and
   state you need. Raw locators are a **last resort**, allowed only for a
   component that has no wrapper at all (see Step 2).
+- **Pass the whole label** — `getByLabel`, `getByText`, `getByHeaderText` and
+  the other label lookups match the full name, case-sensitively, and fail on
+  duplicates. Copy the label exactly from the view; use `getByLabelContaining`
+  only when the label is long or generated
 - **No `Thread.sleep()`** — use Playwright auto-waiting or `waitFor` methods
   instead
 - **Assert on user-visible state** — check visibility, text, or

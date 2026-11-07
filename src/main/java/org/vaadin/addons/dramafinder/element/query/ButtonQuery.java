@@ -1,13 +1,12 @@
 package org.vaadin.addons.dramafinder.element.query;
 
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
 
 /**
- * Query for {@code vaadin-button}: adds text filters and an accessible-name
- * filter that, unlike the field one, also reads a button's name from its text.
+ * Query for {@code vaadin-button}: adds text filters, and reads the accessible
+ * name from the button's text when no {@code aria-label} or
+ * {@code aria-labelledby} is set.
  *
  * @param <T> the element type the terminals return
  */
@@ -27,15 +26,28 @@ public class ButtonQuery<T extends VaadinElement> extends ElementQuery<T, Button
 
     /**
      * Keep buttons whose accessible name is exactly {@code name}
-     * (case-sensitive, whitespace-normalized): the {@code aria-label} when set,
-     * otherwise the button text — so it finds icon-only buttons too.
+     * (case-sensitive, whitespace-normalized): the {@code aria-label} or
+     * {@code aria-labelledby} text when set — so it finds icon-only buttons —
+     * otherwise the button's own text. A tooltip on the button is never part of
+     * the name, open or not.
      *
      * @param name the full accessible name
      * @return a new, narrowed query
      */
     @Override
     public ButtonQuery<T> withAccessibleName(String name) {
-        return refine(l -> l.and(l.page().getByRole(AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName(name).setExact(true))));
+        return refine(l -> QueryText.labelledOrOwnText(l, name, true));
+    }
+
+    /**
+     * Keep buttons whose accessible name — as read by
+     * {@link #withAccessibleName(String)} — contains {@code text}, ignoring the
+     * case of ASCII letters.
+     *
+     * @param text part of the accessible name
+     * @return a new, narrowed query
+     */
+    public ButtonQuery<T> withAccessibleNameContaining(String text) {
+        return refine(l -> QueryText.labelledOrOwnText(l, text, false));
     }
 }

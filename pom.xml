@@ -4,7 +4,7 @@
 
     <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
-    <version>1.2.5-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <url>https://github.com/parttio/dramafinder</url>
 
@@ -194,6 +194,9 @@
                             <Dramafinder-Agent-Api-Reference>
                                 META-INF/dramafinder/agent-api-reference.md
                             </Dramafinder-Agent-Api-Reference>
+                            <Dramafinder-Migration-2-0>
+                                META-INF/dramafinder/MIGRATION-2.0.md
+                            </Dramafinder-Migration-2-0>
                         </manifestEntries>
                     </archive>
                 </configuration>

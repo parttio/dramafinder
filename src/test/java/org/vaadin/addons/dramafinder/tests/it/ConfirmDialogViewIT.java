@@ -77,9 +77,10 @@ public class ConfirmDialogViewIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void headerMatchesAsCaseInsensitiveSubstring() {
+    public void headerMatchesInFull() {
         ButtonElement.getByText(page, "Open unsaved changes").click();
-        ConfirmDialogElement.getByHeaderText(page, "unsaved").assertOpen();
+        ConfirmDialogElement.getByHeaderText(page, "Unsaved changes").assertOpen();
+        assertThat(ConfirmDialogElement.getByHeaderText(page, "unsaved").getLocator()).hasCount(0);
     }
 
     @Test

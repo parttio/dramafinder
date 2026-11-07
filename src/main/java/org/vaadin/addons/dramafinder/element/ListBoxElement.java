@@ -123,13 +123,41 @@ public class ListBoxElement extends VaadinElement
 
 
     /**
-     * Get the {@code ListBoxElement} by its label.
+     * Get the {@code ListBoxElement} by its accessible name (ARIA role {@code listbox}),
+     * searching the entire page.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     *
+     * @param page  the Playwright page
+     * @param label the full accessible name
+     * @return the matching {@code ListBoxElement}
      */
     public static ListBoxElement getByLabel(Page page, String label) {
         return new ListBoxElement(
                 page.locator(FIELD_TAG_NAME)
                         .and(page.getByRole(AriaRole.LISTBOX,
-                                new Page.GetByRoleOptions().setName(label))
-                        ).first());
+                                new Page.GetByRoleOptions().setName(label).setExact(true))
+                        ));
+    }
+
+    /**
+     * Get the {@code ListBoxElement} whose accessible name (ARIA role {@code listbox}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code ListBoxElement}
+     */
+    public static ListBoxElement getByLabelContaining(Page page, String text) {
+        return new ListBoxElement(
+                page.locator(FIELD_TAG_NAME)
+                        .and(page.getByRole(AriaRole.LISTBOX,
+                                new Page.GetByRoleOptions().setName(text))
+                        ));
     }
 }

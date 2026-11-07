@@ -2,6 +2,9 @@ package org.vaadin.addons.dramafinder.element.query;
 
 import java.util.regex.Pattern;
 
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+
 /**
  * Text-matching helpers shared by the query filters.
  */
@@ -79,6 +82,26 @@ final class QueryText {
                 + " or text()[contains(" + lower + ", " + value + ")]"
                 + " or *[not(@slot)][contains(" + lower + ", " + value + ")]]";
     }
+
+    /**
+     * Narrow {@code candidates} to components named {@code name} the way
+     * name-from-content roles (button, tab, menu item) are: by
+     * {@code aria-label} or {@code aria-labelledby} when set, otherwise by their
+     * own text (see {@link #ownTextIs}). Unlike Playwright's role name, this
+     * ignores a tooltip slotted into the component, whose text joins the role
+     * name while the tooltip is open.
+     *
+     * @param exact {@code true} for a whole, case-sensitive match; {@code false}
+     *              for a case-insensitive substring
+     */
+    static Locator labelledOrOwnText(Locator candidates, String name, boolean exact) {
+        Page page = candidates.page();
+        Locator labelled = candidates.and(page.getByLabel(name, new Page.GetByLabelOptions().setExact(exact)));
+        String ownText = exact ? ownTextIs(name) : ownTextContains(name);
+        return labelled.or(candidates.and(page.locator(UNLABELLED)).locator(ownText));
+    }
+
+    private static final String UNLABELLED = ":not([aria-label]):not([aria-labelledby])";
 
     /** Collapse whitespace runs the way XPath's {@code normalize-space} does. */
     private static String normalize(String text) {

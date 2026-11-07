@@ -52,36 +52,71 @@ public class CustomFieldElement extends VaadinElement
     }
 
     /**
-     * Get the first custom field on the page whose label matches, using the
-     * {@code group} ARIA role.
+     * Get the {@code CustomFieldElement} by its accessible name (ARIA role {@code group}),
+     * searching the entire page.
      * <p>
-     * The label is matched case-insensitively as a substring.
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
-     * @param label the label, or part of it
-     * @return the first matching {@code CustomFieldElement}
+     * @param label the full accessible name
+     * @return the matching {@code CustomFieldElement}
      */
     public static CustomFieldElement getByLabel(Page page, String label) {
         return new CustomFieldElement(page.locator(FIELD_TAG_NAME)
-                .and(page.getByRole(AriaRole.GROUP, new Page.GetByRoleOptions().setName(label)))
-                .first());
+                .and(page.getByRole(AriaRole.GROUP, new Page.GetByRoleOptions().setName(label).setExact(true))));
     }
 
     /**
-     * Get the first custom field within a parent locator whose label matches,
-     * using the {@code group} ARIA role.
+     * Get the {@code CustomFieldElement} whose accessible name (ARIA role {@code group}) contains
+     * {@code text}, searching the entire page.
      * <p>
-     * The label is matched case-insensitively as a substring.
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code CustomFieldElement}
+     */
+    public static CustomFieldElement getByLabelContaining(Page page, String text) {
+        return new CustomFieldElement(page.locator(FIELD_TAG_NAME)
+                .and(page.getByRole(AriaRole.GROUP, new Page.GetByRoleOptions().setName(text))));
+    }
+
+    /**
+     * Get the {@code CustomFieldElement} by its accessible name (ARIA role {@code group}),
+     * within the given scope.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
      *
      * @param parent the locator to search within
-     * @param label  the label, or part of it
-     * @return the first matching {@code CustomFieldElement}
+     * @param label  the full accessible name
+     * @return the matching {@code CustomFieldElement}
      */
     public static CustomFieldElement getByLabel(Locator parent, String label) {
         return new CustomFieldElement(parent.locator(FIELD_TAG_NAME)
                 .and(parent.page().getByRole(AriaRole.GROUP,
-                        new Page.GetByRoleOptions().setName(label)))
-                .first());
+                        new Page.GetByRoleOptions().setName(label).setExact(true))));
+    }
+
+    /**
+     * Get the {@code CustomFieldElement} whose accessible name (ARIA role {@code group}) contains
+     * {@code text}, within the given scope.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param parent the locator to search within
+     * @param text   part of the accessible name
+     * @return the matching {@code CustomFieldElement}
+     */
+    public static CustomFieldElement getByLabelContaining(Locator parent, String text) {
+        return new CustomFieldElement(parent.locator(FIELD_TAG_NAME)
+                .and(parent.page().getByRole(AriaRole.GROUP,
+                        new Page.GetByRoleOptions().setName(text))));
     }
 
     // ── Wrapped fields ─────────────────────────────────────────────────

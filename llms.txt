@@ -35,6 +35,7 @@ once the dependency resolves:
 JAR=$(ls ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar | tail -1)
 unzip -p "$JAR" META-INF/dramafinder/START-HERE.md    # short guide, ~4 KB
 unzip -p "$JAR" META-INF/dramafinder/api-reference.md # every signature, ~100 KB
+unzip -p "$JAR" META-INF/dramafinder/MIGRATION-2.0.md # upgrading tests from 1.x
 ```
 
 Start with `START-HERE.md`: it has a working test skeleton, the tag-to-wrapper
@@ -58,6 +59,7 @@ naming rule, and the handful of things that are easy to get wrong.
 - [AGENTS.md](AGENTS.md) - Repository guidelines, coding conventions, pitfalls & patterns
 - [TESTING.md](skills/vaadin-playwright-test/TESTING.md) - How to write DramaFinder tests (one assert per test, user-facing locators)
 - [README.md](README.md) - Project overview and setup
+- [MIGRATION-2.0.md](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) - Upgrading 1.x tests: label lookups are exact by default, every changed method
 
 ## Element Specifications
 

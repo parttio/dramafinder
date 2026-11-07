@@ -71,20 +71,21 @@ public class ViewOutlineIT extends SpringPlaywrightIT {
 
     @Test
     public void flagsLookupThatMatchesSeveralComponents() {
-        String outline = outlineOf("dialog");
-        // "Open dialog" is a substring of "Open dialog with header component".
-        assertContains(outline, "ButtonElement.getByText(page, \"Open dialog\") matches 2 components");
-        assertContains(outline, "ButtonElement.getByText(page, \"Open non-modal 1\")");
+        String outline = outlineOf("ambiguous-label");
+        // two buttons share the label "Duplicate"
+        assertContains(outline, "ButtonElement.getByText(page, \"Duplicate\") matches 2 components");
+        // labels match in full, so "Name" singles out its field despite "Nickname"
+        assertContains(outline, "TextFieldElement.getByLabel(page, \"Name\")");
     }
 
     @Test
     public void positionalFallbackPointsAtTheListedComponent() {
-        String outline = outlineOf("dialog");
+        String outline = outlineOf("ambiguous-label");
         String line = outline.lines()
                 .filter(l -> l.contains("matches 2 components"))
                 .findFirst().orElseThrow();
         int nth = Integer.parseInt(line.replaceAll(".*\\.nth\\((\\d+)\\).*", "$1"));
-        assertThat(page.locator("vaadin-button").nth(nth)).hasText("Open dialog");
+        assertThat(page.locator("vaadin-button").nth(nth)).hasText("Duplicate");
     }
 
     @Test

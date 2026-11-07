@@ -244,10 +244,13 @@ public static TextFieldElement getByLabel(Page page, String label) {
         page.locator(FIELD_TAG_NAME)
             .filter(new Locator.FilterOptions()
                 .setHas(page.getByRole(AriaRole.TEXTBOX,
-                    new Page.GetByRoleOptions().setName(label)))
-            ).first());
+                    new Page.GetByRoleOptions().setName(label).setExact(true)))
+            ));
 }
 ```
+Label- and name-keyed factories match the **whole** name with no `.first()`; each
+`getByLabel` has a `getByLabelContaining` sibling for partial matches (see "Exact vs
+substring matching").
 
 #### 2. Mixin Interfaces (Composition)
 Shared behavior is extracted into interfaces with default implementations:
@@ -317,7 +320,8 @@ a **case-insensitive substring** match, so `"Option 1"` also matches
 `"Option 10"`. Combined with a trailing `.first()` that silently resolves to
 whichever matched element comes first in the DOM — and, because the assertion
 helper re-runs the same lookup, a test then goes green against the wrong
-element. The library therefore splits label-keyed lookups in two:
+element. The library therefore matches labels and names **exactly** by default and
+keeps substring matching for lookups that say so in their name or Javadoc:
 
 - **Item-within-container lookups** — one option out of a combo box, select,
   list box or checkbox/radio group, one tab, one menu item, one side-nav item,
@@ -340,15 +344,27 @@ element. The library therefore splits label-keyed lookups in two:
   matches only the item's own text nodes, which is what a container whose items
   can hold items of the same kind (`vaadin-side-nav-item`) needs — matching the
   subtree would read a parent as `"Parent Child 1 Child 2"`.
-- **Page-level factories and `getByText` helpers** — `getByLabel(Page, String)`
-  on a field, `AccessibleNameLocator.find(...)`, and the helpers whose Javadoc
-  says "contains" (`BadgeElement`, `NotificationElement`, `TooltipElement`,
-  `VirtualListElement.getItemByText`). These keep substring matching and
-  `.first()` as a deliberate convenience: a caller may want to pass part of a
-  long label, and a virtual-list item renders an arbitrary component with no
-  single label. Say so in the Javadoc — "matched case-insensitively as a
-  substring" — so it reads as a choice rather than a Playwright default that
-  leaked through.
+- **Page-level and scoped factories** — `getByLabel` on every element
+  (`AccessibleNameLocator.find(...)` for fields, `getByRole(..., setExact(true))`
+  for the rest), `ButtonElement.getByText`, `getByHeaderText`, `getByTitle`,
+  `getBySummaryText`, `getByButtonText`, `AvatarElement.getByName`. Same rule as
+  items: the whole name, case-sensitively, **no `.first()`**. A field's
+  placeholder fallback is matched in full too.
+- **Explicit partial matches** — `getByLabelContaining` (and
+  `ButtonElement.getByTextContaining`), built on
+  `AccessibleNameLocator.findContaining(...)` or `setName(text)` without
+  `setExact`: case-insensitive substring, still no `.first()`, so an ambiguous
+  fragment fails rather than picking the first match.
+- **"Contains" text helpers** — `BadgeElement`, `NotificationElement`,
+  `TooltipElement` `getByText` and `VirtualListElement.getItemByText`. These keep
+  substring matching and `.first()` as a deliberate convenience: they match
+  free-form content rather than a label, and a virtual-list item renders an
+  arbitrary component with no single label. Say so in the Javadoc — "matched
+  case-insensitively as a substring" — so it reads as a choice rather than a
+  Playwright default that leaked through.
+
+A new label- or name-keyed factory follows the first rule and gets a
+`...Containing` sibling when partial matching is useful.
 
 `MessageListElement.getMessageByUserName` is the documented exception among item
 lookups: it matches the author exactly but keeps `.first()`, because several
@@ -377,7 +393,9 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `AccessibleNameFilters`). It reads the host or the field's own
   `slot="input|textarea|value"` child — never a nested component, so a dialog
   is not matched by a field it holds. `ButtonQuery` and `TextQuery` fall back to
-  the component's own text, as name-from-content roles do.
+  the component's own text, as name-from-content roles do — never Playwright's
+  role name, which grows by the tooltip text while a slotted tooltip is open
+  (`ButtonElement.getByText` relies on this).
 - Text filters read the component's **own** text (pitfall 11): light DOM only,
   via XPath, with named-slot children left out — never Playwright `hasText`.
 - A new element gets `@PlaywrightElement` and `implements Findable<...>` with the
@@ -422,7 +440,9 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar META-INF/dramafinder/api-reference.md`.
 - The build copies `api-reference.md` and `agent-api-reference.md` into the jar
   under `META-INF/dramafinder/` (see `maven-resources-plugin` in `pom.xml`), next
-  to the hand-written `src/main/resources/META-INF/dramafinder/START-HERE.md`.
+  to the hand-written `src/main/resources/META-INF/dramafinder/START-HERE.md` and
+  `MIGRATION-2.0.md` (the 1.x → 2.0 guide: keep its list of changed methods in
+  step with any further change to label-lookup behaviour before 2.0 ships).
   That bundled set is the only documentation an offline agent can reach — Maven
   puts nothing but the jar and the pom in `~/.m2` — so keep it working:
   `DocumentationBundledInJarTest` fails if a file stops being bundled, and

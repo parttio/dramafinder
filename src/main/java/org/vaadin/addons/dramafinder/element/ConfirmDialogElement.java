@@ -62,17 +62,17 @@ public class ConfirmDialogElement extends VaadinElement
      * Get an open confirm dialog by its header, which is the dialog's
      * accessible name ({@code alertdialog} role).
      * <p>
-     * The header is matched case-insensitively as a substring. The locator is
-     * not narrowed with {@code first()}, so two open dialogs whose headers both
-     * match fail with a strict-mode error instead of picking one silently.
+     * The header must match in full, case-sensitively. The locator is not
+     * narrowed with {@code first()}, so two open dialogs with that header fail
+     * with a strict-mode error instead of picking one silently.
      *
      * @param page   the Playwright page
-     * @param header the header text, or part of it
+     * @param header the full header text
      * @return the matching {@code ConfirmDialogElement}
      */
     public static ConfirmDialogElement getByHeaderText(Page page, String header) {
         return new ConfirmDialogElement(
-                page.getByRole(AriaRole.ALERTDIALOG, new Page.GetByRoleOptions().setName(header))
+                page.getByRole(AriaRole.ALERTDIALOG, new Page.GetByRoleOptions().setName(header).setExact(true))
                         .and(page.locator(FIELD_TAG_NAME)));
     }
 

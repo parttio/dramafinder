@@ -2,9 +2,11 @@ package org.vaadin.addons.dramafinder.tests.testuis;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.accordion.Accordion;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
@@ -16,6 +18,7 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -40,6 +43,22 @@ public class AmbiguousLabelView extends Main {
         createContextMenu();
         createSideNav();
         createAccordion();
+        createFields();
+        createDuplicateButtons();
+    }
+
+    // Page-level field lookups (#201): the longer label comes first.
+    private void createFields() {
+        TextField nickname = new TextField("Nickname");
+        nickname.setId("nickname-field");
+        TextField name = new TextField("Name");
+        name.setId("name-field");
+        addExample("Text fields", new Div(nickname, name));
+    }
+
+    // Two components sharing one label, for lookups that must fail loudly.
+    private void createDuplicateButtons() {
+        addExample("Duplicate buttons", new Div(new Button("Duplicate"), new Button("Duplicate")));
     }
 
     private void createCheckboxGroup() {

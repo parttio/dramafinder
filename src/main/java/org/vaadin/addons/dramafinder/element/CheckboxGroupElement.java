@@ -175,31 +175,77 @@ public class CheckboxGroupElement extends VaadinElement
     // ── Static factories ───────────────────────────────────────────────
 
     /**
-     * Get a {@code CheckboxGroupElement} by its accessible label.
+     * Get the {@code CheckboxGroupElement} by its accessible name (ARIA role {@code group}),
+     * searching the entire page.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Page, String)} to match part of the name.
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the group (ARIA role {@code group})
+     * @param label the full accessible name
      * @return the matching {@code CheckboxGroupElement}
      */
     public static CheckboxGroupElement getByLabel(Page page, String label) {
         return new CheckboxGroupElement(
                 page.locator(FIELD_TAG_NAME).and(
                         page.getByRole(AriaRole.GROUP,
-                                new Page.GetByRoleOptions().setName(label))).first());
+                                new Page.GetByRoleOptions().setName(label).setExact(true))));
     }
 
     /**
-     * Get a {@code CheckboxGroupElement} by its accessible label within a given scope.
+     * Get the {@code CheckboxGroupElement} whose accessible name (ARIA role {@code group}) contains
+     * {@code text}, searching the entire page.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param page  the Playwright page
+     * @param text  part of the accessible name
+     * @return the matching {@code CheckboxGroupElement}
+     */
+    public static CheckboxGroupElement getByLabelContaining(Page page, String text) {
+        return new CheckboxGroupElement(
+                page.locator(FIELD_TAG_NAME).and(
+                        page.getByRole(AriaRole.GROUP,
+                                new Page.GetByRoleOptions().setName(text))));
+    }
+
+    /**
+     * Get the {@code CheckboxGroupElement} by its accessible name (ARIA role {@code group}),
+     * within the given scope.
+     * <p>
+     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
+     * two matching components fail with a strict-mode error. Use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
      *
      * @param locator the locator to search within
-     * @param label   the accessible label of the group (ARIA role {@code group})
+     * @param label   the full accessible name
      * @return the matching {@code CheckboxGroupElement}
      */
     public static CheckboxGroupElement getByLabel(Locator locator, String label) {
         return new CheckboxGroupElement(
                 locator.locator(FIELD_TAG_NAME).and(
                         locator.page().getByRole(AriaRole.GROUP,
-                                new Page.GetByRoleOptions().setName(label))).first());
+                                new Page.GetByRoleOptions().setName(label).setExact(true))));
+    }
+
+    /**
+     * Get the {@code CheckboxGroupElement} whose accessible name (ARIA role {@code group}) contains
+     * {@code text}, within the given scope.
+     * <p>
+     * The name is matched case-insensitively as a substring. No {@code .first()} is
+     * applied: several matching components fail with a strict-mode error.
+     *
+     * @param locator the locator to search within
+     * @param text    part of the accessible name
+     * @return the matching {@code CheckboxGroupElement}
+     */
+    public static CheckboxGroupElement getByLabelContaining(Locator locator, String text) {
+        return new CheckboxGroupElement(
+                locator.locator(FIELD_TAG_NAME).and(
+                        locator.page().getByRole(AriaRole.GROUP,
+                                new Page.GetByRoleOptions().setName(text))));
     }
 
     // ── Internal ───────────────────────────────────────────────────────

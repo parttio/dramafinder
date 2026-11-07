@@ -155,14 +155,16 @@ public class LoginOverlayElement extends AbstractLoginElement implements Findabl
     /**
      * Get a {@code LoginOverlayElement} by its application title, which is the
      * overlay's accessible name.
+     * <p>
+     * The title must match in full, case-sensitively.
      *
      * @param page  the Playwright page
-     * @param title the application title
+     * @param title the full application title
      * @return the matching {@code LoginOverlayElement}
      */
     public static LoginOverlayElement getByTitle(Page page, String title) {
         return new LoginOverlayElement(
-                page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(title))
+                page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(title).setExact(true))
                         .and(page.locator(FIELD_TAG_NAME)));
     }
 }

@@ -186,7 +186,7 @@ public class TextFieldViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testFocused() {
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField");
+        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
         TextFieldElement textFieldWithHelperComponent = TextFieldElement.getByLabel(page, "TextField with helper component");
 
         assertEquals("", textfield.getLocator().getAttribute("focused"));

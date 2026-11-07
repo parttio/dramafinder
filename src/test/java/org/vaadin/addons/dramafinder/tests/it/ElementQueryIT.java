@@ -114,6 +114,8 @@ public class ElementQueryIT extends SpringPlaywrightIT {
         assertThat(find(page, ButtonElement.class).withAccessibleName("Close").single().getLocator())
                 .hasAttribute("aria-label", "Close");
         assertEquals(1, find(page, ButtonElement.class).withAccessibleName("Save").count());
+        assertEquals(2, find(page, ButtonElement.class).withAccessibleNameContaining("save").count());
+        assertEquals(1, find(page, ButtonElement.class).withAccessibleNameContaining("clo").count());
     }
 
     @Test

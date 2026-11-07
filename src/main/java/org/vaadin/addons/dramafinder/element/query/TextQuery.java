@@ -14,8 +14,6 @@ import org.vaadin.addons.dramafinder.element.VaadinElement;
 public class TextQuery<T extends VaadinElement> extends ElementQuery<T, TextQuery<T>>
         implements TextFilters<TextQuery<T>> {
 
-    private static final String UNLABELLED = ":not([aria-label]):not([aria-labelledby])";
-
     /**
      * Create a query over the given candidates; called by
      * {@link ElementQueries#find(com.microsoft.playwright.Page, Class) find}.
@@ -37,8 +35,18 @@ public class TextQuery<T extends VaadinElement> extends ElementQuery<T, TextQuer
      */
     @Override
     public TextQuery<T> withAccessibleName(String name) {
-        TextQuery<T> labelled = super.withAccessibleName(name);
-        return refine(l -> labelled.getLocator()
-                .or(l.and(l.page().locator(UNLABELLED)).locator(QueryText.ownTextIs(name))));
+        return refine(l -> QueryText.labelledOrOwnText(l, name, true));
+    }
+
+    /**
+     * Keep components whose accessible name — as read by
+     * {@link #withAccessibleName(String)} — contains {@code text}, ignoring the
+     * case of ASCII letters.
+     *
+     * @param text part of the accessible name
+     * @return a new, narrowed query
+     */
+    public TextQuery<T> withAccessibleNameContaining(String text) {
+        return refine(l -> QueryText.labelledOrOwnText(l, text, false));
     }
 }

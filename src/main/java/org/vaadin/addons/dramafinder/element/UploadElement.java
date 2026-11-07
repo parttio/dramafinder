@@ -150,9 +150,12 @@ public class UploadElement extends VaadinElement
 
     /**
      * Get the {@code UploadElement} by the accessible text of its upload button.
+     * <p>
+     * The text must match in full, case-sensitively; two uploads with that button
+     * text fail with a strict-mode error.
      *
      * @param page       the Playwright page
-     * @param buttonText the accessible text of the upload button (ARIA role {@code button})
+     * @param buttonText the full accessible text of the upload button (ARIA role {@code button})
      * @return the matching {@code UploadElement}
      */
     public static UploadElement getByButtonText(Page page, String buttonText) {
@@ -160,7 +163,6 @@ public class UploadElement extends VaadinElement
                 page.locator(FIELD_TAG_NAME)
                         .filter(new Locator.FilterOptions()
                                 .setHas(page.getByRole(AriaRole.BUTTON,
-                                        new Page.GetByRoleOptions().setName(buttonText))))
-                        .first());
+                                        new Page.GetByRoleOptions().setName(buttonText).setExact(true)))));
     }
 }
