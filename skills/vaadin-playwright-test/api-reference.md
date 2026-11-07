@@ -96,69 +96,69 @@ Waits for the Vaadin server round-trip that an element action triggers.
 
 ## Element index
 
-Wrapped web-component tag, its wrapper class, and the wrapper's actual static factory methods. **Factory methods are not uniform** — an element only has the factories listed here (e.g. most fields use `getByLabel`, containers use `get`; `getById` exists on only a few). Do not assume a factory that isn't listed. Every wrapper is also constructible via `new <Name>(Locator)`. The last column is the query that `find(page, <Name>.class)` returns (see **Typed queries**); a wrapper without one cannot be used with `find`.
+Wrapped web-component tag, its wrapper class, and the wrapper's actual static factory methods. **Factory methods are not uniform** — an element only has the factories listed here (e.g. most fields use `getByLabel`, containers use `get`). Do not assume a factory that isn't listed. "+ id, test id" marks a wrapper that also has `getById` and `getByTestId` (each with a `Page` and a `Locator` overload) — fallbacks for a component without a user-visible name. Every wrapper is also constructible via `new <Name>(Locator)`. The last column is the query that `find(page, <Name>.class)` returns (see **Typed queries**); a wrapper without one cannot be used with `find`.
 
 | Web-component tag | Element wrapper | Static factory methods | `find` query |
 |---|---|---|---|
-| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | *constructor only* | `ComponentQuery` |
-| `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` | `ComponentQuery` |
-| `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
-| `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` | `ComponentQuery` |
-| `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
-| `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` | `TextQuery` |
-| `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `ComponentQuery` |
-| `<vaadin-breadcrumbs-item>` | [BreadcrumbsItemElement](#breadcrumbsitemelement) | `getByText(Locator, String)`, `getByText(Page, String)` | `TextQuery` |
-| `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)`, `getByTextContaining(Locator, String)`, `getByTextContaining(Page, String)` | `ButtonQuery` |
-| `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` | `ComponentQuery` |
-| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` | `ComponentQuery` |
-| `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` | `ComponentQuery` |
-| `<vaadin-dialog>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` | `ComponentQuery` |
-| `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
-| `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
-| `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `ComponentQuery` |
-| `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
-| `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` | `ComponentQuery` |
-| `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
-| `<vaadin-menu-bar>` | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `ComponentQuery` |
+| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | + id, test id | `ComponentQuery` |
+| `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` + id, test id | `ComponentQuery` |
+| `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-avatar-group>` | [AvatarGroupElement](#avatargroupelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-badge>` | [BadgeElement](#badgeelement) | `get(Locator)`, `get(Page)`, `getByText(Locator, String)`, `getByText(Page, String)` + id, test id | `TextQuery` |
+| `<vaadin-big-decimal-field>` | [BigDecimalFieldElement](#bigdecimalfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-breadcrumbs>` | [BreadcrumbsElement](#breadcrumbselement) | `get(Locator)`, `get(Page)`, `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-breadcrumbs-item>` | [BreadcrumbsItemElement](#breadcrumbsitemelement) | `getByText(Locator, String)`, `getByText(Page, String)` + id, test id | `TextQuery` |
+| `<vaadin-button>` | [ButtonElement](#buttonelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)`, `getByText(Locator, Locator.GetByRoleOptions)`, `getByText(Locator, String)`, `getByText(Page, Page.GetByRoleOptions)`, `getByText(Page, String)`, `getByTextContaining(Locator, String)`, `getByTextContaining(Page, String)` + id, test id | `ButtonQuery` |
+| `<vaadin-card>` | [CardElement](#cardelement) | `getByTitle(Locator, String)`, `getByTitle(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-checkbox>` | [CheckboxElement](#checkboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-checkbox-group>` | [CheckboxGroupElement](#checkboxgroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-combo-box>` | [ComboBoxElement](#comboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-confirm-dialog>` | [ConfirmDialogElement](#confirmdialogelement) | `get(Page)`, `getByHeaderText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-dialog>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-integer-field>` | [IntegerFieldElement](#integerfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-list-box>` | [ListBoxElement](#listboxelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-login-form>` | [LoginFormElement](#loginformelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-menu-bar>` | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-menu-bar-button>` | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` | `TextQuery` |
-| `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
-| `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` | `ComponentQuery` |
-| `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `ComponentQuery` |
-| `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | *constructor only* | `ComponentQuery` |
-| `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | *constructor only* | `SideNavItemQuery` |
-| `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` | `ComponentQuery` |
-| `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `FieldQuery` |
-| `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` | `TextQuery` |
-| `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
-| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` | `ComponentQuery` |
-| `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
-| `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` | `InputFieldQuery` |
+| `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | + id, test id | `ComponentQuery` |
+| `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | + id, test id | `SideNavItemQuery` |
+| `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
+| `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` + id, test id | `TextQuery` |
+| `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-tooltip>` | [TooltipElement](#tooltipelement) | `get(Locator)`, `get(Page)`, `getByText(Page, String)` | `TooltipQuery` |
-| `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` | `ComponentQuery` |
-| `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` | `ComponentQuery` |
+| `<vaadin-upload>` | [UploadElement](#uploadelement) | `getByButtonText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-virtual-list>` | [VirtualListElement](#virtuallistelement) | `get(Page)` + id, test id | `ComponentQuery` |
 | — | [AbstractLoginElement](#abstractloginelement) | *constructor only* | — |
 | — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* | — |
 | — | [ContextMenuElement](#contextmenuelement) | *constructor only* | — |
 | — | [MenuElement](#menuelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | — |
 | — | [NotificationElement](#notificationelement) | `getByText(Page, String)` | — |
-| — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)`, `getById(Page, String)` | `ComponentQuery` |
+| — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 
 ## Typed queries
 
@@ -427,6 +427,13 @@ PlaywrightElement for <vaadin-accordion>.
 
 - `AccordionElement(Locator locator)` — Create a new AccordionElement.
 
+**Static factory methods:**
+
+- `AccordionElement getById(Page page, String id)` — Get an AccordionElement by its id, searching the entire page.
+- `AccordionElement getById(Locator locator, String id)` — Get an AccordionElement by its id, scoped to the given locator.
+- `AccordionElement getByTestId(Page page, String testId)` — Get an AccordionElement by its test id, searching the entire page.
+- `AccordionElement getByTestId(Locator locator, String testId)` — Get an AccordionElement by its test id, scoped to the given locator.
+
 **Methods:**
 
 - `void assertPanelCount(int count)` — Assert the number of panels present in the accordion.
@@ -455,6 +462,10 @@ PlaywrightElement for <vaadin-accordion-panel>.
 
 - `AccordionPanelElement getAccordionPanelBySummary(Locator locator, String summary)` — Get an accordion panel by its full summary text within a scope.
 - `AccordionPanelElement getOpenedAccordionPanel(Locator locator)` — Get the currently opened accordion panel within a scope.
+- `AccordionPanelElement getById(Page page, String id)` — Get an AccordionPanelElement by its id, searching the entire page.
+- `AccordionPanelElement getById(Locator locator, String id)` — Get an AccordionPanelElement by its id, scoped to the given locator.
+- `AccordionPanelElement getByTestId(Page page, String testId)` — Get an AccordionPanelElement by its test id, searching the entire page.
+- `AccordionPanelElement getByTestId(Locator locator, String testId)` — Get an AccordionPanelElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -485,7 +496,10 @@ PlaywrightElement for <vaadin-app-layout>.
 
 - `AppLayoutElement get(Page page)` — Get the first AppLayoutElement on the page.
 - `AppLayoutElement get(Locator parent)` — Get the first AppLayoutElement within a parent locator.
-- `AppLayoutElement getById(Page page, String id)` — Get an AppLayoutElement by its id attribute.
+- `AppLayoutElement getById(Page page, String id)` — Get an AppLayoutElement by its id, searching the entire page.
+- `AppLayoutElement getById(Locator locator, String id)` — Get an AppLayoutElement by its id, scoped to the given locator.
+- `AppLayoutElement getByTestId(Page page, String testId)` — Get an AppLayoutElement by its test id, searching the entire page.
+- `AppLayoutElement getByTestId(Locator locator, String testId)` — Get an AppLayoutElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -531,6 +545,10 @@ PlaywrightElement for <vaadin-avatar>.
 - `AvatarElement get(Locator locator)` — Get the first AvatarElement within a scope.
 - `AvatarElement getByName(Page page, String name)` — Get an AvatarElement by its name attribute.
 - `AvatarElement getByName(Locator locator, String name)` — Get an AvatarElement by its name attribute within a scope.
+- `AvatarElement getById(Page page, String id)` — Get an AvatarElement by its id, searching the entire page.
+- `AvatarElement getById(Locator locator, String id)` — Get an AvatarElement by its id, scoped to the given locator.
+- `AvatarElement getByTestId(Page page, String testId)` — Get an AvatarElement by its test id, searching the entire page.
+- `AvatarElement getByTestId(Locator locator, String testId)` — Get an AvatarElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -564,6 +582,10 @@ PlaywrightElement for <vaadin-avatar-group>.
 
 - `AvatarGroupElement get(Page page)` — Get the first AvatarGroupElement on the page.
 - `AvatarGroupElement get(Locator locator)` — Get the first AvatarGroupElement within a scope.
+- `AvatarGroupElement getById(Page page, String id)` — Get an AvatarGroupElement by its id, searching the entire page.
+- `AvatarGroupElement getById(Locator locator, String id)` — Get an AvatarGroupElement by its id, scoped to the given locator.
+- `AvatarGroupElement getByTestId(Page page, String testId)` — Get an AvatarGroupElement by its test id, searching the entire page.
+- `AvatarGroupElement getByTestId(Locator locator, String testId)` — Get an AvatarGroupElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -610,6 +632,10 @@ PlaywrightElement for <vaadin-badge>.
 - `BadgeElement get(Locator locator)` — Get the first BadgeElement within a scope.
 - `BadgeElement getByText(Page page, String text)` — Get a BadgeElement by its text content.
 - `BadgeElement getByText(Locator locator, String text)` — Get a BadgeElement by its text content within a scope.
+- `BadgeElement getById(Page page, String id)` — Get a BadgeElement by its id, searching the entire page.
+- `BadgeElement getById(Locator locator, String id)` — Get a BadgeElement by its id, scoped to the given locator.
+- `BadgeElement getByTestId(Page page, String testId)` — Get a BadgeElement by its test id, searching the entire page.
+- `BadgeElement getByTestId(Locator locator, String testId)` — Get a BadgeElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -640,6 +666,10 @@ PlaywrightElement for <vaadin-big-decimal-field>.
 - `BigDecimalFieldElement getByLabelContaining(Page page, String text)` — Get the BigDecimalFieldElement whose accessible name contains text, searching the entire page.
 - `BigDecimalFieldElement getByLabel(Locator locator, String label)` — Get the BigDecimalFieldElement by its label within a given scope.
 - `BigDecimalFieldElement getByLabelContaining(Locator locator, String text)` — Get the BigDecimalFieldElement whose accessible name contains text, scoped to the given locator.
+- `BigDecimalFieldElement getById(Page page, String id)` — Get a BigDecimalFieldElement by its id, searching the entire page.
+- `BigDecimalFieldElement getById(Locator locator, String id)` — Get a BigDecimalFieldElement by its id, scoped to the given locator.
+- `BigDecimalFieldElement getByTestId(Page page, String testId)` — Get a BigDecimalFieldElement by its test id, searching the entire page.
+- `BigDecimalFieldElement getByTestId(Locator locator, String testId)` — Get a BigDecimalFieldElement by its test id, scoped to the given locator.
 
 ### BreadcrumbsElement  `<vaadin-breadcrumbs>`
 
@@ -660,6 +690,10 @@ PlaywrightElement for <vaadin-breadcrumbs>.
 - `BreadcrumbsElement get(Locator locator)` — Get the first <vaadin-breadcrumbs> within a locator scope.
 - `BreadcrumbsElement getByLabel(Page page, String label)` — Get the BreadcrumbsElement by its accessible name (ARIA role navigation), searching the entire page.
 - `BreadcrumbsElement getByLabelContaining(Page page, String text)` — Get the BreadcrumbsElement whose accessible name (ARIA role navigation) contains text, searching the entire page.
+- `BreadcrumbsElement getById(Page page, String id)` — Get a BreadcrumbsElement by its id, searching the entire page.
+- `BreadcrumbsElement getById(Locator locator, String id)` — Get a BreadcrumbsElement by its id, scoped to the given locator.
+- `BreadcrumbsElement getByTestId(Page page, String testId)` — Get a BreadcrumbsElement by its test id, searching the entire page.
+- `BreadcrumbsElement getByTestId(Locator locator, String testId)` — Get a BreadcrumbsElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -700,6 +734,10 @@ PlaywrightElement for <vaadin-breadcrumbs-item>, a single entry of a Breadcrumbs
 
 - `BreadcrumbsItemElement getByText(Page page, String text)` — Get the first <vaadin-breadcrumbs-item> with the given text on the page.
 - `BreadcrumbsItemElement getByText(Locator locator, String text)` — Get the first <vaadin-breadcrumbs-item> with the given text within a locator scope.
+- `BreadcrumbsItemElement getById(Page page, String id)` — Get a BreadcrumbsItemElement by its id, searching the entire page.
+- `BreadcrumbsItemElement getById(Locator locator, String id)` — Get a BreadcrumbsItemElement by its id, scoped to the given locator.
+- `BreadcrumbsItemElement getByTestId(Page page, String testId)` — Get a BreadcrumbsItemElement by its test id, searching the entire page.
+- `BreadcrumbsItemElement getByTestId(Locator locator, String testId)` — Get a BreadcrumbsItemElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -741,6 +779,10 @@ PlaywrightElement for <vaadin-button>.
 - `ButtonElement getByText(Locator locator, Locator.GetByRoleOptions options)` — Get a ButtonElement by its accessible name with custom role options within a scope.
 - `ButtonElement getByLabel(Page page, String text)` — Alias for #getByText(Page, String).
 - `ButtonElement getByLabelContaining(Page page, String text)` — Alias for #getByTextContaining(Page, String).
+- `ButtonElement getById(Page page, String id)` — Get a ButtonElement by its id, searching the entire page.
+- `ButtonElement getById(Locator locator, String id)` — Get a ButtonElement by its id, scoped to the given locator.
+- `ButtonElement getByTestId(Page page, String testId)` — Get a ButtonElement by its test id, searching the entire page.
+- `ButtonElement getByTestId(Locator locator, String testId)` — Get a ButtonElement by its test id, scoped to the given locator.
 
 ### CardElement  `<vaadin-card>`
 
@@ -759,6 +801,10 @@ PlaywrightElement for <vaadin-card>.
 
 - `CardElement getByTitle(Page page, String title)` — Get a card by its title.
 - `CardElement getByTitle(Locator locator, String title)` — Get a card by its title.
+- `CardElement getById(Page page, String id)` — Get a CardElement by its id, searching the entire page.
+- `CardElement getById(Locator locator, String id)` — Get a CardElement by its id, scoped to the given locator.
+- `CardElement getByTestId(Page page, String testId)` — Get a CardElement by its test id, searching the entire page.
+- `CardElement getByTestId(Locator locator, String testId)` — Get a CardElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -791,6 +837,10 @@ PlaywrightElement for <vaadin-checkbox>.
 - `CheckboxElement getByLabel(Page page, String label)` — Get the CheckboxElement by its accessible name (ARIA role checkbox), searching the entire page.
 - `CheckboxElement getByLabelContaining(Page page, String text)` — Get the CheckboxElement whose accessible name (ARIA role checkbox) contains text, searching the entire page.
 - `CheckboxElement getByLabel(Locator locator, String label)` — Get a CheckboxElement by its accessible label within a given scope.
+- `CheckboxElement getById(Page page, String id)` — Get a CheckboxElement by its id, searching the entire page.
+- `CheckboxElement getById(Locator locator, String id)` — Get a CheckboxElement by its id, scoped to the given locator.
+- `CheckboxElement getByTestId(Page page, String testId)` — Get a CheckboxElement by its test id, searching the entire page.
+- `CheckboxElement getByTestId(Locator locator, String testId)` — Get a CheckboxElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -819,6 +869,10 @@ PlaywrightElement for <vaadin-checkbox-group>.
 - `CheckboxGroupElement getByLabelContaining(Page page, String text)` — Get the CheckboxGroupElement whose accessible name (ARIA role group) contains text, searching the entire page.
 - `CheckboxGroupElement getByLabel(Locator locator, String label)` — Get the CheckboxGroupElement by its accessible name (ARIA role group), within the given scope.
 - `CheckboxGroupElement getByLabelContaining(Locator locator, String text)` — Get the CheckboxGroupElement whose accessible name (ARIA role group) contains text, within the given scope.
+- `CheckboxGroupElement getById(Page page, String id)` — Get a CheckboxGroupElement by its id, searching the entire page.
+- `CheckboxGroupElement getById(Locator locator, String id)` — Get a CheckboxGroupElement by its id, scoped to the given locator.
+- `CheckboxGroupElement getByTestId(Page page, String testId)` — Get a CheckboxGroupElement by its test id, searching the entire page.
+- `CheckboxGroupElement getByTestId(Locator locator, String testId)` — Get a CheckboxGroupElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -851,6 +905,10 @@ PlaywrightElement for <vaadin-combo-box>.
 - `ComboBoxElement getByLabelContaining(Page page, String text)` — Get the ComboBoxElement whose accessible name contains text, searching the entire page.
 - `ComboBoxElement getByLabel(Locator locator, String label)` — Get the ComboBoxElement by its label within a given scope.
 - `ComboBoxElement getByLabelContaining(Locator locator, String text)` — Get the ComboBoxElement whose accessible name contains text, scoped to the given locator.
+- `ComboBoxElement getById(Page page, String id)` — Get a ComboBoxElement by its id, searching the entire page.
+- `ComboBoxElement getById(Locator locator, String id)` — Get a ComboBoxElement by its id, scoped to the given locator.
+- `ComboBoxElement getByTestId(Page page, String testId)` — Get a ComboBoxElement by its test id, searching the entire page.
+- `ComboBoxElement getByTestId(Locator locator, String testId)` — Get a ComboBoxElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -888,6 +946,10 @@ PlaywrightElement for <vaadin-confirm-dialog>.
 
 - `ConfirmDialogElement get(Page page)` — Get the open confirm dialog, found by its alertdialog role.
 - `ConfirmDialogElement getByHeaderText(Page page, String header)` — Get an open confirm dialog by its header, which is the dialog's accessible name (alertdialog role).
+- `ConfirmDialogElement getById(Page page, String id)` — Get a ConfirmDialogElement by its id, searching the entire page.
+- `ConfirmDialogElement getById(Locator locator, String id)` — Get a ConfirmDialogElement by its id, scoped to the given locator.
+- `ConfirmDialogElement getByTestId(Page page, String testId)` — Get a ConfirmDialogElement by its test id, searching the entire page.
+- `ConfirmDialogElement getByTestId(Locator locator, String testId)` — Get a ConfirmDialogElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -968,6 +1030,10 @@ PlaywrightElement for <vaadin-custom-field>.
 - `CustomFieldElement getByLabelContaining(Page page, String text)` — Get the CustomFieldElement whose accessible name (ARIA role group) contains text, searching the entire page.
 - `CustomFieldElement getByLabel(Locator parent, String label)` — Get the CustomFieldElement by its accessible name (ARIA role group), within the given scope.
 - `CustomFieldElement getByLabelContaining(Locator parent, String text)` — Get the CustomFieldElement whose accessible name (ARIA role group) contains text, within the given scope.
+- `CustomFieldElement getById(Page page, String id)` — Get a CustomFieldElement by its id, searching the entire page.
+- `CustomFieldElement getById(Locator locator, String id)` — Get a CustomFieldElement by its id, scoped to the given locator.
+- `CustomFieldElement getByTestId(Page page, String testId)` — Get a CustomFieldElement by its test id, searching the entire page.
+- `CustomFieldElement getByTestId(Locator locator, String testId)` — Get a CustomFieldElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1000,6 +1066,10 @@ PlaywrightElement for <vaadin-date-picker>.
 - `DatePickerElement getByLabelContaining(Page page, String text)` — Get the DatePickerElement whose accessible name contains text, searching the entire page.
 - `DatePickerElement getByLabel(Locator locator, String label)` — Get the DatePickerElement by its label within a given scope.
 - `DatePickerElement getByLabelContaining(Locator locator, String text)` — Get the DatePickerElement whose accessible name contains text, scoped to the given locator.
+- `DatePickerElement getById(Page page, String id)` — Get a DatePickerElement by its id, searching the entire page.
+- `DatePickerElement getById(Locator locator, String id)` — Get a DatePickerElement by its id, scoped to the given locator.
+- `DatePickerElement getByTestId(Page page, String testId)` — Get a DatePickerElement by its test id, searching the entire page.
+- `DatePickerElement getByTestId(Locator locator, String testId)` — Get a DatePickerElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1028,6 +1098,10 @@ PlaywrightElement for <vaadin-date-time-picker>.
 - `DateTimePickerElement getByLabelContaining(Page page, String text)` — Get the DateTimePickerElement whose accessible name contains text, searching the entire page.
 - `DateTimePickerElement getByLabel(Locator locator, String label)` — Get the DateTimePickerElement by its label within a given scope.
 - `DateTimePickerElement getByLabelContaining(Locator locator, String text)` — Get the DateTimePickerElement whose accessible name contains text, scoped to the given locator.
+- `DateTimePickerElement getById(Page page, String id)` — Get a DateTimePickerElement by its id, searching the entire page.
+- `DateTimePickerElement getById(Locator locator, String id)` — Get a DateTimePickerElement by its id, scoped to the given locator.
+- `DateTimePickerElement getByTestId(Page page, String testId)` — Get a DateTimePickerElement by its test id, searching the entire page.
+- `DateTimePickerElement getByTestId(Locator locator, String testId)` — Get a DateTimePickerElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1057,6 +1131,10 @@ PlaywrightElement for <vaadin-details>.
 **Static factory methods:**
 
 - `DetailsElement getBySummaryText(Page page, String summary)` — Get a details component by its summary text.
+- `DetailsElement getById(Page page, String id)` — Get a DetailsElement by its id, searching the entire page.
+- `DetailsElement getById(Locator locator, String id)` — Get a DetailsElement by its id, scoped to the given locator.
+- `DetailsElement getByTestId(Page page, String testId)` — Get a DetailsElement by its test id, searching the entire page.
+- `DetailsElement getByTestId(Locator locator, String testId)` — Get a DetailsElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1087,6 +1165,10 @@ PlaywrightElement for <vaadin-dialog>.
 **Static factory methods:**
 
 - `DialogElement getByHeaderText(Page page, String header)` — Get a dialog by its header text, which is its accessible name.
+- `DialogElement getById(Page page, String id)` — Get a DialogElement by its id, searching the entire page.
+- `DialogElement getById(Locator locator, String id)` — Get a DialogElement by its id, scoped to the given locator.
+- `DialogElement getByTestId(Page page, String testId)` — Get a DialogElement by its test id, searching the entire page.
+- `DialogElement getByTestId(Locator locator, String testId)` — Get a DialogElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1125,6 +1207,10 @@ PlaywrightElement for <vaadin-email-field>.
 - `EmailFieldElement getByLabelContaining(Page page, String text)` — Get the EmailFieldElement whose accessible name contains text, searching the entire page.
 - `EmailFieldElement getByLabel(Locator locator, String label)` — Get the EmailFieldElement by its label within a given scope.
 - `EmailFieldElement getByLabelContaining(Locator locator, String text)` — Get the EmailFieldElement whose accessible name contains text, scoped to the given locator.
+- `EmailFieldElement getById(Page page, String id)` — Get an EmailFieldElement by its id, searching the entire page.
+- `EmailFieldElement getById(Locator locator, String id)` — Get an EmailFieldElement by its id, scoped to the given locator.
+- `EmailFieldElement getByTestId(Page page, String testId)` — Get an EmailFieldElement by its test id, searching the entire page.
+- `EmailFieldElement getByTestId(Locator locator, String testId)` — Get an EmailFieldElement by its test id, scoped to the given locator.
 
 ### FormLayoutElement  `<vaadin-form-layout>`
 
@@ -1143,7 +1229,10 @@ PlaywrightElement for <vaadin-form-layout>.
 
 - `FormLayoutElement get(Page page)` — Get the first FormLayoutElement on the page.
 - `FormLayoutElement get(Locator parent)` — Get the first FormLayoutElement within a parent locator.
-- `FormLayoutElement getById(Page page, String id)` — Get a FormLayoutElement by its id attribute.
+- `FormLayoutElement getById(Page page, String id)` — Get a FormLayoutElement by its id, searching the entire page.
+- `FormLayoutElement getById(Locator locator, String id)` — Get a FormLayoutElement by its id, scoped to the given locator.
+- `FormLayoutElement getByTestId(Page page, String testId)` — Get a FormLayoutElement by its test id, searching the entire page.
+- `FormLayoutElement getByTestId(Locator locator, String testId)` — Get a FormLayoutElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1174,7 +1263,10 @@ PlaywrightElement for <vaadin-grid>.
 
 - `GridElement get(Page page)` — Get the first GridElement on the page.
 - `GridElement get(Locator parent)` — Get the first GridElement within a parent locator.
-- `GridElement getById(Page page, String id)` — Get a GridElement by its id attribute.
+- `GridElement getById(Page page, String id)` — Get a GridElement by its id, searching the entire page.
+- `GridElement getById(Locator locator, String id)` — Get a GridElement by its id, scoped to the given locator.
+- `GridElement getByTestId(Page page, String testId)` — Get a GridElement by its test id, searching the entire page.
+- `GridElement getByTestId(Locator locator, String testId)` — Get a GridElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1317,6 +1409,10 @@ PlaywrightElement for <vaadin-integer-field>.
 - `IntegerFieldElement getByLabelContaining(Page page, String text)` — Get the IntegerFieldElement whose accessible name contains text, searching the entire page.
 - `IntegerFieldElement getByLabel(Locator locator, String label)` — Get the IntegerFieldElement by its label within a given scope.
 - `IntegerFieldElement getByLabelContaining(Locator locator, String text)` — Get the IntegerFieldElement whose accessible name contains text, scoped to the given locator.
+- `IntegerFieldElement getById(Page page, String id)` — Get an IntegerFieldElement by its id, searching the entire page.
+- `IntegerFieldElement getById(Locator locator, String id)` — Get an IntegerFieldElement by its id, scoped to the given locator.
+- `IntegerFieldElement getByTestId(Page page, String testId)` — Get an IntegerFieldElement by its test id, searching the entire page.
+- `IntegerFieldElement getByTestId(Locator locator, String testId)` — Get an IntegerFieldElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1347,6 +1443,10 @@ PlaywrightElement for <vaadin-list-box>.
 
 - `ListBoxElement getByLabel(Page page, String label)` — Get the ListBoxElement by its accessible name (ARIA role listbox), searching the entire page.
 - `ListBoxElement getByLabelContaining(Page page, String text)` — Get the ListBoxElement whose accessible name (ARIA role listbox) contains text, searching the entire page.
+- `ListBoxElement getById(Page page, String id)` — Get a ListBoxElement by its id, searching the entire page.
+- `ListBoxElement getById(Locator locator, String id)` — Get a ListBoxElement by its id, scoped to the given locator.
+- `ListBoxElement getByTestId(Page page, String testId)` — Get a ListBoxElement by its test id, searching the entire page.
+- `ListBoxElement getByTestId(Locator locator, String testId)` — Get a ListBoxElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1377,6 +1477,10 @@ PlaywrightElement for <vaadin-login-form>.
 
 - `LoginFormElement get(Page page)` — Get the first LoginFormElement on the page.
 - `LoginFormElement get(Locator locator)` — Get the first LoginFormElement within a scope.
+- `LoginFormElement getById(Page page, String id)` — Get a LoginFormElement by its id, searching the entire page.
+- `LoginFormElement getById(Locator locator, String id)` — Get a LoginFormElement by its id, scoped to the given locator.
+- `LoginFormElement getByTestId(Page page, String testId)` — Get a LoginFormElement by its test id, searching the entire page.
+- `LoginFormElement getByTestId(Locator locator, String testId)` — Get a LoginFormElement by its test id, scoped to the given locator.
 
 ### LoginOverlayElement  `<vaadin-login-overlay>`
 
@@ -1396,6 +1500,10 @@ PlaywrightElement for <vaadin-login-overlay>.
 
 - `LoginOverlayElement get(Page page)` — Get the first LoginOverlayElement on the page.
 - `LoginOverlayElement getByTitle(Page page, String title)` — Get a LoginOverlayElement by its application title, which is the overlay's accessible name.
+- `LoginOverlayElement getById(Page page, String id)` — Get a LoginOverlayElement by its id, searching the entire page.
+- `LoginOverlayElement getById(Locator locator, String id)` — Get a LoginOverlayElement by its id, scoped to the given locator.
+- `LoginOverlayElement getByTestId(Page page, String testId)` — Get a LoginOverlayElement by its test id, searching the entire page.
+- `LoginOverlayElement getByTestId(Locator locator, String testId)` — Get a LoginOverlayElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1428,6 +1536,10 @@ PlaywrightElement for <vaadin-markdown>.
 
 - `MarkdownElement get(Page page)` — Get the first <vaadin-markdown> on the page.
 - `MarkdownElement get(Locator locator)` — Get the first <vaadin-markdown> within a locator scope.
+- `MarkdownElement getById(Page page, String id)` — Get a MarkdownElement by its id, searching the entire page.
+- `MarkdownElement getById(Locator locator, String id)` — Get a MarkdownElement by its id, scoped to the given locator.
+- `MarkdownElement getByTestId(Page page, String testId)` — Get a MarkdownElement by its test id, searching the entire page.
+- `MarkdownElement getByTestId(Locator locator, String testId)` — Get a MarkdownElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1468,6 +1580,10 @@ PlaywrightElement for <vaadin-menu-bar>.
 
 - `MenuBarElement getByLabel(Page page, String label)` — Get the MenuBarElement by its accessible name (ARIA role menubar), searching the entire page.
 - `MenuBarElement getByLabelContaining(Page page, String text)` — Get the MenuBarElement whose accessible name (ARIA role menubar) contains text, searching the entire page.
+- `MenuBarElement getById(Page page, String id)` — Get a MenuBarElement by its id, searching the entire page.
+- `MenuBarElement getById(Locator locator, String id)` — Get a MenuBarElement by its id, scoped to the given locator.
+- `MenuBarElement getByTestId(Page page, String testId)` — Get a MenuBarElement by its test id, searching the entire page.
+- `MenuBarElement getByTestId(Locator locator, String testId)` — Get a MenuBarElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1537,6 +1653,10 @@ PlaywrightElement for <vaadin-message-input>.
 
 - `MessageInputElement get(Page page)` — Get the first <vaadin-message-input> on the page.
 - `MessageInputElement get(Locator locator)` — Get the first <vaadin-message-input> within a locator scope.
+- `MessageInputElement getById(Page page, String id)` — Get a MessageInputElement by its id, searching the entire page.
+- `MessageInputElement getById(Locator locator, String id)` — Get a MessageInputElement by its id, scoped to the given locator.
+- `MessageInputElement getByTestId(Page page, String testId)` — Get a MessageInputElement by its test id, searching the entire page.
+- `MessageInputElement getByTestId(Locator locator, String testId)` — Get a MessageInputElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1576,6 +1696,10 @@ PlaywrightElement for <vaadin-message-list>.
 
 - `MessageListElement get(Page page)` — Get the first <vaadin-message-list> on the page.
 - `MessageListElement get(Locator locator)` — Get the first <vaadin-message-list> within a locator scope.
+- `MessageListElement getById(Page page, String id)` — Get a MessageListElement by its id, searching the entire page.
+- `MessageListElement getById(Locator locator, String id)` — Get a MessageListElement by its id, scoped to the given locator.
+- `MessageListElement getByTestId(Page page, String testId)` — Get a MessageListElement by its test id, searching the entire page.
+- `MessageListElement getByTestId(Locator locator, String testId)` — Get a MessageListElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1610,6 +1734,10 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 - `MultiSelectComboBoxElement getByLabelContaining(Page page, String text)` — Get the MultiSelectComboBoxElement whose accessible name contains text, searching the entire page.
 - `MultiSelectComboBoxElement getByLabel(Locator locator, String label)` — Get the MultiSelectComboBoxElement by its label within a given scope.
 - `MultiSelectComboBoxElement getByLabelContaining(Locator locator, String text)` — Get the MultiSelectComboBoxElement whose accessible name contains text, scoped to the given locator.
+- `MultiSelectComboBoxElement getById(Page page, String id)` — Get a MultiSelectComboBoxElement by its id, searching the entire page.
+- `MultiSelectComboBoxElement getById(Locator locator, String id)` — Get a MultiSelectComboBoxElement by its id, scoped to the given locator.
+- `MultiSelectComboBoxElement getByTestId(Page page, String testId)` — Get a MultiSelectComboBoxElement by its test id, searching the entire page.
+- `MultiSelectComboBoxElement getByTestId(Locator locator, String testId)` — Get a MultiSelectComboBoxElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1685,6 +1813,10 @@ PlaywrightElement for <vaadin-number-field>.
 - `NumberFieldElement getByLabelContaining(Page page, String text)` — Get the NumberFieldElement whose accessible name contains text, searching the entire page.
 - `NumberFieldElement getByLabel(Locator locator, String label)` — Get the NumberFieldElement by its label within a given scope.
 - `NumberFieldElement getByLabelContaining(Locator locator, String text)` — Get the NumberFieldElement whose accessible name contains text, scoped to the given locator.
+- `NumberFieldElement getById(Page page, String id)` — Get a NumberFieldElement by its id, searching the entire page.
+- `NumberFieldElement getById(Locator locator, String id)` — Get a NumberFieldElement by its id, scoped to the given locator.
+- `NumberFieldElement getByTestId(Page page, String testId)` — Get a NumberFieldElement by its test id, searching the entire page.
+- `NumberFieldElement getByTestId(Locator locator, String testId)` — Get a NumberFieldElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1714,6 +1846,10 @@ PlaywrightElement for <vaadin-password-field>.
 
 - `PasswordFieldElement getByLabel(Page page, String label)` — Get the PasswordFieldElement by its accessible name, searching the entire page.
 - `PasswordFieldElement getByLabelContaining(Page page, String text)` — Get the PasswordFieldElement whose accessible name contains text, searching the entire page.
+- `PasswordFieldElement getById(Page page, String id)` — Get a PasswordFieldElement by its id, searching the entire page.
+- `PasswordFieldElement getById(Locator locator, String id)` — Get a PasswordFieldElement by its id, scoped to the given locator.
+- `PasswordFieldElement getByTestId(Page page, String testId)` — Get a PasswordFieldElement by its test id, searching the entire page.
+- `PasswordFieldElement getByTestId(Locator locator, String testId)` — Get a PasswordFieldElement by its test id, scoped to the given locator.
 
 ### PopoverElement  `<vaadin-popover>`
 
@@ -1733,6 +1869,10 @@ PlaywrightElement for <vaadin-popover>.
 
 - `PopoverElement getByLabel(Page page, String label)` — Get the PopoverElement by its accessible name (ARIA role dialog), searching the entire page.
 - `PopoverElement getByLabelContaining(Page page, String text)` — Get the PopoverElement whose accessible name (ARIA role dialog) contains text, searching the entire page.
+- `PopoverElement getById(Page page, String id)` — Get a PopoverElement by its id, searching the entire page.
+- `PopoverElement getById(Locator locator, String id)` — Get a PopoverElement by its id, scoped to the given locator.
+- `PopoverElement getByTestId(Page page, String testId)` — Get a PopoverElement by its test id, searching the entire page.
+- `PopoverElement getByTestId(Locator locator, String testId)` — Get a PopoverElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1753,6 +1893,13 @@ PlaywrightElement for <vaadin-progress-bar>.
 **Constructors:**
 
 - `ProgressBarElement(Locator locator)` — Create a ProgressBarElement from an existing locator.
+
+**Static factory methods:**
+
+- `ProgressBarElement getById(Page page, String id)` — Get a ProgressBarElement by its id, searching the entire page.
+- `ProgressBarElement getById(Locator locator, String id)` — Get a ProgressBarElement by its id, scoped to the given locator.
+- `ProgressBarElement getByTestId(Page page, String testId)` — Get a ProgressBarElement by its test id, searching the entire page.
+- `ProgressBarElement getByTestId(Locator locator, String testId)` — Get a ProgressBarElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1787,6 +1934,10 @@ PlaywrightElement for <vaadin-radio-group>.
 
 - `RadioButtonGroupElement getByLabel(Page page, String label)` — Get the RadioButtonGroupElement by its accessible name (ARIA role radiogroup), searching the entire page.
 - `RadioButtonGroupElement getByLabelContaining(Page page, String text)` — Get the RadioButtonGroupElement whose accessible name (ARIA role radiogroup) contains text, searching the entire page.
+- `RadioButtonGroupElement getById(Page page, String id)` — Get a RadioButtonGroupElement by its id, searching the entire page.
+- `RadioButtonGroupElement getById(Locator locator, String id)` — Get a RadioButtonGroupElement by its id, scoped to the given locator.
+- `RadioButtonGroupElement getByTestId(Page page, String testId)` — Get a RadioButtonGroupElement by its test id, searching the entire page.
+- `RadioButtonGroupElement getByTestId(Locator locator, String testId)` — Get a RadioButtonGroupElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1815,6 +1966,10 @@ PlaywrightElement for <vaadin-select>.
 - `SelectElement getByLabelContaining(Page page, String text)` — Get the SelectElement whose label contains text, searching the entire page.
 - `SelectElement getByLabel(Locator locator, String label)` — Get the SelectElement by its label within a given scope.
 - `SelectElement getByLabelContaining(Locator locator, String text)` — Get the SelectElement whose label contains text, scoped to the given locator.
+- `SelectElement getById(Page page, String id)` — Get a SelectElement by its id, searching the entire page.
+- `SelectElement getById(Locator locator, String id)` — Get a SelectElement by its id, scoped to the given locator.
+- `SelectElement getByTestId(Page page, String testId)` — Get a SelectElement by its test id, searching the entire page.
+- `SelectElement getByTestId(Locator locator, String testId)` — Get a SelectElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1839,6 +1994,10 @@ PlaywrightElement for <vaadin-side-nav>.
 
 - `SideNavigationElement getByLabel(Page page, String label)` — Get the SideNavigationElement by its accessible name (ARIA role navigation), searching the entire page.
 - `SideNavigationElement getByLabelContaining(Page page, String text)` — Get the SideNavigationElement whose accessible name (ARIA role navigation) contains text, searching the entire page.
+- `SideNavigationElement getById(Page page, String id)` — Get a SideNavigationElement by its id, searching the entire page.
+- `SideNavigationElement getById(Locator locator, String id)` — Get a SideNavigationElement by its id, scoped to the given locator.
+- `SideNavigationElement getByTestId(Page page, String testId)` — Get a SideNavigationElement by its test id, searching the entire page.
+- `SideNavigationElement getByTestId(Locator locator, String testId)` — Get a SideNavigationElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1863,6 +2022,13 @@ PlaywrightElement for <vaadin-side-nav-item>.
 **Constructors:**
 
 - `SideNavigationItemElement(Locator locator)`
+
+**Static factory methods:**
+
+- `SideNavigationItemElement getById(Page page, String id)` — Get a SideNavigationItemElement by its id, searching the entire page.
+- `SideNavigationItemElement getById(Locator locator, String id)` — Get a SideNavigationItemElement by its id, scoped to the given locator.
+- `SideNavigationItemElement getByTestId(Page page, String testId)` — Get a SideNavigationItemElement by its test id, searching the entire page.
+- `SideNavigationItemElement getByTestId(Locator locator, String testId)` — Get a SideNavigationItemElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1893,6 +2059,10 @@ PlaywrightElement for <vaadin-slider> (the Flow IntegerSlider and DecimalSlider 
 - `SliderElement getByLabelContaining(Page page, String text)` — Get the SliderElement whose accessible name contains text, searching the entire page.
 - `SliderElement getByLabel(Locator locator, String label)` — Get the SliderElement by its label within a given scope.
 - `SliderElement getByLabelContaining(Locator locator, String text)` — Get the SliderElement whose accessible name contains text, scoped to the given locator.
+- `SliderElement getById(Page page, String id)` — Get a SliderElement by its id, searching the entire page.
+- `SliderElement getById(Locator locator, String id)` — Get a SliderElement by its id, scoped to the given locator.
+- `SliderElement getByTestId(Page page, String testId)` — Get a SliderElement by its test id, searching the entire page.
+- `SliderElement getByTestId(Locator locator, String testId)` — Get a SliderElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1931,6 +2101,10 @@ PlaywrightElement for vaadin-split-layout.
 **Static factory methods:**
 
 - `SplitLayoutElement get(Page page)` — Get the first split layout on the page.
+- `SplitLayoutElement getById(Page page, String id)` — Get a SplitLayoutElement by its id, searching the entire page.
+- `SplitLayoutElement getById(Locator locator, String id)` — Get a SplitLayoutElement by its id, scoped to the given locator.
+- `SplitLayoutElement getByTestId(Page page, String testId)` — Get a SplitLayoutElement by its test id, searching the entire page.
+- `SplitLayoutElement getByTestId(Locator locator, String testId)` — Get a SplitLayoutElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -1958,6 +2132,10 @@ PlaywrightElement for <vaadin-switch>.
 
 - `SwitchElement getByLabel(Page page, String label)` — Get the SwitchElement by its accessible name (ARIA role switch), searching the entire page.
 - `SwitchElement getByLabelContaining(Page page, String text)` — Get the SwitchElement whose accessible name (ARIA role switch) contains text, searching the entire page.
+- `SwitchElement getById(Page page, String id)` — Get a SwitchElement by its id, searching the entire page.
+- `SwitchElement getById(Locator locator, String id)` — Get a SwitchElement by its id, scoped to the given locator.
+- `SwitchElement getByTestId(Page page, String testId)` — Get a SwitchElement by its test id, searching the entire page.
+- `SwitchElement getByTestId(Locator locator, String testId)` — Get a SwitchElement by its test id, scoped to the given locator.
 
 ### TabElement  `<vaadin-tab>`
 
@@ -1976,6 +2154,10 @@ PlaywrightElement for tabs <vaadin-tab>.
 
 - `TabElement getTabByText(Locator locator, String summary)` — Get a tab by its full visible text within a scope.
 - `TabElement getSelectedTab(Locator locator)` — Get the currently selected tab within a scope.
+- `TabElement getById(Page page, String id)` — Get a TabElement by its id, searching the entire page.
+- `TabElement getById(Locator locator, String id)` — Get a TabElement by its id, scoped to the given locator.
+- `TabElement getByTestId(Page page, String testId)` — Get a TabElement by its test id, searching the entire page.
+- `TabElement getByTestId(Locator locator, String testId)` — Get a TabElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2001,6 +2183,10 @@ PlaywrightElement for <vaadin-tabsheet>.
 **Static factory methods:**
 
 - `TabSheetElement get(Page page)` — Get the first tabsheet instance on the page.
+- `TabSheetElement getById(Page page, String id)` — Get a TabSheetElement by its id, searching the entire page.
+- `TabSheetElement getById(Locator locator, String id)` — Get a TabSheetElement by its id, scoped to the given locator.
+- `TabSheetElement getByTestId(Page page, String testId)` — Get a TabSheetElement by its test id, searching the entire page.
+- `TabSheetElement getByTestId(Locator locator, String testId)` — Get a TabSheetElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2030,7 +2216,10 @@ PlaywrightElement for <vaadin-tabs>.
 
 - `TabsElement get(Page page)` — Get the first TabsElement on the page.
 - `TabsElement get(Locator parent)` — Get the first TabsElement within a parent locator.
-- `TabsElement getById(Page page, String id)` — Get a TabsElement by its id attribute.
+- `TabsElement getById(Page page, String id)` — Get a TabsElement by its id, searching the entire page.
+- `TabsElement getById(Locator locator, String id)` — Get a TabsElement by its id, scoped to the given locator.
+- `TabsElement getByTestId(Page page, String testId)` — Get a TabsElement by its test id, searching the entire page.
+- `TabsElement getByTestId(Locator locator, String testId)` — Get a TabsElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2066,6 +2255,10 @@ PlaywrightElement for <vaadin-text-area>.
 - `TextAreaElement getByLabelContaining(Page page, String text)` — Get the TextAreaElement whose accessible name contains text, searching the entire page.
 - `TextAreaElement getByLabel(Locator locator, String label)` — Get the TextAreaElement by its accessible name, scoped to the given locator.
 - `TextAreaElement getByLabelContaining(Locator locator, String text)` — Get the TextAreaElement whose accessible name contains text, scoped to the given locator.
+- `TextAreaElement getById(Page page, String id)` — Get a TextAreaElement by its id, searching the entire page.
+- `TextAreaElement getById(Locator locator, String id)` — Get a TextAreaElement by its id, scoped to the given locator.
+- `TextAreaElement getByTestId(Page page, String testId)` — Get a TextAreaElement by its test id, searching the entire page.
+- `TextAreaElement getByTestId(Locator locator, String testId)` — Get a TextAreaElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2090,6 +2283,10 @@ PlaywrightElement for <vaadin-text-field>
 - `TextFieldElement getByLabelContaining(Page page, String text)` — Get the TextFieldElement whose accessible name contains text, searching the entire page.
 - `TextFieldElement getByLabel(Locator locator, String label)` — Get the TextFieldElement by its accessible name, scoped to the given locator.
 - `TextFieldElement getByLabelContaining(Locator locator, String text)` — Get the TextFieldElement whose accessible name contains text, scoped to the given locator.
+- `TextFieldElement getById(Page page, String id)` — Get a TextFieldElement by its id, searching the entire page.
+- `TextFieldElement getById(Locator locator, String id)` — Get a TextFieldElement by its id, scoped to the given locator.
+- `TextFieldElement getByTestId(Page page, String testId)` — Get a TextFieldElement by its test id, searching the entire page.
+- `TextFieldElement getByTestId(Locator locator, String testId)` — Get a TextFieldElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2122,6 +2319,10 @@ PlaywrightElement for <vaadin-time-picker>.
 - `TimePickerElement getByLabelContaining(Page page, String text)` — Get the TimePickerElement whose accessible name contains text, searching the entire page.
 - `TimePickerElement getByLabel(Locator locator, String label)` — Get the TimePickerElement by its label within a given scope.
 - `TimePickerElement getByLabelContaining(Locator locator, String text)` — Get the TimePickerElement whose accessible name contains text, scoped to the given locator.
+- `TimePickerElement getById(Page page, String id)` — Get a TimePickerElement by its id, searching the entire page.
+- `TimePickerElement getById(Locator locator, String id)` — Get a TimePickerElement by its id, scoped to the given locator.
+- `TimePickerElement getByTestId(Page page, String testId)` — Get a TimePickerElement by its test id, searching the entire page.
+- `TimePickerElement getByTestId(Locator locator, String testId)` — Get a TimePickerElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2178,7 +2379,10 @@ PlaywrightElement for Vaadin Tree Grid.
 
 - `TreeGridElement get(Page page)` — Get the first TreeGridElement on the page.
 - `TreeGridElement get(Locator parent)` — Get the first TreeGridElement within a parent locator.
-- `TreeGridElement getById(Page page, String id)` — Get a TreeGridElement by its id attribute.
+- `TreeGridElement getById(Page page, String id)` — Get a TreeGridElement by its id, searching the entire page.
+- `TreeGridElement getById(Locator locator, String id)` — Get a TreeGridElement by its id, scoped to the given locator.
+- `TreeGridElement getByTestId(Page page, String testId)` — Get a TreeGridElement by its test id, searching the entire page.
+- `TreeGridElement getByTestId(Locator locator, String testId)` — Get a TreeGridElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2221,6 +2425,10 @@ PlaywrightElement for vaadin-upload.
 **Static factory methods:**
 
 - `UploadElement getByButtonText(Page page, String buttonText)` — Get the UploadElement by the accessible text of its upload button.
+- `UploadElement getById(Page page, String id)` — Get an UploadElement by its id, searching the entire page.
+- `UploadElement getById(Locator locator, String id)` — Get an UploadElement by its id, scoped to the given locator.
+- `UploadElement getByTestId(Page page, String testId)` — Get an UploadElement by its test id, searching the entire page.
+- `UploadElement getByTestId(Locator locator, String testId)` — Get an UploadElement by its test id, scoped to the given locator.
 
 **Methods:**
 
@@ -2251,6 +2459,10 @@ PlaywrightElement for <vaadin-virtual-list>.
 **Static factory methods:**
 
 - `VirtualListElement get(Page page)` — Get the first VirtualListElement on the page.
+- `VirtualListElement getById(Page page, String id)` — Get a VirtualListElement by its id, searching the entire page.
+- `VirtualListElement getById(Locator locator, String id)` — Get a VirtualListElement by its id, scoped to the given locator.
+- `VirtualListElement getByTestId(Page page, String testId)` — Get a VirtualListElement by its test id, searching the entire page.
+- `VirtualListElement getByTestId(Locator locator, String testId)` — Get a VirtualListElement by its test id, scoped to the given locator.
 
 **Methods:**
 

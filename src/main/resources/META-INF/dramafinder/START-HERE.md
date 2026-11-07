@@ -75,7 +75,9 @@ items, checkboxes of a group). Copy lookups from it rather than guessing labels.
 ## Four things that are easy to get wrong
 
 **Factory methods are not uniform.** Most fields have `getByLabel(Page, String)`,
-containers have `get(Page)`, and `getById(Page, String)` exists on only a few. An
+containers have `get(Page)`, and almost every element has `getById` and `getByTestId`
+(fallbacks for a component without a user-visible name; Flow sets the test id with
+`setTestId`). An
 element has exactly the factories the index table lists for it — assuming one that
 isn't listed is the most common way to lose a compile round-trip. Every wrapper is
 also constructible from a `Locator`: `new TextFieldElement(someLocator)`. For one

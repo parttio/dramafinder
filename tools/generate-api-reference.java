@@ -221,8 +221,10 @@ class GenerateApiReference {
         md.append("Wrapped web-component tag, its wrapper class, and the wrapper's actual ");
         md.append("static factory methods. **Factory methods are not uniform** — an element ");
         md.append("only has the factories listed here (e.g. most fields use `getByLabel`, ");
-        md.append("containers use `get`; `getById` exists on only a few). Do not assume a ");
-        md.append("factory that isn't listed. Every wrapper is also constructible via ");
+        md.append("containers use `get`). Do not assume a factory that isn't listed. ");
+        md.append("\"+ id, test id\" marks a wrapper that also has `getById` and `getByTestId` ");
+        md.append("(each with a `Page` and a `Locator` overload) — fallbacks for a component ");
+        md.append("without a user-visible name. Every wrapper is also constructible via ");
         md.append("`new <Name>(Locator)`. The last column is the query that ");
         md.append("`find(page, <Name>.class)` returns (see **Typed queries**); a wrapper ");
         md.append("without one cannot be used with `find`.\n\n");
@@ -239,12 +241,18 @@ class GenerateApiReference {
                     String name = e.getKey();
                     String tag = tagOf(t);
                     List<String> factories = factorySigs(t);
+                    boolean byId = factories.contains("getById(Page, String)")
+                            && factories.contains("getByTestId(Page, String)");
+                    if (byId) {
+                        factories.removeIf(f -> f.startsWith("getById(") || f.startsWith("getByTestId("));
+                    }
                     md.append("| ").append(tag != null ? "`<" + tag + ">`" : "—")
                       .append(" | [").append(name).append("](#").append(anchor(name)).append(")")
                       .append(" | ")
                       .append(factories.isEmpty()
-                              ? "*constructor only*"
+                              ? (byId ? "" : "*constructor only*")
                               : factories.stream().map(s -> "`" + s + "`").collect(Collectors.joining(", ")))
+                      .append(byId ? (factories.isEmpty() ? "+ id, test id" : " + id, test id") : "")
                       .append(" | ")
                       .append(Optional.ofNullable(queryOf(t, elements)).map(q -> "`" + q + "`").orElse("—"))
                       .append(" |\n");
