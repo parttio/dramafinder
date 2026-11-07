@@ -106,7 +106,7 @@ public class SliderElement extends VaadinElement
                     el.dispatchEvent(new Event('input', { bubbles: true }));
                     el.dispatchEvent(new Event('change', { bubbles: true }));
                 }""", value);
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**
@@ -228,8 +228,9 @@ public class SliderElement extends VaadinElement
         Locator input = getInputLocator();
         for (int i = 0; i < times; i++) {
             input.press(key);
+            waitAfterAction();
         }
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**

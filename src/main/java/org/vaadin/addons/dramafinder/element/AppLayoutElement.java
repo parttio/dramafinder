@@ -163,6 +163,7 @@ public class AppLayoutElement extends VaadinElement implements HasStyleElement, 
      */
     public void toggleDrawer() {
         getDrawerToggle().click();
+        waitAfterAction();
     }
 
     // ── Drawer state ──────────────────────────────────────────────────
@@ -230,6 +231,7 @@ public class AppLayoutElement extends VaadinElement implements HasStyleElement, 
         BoundingBox drawerBox = getLocator().locator("[part='drawer']").boundingBox();
         if (backdropBox == null || drawerBox == null) {
             backdrop.click();
+            waitAfterAction();
             return;
         }
         double spaceBeforeDrawer = drawerBox.x - backdropBox.x;
@@ -237,6 +239,7 @@ public class AppLayoutElement extends VaadinElement implements HasStyleElement, 
         double x = spaceAfterDrawer >= spaceBeforeDrawer ? backdropBox.width - 1 : 1;
         backdrop.click(new Locator.ClickOptions()
                 .setPosition(x, backdropBox.height / 2));
+        waitAfterAction();
     }
 
     /**
@@ -244,6 +247,7 @@ public class AppLayoutElement extends VaadinElement implements HasStyleElement, 
      */
     public void closeDrawerWithEscape() {
         getLocator().page().keyboard().press("Escape");
+        waitAfterAction();
     }
 
     /**

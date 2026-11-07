@@ -108,6 +108,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
     public void selectItem(String item) {
         open();
         getOverlayItem(item).click();
+        waitAfterAction();
     }
 
     /**
@@ -119,6 +120,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
     public void deselectItem(String item) {
         open();
         getOverlayItem(item).click();
+        waitAfterAction();
     }
 
     /**
@@ -130,6 +132,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
         open();
         for (String item : items) {
             getOverlayItem(item).click();
+            waitAfterAction();
         }
     }
 
@@ -142,6 +145,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
         open();
         for (String item : items) {
             getOverlayItem(item).click();
+            waitAfterAction();
         }
     }
 
@@ -154,6 +158,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
     public void filterAndSelectItem(String filter, String item) {
         setFilter(filter);
         getOverlayItem(item).click();
+        waitAfterAction();
     }
 
     /**
@@ -169,6 +174,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
         getInputLocator().clear();
         open();
         getInputLocator().pressSequentially(filter);
+        waitAfterAction();
     }
 
     /**
@@ -236,6 +242,7 @@ public class MultiSelectComboBoxElement extends VaadinElement
      */
     public void clickToggleButton() {
         getToggleButtonLocator().click();
+        waitAfterAction();
     }
 
     // ── Overlay items ──────────────────────────────────────────────────

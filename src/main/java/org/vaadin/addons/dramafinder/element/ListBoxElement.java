@@ -48,6 +48,7 @@ public class ListBoxElement extends VaadinElement
      */
     public void selectItem(String item) {
         getItem(item).click();
+        waitAfterAction();
     }
 
     /**

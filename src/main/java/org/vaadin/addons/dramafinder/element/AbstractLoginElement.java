@@ -111,6 +111,7 @@ public abstract class AbstractLoginElement extends VaadinElement
         getUsernameField().setValue(username);
         getPasswordField().setValue(password);
         getSubmitButton().click();
+        waitAfterAction();
     }
 
     /**

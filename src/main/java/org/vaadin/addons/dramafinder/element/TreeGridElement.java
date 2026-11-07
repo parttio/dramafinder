@@ -227,6 +227,7 @@ public class TreeGridElement extends GridElement {
      */
     protected void clickTreeToggle(Locator toggleLocator) {
         toggleLocator.evaluate("el => el.click()");
+        waitAfterAction();
         waitForGridToStopLoading();
     }
 

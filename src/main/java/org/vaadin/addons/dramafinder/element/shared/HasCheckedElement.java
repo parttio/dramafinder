@@ -87,11 +87,13 @@ public interface HasCheckedElement extends HasEnabledElement, HasAriaLabelElemen
     /** Check the component. */
     default void check() {
         getInputLocator().check();
+        waitAfterAction();
     }
 
     /** Uncheck the component. */
     default void uncheck() {
         getInputLocator().uncheck();
+        waitAfterAction();
     }
 
     /**

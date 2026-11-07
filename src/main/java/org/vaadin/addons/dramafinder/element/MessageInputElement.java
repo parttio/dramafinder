@@ -85,6 +85,7 @@ public class MessageInputElement extends VaadinElement
      */
     public void setValue(String value) {
         getTextAreaInputLocator().fill(value);
+        waitAfterAction();
         getTextAreaLocator().evaluate("(el, v) => { el.value = v; }", value);
     }
 
@@ -111,6 +112,7 @@ public class MessageInputElement extends VaadinElement
      */
     public void submit() {
         getSendButtonLocator().click();
+        waitAfterAction();
     }
 
     /**
@@ -118,6 +120,7 @@ public class MessageInputElement extends VaadinElement
      */
     public void submitByEnter() {
         getTextAreaInputLocator().press("Enter");
+        waitAfterAction();
     }
 
     /**

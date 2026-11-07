@@ -46,6 +46,7 @@ public class AccordionPanelElement extends VaadinElement implements HasDisabledA
     public void setOpen(boolean open) {
         if (isOpen() != open) {
             getSummaryLocator().click();
+            waitAfterAction();
         }
     }
 

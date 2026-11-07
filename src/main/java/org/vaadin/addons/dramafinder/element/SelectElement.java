@@ -59,6 +59,7 @@ public class SelectElement extends VaadinElement
     public void selectItem(String item) {
         getLocator().click();
         getSelectItem(getLocator().getByRole(AriaRole.LISTBOX), item).click();
+        waitAfterAction();
     }
 
     /**

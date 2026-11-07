@@ -177,6 +177,7 @@ public class AvatarGroupElement extends VaadinElement
     public void openOverflow() {
         if (!isOverflowOpen()) {
             getOverflowAvatar().click();
+            waitAfterAction();
         }
         assertOverflowOpen();
     }
@@ -187,6 +188,7 @@ public class AvatarGroupElement extends VaadinElement
      */
     public void closeOverflow() {
         getLocator().page().keyboard().press("Escape");
+        waitAfterAction();
         assertOverflowClosed();
     }
 

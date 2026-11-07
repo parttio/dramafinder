@@ -96,6 +96,7 @@ public class ComboBoxElement extends VaadinElement
     @Override
     public void setValue(String value) {
         getInputLocator().fill(value);
+        waitAfterAction();
         assertThat(getOverlayItem(value)).isVisible();
         close();
     }
@@ -109,6 +110,7 @@ public class ComboBoxElement extends VaadinElement
     public void selectItem(String item) {
         open();
         getOverlayItem(item).click();
+        waitAfterAction();
     }
 
     /**
@@ -120,6 +122,7 @@ public class ComboBoxElement extends VaadinElement
     public void filterAndSelectItem(String filter, String item) {
         setFilter(filter);
         getOverlayItem(item).click();
+        waitAfterAction();
     }
 
     /**
@@ -135,6 +138,7 @@ public class ComboBoxElement extends VaadinElement
         getInputLocator().clear();
         open();
         getInputLocator().pressSequentially(filter);
+        waitAfterAction();
     }
 
     /**
@@ -198,6 +202,7 @@ public class ComboBoxElement extends VaadinElement
      */
     public void clickToggleButton() {
         getToggleButtonLocator().click();
+        waitAfterAction();
     }
 
     /**

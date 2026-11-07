@@ -122,6 +122,16 @@ assertTrue(getLocator().getAttribute("opened") != null);
 // Good: Auto-retries until timeout
 assertThat(getLocator()).hasAttribute("opened", "");
 ```
+- **Every element action waits for the server round-trip** it may trigger
+  (`AutoWait`, issue #202): a public method that clicks, fills, presses, checks,
+  selects, hovers, focuses/blurs, uploads or sets a property ends with
+  `waitAfterAction()` (from `HasLocatorElement`), placed right after the raw
+  Playwright action — before any wait specific to the component (e.g. Grid's
+  `waitForGridToStopLoading()`). A new action must do the same; never call
+  `waitForVaadinIdle()` there, because it ignores the opt-out
+  (`AutoWait.withoutWaiting(...)`, `-Ddramafinder.autoWait=false`). The server
+  half only: client-side rendering after the response (an overlay opening, a
+  grid re-rendering) still needs a retrying assertion.
 
 #### 5. Attribute vs Property
 - **Pitfall**: Confusing HTML attributes with DOM properties.

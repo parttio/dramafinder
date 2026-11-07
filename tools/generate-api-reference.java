@@ -46,7 +46,7 @@ class GenerateApiReference {
     // Top-level types in the root package, in the order a test author meets them.
     // They are how you get a Page at all, so the reference is useless without
     // them — leaving them out is what sent agents to `javap -c` on the jar.
-    static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "HasTestView");
+    static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "HasTestView", "AutoWait");
 
     // Method keys (name/arity) declared by the shared mixins and by VaadinElement.
     // They are what tells a plain mixin implementation apart from an override
@@ -206,6 +206,9 @@ class GenerateApiReference {
         md.append("- `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / ");
         md.append("`cleanupTest()` are `@BeforeEach` / `@AfterEach`. Overriding one means calling ");
         md.append("`super` — the `page` field is null otherwise.\n");
+        md.append("- Element actions (`click`, `setValue`, `selectItem`, ...) return only once the Vaadin ");
+        md.append("server round-trip they trigger has finished; see `AutoWait` below to observe an ");
+        md.append("in-flight state.\n");
         md.append("- Playwright's own browser binaries must already be installed.\n\n");
         for (var e : setup.entrySet()) {
             renderType(md, e.getValue(), 3, false, true);

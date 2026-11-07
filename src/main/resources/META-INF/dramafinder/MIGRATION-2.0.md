@@ -185,6 +185,30 @@ To find the lookups to review, search the test sources for the changed factories
 grep -rnE '\.(getByLabel|getByText|getByHeaderText|getByTitle|getBySummaryText|getByButtonText|getByName)\(' src/test
 ```
 
+## Actions wait for the server round-trip
+
+In 1.x only `setValue` and a few date, slider and checkbox-group methods waited
+for the Vaadin server to answer. In 2.0 every element action does (issue #202):
+`click`, `setValue`, `clear`, `check`/`uncheck`, `selectItem`, key presses,
+`hoverTarget`, `focus`/`blur`, `upload`, `setProperty` and the rest return only
+once Flow has no request in flight. Playwright still waits for the element to be
+actionable before the action.
+
+Most suites need no change; flaky reads right after an action get steadier. A test
+that asserts the in-flight state — a loading indicator, a disabled-while-saving
+button — now sees the final state instead. Wrap that action:
+
+```java
+import org.vaadin.addons.dramafinder.AutoWait;
+
+AutoWait.withoutWaiting(() -> ButtonElement.getByText(page, "Save").click());
+assertThat(page.locator(".spinner")).isVisible();
+```
+
+`-Ddramafinder.autoWait=false` turns the waiting off for a whole run.
+`waitForVaadinIdle()` still waits explicitly, and is what to call after an action
+on a raw Playwright `Locator`, which the element API does not see.
+
 ## Also new in 2.0
 
 The typed query builder (issue #200) gives every element the same lookup grammar.

@@ -104,7 +104,7 @@ public class CheckboxGroupElement extends VaadinElement
         for (String label : labels) {
             getCheckbox(label).check();
         }
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**
@@ -117,7 +117,7 @@ public class CheckboxGroupElement extends VaadinElement
         for (String label : labels) {
             getCheckbox(label).uncheck();
         }
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**
@@ -128,7 +128,7 @@ public class CheckboxGroupElement extends VaadinElement
         for (int i = checked.count() - 1; i >= 0; i--) {
             new CheckboxElement(checked.nth(i)).uncheck();
         }
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**

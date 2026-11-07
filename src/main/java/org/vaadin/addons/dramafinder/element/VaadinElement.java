@@ -30,10 +30,12 @@ public abstract class VaadinElement implements HasLocatorElement {
     }
 
     /**
-     * Click the component root.
+     * Click the component root, then wait for the server round-trip it
+     * triggers (see {@link org.vaadin.addons.dramafinder.AutoWait}).
      */
     public void click() {
         locator.click();
+        waitAfterAction();
     }
 
     /**
@@ -68,13 +70,15 @@ public abstract class VaadinElement implements HasLocatorElement {
     }
 
     /**
-     * Set a DOM property on the underlying element (e.g. {@code value}, {@code disabled}).
+     * Set a DOM property on the underlying element (e.g. {@code value}, {@code disabled}),
+     * then wait for the server round-trip a synchronized property triggers.
      *
      * @param name  property name
      * @param value property value
      */
     public void setProperty(String name, Object value) {
         locator.evaluate("(el, args) => el[args.name] = args.value", Map.of("name", name, "value", value));
+        waitAfterAction();
     }
 
     /**

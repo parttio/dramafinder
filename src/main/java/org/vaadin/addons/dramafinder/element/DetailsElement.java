@@ -48,6 +48,7 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
     public void setOpen(boolean open) {
         if (isOpen() != open) {
             getSummaryLocator().click();
+            waitAfterAction();
         }
     }
 

@@ -650,11 +650,13 @@ public class GridElement extends VaadinElement
         var checkbox = cell.getCellContentLocator().locator("vaadin-checkbox");
         if (checkbox.count() > 0) {
             checkbox.click();
+            waitAfterAction();
         } else {
             var position = findSelectionClickPosition(cell).orElseThrow(() -> new IllegalStateException(
                     "Cannot click cell " + cell.getColumnIndex() + " for selection: interactive content "
                             + "covers the whole cell, padding included"));
             cell.getCellContentLocator().click(new Locator.ClickOptions().setPosition(position));
+            waitAfterAction();
         }
         waitForGridToStopLoading();
     }
@@ -746,6 +748,7 @@ public class GridElement extends VaadinElement
             return;
         }
         getSelectAllCheckboxLocator().click();
+        waitAfterAction();
         waitForGridToStopLoading();
     }
 
@@ -758,6 +761,7 @@ public class GridElement extends VaadinElement
             return;
         }
         getSelectAllCheckboxLocator().click();
+        waitAfterAction();
         waitForGridToStopLoading();
     }
 
@@ -788,6 +792,7 @@ public class GridElement extends VaadinElement
         }
 
         row.getCell(1).click();
+        waitAfterAction();
         waitForGridToStopLoading();
     }
 
@@ -804,6 +809,7 @@ public class GridElement extends VaadinElement
         }
 
         row.getCell(1).click();
+        waitAfterAction();
         waitForGridToStopLoading();
     }
 
@@ -1284,6 +1290,7 @@ public class GridElement extends VaadinElement
          */
         public void click() {
             cellContent.click();
+            waitAfterAction();
         }
     }
 
@@ -1316,6 +1323,7 @@ public class GridElement extends VaadinElement
                 throw new IllegalStateException("Header cell at column index " + getColumnIndex() + " is not sortable");
             }
             sorterLocator.first().click();
+            waitAfterAction();
             waitForGridToStopLoading();
         }
 

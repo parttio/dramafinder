@@ -90,6 +90,7 @@ public class SplitLayoutElement extends VaadinElement implements HasStyleElement
         page.mouse().move(centerX + deltaX, centerY + deltaY,
                 new Mouse.MoveOptions().setSteps(10));
         page.mouse().up();
+        waitAfterAction();
     }
 
 }

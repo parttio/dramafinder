@@ -190,6 +190,7 @@ public class BreadcrumbsElement extends VaadinElement
     public void openOverflow() {
         if (!isOverflowOpen()) {
             getOverflowButtonLocator().click();
+            waitAfterAction();
         }
     }
 
@@ -203,6 +204,7 @@ public class BreadcrumbsElement extends VaadinElement
     public void closeOverflow() {
         if (isOverflowOpen()) {
             getLocator().page().keyboard().press("Escape");
+            waitAfterAction();
         }
     }
 

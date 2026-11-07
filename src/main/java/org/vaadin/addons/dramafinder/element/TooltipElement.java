@@ -251,6 +251,7 @@ public class TooltipElement extends VaadinElement implements HasThemeElement, Ha
         getLocator().page().mouse().move(
                 ((Number) point.get("x")).doubleValue(),
                 ((Number) point.get("y")).doubleValue());
+        waitAfterAction();
     }
 
     /**
@@ -262,5 +263,6 @@ public class TooltipElement extends VaadinElement implements HasThemeElement, Ha
      */
     public void closeWithEscape() {
         getLocator().page().keyboard().press("Escape");
+        waitAfterAction();
     }
 }

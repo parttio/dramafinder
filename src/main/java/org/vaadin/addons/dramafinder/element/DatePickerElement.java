@@ -94,7 +94,7 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
         HasInputFieldElement.super.setValue(value);
         getLocator().press("Enter");
         getLocator().dispatchEvent("change");
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
 

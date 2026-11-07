@@ -106,6 +106,7 @@ public class UploadElement extends VaadinElement
      */
     public void uploadFiles(Path... files) {
         getFileInputLocator().setInputFiles(files);
+        waitAfterAction();
     }
 
     /**
@@ -115,6 +116,7 @@ public class UploadElement extends VaadinElement
      */
     public void removeFile(String fileName) {
         getFileItemLocator(fileName).locator("[part=\"remove-button\"]").first().click();
+        waitAfterAction();
     }
 
     /**
