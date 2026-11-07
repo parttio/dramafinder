@@ -67,7 +67,7 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
         datePickerElement.setValue(date.toLocalDate());
         timePickerElement.setValue(date.toLocalTime());
         getLocator().dispatchEvent("change");
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**
@@ -224,7 +224,7 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
         datePickerElement.setValue(date);
         getLocator().press("Enter");
         getLocator().dispatchEvent("change");
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**
@@ -234,7 +234,7 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
         timePickerElement.setValue(date);
         getLocator().press("Enter");
         getLocator().dispatchEvent("change");
-        waitForVaadinIdle();
+        waitAfterAction();
     }
 
     /**

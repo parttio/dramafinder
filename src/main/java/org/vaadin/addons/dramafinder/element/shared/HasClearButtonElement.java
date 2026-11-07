@@ -17,6 +17,7 @@ public interface HasClearButtonElement extends HasLocatorElement {
     /** Click the clear button. */
     default void clickClearButton() {
         getClearButtonLocator().click();
+        waitAfterAction();
     }
 
     /** Whether the clear button is visible. */

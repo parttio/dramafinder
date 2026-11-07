@@ -38,6 +38,7 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
     /** Close the dialog using the Escape key. */
     public void closeWithEscape() {
         getLocator().press("Escape");
+        waitAfterAction();
     }
 
     /**

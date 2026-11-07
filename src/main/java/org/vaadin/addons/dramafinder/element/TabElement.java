@@ -29,6 +29,7 @@ public class TabElement extends VaadinElement implements Findable<TextQuery<TabE
     /** Select the tab by clicking it. */
     public void select() {
         getLocator().click();
+        waitAfterAction();
     }
 
     /** Get the tab label text. */

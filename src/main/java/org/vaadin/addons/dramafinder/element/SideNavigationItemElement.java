@@ -66,6 +66,7 @@ public class SideNavigationItemElement extends VaadinElement implements HasDisab
      */
     public void toggle() {
         getLocator().locator("button[part='toggle-button']").first().click();
+        waitAfterAction();
     }
 
     @Override
@@ -75,5 +76,6 @@ public class SideNavigationItemElement extends VaadinElement implements HasDisab
 
     public void navigate() {
         getLocator().getByRole(AriaRole.LINK).first().click();
+        waitAfterAction();
     }
 }

@@ -85,6 +85,7 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
      */
     public void clickItem(String label) {
         getItem(label).click();
+        waitAfterAction();
     }
 
     /**
@@ -129,5 +130,6 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
      */
     public void toggle() {
         getLocator().locator("[slot='label']").first().click();
+        waitAfterAction();
     }
 }

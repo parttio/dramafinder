@@ -45,6 +45,7 @@ Notes:
 
 - The browser runs headless unless the `headless` system property or the `HEADLESS` environment variable says otherwise.
 - `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / `cleanupTest()` are `@BeforeEach` / `@AfterEach`. Overriding one means calling `super` — the `page` field is null otherwise.
+- Element actions (`click`, `setValue`, `selectItem`, ...) return only once the Vaadin server round-trip they trigger has finished; see `AutoWait` below to observe an in-flight state.
 - Playwright's own browser binaries must already be installed.
 
 ### AbstractBasePlaywrightIT
@@ -78,6 +79,20 @@ Base class for Playwright integration tests of a Vaadin view.
 
 - `String getUrl()`
 - `String getView()`
+
+### AutoWait
+
+Waits for the Vaadin server round-trip that an element action triggers.
+
+**Constants:** `String PROPERTY = "dramafinder.autoWait"`
+
+**Static methods:**
+
+- `boolean isEnabled()` — Whether element actions currently wait for the server round-trip: not switched off with -Ddramafinder.autoWait=false, and not inside #withoutWaiting(Runnable) on this thread.
+- `void withoutWaiting(Runnable actions)` — Run actions without waiting for the server round-trip after each element action, so the test can observe the state while a request is in flight.
+- `<T> T withoutWaiting(Supplier<T> actions)` — Run actions without waiting for the server round-trip after each element action, and return their result.
+- `void afterAction(Page page)` — Wait for the round-trip an element action just triggered, unless automatic waiting is off (see #isEnabled()).
+- `void waitForVaadinIdle(Page page)` — Block until Vaadin Flow has no client-server exchange in flight, regardless of #isEnabled().
 
 ## Element index
 
@@ -2398,6 +2413,7 @@ Base contract for objects that expose a Playwright Locator.
 
 - `Locator getLocator()` — The root locator for the component.
 - `void waitForVaadinIdle()` — Block until Vaadin Flow has no active client-server exchange in flight.
+- `void waitAfterAction()` — Wait for the server round-trip the action just performed may have triggered, unless automatic waiting is off (see AutoWait).
 
 ### HasPlaceholderElement
 
@@ -2532,10 +2548,10 @@ Base class for typed Playwright wrappers around Vaadin components.
 
 **Methods:**
 
-- `void click()` — Click the component root.
+- `void click()` — Click the component root, then wait for the server round-trip it triggers (see org.vaadin.addons.dramafinder.AutoWait).
 - `String getText()` — Get the textual content of the component root.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for type components inside this component, e.g. dialog.find(ButtonElement.class).withText("Delete").single().
-- `void setProperty(String name, Object value)` — Set a DOM property on the underlying element (e.g. value, disabled).
+- `void setProperty(String name, Object value)` — Set a DOM property on the underlying element (e.g. value, disabled), then wait for the server round-trip a synchronized property triggers.
 - `Object getProperty(String name)` — Get a DOM property from the underlying element.
 - `boolean isVisible()` — Whether the component is visible.
 - `void assertVisible()` — Assert that the component is visible.

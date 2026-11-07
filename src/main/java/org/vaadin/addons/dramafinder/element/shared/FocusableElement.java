@@ -21,6 +21,7 @@ public interface FocusableElement extends HasLocatorElement {
      */
     default void focus() {
         getFocusLocator().focus();
+        waitAfterAction();
     }
 
     /**
@@ -28,6 +29,7 @@ public interface FocusableElement extends HasLocatorElement {
      */
     default void blur() {
         getFocusLocator().blur();
+        waitAfterAction();
     }
 
     /**

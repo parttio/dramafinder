@@ -41,6 +41,7 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
     public MenuElement openSubMenu(String name) {
         MenuItemElement menuItemElement = getMenuItemElement(name);
         menuItemElement.click();
+        waitAfterAction();
         menuItemElement.assertExpanded();
         return new MenuElement(getLocator().page());
     }

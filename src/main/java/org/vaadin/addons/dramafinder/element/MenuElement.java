@@ -33,6 +33,7 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
     public MenuElement openSubMenu(String name) {
         MenuItemElement menuItemElement = getMenuItemElement(name);
         menuItemElement.click();
+        waitAfterAction();
         menuItemElement.assertExpanded();
         return new MenuElement(getLocator().page());
     }

@@ -38,6 +38,7 @@ public class RadioButtonGroupElement extends VaadinElement
      */
     public void selectByLabel(String label) {
         getRadioButtonByLabel(label).check();
+        waitAfterAction();
     }
 
     /**
@@ -98,6 +99,7 @@ public class RadioButtonGroupElement extends VaadinElement
      */
     public void setValue(String value) {
         RadioButtonElement.getByLabel(getLocator(), value).check();
+        waitAfterAction();
     }
 
     /**

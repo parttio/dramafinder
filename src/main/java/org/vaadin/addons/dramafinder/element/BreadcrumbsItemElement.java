@@ -119,6 +119,7 @@ public class BreadcrumbsItemElement extends VaadinElement
     public void click() {
         if (isLink()) {
             getLinkLocator().click();
+            waitAfterAction();
         } else {
             super.click();
         }

@@ -102,7 +102,11 @@ fails rather than guessing when several components match.
 **Assertions retry; getters do not.** Every `assertX` method polls via
 `page.waitForCondition(...)`, so it tolerates a value the client has not rendered yet.
 A bare `getX()` compared with `assertEquals` does not, and is flaky against a lazily
-loaded grid or a debounced field. Reach for the `assertX` method.
+loaded grid or a debounced field. Reach for the `assertX` method. Element actions
+(`click`, `setValue`, `selectItem`, …) do wait for the Vaadin server round-trip they
+trigger, so the server's response has arrived when they return; to observe a state
+while the request is still in flight (a loading indicator), wrap the action in
+`AutoWait.withoutWaiting(() -> ...)`.
 
 ## When a test fails
 

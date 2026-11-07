@@ -93,6 +93,7 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
      */
     public ContextMenuElement openSubMenu(String itemLabel) {
         getItemLocator(itemLabel).hover();
+        waitAfterAction();
         return new ContextMenuElement(getLocator().locator(FIELD_TAG_NAME + "[slot=\"submenu\"][opened]").first());
     }
 
@@ -103,6 +104,7 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
      */
     public void selectItem(String itemLabel) {
         getItemLocator(itemLabel).click();
+        waitAfterAction();
     }
 
     /**

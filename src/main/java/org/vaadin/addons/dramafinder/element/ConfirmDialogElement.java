@@ -232,16 +232,19 @@ public class ConfirmDialogElement extends VaadinElement
     /** Click the confirm button. */
     public void confirm() {
         getConfirmButton().click();
+        waitAfterAction();
     }
 
     /** Click the cancel button. Fails if the dialog is not cancelable. */
     public void cancel() {
         getCancelButton().click();
+        waitAfterAction();
     }
 
     /** Click the reject button. Fails if the dialog is not rejectable. */
     public void reject() {
         getRejectButton().click();
+        waitAfterAction();
     }
 
     /**
@@ -250,6 +253,7 @@ public class ConfirmDialogElement extends VaadinElement
      */
     public void closeWithEscape() {
         getLocator().press("Escape");
+        waitAfterAction();
     }
 
     /**
