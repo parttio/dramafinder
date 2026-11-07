@@ -225,6 +225,11 @@ dialog.find(ButtonElement.class).withText("Delete").single().click();
 It sits alongside the factories; nothing has to move to it. See "Typed queries"
 in `META-INF/dramafinder/api-reference.md`.
 
+`AbstractBasePlaywrightIT` navigates by route class (issue #204):
+`navigate(ProfileView.class)` instead of `page.navigate(getUrl() + "nav/profile")`,
+with `assertAt(ProfileView.class)`, `assertPath(...)` and `assertQueryParameter(...)`
+to check where the browser ended up.
+
 Every element now also has `getById(Page|Locator, String)` and
 `getByTestId(Page|Locator, String)` (issue #203), so
 `new XElement(page.locator("#id"))` can become `XElement.getById(page, "id")`. The test

@@ -485,6 +485,11 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `vaadin-playwright-test`'s. A new skill goes into `marketplace.json` and
   `tile.json`; `SkillDistributionTest` fails when one is missing or the tile
   version drifts.
+- `com.vaadin:flow-server` is a `provided` dependency, used only by
+  `RouteNavigation` (navigation by route class). Keep Vaadin types out of
+  `AbstractBasePlaywrightIT`'s method signatures — JUnit reflects over them, and a
+  test classpath without Flow must still load the class; its `navigate`/`assertAt`
+  wrappers take `Class<?>`/`Object` and delegate. `RouteNavigationTest` checks this.
 - `GEMINI.md` only imports this file; put agent instructions here.
 
 ## Agent skills
