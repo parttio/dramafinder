@@ -5,6 +5,8 @@ import java.util.Objects;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.FieldQuery;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
@@ -29,7 +31,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 public class SelectElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasInputFieldElement,
         HasPrefixElement, HasThemeElement, HasPlaceholderElement,
-        HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement {
+        HasEnabledElement, HasTooltipElement, HasValidationPropertiesElement,
+        Findable<FieldQuery<SelectElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-select";
     public static final String FIELD_ITEM_TAG_NAME = "vaadin-select-item";

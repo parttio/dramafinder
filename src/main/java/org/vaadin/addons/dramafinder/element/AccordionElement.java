@@ -1,6 +1,8 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -12,7 +14,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * open/closed state and panel count.
  */
 @PlaywrightElement(AccordionElement.FIELD_TAG_NAME)
-public class AccordionElement extends VaadinElement implements HasStyleElement {
+public class AccordionElement extends VaadinElement implements HasStyleElement,
+        Findable<ComponentQuery<AccordionElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-accordion";
 

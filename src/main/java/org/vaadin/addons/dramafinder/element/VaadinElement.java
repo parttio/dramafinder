@@ -3,6 +3,9 @@ package org.vaadin.addons.dramafinder.element;
 import java.util.Map;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
+import org.vaadin.addons.dramafinder.element.query.ElementQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasLocatorElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -46,6 +49,22 @@ public abstract class VaadinElement implements HasLocatorElement {
     /** {@inheritDoc} */
     public Locator getLocator() {
         return locator;
+    }
+
+    /**
+     * Start a typed query for {@code type} components inside this component,
+     * e.g. {@code dialog.find(ButtonElement.class).withText("Delete").single()}.
+     * <p>
+     * Searches this component's subtree; the component itself is not a
+     * candidate. See {@link ElementQueries#find(com.microsoft.playwright.Page, Class)}.
+     *
+     * @param type the element class, annotated with {@link PlaywrightElement}
+     * @param <T>  the element type
+     * @param <Q>  the query type bound to {@code T} by {@link Findable}
+     * @return a query over every component of that type inside this one
+     */
+    public <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type) {
+        return ElementQueries.find(locator, type);
     }
 
     /**

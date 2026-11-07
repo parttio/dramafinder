@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
@@ -24,7 +26,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(UploadElement.FIELD_TAG_NAME)
 public class UploadElement extends VaadinElement
         implements HasEnabledElement,
-        HasValidationPropertiesElement, HasThemeElement, FocusableElement {
+        HasValidationPropertiesElement, HasThemeElement, FocusableElement,
+        Findable<ComponentQuery<UploadElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-upload";
     public static final String FILE_ITEM_TAG_NAME = "vaadin-upload-file";

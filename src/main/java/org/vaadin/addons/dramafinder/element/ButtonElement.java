@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ButtonQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
@@ -21,7 +23,8 @@ import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 @PlaywrightElement(ButtonElement.FIELD_TAG_NAME)
 public class ButtonElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasEnabledElement,
-        HasPrefixElement, HasStyleElement, HasSuffixElement, HasThemeElement, HasTooltipElement {
+        HasPrefixElement, HasStyleElement, HasSuffixElement, HasThemeElement, HasTooltipElement,
+        Findable<ButtonQuery<ButtonElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-button";
 

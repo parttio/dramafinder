@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.FieldQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasHelperElement;
@@ -34,7 +36,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 @PlaywrightElement(SliderElement.FIELD_TAG_NAME)
 public class SliderElement extends VaadinElement
         implements HasLabelElement, HasHelperElement, HasEnabledElement, HasReadOnlyElement,
-        FocusableElement, HasThemeElement, HasStyleElement, HasTooltipElement {
+        FocusableElement, HasThemeElement, HasStyleElement, HasTooltipElement,
+        Findable<FieldQuery<SliderElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-slider";
 

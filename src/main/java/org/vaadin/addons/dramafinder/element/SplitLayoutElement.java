@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Mouse;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -16,7 +18,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * via the {@code slot} attribute, and the splitter is moved by property or drag.
  */
 @PlaywrightElement(SplitLayoutElement.FIELD_TAG_NAME)
-public class SplitLayoutElement extends VaadinElement implements HasStyleElement, HasThemeElement {
+public class SplitLayoutElement extends VaadinElement implements HasStyleElement, HasThemeElement,
+        Findable<ComponentQuery<SplitLayoutElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-split-layout";
 

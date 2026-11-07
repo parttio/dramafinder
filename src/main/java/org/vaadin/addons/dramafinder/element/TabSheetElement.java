@@ -2,6 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 
 /**
  * PlaywrightElement for {@code <vaadin-tabsheet>}.
@@ -11,7 +13,7 @@ import com.microsoft.playwright.Page;
  * {@code <vaadin-tabs>} strip.
  */
 @PlaywrightElement(TabSheetElement.FIELD_TAG_NAME)
-public class TabSheetElement extends VaadinElement {
+public class TabSheetElement extends VaadinElement implements Findable<ComponentQuery<TabSheetElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-tabsheet";
 

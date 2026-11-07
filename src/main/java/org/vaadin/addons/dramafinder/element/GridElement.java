@@ -10,6 +10,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.Position;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
@@ -28,7 +30,8 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  */
 @PlaywrightElement(GridElement.FIELD_TAG_NAME)
 public class GridElement extends VaadinElement
-        implements FocusableElement, HasStyleElement, HasThemeElement, HasEnabledElement {
+        implements FocusableElement, HasStyleElement, HasThemeElement, HasEnabledElement,
+        Findable<ComponentQuery<GridElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-grid";
 

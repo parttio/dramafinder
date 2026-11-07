@@ -2,6 +2,8 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -14,7 +16,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * lookup helpers based on the Card's ARIA {@code region} name (title).
  */
 @PlaywrightElement(CardElement.FIELD_TAG_NAME)
-public class CardElement extends VaadinElement implements HasThemeElement, HasStyleElement {
+public class CardElement extends VaadinElement implements HasThemeElement, HasStyleElement,
+        Findable<ComponentQuery<CardElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-card";
 

@@ -357,6 +357,41 @@ messages from one author is normal data, not an ambiguity.
 Two consequences worth spelling out in the Javadoc of an exact lookup: the match
 becomes **case-sensitive**, and a lookup keyed on a partial label stops working.
 
+#### 7. Typed Query Pattern
+`ElementQueries.find(page, X.class)` (and `element.find(X.class)` for a scoped
+search) is a query builder alongside the factories, in the
+`org.vaadin.addons.dramafinder.element.query` package. Each element declares
+its query type by implementing `Findable<Q>`; Java infers `Q` from the class
+literal, so a filter that cannot apply to the component does not compile:
+```java
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
+dialog.find(ButtonElement.class).withText("Delete").single().click();
+find(page, ButtonElement.class).withLabel("Save"); // compile error
+```
+- Filters come from mixins (`LabelFilters`, `TextFilters`, `PlaceholderFilters`)
+  composed by small query classes (`InputFieldQuery`, `FieldQuery`, `ButtonQuery`,
+  `TextQuery`, `TooltipQuery`, `SideNavItemQuery`, `ComponentQuery`). A mixin's
+  default methods only call `refine(...)`; a query whose component keeps its
+  text or label elsewhere overrides them (`TooltipQuery`, `SideNavItemQuery`).
+- `withAccessibleName` is on every query (`ElementQuery` implements
+  `AccessibleNameFilters`). It reads the host or the field's own
+  `slot="input|textarea|value"` child — never a nested component, so a dialog
+  is not matched by a field it holds. `ButtonQuery` and `TextQuery` fall back to
+  the component's own text, as name-from-content roles do.
+- Text filters read the component's **own** text (pitfall 11): light DOM only,
+  via XPath, with named-slot children left out — never Playwright `hasText`.
+- A new element gets `@PlaywrightElement` and `implements Findable<...>` with the
+  query whose filters really match it — verify each filter in an IT before
+  binding (e.g. `vaadin-select` does not reflect `placeholder` on its host, so
+  it is a `FieldQuery`). `ElementQueriesTest` fails when a public element is not
+  findable; overlay-bound wrappers are listed there as exceptions.
+- Exact filters (`withLabel`, `withText`, `withAccessibleName`,
+  `withPlaceholder`) match the whole value case-sensitively and carry no
+  `.first()`, like item lookups; `*Containing` variants are the substring ones.
+- A subclass inherits its parent's binding (Java forbids two
+  parameterizations of one interface): `find(page, TreeGridElement.class)`
+  returns `TreeGridElement` instances typed as `GridElement`.
+
 ### Best Practices
 
 1. **Prefer ARIA roles over tag names** for element lookup when possible.

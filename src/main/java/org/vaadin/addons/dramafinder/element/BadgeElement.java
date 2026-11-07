@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.TextQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -45,7 +47,8 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  * text and number assertions keep working under those variants.
  */
 @PlaywrightElement(BadgeElement.FIELD_TAG_NAME)
-public class BadgeElement extends VaadinElement implements HasThemeElement, HasStyleElement {
+public class BadgeElement extends VaadinElement implements HasThemeElement, HasStyleElement,
+        Findable<TextQuery<BadgeElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-badge";
 

@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -20,7 +22,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * as {@code pre > code}.
  */
 @PlaywrightElement(MarkdownElement.FIELD_TAG_NAME)
-public class MarkdownElement extends VaadinElement implements HasThemeElement, HasStyleElement {
+public class MarkdownElement extends VaadinElement implements HasThemeElement, HasStyleElement,
+        Findable<ComponentQuery<MarkdownElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-markdown";
 

@@ -78,7 +78,11 @@ items, checkboxes of a group). Copy lookups from it rather than guessing labels.
 containers have `get(Page)`, and `getById(Page, String)` exists on only a few. An
 element has exactly the factories the index table lists for it — assuming one that
 isn't listed is the most common way to lose a compile round-trip. Every wrapper is
-also constructible from a `Locator`: `new TextFieldElement(someLocator)`.
+also constructible from a `Locator`: `new TextFieldElement(someLocator)`. For one
+grammar on every element, use the typed query builder
+(`find(page, TextFieldElement.class).withLabel("Name").single()`, see "Typed queries"
+in the reference): it only offers the filters that fit the component, and
+`element.find(X.class)` searches inside a dialog or layout.
 
 **A grid cell has two locators.** `getTableCellLocator()` is the `<td>`; the rendered
 content lives in a `<vaadin-grid-cell-content>` elsewhere in the DOM, reachable via

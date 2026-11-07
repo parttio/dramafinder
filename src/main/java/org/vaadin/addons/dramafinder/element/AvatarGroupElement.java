@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -26,7 +28,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(AvatarGroupElement.FIELD_TAG_NAME)
 public class AvatarGroupElement extends VaadinElement
-        implements HasStyleElement, HasThemeElement {
+        implements HasStyleElement, HasThemeElement,
+        Findable<ComponentQuery<AvatarGroupElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-avatar-group";
     public static final String FIELD_MENU_TAG_NAME = "vaadin-avatar-group-menu";

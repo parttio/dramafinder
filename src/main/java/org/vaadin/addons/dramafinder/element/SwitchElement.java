@@ -3,6 +3,8 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.FieldQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasCheckedElement;
@@ -27,7 +29,8 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 @PlaywrightElement(SwitchElement.FIELD_TAG_NAME)
 public class SwitchElement extends VaadinElement
         implements FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement,
-        HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement {
+        HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement,
+        Findable<FieldQuery<SwitchElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-switch";
 

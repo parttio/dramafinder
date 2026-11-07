@@ -5,6 +5,8 @@ import java.util.List;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
@@ -26,7 +28,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  */
 @PlaywrightElement(BreadcrumbsElement.FIELD_TAG_NAME)
 public class BreadcrumbsElement extends VaadinElement
-        implements HasAriaLabelElement, HasStyleElement, HasThemeElement {
+        implements HasAriaLabelElement, HasStyleElement, HasThemeElement,
+        Findable<ComponentQuery<BreadcrumbsElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-breadcrumbs";
 

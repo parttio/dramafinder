@@ -1,6 +1,8 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.Findable;
+import org.vaadin.addons.dramafinder.element.query.TextQuery;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -9,7 +11,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * PlaywrightElement for tabs {@code <vaadin-tab>}.
  */
 @PlaywrightElement(TabElement.FIELD_TAG_NAME)
-public class TabElement extends VaadinElement {
+public class TabElement extends VaadinElement implements Findable<TextQuery<TabElement>> {
 
     public static final String FIELD_PARENT_TAG_NAME = "vaadin-tabs";
     public static final String FIELD_TAG_NAME = "vaadin-tab";
