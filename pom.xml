@@ -101,6 +101,15 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Route annotations for navigation by view class (RouteNavigation).
+             Provided: a Vaadin project already has it; tests that never navigate
+             by class run without it. -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>flow-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- test deps -->
         <dependency>
             <groupId>com.vaadin</groupId>

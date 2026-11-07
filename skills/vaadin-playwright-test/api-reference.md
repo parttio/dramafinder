@@ -46,6 +46,7 @@ Notes:
 - The browser runs headless unless the `headless` system property or the `HEADLESS` environment variable says otherwise.
 - `setup()` / `cleanup()` are `@BeforeAll` / `@AfterAll` and `setupTest()` / `cleanupTest()` are `@BeforeEach` / `@AfterEach`. Overriding one means calling `super` — the `page` field is null otherwise.
 - Element actions (`click`, `setValue`, `selectItem`, ...) return only once the Vaadin server round-trip they trigger has finished; see `AutoWait` below to observe an in-flight state.
+- To open another view, use `navigate(ProfileView.class)` and check it with `assertAt(ProfileView.class)` (see `RouteNavigation` below) rather than `page.navigate(...)` with a hand-built URL.
 - Playwright's own browser binaries must already be installed.
 
 ### AbstractBasePlaywrightIT
@@ -69,6 +70,11 @@ Base class for Playwright integration tests of a Vaadin view.
 - `void setupTest()`
 - `void cleanupTest()`
 - `protected Page getPage()`
+- `protected void navigate(Class<?> view)` — Open view — its path resolved from @Route and the layouts' @RoutePrefix — under #getUrl(), and wait for Vaadin to finish loading.
+- `protected void navigate(Class<?> view, Object parameter)` — Open a parameterized view under #getUrl() and wait for Vaadin to finish loading.
+- `protected void assertAt(Class<?> view)` — Assert, retrying until the timeout, that the browser is on view, e.g. after a login redirect or a navigation guard.
+- `protected void assertPath(String path)` — Assert, retrying until the timeout, that the browser's path under #getUrl() is exactly path, whatever the query string.
+- `protected void assertQueryParameter(String name, String value)` — Assert, retrying until the timeout, that the URL holds the query parameter name with value, or no such parameter when value is null.
 - `Page agentPage()` — Returns the test's page, so a failing test is captured in the state it failed in.
 - `protected Browser getBrowser()`
 - `protected Playwright getPlaywright()`
@@ -93,6 +99,23 @@ Waits for the Vaadin server round-trip that an element action triggers.
 - `<T> T withoutWaiting(Supplier<T> actions)` — Run actions without waiting for the server round-trip after each element action, and return their result.
 - `void afterAction(Page page)` — Wait for the round-trip an element action just triggered, unless automatic waiting is off (see #isEnabled()).
 - `void waitForVaadinIdle(Page page)` — Block until Vaadin Flow has no client-server exchange in flight, regardless of #isEnabled().
+
+### RouteNavigation
+
+Navigates by Vaadin route class and asserts which view the browser is on.
+
+**Static methods:**
+
+- `String templateOf(Class<?> view)` — The route template of view, relative to the application root and without leading slash, e.g. "admin/user/:userId/edit".
+- `String pathOf(Class<?> view)` — The path that opens view, for a route without parameters.
+- `String pathOf(Class<?> view, Object parameter)` — The path that opens a HasUrlParameter view with parameter appended as the last segment.
+- `String pathOf(Class<?> view, RouteParameters parameters)` — The path that opens a template route, e.g. "user/:userId/edit" with new RouteParameters("userId", "42").
+- `void navigate(Page page, String baseUrl, Class<?> view)` — Open view and wait for Vaadin to finish loading it.
+- `void navigate(Page page, String baseUrl, Class<?> view, Object parameter)` — Open a parameterized view and wait for Vaadin to finish loading it.
+- `void open(Page page, String baseUrl, String path)` — Open path under the base URL and wait for Vaadin to finish loading.
+- `void assertAt(Page page, String baseUrl, Class<?> view)` — Assert, retrying until the timeout, that the browser is on view: its path matches the view's route template, any parameter value accepted, whatever the query string.
+- `void assertPath(Page page, String baseUrl, String path)` — Assert, retrying until the timeout, that the browser's path is exactly path, whatever the query string.
+- `void assertQueryParameter(Page page, String name, String value)` — Assert, retrying until the timeout, that the URL's query string holds name with value (compared decoded), or no name at all when value is null.
 
 ## Element index
 

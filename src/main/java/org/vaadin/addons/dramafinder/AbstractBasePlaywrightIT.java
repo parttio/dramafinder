@@ -93,6 +93,66 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
         return page;
     }
 
+    // ── Navigation by route class ──────────────────────────────────────
+    // Signatures stay free of Vaadin types: JUnit reflects over this class's
+    // methods, and a test classpath without flow-server must still load it.
+
+    /**
+     * Open {@code view} — its path resolved from {@code @Route} and the layouts'
+     * {@code @RoutePrefix} — under {@link #getUrl()}, and wait for Vaadin to
+     * finish loading. See {@link RouteNavigation}.
+     *
+     * @param view a class annotated with {@code @Route}
+     */
+    protected void navigate(Class<?> view) {
+        RouteNavigation.navigate(page, getUrl(), view);
+    }
+
+    /**
+     * Open a parameterized view under {@link #getUrl()} and wait for Vaadin to
+     * finish loading.
+     *
+     * @param view      a class annotated with {@code @Route}
+     * @param parameter the {@code HasUrlParameter} value, or a
+     *                  {@code RouteParameters} for a template route such as
+     *                  {@code "user/:userId/edit"}
+     */
+    protected void navigate(Class<?> view, Object parameter) {
+        RouteNavigation.navigate(page, getUrl(), view, parameter);
+    }
+
+    /**
+     * Assert, retrying until the timeout, that the browser is on {@code view},
+     * e.g. after a login redirect or a navigation guard.
+     *
+     * @param view a class annotated with {@code @Route}
+     */
+    protected void assertAt(Class<?> view) {
+        RouteNavigation.assertAt(page, getUrl(), view);
+    }
+
+    /**
+     * Assert, retrying until the timeout, that the browser's path under
+     * {@link #getUrl()} is exactly {@code path}, whatever the query string.
+     *
+     * @param path the expected path, e.g. {@code "profile"}
+     */
+    protected void assertPath(String path) {
+        RouteNavigation.assertPath(page, getUrl(), path);
+    }
+
+    /**
+     * Assert, retrying until the timeout, that the URL holds the query
+     * parameter {@code name} with {@code value}, or no such parameter when
+     * {@code value} is {@code null}.
+     *
+     * @param name  the query parameter name
+     * @param value the expected decoded value; {@code null} to assert absence
+     */
+    protected void assertQueryParameter(String name, String value) {
+        RouteNavigation.assertQueryParameter(page, name, value);
+    }
+
     /**
      * {@inheritDoc}
      * <p>

@@ -47,6 +47,14 @@ public class MyViewIT extends AbstractBasePlaywrightIT {
 is headless unless the `headless` system property or the `HEADLESS` environment
 variable says otherwise. Playwright's browser binaries must already be installed.
 
+To go to another view, navigate by its route class rather than a hand-built URL, so
+renaming a route cannot break the test silently: `navigate(ProfileView.class)`,
+`navigate(ArticleView.class, 42)` for a `HasUrlParameter`, or
+`navigate(UserEditView.class, new RouteParameters("userId", "42"))` for a template
+route. `assertAt(ProfileView.class)`, `assertPath("profile")` and
+`assertQueryParameter("tab", "2")` retry until the browser gets there, e.g. after a
+login redirect.
+
 ## Finding the wrapper for a component
 
 A component's tag maps to its wrapper by name: `<vaadin-text-field>` →

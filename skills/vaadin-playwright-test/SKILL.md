@@ -30,6 +30,10 @@ Always follow [@TESTING.md](TESTING.md) when generating tests. Key rules:
   implementation details — the wrapper already exposes the count, content, and
   state you need. Raw locators are a **last resort**, allowed only for a
   component that has no wrapper at all (see Step 2).
+- **Navigate by route class** — inside a test that extends
+  `AbstractBasePlaywrightIT`, go to another view with `navigate(ProfileView.class)`
+  (or `navigate(View.class, parameter)`), not `page.navigate(...)` with a built URL.
+  Check where the browser is with `assertAt(View.class)`.
 - **Pass the whole label** — `getByLabel`, `getByText`, `getByHeaderText` and
   the other label lookups match the full name, case-sensitively, and fail on
   duplicates. Copy the label exactly from the view; use `getByLabelContaining`
