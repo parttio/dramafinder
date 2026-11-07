@@ -7,7 +7,7 @@ import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.MenuBarElement;
 import org.vaadin.addons.dramafinder.element.MenuElement;
 import org.vaadin.addons.dramafinder.element.MenuItemElement;
-import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 

@@ -18,6 +18,7 @@ import org.vaadin.addons.dramafinder.agent.AgentReport;
 import org.vaadin.addons.dramafinder.agent.AgentReportProvider;
 import org.vaadin.addons.dramafinder.agent.AgentReporting;
 import org.vaadin.addons.dramafinder.agent.ComponentSnapshot;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

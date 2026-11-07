@@ -33,6 +33,7 @@ import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.element.TimePickerElement;
 import org.vaadin.addons.dramafinder.element.TooltipElement;
 import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

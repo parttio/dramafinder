@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.DetailsElement;
-import org.vaadin.addons.dramafinder.tests.it.SpringPlaywrightIT;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

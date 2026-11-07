@@ -51,8 +51,10 @@ Run these checks in parallel before doing anything else:
    `<artifactId>dramafinder</artifactId>`.
 2. **Spring Boot app?** — grep `pom.xml` for `spring-boot-starter`.
 3. **Existing IT tests?** — look for `*IT.java` files under `src/test/java`.
-4. **`SpringPlaywrightIT` already in project?** —
-   `find src/test/java -name SpringPlaywrightIT.java`.
+4. **Own `SpringPlaywrightIT` copy in project?** —
+   `find src/test/java -name SpringPlaywrightIT.java`. DramaFinder 2.0+ ships
+   `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`; a project copy
+   only exists for older versions.
 
 ### DramaFinder not found — propose setup, then run it
 
@@ -62,8 +64,10 @@ following in a single confirmation:
 - Add `org.vaadin.addons:dramafinder:<VERSION>` and
   `com.microsoft.playwright:playwright` (test scope) to `pom.xml` with
   `<dramafinder.version>` in `<properties>`.
-- **Spring Boot only:** also create
-  `src/test/java/<basePackage>/it/support/SpringPlaywrightIT.java`.
+- **Spring Boot only, DramaFinder before 2.0:** also create
+  `src/test/java/<basePackage>/it/support/SpringPlaywrightIT.java`. From 2.0 on,
+  tests extend the library's `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`
+  and nothing is generated.
 
 On confirmation, execute [setup.md](setup.md) end-to-end, then continue with
 Step 2.
@@ -78,9 +82,13 @@ If no existing IT tests exist, use the default structure in Step 3.
 
 ### `SpringPlaywrightIT` location
 
-- 1 hit → use that fully-qualified class name.
-- 0 hits + Spring Boot detected → run setup (it will create the file).
-- More than 1 hit → ask the user which one to use.
+- DramaFinder 2.0 or later → `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`
+  from the library. It starts the app on a random port (`@SpringBootTest` is
+  inherited) and derives `getUrl()` from it, context path included. If the project
+  also has its own copy, keep following its existing tests, and suggest deleting
+  the copy in favour of the library class.
+- Before 2.0: 1 hit → use that class; 0 hits + Spring Boot → run setup (it creates
+  the file); more than 1 hit → ask the user which one to use.
 
 ## Step 2 — Map view components to DramaFinder elements
 
@@ -103,7 +111,7 @@ actually matches. Before writing lookups, run a throwaway test that writes a
 lookup that reaches it, verified against the live page:
 
 ```java
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // omit if not Spring Boot
+// a SpringPlaywrightIT copy from before 2.0 also needs @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class <ViewName>OutlineIT extends SpringPlaywrightIT { // or AbstractBasePlaywrightIT
 
     @Override
@@ -208,16 +216,13 @@ The same rule applies to every wrapped component:
 package <same.package.as.view>; // mirror src/test/java structure
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.TextFieldElement; // import only used elements
-
-import <basePackage>.it.support.SpringPlaywrightIT; // Spring projects: actual location from Step 1
-// import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT; // non-Spring projects
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT; // Spring Boot, DramaFinder 2.0+
+// import <basePackage>.it.support.SpringPlaywrightIT;           // Spring Boot, before 2.0 (+ @SpringBootTest)
+// import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT; // no Spring: also override getUrl()
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // omit if not Spring Boot
 public class <ViewName>IT extends SpringPlaywrightIT { // or AbstractBasePlaywrightIT
 
     @Override
@@ -235,7 +240,10 @@ public class <ViewName>IT extends SpringPlaywrightIT { // or AbstractBasePlaywri
 ```
 
 Use `SpringPlaywrightIT` if Spring Boot is detected, `AbstractBasePlaywrightIT`
-otherwise.
+otherwise. The library class needs no `@SpringBootTest` on the test (it inherits
+one with `RANDOM_PORT`); annotate the test only to change properties or the web
+environment. A copy generated for DramaFinder before 2.0 still needs
+`@SpringBootTest(webEnvironment = RANDOM_PORT)` on each test.
 
 ### Component test patterns
 

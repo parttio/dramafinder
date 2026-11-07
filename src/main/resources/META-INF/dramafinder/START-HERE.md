@@ -18,20 +18,12 @@ are invisible in them.
 ## A working test
 
 ```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MyViewIT extends AbstractBasePlaywrightIT {
-
-    @LocalServerPort
-    private int port;
-
-    @Override
-    public String getUrl() {
-        return "http://localhost:" + port;
-    }
+// Spring Boot app: the base class starts it on a random port and builds getUrl()
+public class MyViewIT extends org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT {
 
     @Override
     public String getView() {
-        return "/my-view"; // appended to getUrl() before each test
+        return "my-view"; // appended to getUrl() before each test
     }
 
     @Test
@@ -41,6 +33,11 @@ public class MyViewIT extends AbstractBasePlaywrightIT {
     }
 }
 ```
+
+Without Spring Boot, extend `org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT`
+and override `getUrl()` with the running application's address. `SpringPlaywrightIT`
+needs `spring-boot-starter-test`, which a Spring Boot project already has; DramaFinder
+itself never adds Spring to the classpath.
 
 `AbstractBasePlaywrightIT` opens the `page` field before each test, navigates it to
 `getUrl() + getView()`, waits for Vaadin to go idle, and closes it after. The browser

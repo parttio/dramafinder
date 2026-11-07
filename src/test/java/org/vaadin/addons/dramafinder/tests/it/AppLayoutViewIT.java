@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.AppLayoutElement;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.SideNavigationElement;
+import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 import org.vaadin.addons.dramafinder.tests.testuis.AppLayoutView;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
