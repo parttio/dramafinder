@@ -135,7 +135,11 @@ public class ListBoxElement extends VaadinElement
      * @param page  the Playwright page
      * @param label the full accessible name
      * @return the matching {@code ListBoxElement}
+     * @deprecated A {@code ListBoxElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, ListBoxElement.class).withAccessibleName(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static ListBoxElement getByLabel(Page page, String label) {
         return new ListBoxElement(
                 page.locator(FIELD_TAG_NAME)
@@ -154,7 +158,11 @@ public class ListBoxElement extends VaadinElement
      * @param page  the Playwright page
      * @param text  part of the accessible name
      * @return the matching {@code ListBoxElement}
+     * @deprecated A {@code ListBoxElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, ListBoxElement.class).withAccessibleNameContaining(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static ListBoxElement getByLabelContaining(Page page, String text) {
         return new ListBoxElement(
                 page.locator(FIELD_TAG_NAME)

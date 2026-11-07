@@ -46,6 +46,7 @@ public class TextQuery<T extends VaadinElement> extends ElementQuery<T, TextQuer
      * @param text part of the accessible name
      * @return a new, narrowed query
      */
+    @Override
     public TextQuery<T> withAccessibleNameContaining(String text) {
         return refine(l -> QueryText.labelledOrOwnText(l, text, false));
     }

@@ -1,24 +1,42 @@
 # Migrating to DramaFinder 2.0
 
-DramaFinder 2.0 makes label lookups **exact by default** (issue #201). Every
-factory that finds a component by its label, text, header, title or name now:
+DramaFinder 2.0 changes how a component is found by its label or name, in two ways:
 
-1. matches the **whole** value — `"Name"` no longer finds a field labelled
-   `"Nickname"`;
-2. is **case-sensitive** — `"save"` no longer finds a `"Save"` button;
-3. applies **no `.first()`** — two components with the same label raise a
-   Playwright strict-mode error instead of silently resolving to the first one
-   in the DOM.
+1. **Lookups are exact by default** (issue #201). Every factory that finds a
+   component by its label, text, header, title or name now matches the **whole**
+   value (`"Name"` no longer finds a field labelled `"Nickname"`), is
+   **case-sensitive** (`"save"` no longer finds a `"Save"` button) and applies
+   **no `.first()`** (two components with the same label raise a Playwright
+   strict-mode error instead of resolving to the first one in the DOM).
+   Whitespace is still normalized.
+2. **A label is the visible label.** `getByLabel` matches the text a component
+   shows in its own label slot, and nothing else. An `aria-label` (or
+   `aria-labelledby` text) is the component's **accessible name**, which the query
+   builder finds with `withAccessibleName`; a placeholder is found with
+   `withPlaceholder`. In 1.x `getByLabel` matched all three.
 
-Whitespace is still normalized: leading, trailing and repeated spaces do not
-matter.
+## Replacing a 1.x `getByLabel`
 
-No method was removed or renamed, so a 1.x test suite still **compiles**, with one
-exception: a test class that declares its own `navigate`, `assertAt`, `assertPath`
-or `assertQueryParameter` (see "New methods on `AbstractBasePlaywrightIT`"). Lookups
-that relied on the old matching fail at **runtime**. Partial matching is still
-available, but you now ask for it explicitly with `getByLabelContaining` /
-`getByTextContaining`.
+| The 1.x call relied on | Use in 2.0 |
+|---|---|
+| the whole visible label | `getByLabel(page, label)`, unchanged |
+| part of the visible label, or another case | `getByLabelContaining(page, text)` |
+| an `aria-label`, or you don't know which (the closest to 1.x) | `find(page, X.class).withAccessibleNameContaining(text).single()` |
+| the placeholder | `find(page, X.class).withPlaceholder(placeholder).single()` |
+
+`find` is `org.vaadin.addons.dramafinder.element.query.ElementQueries.find`; use
+`find(locator, X.class)` for a scoped lookup. `withAccessibleNameContaining`
+matches the label or `aria-label` case-insensitively as a substring, like 1.x
+did, but it has no placeholder fallback and no `.first()`: an ambiguous
+fragment fails instead of picking the first match. `withAccessibleName` is its
+exact sibling.
+
+A 1.x test suite still **compiles**, with three exceptions: a test class that
+declares its own `navigate`, `assertAt`, `assertPath` or `assertQueryParameter`
+(see "New methods on `AbstractBasePlaywrightIT`"), code that calls the removed
+`AccessibleNameLocator` (see "Removed"), and the `getByLabel` factories of
+components without a visible label, which are deprecated and compile with a
+warning. Lookups that relied on the old matching fail at **runtime**.
 
 ## Why
 
@@ -27,78 +45,86 @@ component without any error. The assertion helpers re-run the same lookup, so th
 test then passed against the wrong component. An exact lookup either finds the
 component you named or fails loudly.
 
+A label and an accessible name are different things: a sighted user reads the
+label, a screen reader announces the accessible name. Keeping one word for one
+concept also makes `getByLabel` and the query builder's `withLabel` find the same
+components, which in 1.x they did not.
+
 ## How a broken lookup shows up
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Timeout, `element(s) not found`; the call log shows `setExact(true)` or `getByPlaceholder(..., setExact(true))` | The label passed is only part of the real label, or differs in case | Pass the whole label as the view renders it, or use the `…Containing` variant |
+| Timeout, `element(s) not found` from a `getByLabel` | The field is named by an `aria-label` or a placeholder, not a visible label | Use the replacement from the table above |
+| Timeout, `element(s) not found` | The label passed is only part of the real label, or differs in case | Pass the whole label as the view renders it, or use the `…Containing` variant |
 | `strict mode violation: … resolved to N elements` | Several components share the label, and 1.x silently picked the first | Scope the lookup to a container (`getByLabel(Locator, String)`), give the component an id, or use the query builder (`find(...).withLabel(...).withId(...)`) |
 
-The quickest way to find the exact labels is `ViewOutline`. Run
+The quickest way to find the right lookups is `ViewOutline`. Run
 `ViewOutline.write(page)` (or read `view-outline.txt` from a failed test's agent
 report). It lists a lookup for every component on the view that is verified to
-resolve to exactly that component.
+resolve to exactly that component, using `getByLabel` for a visible label and
+`withAccessibleName` / `withPlaceholder` otherwise.
 
 ## Changed methods
 
-52 public factory methods change behaviour. "Partial" means a part of the label
-used to match; "case" means a differently-cased label used to match; "duplicates"
-means `.first()` used to pick among several matches.
+"Partial" means a part of the label used to match; "case" means a
+differently-cased label used to match; "duplicates" means `.first()` used to pick
+among several matches; "name" means an `aria-label` used to match; "placeholder"
+means the placeholder used to match.
 
-### Field `getByLabel` — 27 methods
+### `getByLabel` on components with a visible label — 21 elements
 
-Matches a visible label, `aria-label` or, when the field has no label, the
-placeholder. Before: partial, case and duplicates, for the label and the
-placeholder alike. After: exact. Partial alternative:
-`getByLabelContaining(Page|Locator, String)`.
+`getByLabel(Page|Locator, String)` matches the whole visible label, and
+`getByLabelContaining(Page|Locator, String)` part of it (case-insensitive, no
+`.first()`). Both are the same lookup as the query builder's `withLabel` /
+`withLabelContaining`.
 
-| Element | `getByLabel(Page, String)` | `getByLabel(Locator, String)` |
-|---|---|---|
-| `BigDecimalFieldElement` | changed | changed |
-| `ComboBoxElement` | changed | changed |
-| `DatePickerElement` | changed | changed |
-| `DateTimePickerElement` | changed | changed |
-| `EmailFieldElement` | changed | changed |
-| `IntegerFieldElement` | changed | changed |
-| `MultiSelectComboBoxElement` | changed | changed |
-| `NumberFieldElement` | changed | changed |
-| `PasswordFieldElement` | changed | — |
-| `SelectElement` | changed (see below) | changed (see below) |
-| `SliderElement` | changed | changed |
-| `TextAreaElement` | changed | changed |
-| `TextFieldElement` | changed | changed |
-| `TimePickerElement` | changed | changed |
-
-`SelectElement.getByLabel` matches the **visible label or `aria-label`** of the
-select. In 1.x it matched the value button's accessible name, which also contains
-the selected value or the placeholder. That means a 1.x lookup stopped finding the
-select once a value was picked. There is no placeholder fallback for a select any
-more.
-
-### Other `getByLabel` — 14 methods
-
-Matched on the component's accessible name. Partial alternative:
-`getByLabelContaining` with the same parameters.
-
-| Method | Before |
+| Element | Before |
 |---|---|
-| `BreadcrumbsElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `ButtonElement.getByLabel(Page, String)` | partial, case (alias of `getByText`) |
-| `CheckboxElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `CheckboxGroupElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `CheckboxGroupElement.getByLabel(Locator, String)` | partial, case, duplicates |
-| `CustomFieldElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `CustomFieldElement.getByLabel(Locator, String)` | partial, case, duplicates |
-| `ListBoxElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `MenuBarElement.getByLabel(Page, String)` | partial, case |
-| `MenuElement.getByLabel(Page, String)` | partial, case |
-| `PopoverElement.getByLabel(Page, String)` | partial, case |
-| `RadioButtonGroupElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `SideNavigationElement.getByLabel(Page, String)` | partial, case, duplicates |
-| `SwitchElement.getByLabel(Page, String)` | partial, case, duplicates |
+| `BigDecimalFieldElement`, `ComboBoxElement`, `DatePickerElement`, `EmailFieldElement`, `IntegerFieldElement`, `MultiSelectComboBoxElement`, `NumberFieldElement`, `PasswordFieldElement`, `TextAreaElement`, `TextFieldElement`, `TimePickerElement` | partial, case, duplicates, name, placeholder |
+| `DateTimePickerElement` | partial, case, duplicates, name, placeholder (of its date picker) |
+| `SelectElement` | partial, case, duplicates, name, placeholder (see below) |
+| `SliderElement` | partial, case, duplicates, name |
+| `CheckboxElement`, `SwitchElement` | partial, case, duplicates, name |
+| `CheckboxGroupElement`, `RadioButtonGroupElement`, `CustomFieldElement`, `SideNavigationElement` | partial, case, duplicates, name |
+| `SideNavigationItemElement` | new in 2.0 |
 
-`CustomFieldElement.getField(Class, String)` calls the wrapped type's
-`getByLabel(Locator, String)`, so it now needs the wrapped field's whole name too.
+New overloads, so every one of these elements has all four:
+`PasswordFieldElement`, `SwitchElement`, `RadioButtonGroupElement` and
+`SideNavigationElement` gain `getByLabel(Locator, String)` and
+`getByLabelContaining(Locator, String)`; `CheckboxElement` gains
+`getByLabelContaining(Locator, String)`; `SideNavigationItemElement` gains all four.
+
+`SelectElement`: in 1.x the lookup read the value button's accessible name, which
+also holds the selected value or the placeholder, so it stopped finding the
+select once a value was picked. Its placeholder is found with
+`find(page, SelectElement.class).withPlaceholder(..)`, which matches while no
+value is selected.
+
+`DateTimePickerElement`: the placeholder lives on its date picker
+(`setDatePlaceholder`); `find(page, DateTimePickerElement.class).withPlaceholder(..)`
+reads it there.
+
+`CustomFieldElement.getField(Class, String)` finds a wrapped field by its whole
+accessible name (`find(...).withAccessibleName(..)` inside the custom field). In
+1.x it went through the wrapped type's `getByLabel` and matched part of the name.
+
+### Deprecated: `getByLabel` on components without a visible label
+
+These components have no label slot, so their `getByLabel` always matched the
+accessible name. They keep that behaviour, now exact, and are deprecated for
+removal in 3.0:
+
+| Deprecated | Before | Replacement |
+|---|---|---|
+| `BreadcrumbsElement.getByLabel(Page, String)` / `…Containing` | partial, case, duplicates | `find(page, BreadcrumbsElement.class).withAccessibleName(..)` / `…Containing` |
+| `ListBoxElement.getByLabel(Page, String)` / `…Containing` | partial, case, duplicates | `find(page, ListBoxElement.class).withAccessibleName(..)` / `…Containing` |
+| `MenuBarElement.getByLabel(Page, String)` / `…Containing` | partial, case | `find(page, MenuBarElement.class).withAccessibleName(..)` / `…Containing` |
+| `MenuElement.getByLabel(Page, String)` / `…Containing` | partial, case | `find(page, MenuElement.class).withAccessibleName(..)` / `…Containing` |
+| `PopoverElement.getByLabel(Page, String)` / `…Containing` | partial, case | `find(page, PopoverElement.class).withAccessibleName(..)` / `…Containing` |
+| `MenuItemElement.getByLabel(Locator, String)` | already exact | `find(locator, MenuItemElement.class).withAccessibleName(..)` |
+| `ButtonElement.getByLabel(Page, String)` / `…Containing` | partial, case (alias of `getByText`) | `getByText` / `getByTextContaining` |
+
+`MenuElement` can now be used with `find`.
 
 ### Button text — 2 methods
 
@@ -140,12 +166,12 @@ that holds components is named by all of their text: a summary made of
 | `AvatarElement.getByName(Page, String)` | duplicates (the name was already exact) |
 | `AvatarElement.getByName(Locator, String)` | duplicates (the name was already exact) |
 
-### Utility class — 2 methods
+## Removed
 
-`AccessibleNameLocator.find(Page, …)` and `AccessibleNameLocator.find(Locator, …)`
-are now exact, with an exact placeholder fallback and no `.first()`.
-`AccessibleNameLocator.findContaining(...)` keeps the 1.x behaviour, but without
-`.first()`. This matters only to custom elements built on the helper.
+`org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator` (`find`,
+`findContaining`, `findExact`). Custom elements built on it use the query
+builder instead: `find(scope, X.class).withLabel(..)` for a visible label,
+`.withAccessibleName(..)` for an accessible name.
 
 ## Unchanged
 
@@ -154,19 +180,30 @@ behaviour (case-insensitive substring, first match):
 `BadgeElement.getByText`, `NotificationElement.getByText`,
 `TooltipElement.getByText` and `VirtualListElement.getItemByText`.
 
-Item lookups inside a container (`getCheckbox`, `getTab`, `selectItem`,
-`getItem`, `MenuItemElement.getByLabel`, `CheckboxElement.getByLabel(Locator, …)`
+Item lookups inside a container (`getCheckbox`, `getTab`, `selectItem`, `getItem`
 and the like) were already exact since 1.2 and do not change.
 
 ## Rewriting a lookup
 
 ```java
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
 // 1.x: partial label
 TextFieldElement.getByLabel(page, "Email");          // label "Email address"
 // 2.0: whole label…
 TextFieldElement.getByLabel(page, "Email address");
 // …or an explicit partial match
 TextFieldElement.getByLabelContaining(page, "email");
+
+// 1.x: a field with only an aria-label (Flow: setAriaLabel("Search"))
+TextFieldElement.getByLabel(page, "Search");
+// 2.0
+find(page, TextFieldElement.class).withAccessibleName("Search").single();
+
+// 1.x: a field with only a placeholder
+TextFieldElement.getByLabel(page, "Type to search");
+// 2.0
+find(page, TextFieldElement.class).withPlaceholder("Type to search").single();
 
 // 1.x: case differs
 ButtonElement.getByText(page, "save");               // button "Save"

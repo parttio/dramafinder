@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.EmailFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class EmailFieldGetByLabelIT extends SpringPlaywrightIT {
@@ -17,15 +18,17 @@ public class EmailFieldGetByLabelIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void getByLabel_page_placeholder() {
-        EmailFieldElement field = EmailFieldElement.getByLabel(page, "My Placeholder");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_placeholderIsNotALabel() {
+        // a placeholder is not a label: withPlaceholder is the replacement
+        assertThat(EmailFieldElement.getByLabel(page, "My Placeholder").getLocator()).hasCount(0);
+        assertThat(find(page, EmailFieldElement.class).withPlaceholder("My Placeholder").getLocator()).isVisible();
     }
 
     @Test
-    public void getByLabel_page_ariaLabel() {
-        EmailFieldElement field = EmailFieldElement.getByLabel(page, "My AriaLabel");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_ariaLabelIsNotALabel() {
+        // an aria-label is not a label: withAccessibleName is the replacement
+        assertThat(EmailFieldElement.getByLabel(page, "My AriaLabel").getLocator()).hasCount(0);
+        assertThat(find(page, EmailFieldElement.class).withAccessibleName("My AriaLabel").getLocator()).isVisible();
     }
 
     @Test

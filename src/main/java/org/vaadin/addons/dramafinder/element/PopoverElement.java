@@ -65,7 +65,11 @@ public class PopoverElement extends VaadinElement implements HasThemeElement, Ha
      * @param page  the Playwright page
      * @param label the full accessible name
      * @return the matching {@code PopoverElement}
+     * @deprecated A {@code PopoverElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, PopoverElement.class).withAccessibleName(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static PopoverElement getByLabel(Page page, String label) {
         return new PopoverElement(
                 page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(label).setExact(true))
@@ -83,7 +87,11 @@ public class PopoverElement extends VaadinElement implements HasThemeElement, Ha
      * @param page  the Playwright page
      * @param text  part of the accessible name
      * @return the matching {@code PopoverElement}
+     * @deprecated A {@code PopoverElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, PopoverElement.class).withAccessibleNameContaining(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static PopoverElement getByLabelContaining(Page page, String text) {
         return new PopoverElement(
                 page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName(text))

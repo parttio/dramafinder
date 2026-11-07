@@ -2,10 +2,9 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
-import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -128,73 +127,73 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
     }
 
     /**
-     * Get the {@code IntegerFieldElement} by its label.
-     *
-     * <p>Matches the internal input by ARIA role {@code spinbutton} and accessible name.</p>
+     * Get the {@code IntegerFieldElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two fields with the same name fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(page, IntegerFieldElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, IntegerFieldElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the field
+     * @param label the full visible label
      * @return the matching {@code IntegerFieldElement}
      */
     public static IntegerFieldElement getByLabel(Page page, String label) {
-        return new IntegerFieldElement(
-                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.SPINBUTTON, label));
+        return new IntegerFieldElement(ElementQueries.find(page, IntegerFieldElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code IntegerFieldElement} whose accessible name contains {@code text},
-     * searching the entire page.
+     * Get the {@code IntegerFieldElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
-     * substring. No {@code .first()} is applied: several matching fields fail with a
-     * strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, IntegerFieldElement.class).withLabelContaining(text)}.
      *
-     * @param page the Playwright page
-     * @param text part of the accessible name of the field
+     * @param page  the Playwright page
+     * @param text  part of the visible label
      * @return the matching {@code IntegerFieldElement}
      */
     public static IntegerFieldElement getByLabelContaining(Page page, String text) {
-        return new IntegerFieldElement(
-                AccessibleNameLocator.findContaining(page, FIELD_TAG_NAME, AriaRole.SPINBUTTON, text));
+        return new IntegerFieldElement(ElementQueries.find(page, IntegerFieldElement.class).withLabelContaining(text).getLocator());
     }
 
     /**
-     * Get the {@code IntegerFieldElement} by its label within a given scope.
-     *
-     * <p>Searches under the provided locator and matches by accessible label.</p>
+     * Get the {@code IntegerFieldElement} whose visible label is exactly {@code label}, scoped to the given locator.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two fields with the same name fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(locator, IntegerFieldElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, IntegerFieldElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
      *
-     * @param locator the locator to search within
-     * @param label   the accessible label of the field
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
      * @return the matching {@code IntegerFieldElement}
      */
     public static IntegerFieldElement getByLabel(Locator locator, String label) {
-        return new IntegerFieldElement(
-                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.SPINBUTTON, label));
+        return new IntegerFieldElement(ElementQueries.find(locator, IntegerFieldElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code IntegerFieldElement} whose accessible name contains {@code text},
-     * scoped to the given locator.
+     * Get the {@code IntegerFieldElement} whose visible label contains {@code text}, scoped to the given locator.
      * <p>
-     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
-     * substring. No {@code .first()} is applied: several matching fields fail with a
-     * strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, IntegerFieldElement.class).withLabelContaining(text)}.
      *
-     * @param locator the locator defining the search scope
-     * @param text    part of the accessible name of the field
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
      * @return the matching {@code IntegerFieldElement}
      */
     public static IntegerFieldElement getByLabelContaining(Locator locator, String text) {
-        return new IntegerFieldElement(
-                AccessibleNameLocator.findContaining(locator, FIELD_TAG_NAME, AriaRole.SPINBUTTON, text));
+        return new IntegerFieldElement(ElementQueries.find(locator, IntegerFieldElement.class).withLabelContaining(text).getLocator());
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

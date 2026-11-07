@@ -34,7 +34,8 @@
 - Add a class-level Javadoc for each element class and shared mixin:
   - Identify the Vaadin tag using inline code (e.g., `vaadin-text-field`).
   - One–two sentence summary of responsibilities and notable behaviors.
-  - For factory helpers (e.g., `getByLabel`), mention the ARIA role used.
+  - For factory helpers, say what they match: `getByLabel` the visible label,
+    other name-keyed factories the accessible name (and the ARIA role, if any).
 - For public methods, document parameters, return values, and null semantics
   (especially for assertion helpers where `null` implies absence).
 - Use `{@inheritDoc}` on simple overrides (e.g., locator accessors) to avoid
@@ -221,8 +222,8 @@ public class TextFieldElement extends VaadinElement implements HasEnabledElement
   returns the `"Option 10"` checkbox when that one comes first in the DOM, and
   `assertSelected("Option 1")` then passes against it — a green test over a
   wrong UI state.
-- **Solution**: For item-within-container lookups use `ItemLocator` /
-  `AccessibleNameLocator.findExact`, which match the full label and leave the
+- **Solution**: For item-within-container lookups use `ItemLocator`, which
+  matches the full label and leaves the
   locator unnarrowed so duplicates raise a strict-mode error. See "Exact vs
   substring matching" under the Scoped Lookup Pattern for which lookups stay
   substring-based.
@@ -247,20 +248,27 @@ ItemLocator.byExactName(getLocator(), AriaRole.TAB, label);
 ### Design Patterns
 
 #### 1. Factory Method Pattern
-All element classes provide static factory methods for lookup by accessible name:
+Element classes provide static factory methods. A **label** is the visible label
+(the component's own `label` slot), not the accessible name (see `GLOSSARY.md`):
+`getByLabel` never matches an `aria-label` or a placeholder. It delegates to the
+typed query, so the two lookups cannot drift apart:
 ```java
 public static TextFieldElement getByLabel(Page page, String label) {
     return new TextFieldElement(
-        page.locator(FIELD_TAG_NAME)
-            .filter(new Locator.FilterOptions()
-                .setHas(page.getByRole(AriaRole.TEXTBOX,
-                    new Page.GetByRoleOptions().setName(label).setExact(true)))
-            ));
+        ElementQueries.find(page, TextFieldElement.class).withLabel(label).getLocator());
 }
 ```
-Label- and name-keyed factories match the **whole** name with no `.first()`; each
-`getByLabel` has a `getByLabelContaining` sibling for partial matches (see "Exact vs
-substring matching").
+`getByLabel` and `getByLabelContaining`, each with a `Page` and a `Locator`
+overload, exist **exactly** on the elements whose query has `withLabel`;
+`LabelLookupParityTest` fails otherwise, and `LabelLookupIT` checks each one
+against the visible label, an `aria-label` and a placeholder. A component with no
+visible label gets no `getByLabel`: tests find it by accessible name with
+`find(..).withAccessibleName(..)` (deprecated 1.x `getByLabel` factories on such
+elements stay until 3.0). Don't add static `getByAccessibleName` factories; the
+query filter is the one place that rule lives.
+
+Name-keyed factories match the **whole** name with no `.first()`; the `…Containing`
+siblings are the partial matches (see "Exact vs substring matching").
 
 Every public element also has `getById` and `getByTestId`, each with a `Page` and a
 `Locator` overload, built on `IdLocator` (issue #203): exact, scoped to the element's
@@ -353,25 +361,20 @@ keeps substring matching for lookups that say so in their name or Javadoc:
   ItemLocator.byExactText(getLocator(), FIELD_ITEM_TAG_NAME, label);
   // exact visible text of the item ALONE, for items that nest items
   ItemLocator.byOwnExactText(getLocator(), FIELD_TAG_NAME, label);
-  // exact accessible name of a field inside a container
-  AccessibleNameLocator.findExact(locator, FIELD_TAG_NAME, AriaRole.CHECKBOX, label);
   ```
   `byExactText` matches an element whose whole subtree text equals the label, so
   it also finds a label wrapped in a renderer's `<span>`; `byOwnExactText`
   matches only the item's own text nodes, which is what a container whose items
   can hold items of the same kind (`vaadin-side-nav-item`) needs — matching the
   subtree would read a parent as `"Parent Child 1 Child 2"`.
-- **Page-level and scoped factories** — `getByLabel` on every element
-  (`AccessibleNameLocator.find(...)` for fields, `getByRole(..., setExact(true))`
-  for the rest), `ButtonElement.getByText`, `getByHeaderText`, `getByTitle`,
+- **Page-level and scoped factories** — `getByLabel` (the visible label, through
+  `withLabel`), `ButtonElement.getByText`, `getByHeaderText`, `getByTitle`,
   `getBySummaryText`, `getByButtonText`, `AvatarElement.getByName`. Same rule as
-  items: the whole name, case-sensitively, **no `.first()`**. A field's
-  placeholder fallback is matched in full too.
-- **Explicit partial matches** — `getByLabelContaining` (and
-  `ButtonElement.getByTextContaining`), built on
-  `AccessibleNameLocator.findContaining(...)` or `setName(text)` without
-  `setExact`: case-insensitive substring, still no `.first()`, so an ambiguous
-  fragment fails rather than picking the first match.
+  items: the whole name, case-sensitively, **no `.first()`**.
+- **Explicit partial matches** — `getByLabelContaining` (through
+  `withLabelContaining`), `ButtonElement.getByTextContaining` and the query's
+  `withAccessibleNameContaining`: case-insensitive substring, still no
+  `.first()`, so an ambiguous fragment fails rather than picking the first match.
 - **"Contains" text helpers** — `BadgeElement`, `NotificationElement`,
   `TooltipElement` `getByText` and `VirtualListElement.getItemByText`. These keep
   substring matching and `.first()` as a deliberate convenience: they match
@@ -403,11 +406,13 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
 ```
 - Filters come from mixins (`LabelFilters`, `TextFilters`, `PlaceholderFilters`)
   composed by small query classes (`InputFieldQuery`, `FieldQuery`, `ButtonQuery`,
-  `TextQuery`, `TooltipQuery`, `SideNavItemQuery`, `ComponentQuery`). A mixin's
-  default methods only call `refine(...)`; a query whose component keeps its
-  text or label elsewhere overrides them (`TooltipQuery`, `SideNavItemQuery`).
-- `withAccessibleName` is on every query (`ElementQuery` implements
-  `AccessibleNameFilters`). It reads the host or the field's own
+  `TextQuery`, `TooltipQuery`, `SideNavItemQuery`, `SelectQuery`,
+  `DateTimePickerQuery`, `ComponentQuery`). A mixin's default methods only call
+  `refine(...)`; a query whose component keeps its text, label or placeholder
+  elsewhere overrides them (`TooltipQuery`, `SideNavItemQuery`, `SelectQuery`,
+  `DateTimePickerQuery`).
+- `withAccessibleName` and `withAccessibleNameContaining` are on every query
+  (`ElementQuery` implements `AccessibleNameFilters`). It reads the host or the field's own
   `slot="input|textarea|value"` child — never a nested component, so a dialog
   is not matched by a field it holds. `ButtonQuery` and `TextQuery` fall back to
   the component's own text, as name-from-content roles do — never Playwright's
@@ -418,7 +423,7 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
 - A new element gets `@PlaywrightElement` and `implements Findable<...>` with the
   query whose filters really match it — verify each filter in an IT before
   binding (e.g. `vaadin-select` does not reflect `placeholder` on its host, so
-  it is a `FieldQuery`). `ElementQueriesTest` fails when a public element is not
+  `SelectQuery` reads it from the value button). `ElementQueriesTest` fails when a public element is not
   findable; overlay-bound wrappers are listed there as exceptions.
 - Exact filters (`withLabel`, `withText`, `withAccessibleName`,
   `withPlaceholder`) match the whole value case-sensitively and carry no

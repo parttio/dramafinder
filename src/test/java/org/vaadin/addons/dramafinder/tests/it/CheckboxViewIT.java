@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.CheckboxElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -97,7 +98,7 @@ public class CheckboxViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Aria label");
+        CheckboxElement checkbox = find(page, CheckboxElement.class).withAccessibleName("Aria label").single();
         checkbox.assertAriaLabel("Aria label");
         checkbox.assertLabel(null);
     }

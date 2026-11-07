@@ -54,12 +54,14 @@ public class ViewOutlineIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void suggestsLabelLookupIncludingPlaceholderFallback() {
+    public void suggestsLabelLookupOnlyForTheVisibleLabel() {
         String outline = outlineOf("textfield-getbylabel");
         assertContains(outline, "vaadin-text-field \"My Label\"\n    TextFieldElement.getByLabel(page, \"My Label\")"
                 .replace("\n", System.lineSeparator()));
-        assertContains(outline, "TextFieldElement.getByLabel(page, \"My Placeholder\")");
-        assertContains(outline, "TextFieldElement.getByLabel(page, \"My AriaLabel\")");
+        assertContains(outline, "find(page, TextFieldElement.class).withPlaceholder(\"My Placeholder\").single()");
+        assertContains(outline, "find(page, TextFieldElement.class).withAccessibleName(\"My AriaLabel\").single()");
+        assertFalse(outline.contains("getByLabel(page, \"My Placeholder\")"), outline);
+        assertFalse(outline.contains("getByLabel(page, \"My AriaLabel\")"), outline);
     }
 
     @Test

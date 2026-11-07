@@ -3,14 +3,21 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
+import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
 /**
  * PlaywrightElement for the menu overlay list {@code <vaadin-menu-bar-list-box>}.
+ * <p>
+ * The list opens in an overlay at the page root; {@code find(page, MenuElement.class)}
+ * finds it there once the menu is open.
  */
-public class MenuElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement {
+@PlaywrightElement(MenuElement.FIELD_TAG_NAME)
+public class MenuElement extends VaadinElement implements HasThemeElement, HasStyleElement, HasAriaLabelElement,
+        Findable<ComponentQuery<MenuElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-menu-bar-list-box";
 
@@ -26,7 +33,7 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
 
     /** Get a menu item by its visible label within this menu. */
     public MenuItemElement getMenuItemElement(String name) {
-        return MenuItemElement.getByLabel(getLocator(), name);
+        return MenuItemElement.byName(getLocator(), name);
     }
 
     /** Click a menu item to open its submenu and return the next overlay. */
@@ -50,7 +57,11 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
      * @param page  the Playwright page
      * @param label the full accessible name
      * @return the matching {@code MenuElement}
+     * @deprecated A {@code MenuElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, MenuElement.class).withAccessibleName(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static MenuElement getByLabel(Page page, String label) {
         return new MenuElement(
                 page.getByRole(AriaRole.MENU, new Page.GetByRoleOptions().setName(label).setExact(true))
@@ -68,7 +79,11 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
      * @param page  the Playwright page
      * @param text  part of the accessible name
      * @return the matching {@code MenuElement}
+     * @deprecated A {@code MenuElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(page, MenuElement.class).withAccessibleNameContaining(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static MenuElement getByLabelContaining(Page page, String text) {
         return new MenuElement(
                 page.getByRole(AriaRole.MENU, new Page.GetByRoleOptions().setName(text))

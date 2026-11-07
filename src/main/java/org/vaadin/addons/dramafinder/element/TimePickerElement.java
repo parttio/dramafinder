@@ -5,10 +5,9 @@ import java.time.format.DateTimeFormatter;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
-import org.vaadin.addons.dramafinder.element.utils.AccessibleNameLocator;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasClearButtonElement;
@@ -99,69 +98,73 @@ public class TimePickerElement extends VaadinElement implements HasInputFieldEle
     }
 
     /**
-     * Get the {@code TimePickerElement} by its label.
+     * Get the {@code TimePickerElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two fields with the same name fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(page, TimePickerElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, TimePickerElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the accessible label of the field
+     * @param label the full visible label
      * @return the matching {@code TimePickerElement}
      */
     public static TimePickerElement getByLabel(Page page, String label) {
-        return new TimePickerElement(
-                AccessibleNameLocator.find(page, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
+        return new TimePickerElement(ElementQueries.find(page, TimePickerElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code TimePickerElement} whose accessible name contains {@code text},
-     * searching the entire page.
+     * Get the {@code TimePickerElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
-     * substring. No {@code .first()} is applied: several matching fields fail with a
-     * strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, TimePickerElement.class).withLabelContaining(text)}.
      *
-     * @param page the Playwright page
-     * @param text part of the accessible name of the field
+     * @param page  the Playwright page
+     * @param text  part of the visible label
      * @return the matching {@code TimePickerElement}
      */
     public static TimePickerElement getByLabelContaining(Page page, String text) {
-        return new TimePickerElement(
-                AccessibleNameLocator.findContaining(page, FIELD_TAG_NAME, AriaRole.COMBOBOX, text));
+        return new TimePickerElement(ElementQueries.find(page, TimePickerElement.class).withLabelContaining(text).getLocator());
     }
 
     /**
-     * Get the {@code TimePickerElement} by its label within a given scope.
+     * Get the {@code TimePickerElement} whose visible label is exactly {@code label}, scoped to the given locator.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two fields with the same name fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} or a placeholder is not a
+     * label: use {@code find(locator, TimePickerElement.class).withAccessibleName(..)} or
+     * {@code .withPlaceholder(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, TimePickerElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
      *
-     * @param locator the locator to search within
-     * @param label   the accessible label of the field
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
      * @return the matching {@code TimePickerElement}
      */
     public static TimePickerElement getByLabel(Locator locator, String label) {
-        return new TimePickerElement(
-                AccessibleNameLocator.find(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, label));
+        return new TimePickerElement(ElementQueries.find(locator, TimePickerElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code TimePickerElement} whose accessible name contains {@code text},
-     * scoped to the given locator.
+     * Get the {@code TimePickerElement} whose visible label contains {@code text}, scoped to the given locator.
      * <p>
-     * The label, {@code aria-label} or placeholder is matched case-insensitively as a
-     * substring. No {@code .first()} is applied: several matching fields fail with a
-     * strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * or a placeholder is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, TimePickerElement.class).withLabelContaining(text)}.
      *
-     * @param locator the locator defining the search scope
-     * @param text    part of the accessible name of the field
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
      * @return the matching {@code TimePickerElement}
      */
     public static TimePickerElement getByLabelContaining(Locator locator, String text) {
-        return new TimePickerElement(
-                AccessibleNameLocator.findContaining(locator, FIELD_TAG_NAME, AriaRole.COMBOBOX, text));
+        return new TimePickerElement(ElementQueries.find(locator, TimePickerElement.class).withLabelContaining(text).getLocator());
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

@@ -2,7 +2,7 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.FieldQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
@@ -45,44 +45,71 @@ public class SwitchElement extends VaadinElement
     }
 
     /**
-     * Get the {@code SwitchElement} by its accessible name (ARIA role {@code switch}),
-     * searching the entire page.
+     * Get the {@code SwitchElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two matching components fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(page, SwitchElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, SwitchElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the full accessible name
+     * @param label the full visible label
      * @return the matching {@code SwitchElement}
      */
     public static SwitchElement getByLabel(Page page, String label) {
-        return new SwitchElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.SWITCH,
-                                        new Page.GetByRoleOptions().setName(label).setExact(true)))
-                        ));
+        return new SwitchElement(ElementQueries.find(page, SwitchElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code SwitchElement} whose accessible name (ARIA role {@code switch}) contains
-     * {@code text}, searching the entire page.
+     * Get the {@code SwitchElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The name is matched case-insensitively as a substring. No {@code .first()} is
-     * applied: several matching components fail with a strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, SwitchElement.class).withLabelContaining(text)}.
      *
      * @param page  the Playwright page
-     * @param text  part of the accessible name
+     * @param text  part of the visible label
      * @return the matching {@code SwitchElement}
      */
     public static SwitchElement getByLabelContaining(Page page, String text) {
-        return new SwitchElement(
-                page.locator(FIELD_TAG_NAME)
-                        .filter(new Locator.FilterOptions()
-                                .setHas(page.getByRole(AriaRole.SWITCH,
-                                        new Page.GetByRoleOptions().setName(text)))
-                        ));
+        return new SwitchElement(ElementQueries.find(page, SwitchElement.class).withLabelContaining(text).getLocator());
+    }
+
+    /**
+     * Get the {@code SwitchElement} whose visible label is exactly {@code label}, scoped to the given locator.
+     * <p>
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(locator, SwitchElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, SwitchElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
+     * @return the matching {@code SwitchElement}
+     */
+    public static SwitchElement getByLabel(Locator locator, String label) {
+        return new SwitchElement(ElementQueries.find(locator, SwitchElement.class).withLabel(label).getLocator());
+    }
+
+    /**
+     * Get the {@code SwitchElement} whose visible label contains {@code text}, scoped to the given locator.
+     * <p>
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, SwitchElement.class).withLabelContaining(text)}.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
+     * @return the matching {@code SwitchElement}
+     */
+    public static SwitchElement getByLabelContaining(Locator locator, String text) {
+        return new SwitchElement(ElementQueries.find(locator, SwitchElement.class).withLabelContaining(text).getLocator());
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

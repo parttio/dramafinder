@@ -36,7 +36,7 @@ class ElementQueriesTest {
 
     /** Public element classes deliberately left out of {@code find}: overlay or page-bound wrappers. */
     private static final Set<String> NOT_FINDABLE = Set.of(
-            "ContextMenuElement", "MenuElement", "NotificationElement");
+            "ContextMenuElement", "NotificationElement");
 
     @Test
     void everyPublicElementIsFindable() throws Exception {

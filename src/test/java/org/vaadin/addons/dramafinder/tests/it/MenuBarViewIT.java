@@ -10,6 +10,7 @@ import org.vaadin.addons.dramafinder.element.MenuItemElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class MenuBarViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -45,6 +46,15 @@ public class MenuBarViewIT extends SpringPlaywrightIT implements HasTestView {
         assertText("Facebook");
     }
 
+
+    @Test
+    public void openMenuIsFoundFromThePageRoot() {
+        new MenuBarElement(page).openSubMenu("Share");
+        MenuElement share = find(page, MenuElement.class).single();
+        assertThat(share.getLocator()).isVisible();
+        share.getMenuItemElement("By email").click();
+        assertText("By email");
+    }
 
     @Test
     public void testHasClass() {

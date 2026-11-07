@@ -47,6 +47,7 @@ public class ButtonQuery<T extends VaadinElement> extends ElementQuery<T, Button
      * @param text part of the accessible name
      * @return a new, narrowed query
      */
+    @Override
     public ButtonQuery<T> withAccessibleNameContaining(String text) {
         return refine(l -> QueryText.labelledOrOwnText(l, text, false));
     }

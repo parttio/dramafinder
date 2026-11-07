@@ -2,7 +2,7 @@ package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.FieldQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
@@ -57,42 +57,71 @@ public class RadioButtonGroupElement extends VaadinElement
     }
 
     /**
-     * Get the {@code RadioButtonGroupElement} by its accessible name (ARIA role {@code radiogroup}),
-     * searching the entire page.
+     * Get the {@code RadioButtonGroupElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two matching components fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(page, RadioButtonGroupElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, RadioButtonGroupElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the full accessible name
+     * @param label the full visible label
      * @return the matching {@code RadioButtonGroupElement}
      */
     public static RadioButtonGroupElement getByLabel(Page page, String label) {
-        return new RadioButtonGroupElement(
-                page.locator(FIELD_TAG_NAME).and(
-                        page.getByRole(AriaRole.RADIOGROUP,
-                                new Page.GetByRoleOptions().setName(label).setExact(true)
-                        )));
+        return new RadioButtonGroupElement(ElementQueries.find(page, RadioButtonGroupElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code RadioButtonGroupElement} whose accessible name (ARIA role {@code radiogroup}) contains
-     * {@code text}, searching the entire page.
+     * Get the {@code RadioButtonGroupElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The name is matched case-insensitively as a substring. No {@code .first()} is
-     * applied: several matching components fail with a strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, RadioButtonGroupElement.class).withLabelContaining(text)}.
      *
      * @param page  the Playwright page
-     * @param text  part of the accessible name
+     * @param text  part of the visible label
      * @return the matching {@code RadioButtonGroupElement}
      */
     public static RadioButtonGroupElement getByLabelContaining(Page page, String text) {
-        return new RadioButtonGroupElement(
-                page.locator(FIELD_TAG_NAME).and(
-                        page.getByRole(AriaRole.RADIOGROUP,
-                                new Page.GetByRoleOptions().setName(text)
-                        )));
+        return new RadioButtonGroupElement(ElementQueries.find(page, RadioButtonGroupElement.class).withLabelContaining(text).getLocator());
+    }
+
+    /**
+     * Get the {@code RadioButtonGroupElement} whose visible label is exactly {@code label}, scoped to the given locator.
+     * <p>
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(locator, RadioButtonGroupElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, RadioButtonGroupElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
+     * @return the matching {@code RadioButtonGroupElement}
+     */
+    public static RadioButtonGroupElement getByLabel(Locator locator, String label) {
+        return new RadioButtonGroupElement(ElementQueries.find(locator, RadioButtonGroupElement.class).withLabel(label).getLocator());
+    }
+
+    /**
+     * Get the {@code RadioButtonGroupElement} whose visible label contains {@code text}, scoped to the given locator.
+     * <p>
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, RadioButtonGroupElement.class).withLabelContaining(text)}.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
+     * @return the matching {@code RadioButtonGroupElement}
+     */
+    public static RadioButtonGroupElement getByLabelContaining(Locator locator, String text) {
+        return new RadioButtonGroupElement(ElementQueries.find(locator, RadioButtonGroupElement.class).withLabelContaining(text).getLocator());
     }
 
     /**

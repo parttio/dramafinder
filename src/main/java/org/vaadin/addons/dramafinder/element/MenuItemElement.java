@@ -31,9 +31,13 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
      * The label must match the item's whole accessible name, so {@code "Save"}
      * does not resolve to {@code "Save as…"}. Two items sharing the label fail
      * with a Playwright strict-mode error.
+     * @deprecated A {@code MenuItemElement} has no visible label: this matches its
+     *             accessible name. Use {@code find(locator, MenuItemElement.class).withAccessibleName(..)}
+     *             instead. To be removed in 3.0.
      */
+    @Deprecated(since = "2.0.0", forRemoval = true)
     public static MenuItemElement getByLabel(Locator locator, String label) {
-        return new MenuItemElement(ItemLocator.byExactName(locator, AriaRole.MENUITEM, label));
+        return byName(locator, label);
     }
 
     /** Assert that the menu item is expanded (shows submenu). */
@@ -44,5 +48,10 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
     /** Assert that the menu item is collapsed. */
     public void assertCollapsed() {
         assertThat(getLocator()).not().hasAttribute("expanded", "");
+    }
+
+    /** Item lookup used by the menu bar and menus: the item's whole accessible name. */
+    static MenuItemElement byName(Locator locator, String label) {
+        return new MenuItemElement(ItemLocator.byExactName(locator, AriaRole.MENUITEM, label));
     }
 }

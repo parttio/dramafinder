@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.FieldQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
@@ -176,77 +176,71 @@ public class CheckboxGroupElement extends VaadinElement
     // ── Static factories ───────────────────────────────────────────────
 
     /**
-     * Get the {@code CheckboxGroupElement} by its accessible name (ARIA role {@code group}),
-     * searching the entire page.
+     * Get the {@code CheckboxGroupElement} whose visible label is exactly {@code label}, searching the entire page.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two matching components fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Page, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(page, CheckboxGroupElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(page, CheckboxGroupElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Page, String)} to match part of the label.
      *
      * @param page  the Playwright page
-     * @param label the full accessible name
+     * @param label the full visible label
      * @return the matching {@code CheckboxGroupElement}
      */
     public static CheckboxGroupElement getByLabel(Page page, String label) {
-        return new CheckboxGroupElement(
-                page.locator(FIELD_TAG_NAME).and(
-                        page.getByRole(AriaRole.GROUP,
-                                new Page.GetByRoleOptions().setName(label).setExact(true))));
+        return new CheckboxGroupElement(ElementQueries.find(page, CheckboxGroupElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code CheckboxGroupElement} whose accessible name (ARIA role {@code group}) contains
-     * {@code text}, searching the entire page.
+     * Get the {@code CheckboxGroupElement} whose visible label contains {@code text}, searching the entire page.
      * <p>
-     * The name is matched case-insensitively as a substring. No {@code .first()} is
-     * applied: several matching components fail with a strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(page, CheckboxGroupElement.class).withLabelContaining(text)}.
      *
      * @param page  the Playwright page
-     * @param text  part of the accessible name
+     * @param text  part of the visible label
      * @return the matching {@code CheckboxGroupElement}
      */
     public static CheckboxGroupElement getByLabelContaining(Page page, String text) {
-        return new CheckboxGroupElement(
-                page.locator(FIELD_TAG_NAME).and(
-                        page.getByRole(AriaRole.GROUP,
-                                new Page.GetByRoleOptions().setName(text))));
+        return new CheckboxGroupElement(ElementQueries.find(page, CheckboxGroupElement.class).withLabelContaining(text).getLocator());
     }
 
     /**
-     * Get the {@code CheckboxGroupElement} by its accessible name (ARIA role {@code group}),
-     * within the given scope.
+     * Get the {@code CheckboxGroupElement} whose visible label is exactly {@code label}, scoped to the given locator.
      * <p>
-     * The name must match in full, case-sensitively, and no {@code .first()} is applied:
-     * two matching components fail with a strict-mode error. Use
-     * {@link #getByLabelContaining(Locator, String)} to match part of the name.
+     * The label is the text of the component's own {@code label} slot, matched in
+     * full and case-sensitively. An {@code aria-label} is not a label: use
+     * {@code find(locator, CheckboxGroupElement.class).withAccessibleName(..)}. No {@code .first()} is applied: two components
+     * with that label fail with a strict-mode error. Same as
+     * {@code find(locator, CheckboxGroupElement.class).withLabel(label)}; use
+     * {@link #getByLabelContaining(Locator, String)} to match part of the label.
      *
-     * @param locator the locator to search within
-     * @param label   the full accessible name
+     * @param locator the locator whose subtree is searched
+     * @param label   the full visible label
      * @return the matching {@code CheckboxGroupElement}
      */
     public static CheckboxGroupElement getByLabel(Locator locator, String label) {
-        return new CheckboxGroupElement(
-                locator.locator(FIELD_TAG_NAME).and(
-                        locator.page().getByRole(AriaRole.GROUP,
-                                new Page.GetByRoleOptions().setName(label).setExact(true))));
+        return new CheckboxGroupElement(ElementQueries.find(locator, CheckboxGroupElement.class).withLabel(label).getLocator());
     }
 
     /**
-     * Get the {@code CheckboxGroupElement} whose accessible name (ARIA role {@code group}) contains
-     * {@code text}, within the given scope.
+     * Get the {@code CheckboxGroupElement} whose visible label contains {@code text}, scoped to the given locator.
      * <p>
-     * The name is matched case-insensitively as a substring. No {@code .first()} is
-     * applied: several matching components fail with a strict-mode error.
+     * The label is matched case-insensitively as a substring; an {@code aria-label}
+     * is not a label. No {@code .first()} is applied: several
+     * matching components fail with a strict-mode error. Same as
+     * {@code find(locator, CheckboxGroupElement.class).withLabelContaining(text)}.
      *
-     * @param locator the locator to search within
-     * @param text    part of the accessible name
+     * @param locator the locator whose subtree is searched
+     * @param text    part of the visible label
      * @return the matching {@code CheckboxGroupElement}
      */
     public static CheckboxGroupElement getByLabelContaining(Locator locator, String text) {
-        return new CheckboxGroupElement(
-                locator.locator(FIELD_TAG_NAME).and(
-                        locator.page().getByRole(AriaRole.GROUP,
-                                new Page.GetByRoleOptions().setName(text))));
+        return new CheckboxGroupElement(ElementQueries.find(locator, CheckboxGroupElement.class).withLabelContaining(text).getLocator());
     }
 
     // ── Internal ───────────────────────────────────────────────────────

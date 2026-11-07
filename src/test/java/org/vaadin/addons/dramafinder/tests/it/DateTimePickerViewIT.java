@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -129,7 +131,7 @@ public class DateTimePickerViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        DateTimePickerElement dateTimePickerElement = DateTimePickerElement.getByLabel(page, "Invisible label");
+        DateTimePickerElement dateTimePickerElement = find(page, DateTimePickerElement.class).withAccessibleName("Invisible label").single();
         dateTimePickerElement.assertVisible();
         dateTimePickerElement.assertAriaLabel("Invisible label");
     }

@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TextFieldGetByLabelIT extends SpringPlaywrightIT {
@@ -23,15 +24,17 @@ public class TextFieldGetByLabelIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void getByLabel_page_placeholder() {
-        TextFieldElement field = TextFieldElement.getByLabel(page, "My Placeholder");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_placeholderIsNotALabel() {
+        // a placeholder is not a label: withPlaceholder is the replacement
+        assertThat(TextFieldElement.getByLabel(page, "My Placeholder").getLocator()).hasCount(0);
+        assertThat(find(page, TextFieldElement.class).withPlaceholder("My Placeholder").getLocator()).isVisible();
     }
 
     @Test
-    public void getByLabel_page_ariaLabel() {
-        TextFieldElement field = TextFieldElement.getByLabel(page, "My AriaLabel");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_page_ariaLabelIsNotALabel() {
+        // an aria-label is not a label: withAccessibleName is the replacement
+        assertThat(TextFieldElement.getByLabel(page, "My AriaLabel").getLocator()).hasCount(0);
+        assertThat(find(page, TextFieldElement.class).withAccessibleName("My AriaLabel").getLocator()).isVisible();
     }
 
     @Test
@@ -41,15 +44,17 @@ public class TextFieldGetByLabelIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void getByLabel_locator_placeholder() {
-        TextFieldElement field = TextFieldElement.getByLabel(page.locator("#container"), "My Placeholder");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_locator_placeholderIsNotALabel() {
+        // a placeholder is not a label: withPlaceholder is the replacement
+        assertThat(TextFieldElement.getByLabel(page.locator("#container"), "My Placeholder").getLocator()).hasCount(0);
+        assertThat(find(page.locator("#container"), TextFieldElement.class).withPlaceholder("My Placeholder").getLocator()).isVisible();
     }
 
     @Test
-    public void getByLabel_locator_ariaLabel() {
-        TextFieldElement field = TextFieldElement.getByLabel(page.locator("#container"), "My AriaLabel");
-        assertThat(field.getLocator()).isVisible();
+    public void getByLabel_locator_ariaLabelIsNotALabel() {
+        // an aria-label is not a label: withAccessibleName is the replacement
+        assertThat(TextFieldElement.getByLabel(page.locator("#container"), "My AriaLabel").getLocator()).hasCount(0);
+        assertThat(find(page.locator("#container"), TextFieldElement.class).withAccessibleName("My AriaLabel").getLocator()).isVisible();
     }
 
     @Test

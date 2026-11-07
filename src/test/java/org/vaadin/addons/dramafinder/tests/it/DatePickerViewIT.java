@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.DatePickerElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -87,14 +89,14 @@ public class DatePickerViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        DatePickerElement datePickerElement = DatePickerElement.getByLabel(page, "Invisible label");
+        DatePickerElement datePickerElement = find(page, DatePickerElement.class).withAccessibleName("Invisible label").single();
         datePickerElement.assertVisible();
         datePickerElement.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        DatePickerElement datePickerElement = DatePickerElement.getByLabel(page, "Labelled by");
+        DatePickerElement datePickerElement = find(page, DatePickerElement.class).withAccessibleName("Labelled by").single();
         datePickerElement.assertVisible();
         datePickerElement.assertAriaLabel(null);
     }

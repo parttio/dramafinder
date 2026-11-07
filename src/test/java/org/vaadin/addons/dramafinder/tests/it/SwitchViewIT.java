@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.SwitchElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -74,7 +75,7 @@ public class SwitchViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        SwitchElement switchElement = SwitchElement.getByLabel(page, "Aria label");
+        SwitchElement switchElement = find(page, SwitchElement.class).withAccessibleName("Aria label").single();
         switchElement.assertAriaLabel("Aria label");
         switchElement.assertLabel(null);
     }

@@ -77,7 +77,7 @@ For example:
 
 @Test
 public void testTooltip() {
-    // get a text that has an accessible name (label or aria label,...) equals to text field
+    // get the text field whose visible label is "Textfield"
     TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
     // assert that is visible
     textfield.assertVisible();
@@ -92,7 +92,7 @@ It also gives you some inner locators.
 
 @Test
 public void testHelper() {
-    // get a text that has an accessible name (label or aria label,...) equals to text field
+    // get the text field whose visible label is "TextField with helper component"
     TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
     // Use the helperLocator to get the TextField added as a helper component
     TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperLocator());

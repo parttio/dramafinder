@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TimePickerViewIT extends SpringPlaywrightIT {
@@ -92,14 +93,14 @@ public class TimePickerViewIT extends SpringPlaywrightIT {
 
     @Test
     public void testAriaLabel() {
-        TimePickerElement timePickerElement = TimePickerElement.getByLabel(page, "Invisible label");
+        TimePickerElement timePickerElement = find(page, TimePickerElement.class).withAccessibleName("Invisible label").single();
         timePickerElement.assertVisible();
         timePickerElement.assertAriaLabel("Invisible label");
     }
 
     @Test
     public void testAriaLabelledBy() {
-        TimePickerElement timePickerElement = TimePickerElement.getByLabel(page, "Labelled by");
+        TimePickerElement timePickerElement = find(page, TimePickerElement.class).withAccessibleName("Labelled by").single();
         timePickerElement.assertVisible();
         timePickerElement.assertAriaLabel(null);
     }
