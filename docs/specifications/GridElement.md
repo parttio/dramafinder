@@ -84,6 +84,28 @@ GridElement grid = GridElement.getById(page, "my-grid");
 | `isAllRowsVisible()` | Whether `allRowsVisible` is enabled (no vertical scroll) |
 | `isMultiSort()` | Whether multi-sort is enabled |
 | `isColumnReorderingAllowed()` | Whether column reordering is allowed |
+| `findColumnIndexById(String id)` | `OptionalInt` index of the visible column with that id; empty if absent or hidden |
+| `getColumnIndexById(String id)` | Same, throwing `IllegalArgumentException` when no visible column has that id |
+
+### Column Indexes
+
+Every `columnIndex` / `colIndex` parameter counts the **visible** columns in
+**display order**, starting from 0 on the left:
+
+- hidden columns (`setVisible(false)`) are skipped;
+- a selection column (multi-select) is a column and counts;
+- after the user drags a column to a new place, the indexes follow the new
+  order — the same order as TestBench's `getVisibleColumns()`.
+
+A column with no header text cannot be found with `findHeaderCellByText`; give it
+an id in Flow (`Column.setId("email")`, which lands on the `<vaadin-grid-column>`)
+and look it up with `getColumnIndexById("email")`. `Column.setKey(..)` stays on the
+server and is not visible to the browser.
+
+```java
+int email = grid.getColumnIndexById("email");
+grid.assertCellContent(0, email, "person1@example.com");
+```
 
 ### Header Access Methods
 
