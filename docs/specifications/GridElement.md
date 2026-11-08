@@ -97,6 +97,14 @@ Every `columnIndex` / `colIndex` parameter counts the **visible** columns in
 - after the user drags a column to a new place, the indexes follow the new
   order — the same order as TestBench's `getVisibleColumns()`.
 
+This matches TestBench, whose `getCell(row, colIndex)` and `getHeaderCell(colIndex)`
+count the selection column too. Flow's `Grid.getColumns()` and browserless tests
+(`GridTester`) do **not** list the selection column, so in a multi-select grid a
+Flow column index is one less than the `GridElement` index (the selection column
+is first unless the columns were reordered). To stay independent of the selection
+mode, look a column up by header text (`findCell(row, "Email")`) or by id
+(`getColumnIndexById`) instead of hard-coding its index.
+
 A column with no header text cannot be found with `findHeaderCellByText`; give it
 an id in Flow (`Column.setId("email")`, which lands on the `<vaadin-grid-column>`)
 and look it up with `getColumnIndexById("email")`. `Column.setKey(..)` stays on the
@@ -118,6 +126,20 @@ All `findHeaderCell*` methods return `Optional<HeaderCellElement>`.
 | `findHeaderCellByText(String text)` | Header cell by text content in the first header row |
 | `findHeaderCellByText(int headerRowIndex, String text)` | Header cell by header row index and text content |
 | `getHeaderCellContents()` | Text content of all visible header cells |
+| `getHeaderCells(int colIndex)` | `List<HeaderCellElement>`: the column's header cells in every header row, top row first |
+
+`getHeaderCells` returns the cell of the column itself and those of the column
+groups around it, which is how the web component renders Flow's extra
+`HeaderRow`s: a joined cell above (returned for each column it spans) or a filter
+field in an appended row below. Scope a component lookup to a cell's content:
+
+```java
+// Header rows: joined "Name" | "Last Name" with sorter | filter field
+// The column has Column.setId("last-name") in Flow
+var cells = grid.getHeaderCells(grid.getColumnIndexById("last-name"));
+TextFieldElement filter = TextFieldElement.getById(cells.get(2).getCellContentLocator(), "last-filter");
+filter.setValue("Smith");
+```
 
 ### Footer Access Methods
 
@@ -211,6 +233,9 @@ Extends `CellElement` with sorting support.
 |--------|-------------|
 | `isSortable()` | Whether the column supports sorting |
 | `clickSort()` | Click the sorter to cycle sort direction |
+| `sort(SortDirection direction)` | Click the sorter until it shows `direction` (`ASCENDING`, `DESCENDING`, `NONE`); no-op if already there |
+| `getSortDirection()` | Current `GridElement.SortDirection`; `NONE` when unsorted |
+| `assertSortDirection(SortDirection expected)` | Assert the direction (retrying); `NONE` asserts unsorted |
 | `isSortAscending()` | Whether the column is sorted ascending |
 | `isSortDescending()` | Whether the column is sorted descending |
 | `isNotSorted()` | Whether the column is not sorted |
@@ -306,7 +331,14 @@ assertTrue(headerCell.get().isSortDescending());
 
 headerCell.get().clickSort();
 assertTrue(headerCell.get().isNotSorted());
+
+// Or go straight to a direction (at most two clicks, waits for the grid to load)
+headerCell.get().sort(GridElement.SortDirection.DESCENDING);
+headerCell.get().assertSortDirection(GridElement.SortDirection.DESCENDING);
 ```
+
+`sort`, `getSortDirection` and `clickSort` throw `IllegalStateException` on a
+header cell without a sorter, such as a joined group cell.
 
 ### Row Details
 
