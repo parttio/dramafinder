@@ -22,6 +22,7 @@ public class GridBasicView extends Main {
         createAllRowsVisibleGrid();
         createLazyGrid();
         createUndefinedSizeLazyGrid();
+        createSmallLazyGrid();
     }
 
     private void createBasicGrid() {
@@ -90,6 +91,24 @@ public class GridBasicView extends Main {
                         .mapToObj(i -> new GridPerson("First" + i, "Last" + i, "person" + i + "@example.com")));
         dataView.setItemCountUnknown();
         add(new H2("Undefined Size Lazy Grid"), grid);
+    }
+
+    private void createSmallLazyGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("small-lazy-grid");
+        grid.setHeight("300px");
+        grid.setPageSize(20);
+        grid.addColumn(GridPerson::firstName).setHeader("First Name");
+        grid.addColumn(GridPerson::lastName).setHeader("Last Name");
+        CallbackDataProvider<GridPerson, Void> dataProvider = DataProvider.fromCallbacks(
+                query -> IntStream.rangeClosed(
+                                query.getOffset() + 1,
+                                Math.min(query.getOffset() + query.getLimit(), 300))
+                        .mapToObj(i -> new GridPerson("First" + i, "Last" + i, "person" + i + "@example.com")),
+                query -> 300
+        );
+        grid.setDataProvider(dataProvider);
+        add(new H2("Small Lazy Grid"), grid);
     }
 
     static List<GridPerson> generatePersons(int count) {

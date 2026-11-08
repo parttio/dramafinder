@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -420,6 +421,9 @@ public class GridElement extends VaadinElement
 
     /**
      * Find row indexes where the cell in the given column has the given text.
+     * Reads the column a rendered page of rows at a time (see {@link #getColumnTexts(int)}), so a
+     * lazy grid is scrolled once per page rather than once per row; each cell is compared with
+     * {@link #matchesCellText(String, String)}.
      *
      * @param columnIndex the column index to check the cell content in, starting from 0.
      * @param text        the text to match in the cell content.
@@ -430,21 +434,86 @@ public class GridElement extends VaadinElement
             throw new IllegalArgumentException("Text must not be null");
         }
 
-        var headerRowCount = getHeaderRowCount();
+        var texts = getColumnTexts(columnIndex);
         var matchingRows = new ArrayList<Integer>();
-        int totalRowCount = getTotalRowCount();
-        for (int i = 0; i < totalRowCount; i++) {
-            var rowOptional = findRow(i, headerRowCount);
-
-            rowOptional.ifPresent(row -> {
-                var cell = row.getCell(columnIndex);
-                if (matchesCellContent(cell, text)) {
-                    matchingRows.add(row.getRowIndex());
-                }
-            });
+        for (int i = 0; i < texts.size(); i++) {
+            var cellText = texts.get(i);
+            if (cellText != null && matchesCellText(cellText, text)) {
+                matchingRows.add(i);
+            }
         }
 
         return matchingRows;
+    }
+
+    /**
+     * Read the rendered text of every body cell in the given column, from the first row to the
+     * last. The grid is read a page at a time: one script reads all rows rendered at once, then
+     * the grid jumps to the first row not read yet and waits for it to load. A lazy grid therefore
+     * costs one scroll and one round trip per page instead of several per row. A row that is still
+     * not rendered after the jump is looked up on its own, as {@link #findRow(int)} does. Leaves
+     * the grid scrolled to wherever the last page was.
+     *
+     * @param columnIndex the column index, starting from 0.
+     * @return the cell texts (the {@code innerText} of the cell content), indexed by row; an
+     *         entry is {@code null} when that row could not be rendered. Empty for an empty grid.
+     * @throws IllegalArgumentException if the column index is negative, or the grid has rows and the
+     *                                  column does not exist
+     */
+    public List<String> getColumnTexts(int columnIndex) {
+        if (columnIndex < 0) {
+            throw new IllegalArgumentException("Column index must be non-negative");
+        }
+        int totalRowCount = getTotalRowCount();
+        var texts = new ArrayList<String>(Collections.nCopies(totalRowCount, null));
+        var read = new boolean[totalRowCount];
+        var headerRowCount = getHeaderRowCount();
+
+        readRenderedColumnTexts(columnIndex, headerRowCount, texts, read);
+        for (int i = 0; i < totalRowCount; i++) {
+            if (read[i]) {
+                continue;
+            }
+            if (scrollToFlatIndex(i)) {
+                waitForGridToStopLoading();
+                readRenderedColumnTexts(columnIndex, headerRowCount, texts, read);
+            }
+            if (!read[i]) {
+                // Still not rendered (or its cell has no content yet): fall back to the row path
+                var row = findRow(i, headerRowCount);
+                if (row.isPresent()) {
+                    texts.set(i, row.get().getCell(columnIndex).getText());
+                }
+                read[i] = true;
+            }
+        }
+        return texts;
+    }
+
+    /**
+     * Read, in one script, the text of the given column in every body row currently rendered
+     * (not hidden, not loading), and store it under the row's 0-based index.
+     */
+    @SuppressWarnings("unchecked")
+    private void readRenderedColumnTexts(int columnIndex, int headerRowCount, List<String> texts, boolean[] read) {
+        var pairs = (List<List<Object>>) locator.evaluate(
+                "(g, [column, headerRows]) => [...g.shadowRoot.querySelectorAll('tbody tr[aria-rowindex]')]"
+                        + " .filter(tr => !tr.hidden && !tr.hasAttribute('loading'))"
+                        + " .map(tr => {"
+                        + "   const cell = tr.querySelectorAll('td')[column];"
+                        + "   const slot = cell && cell.querySelector('slot');"
+                        + "   const content = slot && g.querySelector(`vaadin-grid-cell-content[slot=\"${slot.name}\"]`);"
+                        + "   return [parseInt(tr.getAttribute('aria-rowindex')) - 1 - headerRows,"
+                        + "     content ? content.innerText : null]; })"
+                        + " .filter(pair => pair[1] !== null)",
+                List.of(columnIndex, headerRowCount));
+        for (var pair : pairs) {
+            int rowIndex = ((Number) pair.get(0)).intValue();
+            if (rowIndex >= 0 && rowIndex < read.length) {
+                texts.set(rowIndex, (String) pair.get(1));
+                read[rowIndex] = true;
+            }
+        }
     }
 
     /**
@@ -502,16 +571,33 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Determine if a body cell matches the given text. By default, compares the trimmed innerText of the cell content.
-     * Can be overridden for custom matching logic (e.g. ignoring case, or matching only a part of the text).
+     * Determine if a body cell matches the given text, by comparing its rendered text with
+     * {@link #matchesCellText(String, String)}.
      *
      * @param cell the body cell to check
      * @param text the text to match in the cell content
      * @return {@code true} if the cell matches the text, {@code false} otherwise
+     * @deprecated {@link #findRowIndexesWithColumnText(int, String)} reads a whole column at once
+     *             and no longer calls this method; override {@link #matchesCellText(String, String)}
+     *             to customise matching.
      */
+    @Deprecated(since = "2.0.1", forRemoval = true)
     protected boolean matchesCellContent(CellElement cell, String text) {
         cell.getCellContentLocator().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
-        return Objects.equals(cell.getCellContentLocator().innerText(), text);
+        return matchesCellText(cell.getCellContentLocator().innerText(), text);
+    }
+
+    /**
+     * Determine if a body cell's rendered text matches the given text. By default, the two must
+     * be equal. Override for custom matching logic (e.g. ignoring case, or matching only a part of
+     * the text).
+     *
+     * @param cellText the {@code innerText} of the cell content, never {@code null}
+     * @param text     the text to match
+     * @return {@code true} if the cell text matches, {@code false} otherwise
+     */
+    protected boolean matchesCellText(String cellText, String text) {
+        return Objects.equals(cellText, text);
     }
 
     // ── Scroll Actions ─────────────────────────────────────────────────

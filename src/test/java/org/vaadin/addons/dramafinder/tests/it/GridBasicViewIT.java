@@ -185,6 +185,47 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
         assertThat(row.get().getCell(0).getCellContentLocator()).hasText("First9001");
     }
 
+    // ── Column Texts (page at a time) ──────────────────────────────────
+
+    @Test
+    public void testGetColumnTexts() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        List<String> texts = grid.getColumnTexts(1);
+        assertEquals(100, texts.size());
+        for (int i = 0; i < texts.size(); i++) {
+            assertEquals("Last" + (i + 1), texts.get(i));
+        }
+    }
+
+    @Test
+    public void testGetColumnTextsOnLazyGrid() {
+        GridElement grid = GridElement.getById(page, "small-lazy-grid");
+        List<String> texts = grid.getColumnTexts(0);
+        assertEquals(300, texts.size());
+        for (int i = 0; i < texts.size(); i++) {
+            assertEquals("First" + (i + 1), texts.get(i));
+        }
+    }
+
+    @Test
+    public void testFindRowIndexesWithColumnTextOnLazyGrid() {
+        GridElement grid = GridElement.getById(page, "small-lazy-grid");
+        assertEquals(List.of(249), grid.findRowIndexesWithColumnText(1, "Last250"));
+        assertEquals(List.of(), grid.findRowIndexesWithColumnText(1, "Last2500"));
+    }
+
+    @Test
+    public void testGetColumnTextsOnEmptyGrid() {
+        GridElement grid = GridElement.getById(page, "empty-grid");
+        assertEquals(List.of(), grid.getColumnTexts(0));
+    }
+
+    @Test
+    public void testGetColumnTextsRejectsNegativeColumn() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        assertThrows(IllegalArgumentException.class, () -> grid.getColumnTexts(-1));
+    }
+
     // ── CSS Class ──────────────────────────────────────────────────────
 
     @Test

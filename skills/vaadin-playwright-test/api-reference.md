@@ -1354,6 +1354,7 @@ PlaywrightElement for <vaadin-grid>.
 - `Optional<CellElement> findCell(int row, int column)` — Find a body cell by row index and column index.
 - `Optional<CellElement> findCell(int row, String columnHeaderText)` — Find a body cell by row index and column header text.
 - `List<Integer> findRowIndexesWithColumnText(int columnIndex, String text)` — Find row indexes where the cell in the given column has the given text.
+- `List<String> getColumnTexts(int columnIndex)` — Read the rendered text of every body cell in the given column, from the first row to the last.
 - `Optional<RowElement> findRow(int rowIndex)` — Find a row by its index.
 - `void scrollToRow(int rowIndex)` — Scroll the grid so that the given row index becomes visible.
 - `void scrollToStart()` — Scroll to the very beginning of the grid.

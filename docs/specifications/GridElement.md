@@ -114,7 +114,15 @@ All `findFooterCell*` methods return `Optional<FooterCellElement>`.
 | Method | Return Type | Description |
 |--------|-------------|-------------|
 | `findRow(int rowIndex)` | `Optional<RowElement>` | Find row by index; **auto-scrolls** if the row is not yet in view |
-| `findRowIndexesWithColumnText(int columnIndex, String text)` | `List<Integer>` | Row indexes where the given column cell matches the given text |
+| `findRowIndexesWithColumnText(int columnIndex, String text)` | `List<Integer>` | Row indexes where the given column cell matches the given text (reads the column a page at a time) |
+| `getColumnTexts(int columnIndex)` | `List<String>` | Text of every body cell in the column, indexed by row |
+
+`getColumnTexts` (and `findRowIndexesWithColumnText`, built on it) reads a lazy
+grid a **page** at a time: one script reads every rendered row, then the grid jumps
+to the first unread row and waits for it to load. That is one scroll per page
+instead of several round trips per row, so prefer it over looping on
+`findCell(row, column)`. To customise how a cell matches, override
+`matchesCellText(String cellText, String text)`.
 
 ### Cell Access Methods
 
