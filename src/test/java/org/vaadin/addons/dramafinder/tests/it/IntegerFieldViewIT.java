@@ -7,6 +7,10 @@ import org.vaadin.addons.dramafinder.element.IntegerFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class IntegerFieldViewIT extends SpringPlaywrightIT {
@@ -82,5 +86,48 @@ public class IntegerFieldViewIT extends SpringPlaywrightIT {
         // Decrement
         integerField.clickDecreaseButton();
         integerField.assertValue("1");
+    }
+
+    // ── Typed value ────────────────────────────────────────────────────
+
+    @Test
+    public void testSetIntegerValue() {
+        IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "Quantity");
+        integerField.setValue(42);
+        integerField.assertValue("42");
+        integerField.assertValue(42);
+        assertEquals(42, integerField.getValueAsInteger());
+        assertThat(page.locator("#quantity-server-value")).hasText("Server value: 42");
+
+        integerField.setValue(-7);
+        integerField.assertValue(-7);
+        assertThat(page.locator("#quantity-server-value")).hasText("Server value: -7");
+    }
+
+    @Test
+    public void testIntegerNullClearsTheField() {
+        IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "Score");
+        assertEquals(10, integerField.getValueAsInteger());
+        integerField.assertValue(10);
+
+        integerField.setValue((Integer) null);
+        integerField.assertValue("");
+        integerField.assertValue((Integer) null);
+        assertNull(integerField.getValueAsInteger());
+    }
+
+    @Test
+    public void testIntegerAssertValueFailsOnOtherNumber() {
+        IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "Score");
+        assertThrows(AssertionError.class, () -> integerField.assertValue(20));
+    }
+
+    @Test
+    public void testIntegerAssertValueOnUnparsableTextFailsAsMismatch() {
+        IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "Quantity");
+        // Beyond Integer.MAX_VALUE: readable as text, not as an Integer
+        integerField.setValue("3000000000");
+        var e = assertThrows(AssertionError.class, () -> integerField.assertValue(5));
+        assertTrue(e.getMessage().contains("3000000000"), e.getMessage());
     }
 }

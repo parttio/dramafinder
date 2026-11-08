@@ -18,8 +18,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `TextArea` | `TextAreaElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` — extends `TextFieldElement` |
 | `EmailField` | `EmailFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` — extends `TextFieldElement` |
 | `PasswordField` | `PasswordFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` — extends `TextFieldElement` |
-| `NumberField` | `NumberFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()`, `assertMin()`, `assertMax()`, `assertStep()`, `clickIncreaseButton()`, `clickDecreaseButton()` |
-| `IntegerField` | `IntegerFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()`, `assertMin()`, `assertMax()`, `assertStep()` |
+| `NumberField` | `NumberFieldElement` | `getByLabel(page, label)`, `setValue()` (`String` or `Double`; `null` clears), `getValueAsDouble()`, `assertValue()` (`String` or `Double`), `assertMin()`, `assertMax()`, `assertStep()`, `clickIncreaseButton()`, `clickDecreaseButton()` |
+| `IntegerField` | `IntegerFieldElement` | `getByLabel(page, label)`, `setValue()` (`String` or `Integer`; `null` clears), `getValueAsInteger()`, `assertValue()` (`String` or `Integer`), `assertMin()`, `assertMax()`, `assertStep()` |
 | `BigDecimalField` | `BigDecimalFieldElement` | `getByLabel(page, label)`, `setValue()`, `assertValue()` |
 | `Button` | `ButtonElement` | `getByText(page, text)`, `click()`, `assertVisible()`, `assertEnabled()`, `assertDisabled()` |
 | `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |

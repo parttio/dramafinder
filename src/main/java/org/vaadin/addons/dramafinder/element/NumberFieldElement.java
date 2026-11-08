@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.math.BigDecimal;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
@@ -9,13 +11,15 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.NumberUtils;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-number-field>}.
  * <p>
  * Provides helpers for numeric attributes ({@code min}, {@code max}, {@code step})
  * using {@link Double} types and locator utilities to find the component by
- * its accessible label.
+ * its accessible label. Adds a typed {@link Double} value next to the text value:
+ * {@link #setValue(Double)}, {@link #getValueAsDouble()} and {@link #assertValue(Double)}.
  */
 @PlaywrightElement(NumberFieldElement.FIELD_TAG_NAME)
 public class NumberFieldElement extends AbstractNumberFieldElement implements Findable<InputFieldQuery<NumberFieldElement>> {
@@ -198,6 +202,62 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public static NumberFieldElement getByLabelContaining(Locator locator, String text) {
         return new NumberFieldElement(ElementQueries.find(locator, NumberFieldElement.class).withLabelContaining(text).getLocator());
+    }
+
+    // ── Typed value ────────────────────────────────────────────────────
+
+    /**
+     * Set the value as a number, typed the way a user would type it: a whole number without a
+     * fraction ({@code 170}, not {@code 170.0}) and no exponent. See
+     * {@link #setValue(String)} for how the value is entered.
+     *
+     * @param value the value to set; {@code null} clears the field. A literal {@code null} is
+     *              ambiguous with {@link #setValue(String)}: write {@code (Double) null}, or call
+     *              {@link #clear()}
+     * @throws IllegalArgumentException if the value is NaN or infinite
+     */
+    public void setValue(Double value) {
+        if (value == null) {
+            clear();
+            return;
+        }
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Cannot type a non-finite number: " + value);
+        }
+        setValue(BigDecimal.valueOf(value).stripTrailingZeros().toPlainString());
+    }
+
+    /**
+     * Get the current value as a number.
+     *
+     * @return the value, or {@code null} when the field is empty (or holds text the browser does
+     *         not accept as a number, which it reports as an empty value)
+     */
+    public Double getValueAsDouble() {
+        String value = getValue();
+        return value == null || value.isEmpty() ? null : Double.valueOf(value);
+    }
+
+    /**
+     * Assert the value as a number, compared numerically: {@code 2.5} matches the text
+     * {@code 2.50}, and {@code 0.0} matches {@code -0}. Text that is not a number never matches.
+     * Retries until the value matches or the timeout passes.
+     *
+     * @param expected the expected value; {@code null} asserts the field is empty. A literal
+     *                 {@code null} is ambiguous with {@link #assertValue(String)}: write
+     *                 {@code (Double) null}
+     */
+    public void assertValue(Double expected) {
+        assertEventually(getLocator().page(), "Number field value", this::getValue, text -> {
+            if (text == null || text.isEmpty()) {
+                return expected == null;
+            }
+            try {
+                return expected != null && Double.parseDouble(text) == expected;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }, String.valueOf(expected));
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

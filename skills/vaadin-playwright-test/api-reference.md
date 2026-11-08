@@ -1504,6 +1504,9 @@ PlaywrightElement for <vaadin-integer-field>.
 - `Integer getMax()` — Get the current max value.
 - `void setMax(int max)` — Set the max value.
 - `void assertMax(Integer max)` — Assert that the max attribute matches the expected value.
+- `void setValue(Integer value)` — Set the value as a number, typed in its plain decimal form.
+- `Integer getValueAsInteger()` — Get the current value as a number.
+- `void assertValue(Integer expected)` — Assert the value as a number.
 
 ### ListBoxElement  `<vaadin-list-box>`
 
@@ -1908,6 +1911,9 @@ PlaywrightElement for <vaadin-number-field>.
 - `Double getMax()` — Get the current max value.
 - `void setMax(double max)` — Set the max value.
 - `void assertMax(Double max)` — Assert that the max attribute matches the expected value.
+- `void setValue(Double value)` — Set the value as a number, typed the way a user would type it: a whole number without a fraction (170, not 170.0) and no exponent.
+- `Double getValueAsDouble()` — Get the current value as a number.
+- `void assertValue(Double expected)` — Assert the value as a number, compared numerically: 2.5 matches the text 2.50, and 0.0 matches -0.
 
 ### PasswordFieldElement  `<vaadin-password-field>`
 
