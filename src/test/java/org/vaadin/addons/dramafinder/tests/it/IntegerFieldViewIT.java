@@ -10,6 +10,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class IntegerFieldViewIT extends SpringPlaywrightIT {
@@ -119,5 +120,14 @@ public class IntegerFieldViewIT extends SpringPlaywrightIT {
     public void testIntegerAssertValueFailsOnOtherNumber() {
         IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "Score");
         assertThrows(AssertionError.class, () -> integerField.assertValue(20));
+    }
+
+    @Test
+    public void testIntegerAssertValueOnUnparsableTextFailsAsMismatch() {
+        IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "Quantity");
+        // Beyond Integer.MAX_VALUE: readable as text, not as an Integer
+        integerField.setValue("3000000000");
+        var e = assertThrows(AssertionError.class, () -> integerField.assertValue(5));
+        assertTrue(e.getMessage().contains("3000000000"), e.getMessage());
     }
 }

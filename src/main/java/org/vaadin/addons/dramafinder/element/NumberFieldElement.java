@@ -18,7 +18,8 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  * <p>
  * Provides helpers for numeric attributes ({@code min}, {@code max}, {@code step})
  * using {@link Double} types and locator utilities to find the component by
- * its accessible label.
+ * its accessible label. Adds a typed {@link Double} value next to the text value:
+ * {@link #setValue(Double)}, {@link #getValueAsDouble()} and {@link #assertValue(Double)}.
  */
 @PlaywrightElement(NumberFieldElement.FIELD_TAG_NAME)
 public class NumberFieldElement extends AbstractNumberFieldElement implements Findable<InputFieldQuery<NumberFieldElement>> {
@@ -210,7 +211,9 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      * fraction ({@code 170}, not {@code 170.0}) and no exponent. See
      * {@link #setValue(String)} for how the value is entered.
      *
-     * @param value the value to set; {@code null} clears the field
+     * @param value the value to set; {@code null} clears the field. A literal {@code null} is
+     *              ambiguous with {@link #setValue(String)}: write {@code (Double) null}, or call
+     *              {@link #clear()}
      * @throws IllegalArgumentException if the value is NaN or infinite
      */
     public void setValue(Double value) {
@@ -236,13 +239,25 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
     }
 
     /**
-     * Assert the value as a number, compared numerically so {@code 2.5} matches the text
-     * {@code 2.50}. Retries until the value matches or the timeout passes.
+     * Assert the value as a number, compared numerically: {@code 2.5} matches the text
+     * {@code 2.50}, and {@code 0.0} matches {@code -0}. Text that is not a number never matches.
+     * Retries until the value matches or the timeout passes.
      *
-     * @param expected the expected value; {@code null} asserts the field is empty
+     * @param expected the expected value; {@code null} asserts the field is empty. A literal
+     *                 {@code null} is ambiguous with {@link #assertValue(String)}: write
+     *                 {@code (Double) null}
      */
     public void assertValue(Double expected) {
-        assertEventually(getLocator().page(), "Number field value", this::getValueAsDouble, expected);
+        assertEventually(getLocator().page(), "Number field value", this::getValue, text -> {
+            if (text == null || text.isEmpty()) {
+                return expected == null;
+            }
+            try {
+                return expected != null && Double.parseDouble(text) == expected;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }, String.valueOf(expected));
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

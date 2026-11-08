@@ -15,7 +15,9 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  * <p>
  * Provides typed helpers to read and modify integer-specific attributes
  * such as {@code min}, {@code max}, and {@code step}, and convenient
- * factory methods to locate the element by its accessible label.
+ * factory methods to locate the element by its accessible label. Adds a typed
+ * {@link Integer} value next to the text value: {@link #setValue(Integer)},
+ * {@link #getValueAsInteger()} and {@link #assertValue(Integer)}.
  */
 @PlaywrightElement(IntegerFieldElement.FIELD_TAG_NAME)
 public class IntegerFieldElement extends AbstractNumberFieldElement implements Findable<InputFieldQuery<IntegerFieldElement>> {
@@ -206,7 +208,9 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
      * Set the value as a number, typed in its plain decimal form. See {@link #setValue(String)}
      * for how the value is entered.
      *
-     * @param value the value to set; {@code null} clears the field
+     * @param value the value to set; {@code null} clears the field. A literal {@code null} is
+     *              ambiguous with {@link #setValue(String)}: write {@code (Integer) null}, or call
+     *              {@link #clear()}
      */
     public void setValue(Integer value) {
         if (value == null) {
@@ -228,12 +232,24 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
     }
 
     /**
-     * Assert the value as a number. Retries until the value matches or the timeout passes.
+     * Assert the value as a number. Text that is not a whole number within {@code int} range never
+     * matches. Retries until the value matches or the timeout passes.
      *
-     * @param expected the expected value; {@code null} asserts the field is empty
+     * @param expected the expected value; {@code null} asserts the field is empty. A literal
+     *                 {@code null} is ambiguous with {@link #assertValue(String)}: write
+     *                 {@code (Integer) null}
      */
     public void assertValue(Integer expected) {
-        assertEventually(getLocator().page(), "Integer field value", this::getValueAsInteger, expected);
+        assertEventually(getLocator().page(), "Integer field value", this::getValue, text -> {
+            if (text == null || text.isEmpty()) {
+                return expected == null;
+            }
+            try {
+                return expected != null && Integer.parseInt(text) == expected;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }, String.valueOf(expected));
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

@@ -1913,7 +1913,7 @@ PlaywrightElement for <vaadin-number-field>.
 - `void assertMax(Double max)` — Assert that the max attribute matches the expected value.
 - `void setValue(Double value)` — Set the value as a number, typed the way a user would type it: a whole number without a fraction (170, not 170.0) and no exponent.
 - `Double getValueAsDouble()` — Get the current value as a number.
-- `void assertValue(Double expected)` — Assert the value as a number, compared numerically so 2.5 matches the text 2.50.
+- `void assertValue(Double expected)` — Assert the value as a number, compared numerically: 2.5 matches the text 2.50, and 0.0 matches -0.
 
 ### PasswordFieldElement  `<vaadin-password-field>`
 

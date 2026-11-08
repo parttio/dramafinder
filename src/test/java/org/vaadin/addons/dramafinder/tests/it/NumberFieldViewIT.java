@@ -132,4 +132,12 @@ public class NumberFieldViewIT extends SpringPlaywrightIT {
         assertThrows(IllegalArgumentException.class, () -> numberField.setValue(Double.NaN));
         assertThrows(IllegalArgumentException.class, () -> numberField.setValue(Double.POSITIVE_INFINITY));
     }
+
+    @Test
+    public void testNegativeZeroEqualsZero() {
+        NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Weight");
+        numberField.setValue(-0.0);
+        numberField.assertValue(0.0);
+        numberField.assertValue(-0.0);
+    }
 }
