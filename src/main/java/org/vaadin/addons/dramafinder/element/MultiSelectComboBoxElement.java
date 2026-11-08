@@ -348,20 +348,11 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * returned, not only the rendered ones. Closes the overlay again if it was closed.
      *
      * @return the item labels; empty when the combo box offers no item
-     * @throws IllegalStateException if a page of items does not load before the timeout
+     * @throws IllegalStateException if the items do not load before the timeout, for example on a
+     *                               read-only or disabled combo box whose overlay does not open
      */
     public List<String> getItemLabels() {
-        boolean wasOpened = isOpened();
-        if (!wasOpened) {
-            open();
-        }
-        try {
-            return ComboBoxItemLabels.readAll(getLocator());
-        } finally {
-            if (!wasOpened) {
-                close();
-            }
-        }
+        return ComboBoxItemLabels.read(getLocator(), this::isOpened, this::open, this::close);
     }
 
     // ── Overlay item component queries ─────────────────────────────────

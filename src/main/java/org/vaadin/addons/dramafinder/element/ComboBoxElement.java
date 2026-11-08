@@ -314,28 +314,21 @@ public class ComboBoxElement extends VaadinElement
      * the rendered ones. Closes the overlay again if it was closed.
      *
      * @return the item labels; empty when the combo box offers no item
-     * @throws IllegalStateException if a page of items does not load before the timeout
+     * @throws IllegalStateException if the items do not load before the timeout, for example on a
+     *                               read-only or disabled combo box whose overlay does not open
      */
     public List<String> getItemLabels() {
-        boolean wasOpened = isOpened();
-        if (!wasOpened) {
-            open();
-        }
-        try {
-            return ComboBoxItemLabels.readAll(getLocator());
-        } finally {
-            if (!wasOpened) {
-                close();
-            }
-        }
+        return ComboBoxItemLabels.read(getLocator(), this::isOpened, this::open, this::close);
     }
 
     /**
      * Get the label of the selected item, read from the component's {@code selectedItem}. Unlike
      * {@link #getValue()}, which reads the input text, this is not affected by a filter typed into
-     * the input.
+     * the input, and a custom value (with {@code allowCustomValue}) is not an item: the field then
+     * shows the value while this returns {@code null}.
      *
-     * @return the selected item's label, or {@code null} when nothing is selected
+     * @return the selected item's label ({@code ""} for an item without a label), or {@code null}
+     *         when no item is selected
      */
     public String getSelectedItemLabel() {
         Object label = getLocator().evaluate("""
