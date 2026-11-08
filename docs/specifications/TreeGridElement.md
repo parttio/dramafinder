@@ -140,7 +140,7 @@ TreeRowElement row = new TreeRowElement(grid.findRow(0).get());
 
 #### Inherited RowElement Methods
 
-All `RowElement` methods are available: `getRowLocator()`, `getRowIndex()`, `getCell(int)`, `getCell(String)`, `isSelected()`, `select()`, `deselect()`, `openDetails()`, `closeDetails()`, `isDetailsOpen()`.
+All `RowElement` methods are available: `getRowLocator()`, `getRowIndex()`, `getCell(int)`, `getCell(String)`, `isSelected()`, `select()`, `deselect()`, `click()`, `doubleClick()`, `openDetails()`, `closeDetails()`, `isDetailsOpen()`.
 
 ## Implementation Notes
 
