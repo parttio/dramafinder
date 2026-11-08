@@ -7,6 +7,9 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.ComboBoxElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -309,5 +312,42 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
         comboBox.assertValue("Item 101");
         comboBox.clickClearButton();
         comboBox.assertValue("");
+    }
+
+    // ── Item labels ────────────────────────────────────────────────────
+
+    @Test
+    public void testItemLabels() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Sort by");
+        assertEquals(List.of("Most recent first", "Rating: high to low", "Rating: low to high"),
+                comboBox.getItemLabels());
+        // Left closed, as it was
+        comboBox.assertClosed();
+    }
+
+    @Test
+    public void testItemLabelsOfLazyComboBoxLoadsEveryPage() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+        List<String> expected = IntStream.rangeClosed(1, 500).mapToObj(i -> "Item " + i).toList();
+        assertEquals(expected, comboBox.getItemLabels());
+        comboBox.assertClosed();
+    }
+
+    @Test
+    public void testItemLabelsFollowTheFilter() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+        comboBox.setFilter("Item 49");
+        assertEquals(List.of("Item 49", "Item 490", "Item 491", "Item 492", "Item 493", "Item 494",
+                "Item 495", "Item 496", "Item 497", "Item 498", "Item 499"), comboBox.getItemLabels());
+        // Was open for the filter, so stays open
+        comboBox.assertOpened();
+    }
+
+    @Test
+    public void testSelectedItemLabel() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Sort by");
+        assertNull(comboBox.getSelectedItemLabel());
+        comboBox.selectItem("Rating: high to low");
+        assertEquals("Rating: high to low", comboBox.getSelectedItemLabel());
     }
 }

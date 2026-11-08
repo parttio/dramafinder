@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.List;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
@@ -301,6 +303,39 @@ public class ComboBoxElement extends VaadinElement
     private Locator getOverlayItem(String label) {
         return ItemLocator.byExactText(getLocator(),
                 FIELD_ITEM_TAG_NAME + ":not([hidden])", label);
+    }
+
+    // ── Items ──────────────────────────────────────────────────────────
+
+    /**
+     * Get the labels of every item the drop-down offers for the current filter, in order.
+     * Opens the overlay if needed and waits for the items to load; with a lazy data provider the
+     * pages not loaded yet are requested one after the other, so all items are returned, not only
+     * the rendered ones. Closes the overlay again if it was closed.
+     *
+     * @return the item labels; empty when the combo box offers no item
+     * @throws IllegalStateException if the items do not load before the timeout, for example on a
+     *                               read-only or disabled combo box whose overlay does not open
+     */
+    public List<String> getItemLabels() {
+        return ComboBoxItemLabels.read(getLocator(), this::isOpened, this::open, this::close);
+    }
+
+    /**
+     * Get the label of the selected item, read from the component's {@code selectedItem}. Unlike
+     * {@link #getValue()}, which reads the input text, this is not affected by a filter typed into
+     * the input, and a custom value (with {@code allowCustomValue}) is not an item: the field then
+     * shows the value while this returns {@code null}.
+     *
+     * @return the selected item's label ({@code ""} for an item without a label), or {@code null}
+     *         when no item is selected
+     */
+    public String getSelectedItemLabel() {
+        Object label = getLocator().evaluate("""
+                el => { const i = el.selectedItem;
+                        if (i === undefined || i === null) return null;
+                        return typeof i === 'string' ? i : String(i[el.itemLabelPath || 'label'] ?? ''); }""");
+        return label == null ? null : label.toString();
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────
