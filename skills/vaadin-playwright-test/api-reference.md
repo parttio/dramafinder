@@ -1338,6 +1338,8 @@ PlaywrightElement for <vaadin-grid>.
 - `int getRenderedRowCount()` — Get the number of rows currently rendered in the DOM.
 - `int getTotalRowCount()` — Get the total number of rows (data items) in the grid.
 - `int getColumnCount()` — Get the number of visible (non-hidden) columns.
+- `OptionalInt findColumnIndexById(String id)` — Find the index of the visible column with the given id, the one set with Column.setId(..) in Flow.
+- `int getColumnIndexById(String id)` — Get the index of the visible column with the given id, for a column that must exist.
 - `boolean isAllRowsVisible()` — Whether the grid has allRowsVisible enabled.
 - `boolean isMultiSort()` — Whether the grid has multi-sort enabled.
 - `boolean isColumnReorderingAllowed()` — Whether column reordering is allowed.

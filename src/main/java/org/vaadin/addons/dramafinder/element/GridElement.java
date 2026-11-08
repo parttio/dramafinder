@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -29,6 +30,12 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
  * content, and interacting with the grid's header, body and selection.
  * Cell access uses JavaScript evaluation on the grid's internal APIs
  * since body cells live in shadow DOM and are virtualized.
+ * <p>
+ * A column index counts the visible (non-hidden) columns in display order,
+ * from 0 on the left: hidden columns are skipped, a selection column counts,
+ * and after the user drags a column to a new place the indexes follow the
+ * new order. A column without header text can be found by its id
+ * ({@code Column.setId(..)}) with {@link #getColumnIndexById(String)}.
  */
 @PlaywrightElement(GridElement.FIELD_TAG_NAME)
 public class GridElement extends VaadinElement
@@ -97,6 +104,41 @@ public class GridElement extends VaadinElement
     public int getColumnCount() {
         return ((Number) locator.evaluate(
                 "el => el._getColumns().filter(c => !c.hidden).length")).intValue();
+    }
+
+    /**
+     * Find the index of the visible column with the given id, the one set with
+     * {@code Column.setId(..)} in Flow. The index counts visible columns in display
+     * order (see the class description), so it can be passed to
+     * {@link #findCell(int, int)} or {@link #findHeaderCell(int)}. A column key
+     * ({@code Column.setKey(..)}) stays on the server and cannot be found this way.
+     *
+     * @param id the column id, matched exactly
+     * @return the 0-based column index; empty if no visible column has that id
+     *         (the column does not exist or is hidden)
+     */
+    public OptionalInt findColumnIndexById(String id) {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("Column id must not be null or empty");
+        }
+        int index = ((Number) locator.evaluate(
+                "(g, id) => g._getColumns().filter(c => !c.hidden)"
+                        + ".sort((a, b) => a._order - b._order).findIndex(c => c.id === id)",
+                id)).intValue();
+        return index < 0 ? OptionalInt.empty() : OptionalInt.of(index);
+    }
+
+    /**
+     * Get the index of the visible column with the given id, for a column that must
+     * exist. {@link #findColumnIndexById(String)} is the variant that may find none.
+     *
+     * @param id the column id, matched exactly
+     * @return the 0-based column index, in display order
+     * @throws IllegalArgumentException if no visible column has that id
+     */
+    public int getColumnIndexById(String id) {
+        return findColumnIndexById(id).orElseThrow(() ->
+                new IllegalArgumentException("No visible column with id '" + id + "'"));
     }
 
     /**
