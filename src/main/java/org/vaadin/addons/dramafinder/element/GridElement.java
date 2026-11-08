@@ -733,13 +733,16 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Select a row by id.
+     * Select a row by index, clicking it like a user would.
+     * Does nothing if the row is already selected.
      *
      * @param rowIndex index of the row to select, starting from 0.
+     * @throws IllegalArgumentException if no row exists at the given index
+     * @throws AssertionError           if the row is not selected after the click, e.g. because the
+     *                                  grid has no selection or the server rejected it
      */
     public void select(int rowIndex) {
-        var rowOptional = findRow(rowIndex);
-        rowOptional.ifPresent(this::select);
+        select(requireRow(rowIndex));
     }
 
     /**
@@ -749,21 +752,32 @@ public class GridElement extends VaadinElement
      * or if you want to use some modifier keys for selection.
      *
      * @param row row to select.
+     * @throws AssertionError if the row is not selected after the click
      */
     protected void select(RowElement row) {
         if (!row.isSelected()) {
             clickRowForSelection(row);
+            assertEventually(locator.page(), "grid row " + row.getRowIndex()
+                    + " to be selected after clicking it", row::isSelected);
         }
     }
 
     /**
-     * Deselect a row by id.
+     * Deselect a row by index, clicking it like a user would.
+     * Does nothing if the row is not selected.
      *
      * @param rowIndex index of the row to deselect, starting from 0.
+     * @throws IllegalArgumentException if no row exists at the given index
+     * @throws AssertionError           if the row is still selected after the click, e.g. because
+     *                                  the grid does not allow deselecting
      */
     public void deselect(int rowIndex) {
-        var rowOptional = findRow(rowIndex);
-        rowOptional.ifPresent(this::deselect);
+        deselect(requireRow(rowIndex));
+    }
+
+    private RowElement requireRow(int rowIndex) {
+        return findRow(rowIndex).orElseThrow(() -> new IllegalArgumentException(
+                "No row at index " + rowIndex + ": the grid has " + getTotalRowCount() + " rows"));
     }
 
     /**
@@ -773,10 +787,13 @@ public class GridElement extends VaadinElement
      * or if you want to use some modifier keys for deselection.
      *
      * @param row row to deselect.
+     * @throws AssertionError if the row is still selected after the click
      */
     protected void deselect(RowElement row) {
         if (row.isSelected()) {
             clickRowForSelection(row);
+            assertEventually(locator.page(), "grid row " + row.getRowIndex()
+                    + " not to be selected after clicking it", () -> !row.isSelected());
         }
     }
 
@@ -801,7 +818,7 @@ public class GridElement extends VaadinElement
         var cellCount = row.getRowLocator().locator("td:not(.details-cell)").count();
         for (int i = 0; i < cellCount; i++) {
             var cell = i == 0 ? firstCell : row.getCell(i);
-            if (findSelectionClickPosition(cell).isPresent()) {
+            if (findFreeClickPosition(cell).isPresent()) {
                 clickCellForSelection(cell);
                 return;
             }
@@ -826,7 +843,7 @@ public class GridElement extends VaadinElement
             checkbox.click();
             waitAfterAction();
         } else {
-            var position = findSelectionClickPosition(cell).orElseThrow(() -> new IllegalStateException(
+            var position = findFreeClickPosition(cell).orElseThrow(() -> new IllegalStateException(
                     "Cannot click cell " + cell.getColumnIndex() + " for selection: interactive content "
                             + "covers the whole cell, padding included"));
             cell.getCellContentLocator().click(new Locator.ClickOptions().setPosition(position));
@@ -836,14 +853,14 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Find a spot of the cell content where a click selects the row: one that hits the cell content
-     * itself or non-interactive content in it. Tries the middle of the left padding first, then the
-     * top left corner, then the centre.
+     * Find a spot of the cell content where a click reaches the grid rather than a component rendered
+     * in the cell: one that hits the cell content itself or non-interactive content in it. Tries the
+     * middle of the left padding first, then the top left corner, then the centre.
      *
      * @param cell the body cell to check
      * @return the position relative to the cell content, empty if every spot hits interactive content
      */
-    private Optional<Position> findSelectionClickPosition(CellElement cell) {
+    private Optional<Position> findFreeClickPosition(CellElement cell) {
         var point = cell.getCellContentLocator().evaluate("""
                 c => {
                     const r = c.getBoundingClientRect();
@@ -872,6 +889,39 @@ public class GridElement extends VaadinElement
                     ((Number) map.get("y")).doubleValue()));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Find where to click a row so the grid sees a click on the row: a free spot of the first data
+     * cell, skipping the selection column and cells that interactive content covers entirely.
+     *
+     * @param row    the row to click
+     * @param action what the click is for, used in the failure message
+     * @return the cell content to click and the position within it
+     * @throws IllegalStateException if no data cell of the row has a free spot
+     */
+    private RowClickTarget findRowClickTarget(RowElement row, String action) {
+        var cellCount = row.getRowLocator().locator("td:not(.details-cell)").count();
+        for (int i = 0; i < cellCount; i++) {
+            var cell = row.getCell(i);
+            if (isSelectionColumnCell(cell)) {
+                continue;
+            }
+            var position = findFreeClickPosition(cell);
+            if (position.isPresent()) {
+                return new RowClickTarget(cell.getCellContentLocator(), position.get());
+            }
+        }
+        throw new IllegalStateException("Cannot " + action + " row " + row.getRowIndex()
+                + ": the row has no data cell with a spot free of interactive content, padding included");
+    }
+
+    private static boolean isSelectionColumnCell(CellElement cell) {
+        return (boolean) cell.getTableCellLocator().evaluate(
+                "td => !!td._column && td._column.localName.endsWith('selection-column')");
+    }
+
+    private record RowClickTarget(Locator cellContent, Position position) {
     }
 
     /**
@@ -954,37 +1004,44 @@ public class GridElement extends VaadinElement
 
 
     /**
-     * Open details for a row by id.
-     * Override this method if you need to control how the details are opened,
-     * for example by clicking some other cell than the first one.
+     * Open the details of a row by clicking it (see {@link RowElement#click()}), which relies on the
+     * grid toggling details on click: Flow's {@code Grid.setDetailsVisibleOnClick(true)}, the default.
+     * Does nothing if the details are already open. In a single-select grid the click also selects
+     * the row.
+     * Override this method if the details are opened another way, for example by a button.
      *
      * @param row row for which to open details
+     * @throws AssertionError if the details are not open after the click
      */
     protected void openDetails(RowElement row) {
         if (row.isDetailsOpen()) {
             return;
         }
 
-        row.getCell(1).click();
-        waitAfterAction();
-        waitForGridToStopLoading();
+        row.click();
+        assertEventually(locator.page(), "grid row " + row.getRowIndex() + " to have its details open"
+                + " after clicking it (details open on click only with setDetailsVisibleOnClick(true);"
+                + " override openDetails to open them another way)", row::isDetailsOpen);
     }
 
     /**
-     * Close details for a row by id.
-     * Override this method if you need to control how the details are closed,
-     * for example by clicking some other cell than the first one.
+     * Close the details of a row by clicking it (see {@link RowElement#click()}), which relies on the
+     * grid toggling details on click: Flow's {@code Grid.setDetailsVisibleOnClick(true)}, the default.
+     * Does nothing if the details are already closed.
+     * Override this method if the details are closed another way, for example by a button.
      *
      * @param row row for which to close details
+     * @throws AssertionError if the details are still open after the click
      */
     protected void closeDetails(RowElement row) {
         if (!row.isDetailsOpen()) {
             return;
         }
 
-        row.getCell(1).click();
-        waitAfterAction();
-        waitForGridToStopLoading();
+        row.click();
+        assertEventually(locator.page(), "grid row " + row.getRowIndex() + " to have its details closed"
+                + " after clicking it (details toggle on click only with setDetailsVisibleOnClick(true);"
+                + " override closeDetails to close them another way)", () -> !row.isDetailsOpen());
     }
 
     /**
@@ -1759,6 +1816,36 @@ public class GridElement extends VaadinElement
         }
 
         /**
+         * Click this row like a user would, firing the grid's item click.
+         * Clicks the first data cell, skipping the selection column, at a spot free of interactive
+         * content (typically its padding), so a button or link rendered in the cell is not
+         * triggered; falls back to the next data cell when interactive content covers a cell
+         * entirely. As for a user, the click also toggles the row's selection in a single-select
+         * grid.
+         *
+         * @throws IllegalStateException if interactive content covers every data cell of the row
+         */
+        public void click() {
+            var target = findRowClickTarget(this, "click");
+            target.cellContent().click(new Locator.ClickOptions().setPosition(target.position()));
+            waitAfterAction();
+            waitForGridToStopLoading();
+        }
+
+        /**
+         * Double-click this row like a user would, firing the grid's item double click.
+         * Picks the spot to click the same way as {@link #click()}.
+         *
+         * @throws IllegalStateException if interactive content covers every data cell of the row
+         */
+        public void doubleClick() {
+            var target = findRowClickTarget(this, "double-click");
+            target.cellContent().dblclick(new Locator.DblclickOptions().setPosition(target.position()));
+            waitAfterAction();
+            waitForGridToStopLoading();
+        }
+
+        /**
          * Whether this row is selected.
          *
          * @return true if the row is selected, false otherwise
@@ -1768,32 +1855,40 @@ public class GridElement extends VaadinElement
         }
 
         /**
-         * Select this row.
+         * Select this row by clicking it like a user would; see {@link GridElement#select(int)}.
+         *
+         * @throws AssertionError if the row is not selected after the click
          */
         public void select() {
             GridElement.this.select(this);
         }
 
         /**
-         * Deselect this row.
+         * Deselect this row by clicking it like a user would; see {@link GridElement#deselect(int)}.
+         *
+         * @throws AssertionError if the row is still selected after the click
          */
         public void deselect() {
             GridElement.this.deselect(this);
         }
 
         /**
-         * Whether the details for this row are open.
+         * Open the details for this row by clicking it.
          * If you need to use a custom way to open the details,
-         * override the {@link GridElement#openDetails(GridElement.Row)} method.
+         * override the {@link GridElement#openDetails(RowElement)} method.
+         *
+         * @throws AssertionError if the details are not open after the click
          */
         public void openDetails() {
             GridElement.this.openDetails(this);
         }
 
         /**
-         * Close the details for this row.
+         * Close the details for this row by clicking it.
          * If you need to use a custom way to close the details,
-         * override the {@link GridElement#closeDetails(GridElement.Row)} method.
+         * override the {@link GridElement#closeDetails(RowElement)} method.
+         *
+         * @throws AssertionError if the details are still open after the click
          */
         public void closeDetails() {
             GridElement.this.closeDetails(this);

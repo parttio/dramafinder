@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.PageTitle;
@@ -13,6 +14,8 @@ public class GridSelectionView extends Main {
     public GridSelectionView() {
         createSingleSelectGrid();
         createMultiSelectGrid();
+        createNoSelectionGrid();
+        createNoDeselectGrid();
     }
 
     private void createSingleSelectGrid() {
@@ -37,5 +40,26 @@ public class GridSelectionView extends Main {
         grid.addColumn(GridPerson::email).setHeader("Email");
         grid.setItems(GridBasicView.generatePersons(20));
         add(new H2("Multi Select Grid"), grid);
+    }
+
+    private void createNoSelectionGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("no-select-grid");
+        grid.setHeight("300px");
+        grid.setSelectionMode(Grid.SelectionMode.NONE);
+        grid.addColumn(GridPerson::firstName).setHeader("First Name");
+        grid.setItems(GridBasicView.generatePersons(5));
+        add(new H2("No Selection Grid"), grid);
+    }
+
+    private void createNoDeselectGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("no-deselect-grid");
+        grid.setHeight("300px");
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        ((GridSingleSelectionModel<GridPerson>) grid.getSelectionModel()).setDeselectAllowed(false);
+        grid.addColumn(GridPerson::firstName).setHeader("First Name");
+        grid.setItems(GridBasicView.generatePersons(5));
+        add(new H2("No Deselect Grid"), grid);
     }
 }
