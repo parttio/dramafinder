@@ -167,6 +167,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-multi-select-combo-box>` | [MultiSelectComboBoxElement](#multiselectcomboboxelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
+| `<vaadin-notification-card[slot]>` | [NotificationElement](#notificationelement) | `getByText(Page, String)` | `TextQuery` |
 | `<vaadin-number-field>` | [NumberFieldElement](#numberfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
@@ -190,7 +191,6 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | — | [AbstractLoginElement](#abstractloginelement) | *constructor only* | — |
 | — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* | — |
 | — | [ContextMenuElement](#contextmenuelement) | *constructor only* | — |
-| — | [NotificationElement](#notificationelement) | `getByText(Page, String)` | — |
 | — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 
 ## Typed queries
@@ -1836,12 +1836,12 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 - `<T extends VaadinElement> T getOverlayItemComponent(String itemText, Class<T> type)` — Get a typed component element from an overlay item matching the given text.
 - `<T extends VaadinElement> T getOverlayItemComponent(int index, Class<T> type)` — Get a typed component element from an overlay item at the given visible index.
 
-### NotificationElement
+### NotificationElement  `<vaadin-notification-card[slot]>`
 
 PlaywrightElement for notification cards <vaadin-notification-card>.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement  
+**Implements:** HasThemeElement, HasStyleElement, Findable  
 
 **Constants:** `String FIELD_TAG_NAME = "vaadin-notification-card"`
 
@@ -1852,7 +1852,7 @@ PlaywrightElement for notification cards <vaadin-notification-card>.
 
 **Static factory methods:**
 
-- `NotificationElement getByText(Page page, String text)` — Get an open notification by (a substring of) its text.
+- `NotificationElement getByText(Page page, String text)` — Get an open notification by its text, matched case-insensitively as a substring.
 
 **Methods:**
 

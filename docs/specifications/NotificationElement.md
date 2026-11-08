@@ -12,3 +12,25 @@ NotificationElement errorNotification = NotificationElement.getByText(page, "Err
 errorNotification.assertOpen();
 errorNotification.assertContent("Error");
 ```
+
+## Typed query
+
+`find(page, NotificationElement.class)` searches the same open cards. `withText`
+matches the card's whole text exactly (case-sensitive), `withTextContaining` a
+case-insensitive substring, and both combine with the common filters — e.g. the
+error notification among several with the same text:
+
+```java
+NotificationElement error = find(page, NotificationElement.class)
+        .withText("Upload finished")
+        .withAttribute("theme", "error")
+        .single();
+int open = find(page, NotificationElement.class).count();
+```
+
+The text is the card's light-DOM text. A notification built from components
+reads as their texts joined without separators (a `Span` "Saved" and a
+`Button` "Undo" give `"SavedUndo"`), so prefer `withTextContaining` there.
+`withClassName` sees the classes Flow copies onto the card; `withId` and
+`withTestId` do not match, because Flow puts both on `vaadin-notification`, not
+on the card.

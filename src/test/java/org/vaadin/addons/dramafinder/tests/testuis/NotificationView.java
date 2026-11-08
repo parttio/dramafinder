@@ -19,6 +19,7 @@ public class NotificationView extends Main {
         createBasicExample();
         createComponentExample();
         createMultipleExample();
+        createSameTextExample();
     }
 
     private void createBasicExample() {
@@ -52,6 +53,23 @@ public class NotificationView extends Main {
             second.open();
         });
         addExample("Multiple notifications example", openNotificationsButton);
+    }
+
+    private void createSameTextExample() {
+        Button openNotificationsButton = new Button("Show same-text notifications", e -> {
+            Notification error = new Notification("Upload finished");
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            error.setDuration(0);
+            error.open();
+            Notification success = new Notification("Upload finished");
+            success.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            success.setDuration(0);
+            success.open();
+            Notification other = new Notification("Upload finished with warnings");
+            other.setDuration(0);
+            other.open();
+        });
+        addExample("Same-text notifications example", openNotificationsButton);
     }
 
     private void addExample(String title, Component component) {
