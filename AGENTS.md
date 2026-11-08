@@ -494,7 +494,8 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `tile.json`; `SkillDistributionTest` fails when one is missing or the tile
   version drifts.
 - **Spring is optional.** `spring-boot-test` is a `provided` dependency, used only
-  by `spring.SpringPlaywrightIT` (issue #205); nothing else may reference Spring,
+  by the `spring` package (`SpringPlaywrightIT`, issue #205, and its test sign-in);
+  nothing outside it may reference Spring,
   and no Spring or Vaadin dependency may become compile/runtime scope, so
   DramaFinder never adds either to a consumer's classpath. `DependencyScopeTest`
   fails otherwise. The repo's own ITs extend the library's `SpringPlaywrightIT`.

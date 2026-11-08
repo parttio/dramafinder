@@ -85,8 +85,9 @@ Base class for Playwright integration tests of a Spring Boot Vaadin app.
 - `String getUrl()` — The URL of the running application, e.g. http://localhost:54321/ or http://localhost:54321/ctx/ with a servlet context path.
 - `protected void prepareBrowserContext(BrowserContext context)` — Signs the browser context in as the test's Spring Security user (@WithMockUser, @WithUserDetails, …), if it has one and Spring Security is on the classpath.
 - `protected void loginAs(String username, String... roles)` — Sign the test's #page in as username, replacing its session, and reload it.
+- `protected void loginAs(BrowserContext context, String username, String... roles)` — Sign context in as username, e.g. a context from getBrowser().newContext(...), before a page of it opens a view; a page already open must reload to see the user.
 - `protected Page newPageAs(String username, String... roles)` — Open the view in a new browser context — its own cookies and session — signed in as username, e.g. to drive a second user alongside the test's #page.
-- `void closeExtraPages()` — Closes the browser contexts #newPageAs(String, String...) opened.
+- `void closeExtraContexts()` — Closes the browser contexts #newPageAs(String, String...) opened.
 
 ### HasTestView
 

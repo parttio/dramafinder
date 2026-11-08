@@ -4,16 +4,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.ClassUtils;
 
 /**
  * Adds the {@link TestLoginFilter} to the test's Spring context when Spring
  * Security is on the classpath. {@link SpringPlaywrightIT} imports it, so the
- * endpoint exists only in a test context, never in the application.
+ * endpoint exists only in a test context, never in the application. Not a
+ * {@code @Configuration}, so a component scan that reaches this package never
+ * picks it up: only the import adds it.
  */
-@Configuration(proxyBeanMethods = false)
 @Conditional(TestLoginConfiguration.SpringSecurityPresent.class)
 class TestLoginConfiguration {
 

@@ -36,15 +36,17 @@ import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
  * {@code @WithSecurityContext} annotation) on the test method or class, without
  * going through the login view; {@code @WithAnonymousUser} or no annotation
  * starts signed out. {@link #loginAs(String, String...)} switches user during a
- * test and {@link #newPageAs(String, String...)} opens a second user's page.
+ * test, {@link #newPageAs(String, String...)} opens a second user's page and
+ * {@link #loginAs(BrowserContext, String, String...)} signs in a browser context
+ * the test opened itself.
  * The user is put into the HTTP session by an endpoint that exists only in the
  * test's Spring context, so the application must keep its security context in
  * the session (Spring Security's default, and Vaadin's). Needs
  * {@code spring-security-test}; {@code setupBefore = TEST_EXECUTION} is not
  * supported, as the page opens before it applies.
  * <p>
- * Spring is optional for DramaFinder: this is the only class that needs it, and
- * the library declares {@code spring-boot-test} and Spring Security as
+ * Spring is optional for DramaFinder: only this class and its package need it,
+ * and the library declares {@code spring-boot-test} and Spring Security as
  * {@code provided}, so it never adds Spring to a project's classpath. A Spring
  * Boot project already has it through {@code spring-boot-starter-test}.
  */
@@ -114,9 +116,27 @@ public abstract class SpringPlaywrightIT extends AbstractBasePlaywrightIT {
      * @throws IllegalStateException if Spring Security is not on the classpath
      */
     protected void loginAs(String username, String... roles) {
-        signIn(page.context(), username, roles);
+        loginAs(page.context(), username, roles);
         page.reload();
         page.waitForFunction(WAIT_FOR_VAADIN_SCRIPT);
+    }
+
+    /**
+     * Sign {@code context} in as {@code username}, e.g. a context from
+     * {@code getBrowser().newContext(...)}, before a page of it opens a view;
+     * a page already open must reload to see the user. The user is created as
+     * in {@link #loginAs(String, String...)}.
+     *
+     * @param context  the browser context to sign in; its cookies get the session
+     * @param username the user name
+     * @param roles    the roles, e.g. {@code "ADMIN"}; none for {@code USER}
+     * @throws IllegalStateException if Spring Security is not on the classpath
+     */
+    protected void loginAs(BrowserContext context, String username, String... roles) {
+        if (!TestLoginConfiguration.isAvailable()) {
+            throw new IllegalStateException("Signing in needs Spring Security (spring-security-web) on the classpath");
+        }
+        SecurityLogin.signIn(applicationContext, context, getUrl(), username, roles);
     }
 
     /**
@@ -133,7 +153,7 @@ public abstract class SpringPlaywrightIT extends AbstractBasePlaywrightIT {
     protected Page newPageAs(String username, String... roles) {
         BrowserContext context = getBrowser().newContext();
         extraContexts.add(context);
-        signIn(context, username, roles);
+        loginAs(context, username, roles);
         Page other = context.newPage();
         other.navigate(getUrl() + getView());
         other.waitForFunction(WAIT_FOR_VAADIN_SCRIPT);
@@ -142,16 +162,9 @@ public abstract class SpringPlaywrightIT extends AbstractBasePlaywrightIT {
         return other;
     }
 
-    private void signIn(BrowserContext context, String username, String... roles) {
-        if (!TestLoginConfiguration.isAvailable()) {
-            throw new IllegalStateException("Signing in needs Spring Security (spring-security-web) on the classpath");
-        }
-        SecurityLogin.signIn(applicationContext, context, getUrl(), username, roles);
-    }
-
     /** Closes the browser contexts {@link #newPageAs(String, String...)} opened. */
     @AfterEach
-    public void closeExtraPages() {
+    public void closeExtraContexts() {
         extraContexts.forEach(BrowserContext::close);
         extraContexts.clear();
     }

@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
@@ -107,5 +108,17 @@ public class SpringSecurityLoginIT extends SpringPlaywrightIT {
         assertThat(text(page, "Signed in as alice")).isVisible();
         page.reload();
         assertThat(text(page, "Signed in as alice")).isVisible();
+    }
+
+    @Test
+    public void loginAsSignsInAContextTheTestOpened() {
+        try (BrowserContext context = getBrowser().newContext()) {
+            loginAs(context, "grace", "AUDITOR");
+            Page other = context.newPage();
+            other.navigate(getUrl() + getView());
+            assertThat(text(other, "Signed in as grace")).isVisible();
+            assertThat(text(other, "Authorities: ROLE_AUDITOR")).isVisible();
+        }
+        assertThat(text(page, "Not signed in")).isVisible();
     }
 }
