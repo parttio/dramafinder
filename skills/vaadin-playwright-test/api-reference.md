@@ -1347,6 +1347,7 @@ PlaywrightElement for <vaadin-grid>.
 - `Optional<HeaderCellElement> findHeaderCell(int headerRowIndex, int columnIndex)` — Find a header cell by header row index and column index.
 - `Optional<HeaderCellElement> findHeaderCellByText(String text)` — Find a header cell by its text content.
 - `Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text)` — Find a header cell by header row index and text content.
+- `List<HeaderCellElement> getHeaderCells(int columnIndex)` — Get the header cells of a column in every header row, top row first: the cell of the column itself and those of the column groups around it.
 - `List<String> getHeaderCellContents()` — Get the text content of all visible header cells.
 - `Optional<FooterCellElement> findFooterCell(int columnIndex)` — Find a footer cell by column index.
 - `Optional<FooterCellElement> findFooterCell(int footerRowIndex, int columnIndex)` — Find a footer cell by footer row index and column index.
@@ -1418,6 +1419,11 @@ Represents a cell in the grid, providing access to the table cell (td or th), th
 - `String getContentSlotName()` — Get the name of the slot used for the cell content.
 - `void click()` — Click the cell content.
 
+#### GridElement.SortDirection
+
+The sort direction of a grid column, as its vaadin-grid-sorter shows it: ASCENDING, DESCENDING or NONE.
+
+
 #### GridElement.HeaderCellElement
 
 Represents a header cell in the grid, providing access to the table cell (th), the cell content and sorting.
@@ -1432,6 +1438,8 @@ Represents a header cell in the grid, providing access to the table cell (th), t
 - `void assertNotSorted()` — Assert that the column is not sorted.
 - `void assertSortable()` — Assert that the header cell supports sorting.
 - `void assertNotSortable()` — Assert that the header cell does not support sorting.
+- `void sort(SortDirection direction)` — Sort the column in the given direction by clicking its sorter until it shows that direction, waiting for the grid to load after each click.
+- `SortDirection getSortDirection()` — Get the current sort direction of the column, read from its sorter.
 
 #### GridElement.FooterCellElement
 
