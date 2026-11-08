@@ -181,6 +181,12 @@ margins, or a theme without cell padding), do they throw an
 protected `clickRowForSelection(RowElement)` or `clickCellForSelection(CellElement)`
 to select such a row another way.
 
+They also check the outcome. `select(int)` and `deselect(int)` throw an
+`IllegalArgumentException` when there is no row at the index, and every select and
+deselect fails with an `AssertionError` when the row's selected state didn't
+change after the click: a grid with no selection, a single-select grid that
+doesn't allow deselecting, or a server that rejected the selection.
+
 ### Utility Methods
 
 | Method | Description |
@@ -233,9 +239,23 @@ Wraps a single grid row (`<tr>`).
 | `isSelected()` | Whether the row is selected |
 | `select()` | Select this row |
 | `deselect()` | Deselect this row |
-| `openDetails()` | Open this row's details panel |
-| `closeDetails()` | Close this row's details panel |
+| `click()` | Click the row, firing the grid's item click |
+| `doubleClick()` | Double-click the row, firing the grid's item double click |
+| `openDetails()` | Open this row's details panel by clicking the row |
+| `closeDetails()` | Close this row's details panel by clicking the row |
 | `isDetailsOpen()` | Whether this row's details panel is open |
+
+`click()` and `doubleClick()` click the first data cell, skipping the selection
+column, at a spot free of interactive content (usually the padding), so a button or
+link rendered in the cell is not triggered; when interactive content covers a cell
+entirely they move on to the next one, and throw an `IllegalStateException` when
+no cell has a free spot.
+
+`openDetails()` and `closeDetails()` click the row the same way and rely on the
+grid toggling details on click, Flow's `Grid.setDetailsVisibleOnClick(true)` (the
+default). They fail with an `AssertionError` naming that setting when the details
+didn't open or close; override the protected `openDetails(RowElement)` /
+`closeDetails(RowElement)` when the details are toggled another way.
 
 ## Usage Examples
 

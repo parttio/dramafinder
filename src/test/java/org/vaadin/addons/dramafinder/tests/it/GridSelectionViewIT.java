@@ -2,6 +2,7 @@ package org.vaadin.addons.dramafinder.tests.it;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -146,5 +147,32 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
         grid.uncheckSelectAll();
         grid.assertSelectAllUnchecked();
         grid.assertSelectedItemCount(0);
+    }
+
+    // ── Failures ───────────────────────────────────────────────────────
+
+    @Test
+    public void testSelectMissingRowFails() {
+        GridElement grid = GridElement.getById(page, "single-select-grid");
+        var e = assertThrows(IllegalArgumentException.class, () -> grid.select(20));
+        assertTrue(e.getMessage().contains("20"), e.getMessage());
+        assertThrows(IllegalArgumentException.class, () -> grid.deselect(20));
+    }
+
+    @Test
+    public void testSelectFailsWhenRowDoesNotBecomeSelected() {
+        page.setDefaultTimeout(2000);
+        GridElement grid = GridElement.getById(page, "no-select-grid");
+        var e = assertThrows(AssertionError.class, () -> grid.select(0));
+        assertTrue(e.getMessage().contains("row 0"), e.getMessage());
+    }
+
+    @Test
+    public void testDeselectFailsWhenRowStaysSelected() {
+        GridElement grid = GridElement.getById(page, "no-deselect-grid");
+        grid.select(0);
+        page.setDefaultTimeout(2000);
+        var e = assertThrows(AssertionError.class, () -> grid.deselect(0));
+        assertTrue(e.getMessage().contains("row 0"), e.getMessage());
     }
 }

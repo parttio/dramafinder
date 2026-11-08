@@ -1361,8 +1361,8 @@ PlaywrightElement for <vaadin-grid>.
 - `void scrollToRow(int rowIndex)` — Scroll the grid so that the given row index becomes visible.
 - `void scrollToStart()` — Scroll to the very beginning of the grid.
 - `void scrollToEnd()` — Scroll to the very end of the grid.
-- `void select(int rowIndex)` — Select a row by id.
-- `void deselect(int rowIndex)` — Deselect a row by id.
+- `void select(int rowIndex)` — Select a row by index, clicking it like a user would.
+- `void deselect(int rowIndex)` — Deselect a row by index, clicking it like a user would.
 - `int getSelectedItemCount()` — Get the number of currently selected items.
 - `boolean isSelectAllChecked()` — Check if the select-all checkbox is checked.
 - `boolean isSelectAllIndeterminate()` — Check if the select-all checkbox is indeterminate.
@@ -1447,11 +1447,13 @@ Represents a row in the grid, providing access to the row locator, row index, an
 - `CellElement getCell(int columnIndex)` — Get the cell element for the given column index in this row.
 - `CellElement getCell(String columnHeaderText)` — Get the cell element for the given column header text in this row.
 - `CellElement getDetailsCell()` — Get the cell element for the details column in this row.
+- `void click()` — Click this row like a user would, firing the grid's item click.
+- `void doubleClick()` — Double-click this row like a user would, firing the grid's item double click.
 - `boolean isSelected()` — Whether this row is selected.
-- `void select()` — Select this row.
-- `void deselect()` — Deselect this row.
-- `void openDetails()` — Whether the details for this row are open.
-- `void closeDetails()` — Close the details for this row.
+- `void select()` — Select this row by clicking it like a user would; see GridElement#select(int).
+- `void deselect()` — Deselect this row by clicking it like a user would; see GridElement#deselect(int).
+- `void openDetails()` — Open the details for this row by clicking it.
+- `void closeDetails()` — Close the details for this row by clicking it.
 - `boolean isDetailsOpen()` — Whether the details for this row are open.
 - `void assertSelected()` — Assert that this row is selected.
 - `void assertNotSelected()` — Assert that this row is not selected.
