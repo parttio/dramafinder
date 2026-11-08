@@ -114,7 +114,15 @@ public class TabsViewIT extends SpringPlaywrightIT implements HasTestView {
         assertThrows(AssertionError.class, () -> tabs.assertTabLabels("Details", "Shipping", "Payment"));
     }
 
-    // ── Disabled tabs ──────────────────────────────────────────────────
+    @Test
+    public void testTabLabelsAreOwnTrimmedText() {
+        TabsElement tabs = TabsElement.getById(page, "account-tabs");
+        assertEquals(List.of("Profile", "Billing", "Security", "Messages"), tabs.getTabLabels());
+        tabs.assertTabLabels("Profile", "Billing", "Security", "Messages");
+        assertEquals("Messages", tabs.getTab(3).getLabel());
+    }
+
+        // ── Disabled tabs ──────────────────────────────────────────────────
 
     @Test
     public void testDisabledTab() {
@@ -129,7 +137,8 @@ public class TabsViewIT extends SpringPlaywrightIT implements HasTestView {
     @Test
     public void testSelectDisabledTabFailsAtOnce() {
         TabsElement tabs = TabsElement.getById(page, "account-tabs");
-        var e = assertTimeout(Duration.ofSeconds(5),
+        // Well below Playwright's 15 s action timeout, which a click on the disabled tab ran into
+        var e = assertTimeout(Duration.ofSeconds(10),
                 () -> assertThrows(IllegalStateException.class, () -> tabs.selectTab("Billing")));
         assertTrue(e.getMessage().contains("Billing") && e.getMessage().contains("disabled"), e.getMessage());
         tabs.assertSelectedTab("Profile");

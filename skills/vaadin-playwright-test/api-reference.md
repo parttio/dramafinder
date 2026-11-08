@@ -2252,7 +2252,7 @@ PlaywrightElement for tabs <vaadin-tab>.
 
 - `boolean isSelected()` — Whether the tab is currently selected.
 - `void select()` — Select the tab by clicking it.
-- `String getLabel()` — Get the tab label text.
+- `String getLabel()` — Get the tab label: the tab's own text, with whitespace collapsed and trimmed.
 - `void assertSelected()` — Assert that the tab is selected.
 - `void assertNotSelected()` — Assert that the tab is not selected.
 
@@ -2321,8 +2321,8 @@ PlaywrightElement for <vaadin-tabs>.
 - `TabElement getSelectedTab()` — Get the currently selected tab.
 - `int getSelectedIndex()` — Get the zero-based index of the selected tab.
 - `String getOrientation()` — Get the current orientation.
-- `List<String> getTabLabels()` — Get the labels of all tabs, in DOM order, as TabElement#getLabel() reads them.
-- `void assertTabLabels(String... expected)` — Assert the labels of all tabs, in order.
+- `List<String> getTabLabels()` — Get the labels of all tabs, in DOM order, read as TabElement#getLabel() does: own text, whitespace collapsed and trimmed.
+- `void assertTabLabels(String... expected)` — Assert the labels of all tabs, in order, as #getTabLabels() reads them.
 - `void selectTab(String label)` — Select a tab by its label.
 - `void selectTab(int index)` — Select a tab by its zero-based index.
 - `void assertTabCount(int count)` — Assert the number of tabs in the tab strip.

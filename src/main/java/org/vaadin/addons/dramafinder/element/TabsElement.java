@@ -14,6 +14,7 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-tabs>}.
@@ -140,23 +141,25 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
     }
 
     /**
-     * Get the labels of all tabs, in DOM order, as {@link TabElement#getLabel()} reads them.
+     * Get the labels of all tabs, in DOM order, read as {@link TabElement#getLabel()} does: own
+     * text, whitespace collapsed and trimmed.
      *
      * @return the tab labels; empty when the strip has no tabs
      */
     @SuppressWarnings("unchecked")
     public List<String> getTabLabels() {
-        return (List<String>) getTabs().evaluateAll("tabs => tabs.map(t => t.textContent)");
+        return (List<String>) getTabs().evaluateAll("tabs => tabs.map(" + TabElement.LABEL_JS + ")");
     }
 
     /**
-     * Assert the labels of all tabs, in order. Each label must match its tab's whole text
-     * (whitespace normalized), and the strip must hold exactly that many tabs.
+     * Assert the labels of all tabs, in order, as {@link #getTabLabels()} reads them. Each label
+     * must match exactly, and the strip must hold exactly that many tabs. Retries until the labels
+     * match or the timeout passes.
      *
      * @param expected the expected tab labels, in DOM order; none asserts the strip has no tabs
      */
     public void assertTabLabels(String... expected) {
-        assertThat(getTabs()).hasText(expected);
+        assertEventually(getLocator().page(), "Tab labels", this::getTabLabels, List.of(expected));
     }
 
     // ── Actions ───────────────────────────────────────────────────────
