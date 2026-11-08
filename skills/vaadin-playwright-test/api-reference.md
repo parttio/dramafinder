@@ -993,6 +993,8 @@ PlaywrightElement for <vaadin-combo-box>.
 - `void clickToggleButton()` — Click the dropdown toggle button.
 - `int getOverlayItemCount()` — Count visible overlay items.
 - `void assertItemCount(int expected)` — Assert that the overlay contains exactly the expected number of items.
+- `List<String> getItemLabels()` — Get the labels of every item the drop-down offers for the current filter, in order.
+- `String getSelectedItemLabel()` — Get the label of the selected item, read from the component's selectedItem.
 
 ### ConfirmDialogElement  `<vaadin-confirm-dialog>`
 
@@ -1847,6 +1849,7 @@ PlaywrightElement for <vaadin-multi-select-combo-box>.
 - `int getSelectedItemCount()` — Get the count of currently selected items from the selectedItems property.
 - `void assertSelectedItems(String... expected)` — Assert that the selected item labels match the expected values, in any order: the selection holds exactly as many items as expected and contains each of them.
 - `void assertSelectedCount(int expected)` — Assert that the number of selected items matches.
+- `List<String> getItemLabels()` — Get the labels of every item the drop-down offers for the current filter, in order, selected or not.
 - `<T extends VaadinElement> T getOverlayItemComponent(String itemText, Class<T> type)` — Get a typed component element from an overlay item matching the given text.
 - `<T extends VaadinElement> T getOverlayItemComponent(int index, Class<T> type)` — Get a typed component element from an overlay item at the given visible index.
 
@@ -2035,6 +2038,9 @@ PlaywrightElement for <vaadin-radio-group>.
 - `RadioButtonElement getRadioButtonByLabel(String label)` — Get a specific radio by its label within the group.
 - `void setValue(String value)` — Set the selected value by label.
 - `void assertValue(String value)` — Assert the selected value by label.
+- `List<String> getItemLabels()` — Get the labels of all radio buttons in the group, in order: the text the user sees, which for Flow is the item label, not the item key held in value.
+- `String getSelectedLabel()` — Get the label of the selected radio button.
+- `void assertSelectedLabel(String label)` — Assert the label of the selected radio button.
 
 ### SelectElement  `<vaadin-select>`
 

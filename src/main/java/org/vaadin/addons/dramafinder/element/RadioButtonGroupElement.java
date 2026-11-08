@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.List;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
@@ -12,6 +14,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesEleme
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-radio-group>}.
@@ -145,6 +148,46 @@ public class RadioButtonGroupElement extends VaadinElement
             assertThat(getLocator().locator("vaadin-radio-button input:checked"))
                     .hasCount(0);
         }
+    }
+
+    // ── Labels ─────────────────────────────────────────────────────────
+
+    // A radio button's label: the text of its label slot, whitespace collapsed and trimmed
+    private static final String RADIO_LABEL_JS = """
+            r => { const l = r.querySelector(':scope > [slot="label"]');
+                   return (l ? l.textContent : (r.label || '')).replace(/\\s+/g, ' ').trim(); }""";
+
+    /**
+     * Get the labels of all radio buttons in the group, in order: the text the user sees, which
+     * for Flow is the item label, not the item key held in {@code value}.
+     *
+     * @return the labels; empty when the group has no radio button
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getItemLabels() {
+        return (List<String>) getLocator().locator(RadioButtonElement.FIELD_TAG_NAME)
+                .evaluateAll("rs => rs.map(" + RADIO_LABEL_JS + ")");
+    }
+
+    /**
+     * Get the label of the selected radio button.
+     *
+     * @return the label, or {@code null} when no radio button is selected
+     */
+    public String getSelectedLabel() {
+        var checked = getLocator().locator(RadioButtonElement.FIELD_TAG_NAME + "[checked]");
+        return checked.count() == 0 ? null : (String) checked.first().evaluate(RADIO_LABEL_JS);
+    }
+
+    /**
+     * Assert the label of the selected radio button. Retries until it matches or the timeout
+     * passes.
+     *
+     * @param label the expected label, matched exactly; {@code null} asserts that no radio button
+     *              is selected
+     */
+    public void assertSelectedLabel(String label) {
+        assertEventually(getLocator().page(), "Selected radio button label", this::getSelectedLabel, label);
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

@@ -7,6 +7,9 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.MultiSelectComboBoxElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -320,5 +323,22 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
         comboBox.selectItem("Cherry");
         comboBox.close();
         comboBox.assertSelectedCount(1);
+    }
+
+    // ── Item labels ────────────────────────────────────────────────────
+
+    @Test
+    public void testItemLabels() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        assertEquals(List.of("Apple", "Banana", "Cherry", "Date", "Elderberry"), comboBox.getItemLabels());
+        comboBox.assertClosed();
+    }
+
+    @Test
+    public void testItemLabelsOfLazyMultiSelectLoadsEveryPage() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");
+        List<String> expected = IntStream.rangeClosed(1, 500).mapToObj(i -> "Item " + i).toList();
+        assertEquals(expected, comboBox.getItemLabels());
+        comboBox.assertClosed();
     }
 }

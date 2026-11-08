@@ -25,9 +25,9 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
 | `Switch` (experimental, Vaadin 25.3) | `SwitchElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `CheckboxGroup` | `CheckboxGroupElement` | `getByLabel(page, label)`, `getCheckboxes()`, `getCheckbox(label)`, `selectByLabel()`, `deselectByLabel()`, `deselectAll()`, `getSelectedValues()`, `assertSelected()` |
-| `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()` |
-| `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `open()`, `assertItemCount()` |
-| `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `assertSelectedItems()`, `assertSelectedCount()` |
+| `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()`, `getItemLabels()`, `getSelectedLabel()`, `assertSelectedLabel()` |
+| `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `open()`, `assertItemCount()`, `getItemLabels()` (all items, lazy pages loaded), `getSelectedItemLabel()` |
+| `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `assertSelectedItems()`, `assertSelectedCount()`, `getSelectedItems()`, `getItemLabels()` (all items, lazy pages loaded) |
 | `Select` | `SelectElement` | `getByLabel(page, label)`, `selectItem()`, `assertValue()` |
 | `ListBox` | `ListBoxElement` | `find(page, ListBoxElement.class).withAccessibleName(name)`, `selectItem()`, `assertSelectedValue()`, `assertItemEnabled()`, `assertItemDisabled()` |
 | `DatePicker` | `DatePickerElement` | `getByLabel(page, label)`, `setValue(LocalDate)`, `assertValue(LocalDate)`, `assertValid()`, `assertInvalid()` |

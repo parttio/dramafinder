@@ -341,6 +341,29 @@ public class MultiSelectComboBoxElement extends VaadinElement
                 this::getSelectedItemCount, expected);
     }
 
+    /**
+     * Get the labels of every item the drop-down offers for the current filter, in order,
+     * selected or not. Opens the overlay if needed and waits for the items to load; with a lazy
+     * data provider the pages not loaded yet are requested one after the other, so all items are
+     * returned, not only the rendered ones. Closes the overlay again if it was closed.
+     *
+     * @return the item labels; empty when the combo box offers no item
+     * @throws IllegalStateException if a page of items does not load before the timeout
+     */
+    public List<String> getItemLabels() {
+        boolean wasOpened = isOpened();
+        if (!wasOpened) {
+            open();
+        }
+        try {
+            return ComboBoxItemLabels.readAll(getLocator());
+        } finally {
+            if (!wasOpened) {
+                close();
+            }
+        }
+    }
+
     // ── Overlay item component queries ─────────────────────────────────
 
     /**
