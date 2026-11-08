@@ -46,6 +46,13 @@ which starts the app on a random port and builds `getUrl()` from it. Spring is
 optional: DramaFinder declares it `provided` and never adds it to the classpath; a
 project without Spring extends `AbstractBasePlaywrightIT` and overrides `getUrl()`.
 
+With Spring Security, a test starts signed in as the user of Spring Security Test's
+`@WithMockUser` or `@WithUserDetails` (on the test method or class) without going
+through the login view; `loginAs("alice", "ADMIN")` switches user during a test and
+`newPageAs("bob")` opens the view as a second user in its own browser context. The
+user goes into the HTTP session through an endpoint registered only in the test's
+Spring context. It needs `spring-security-test` in test scope.
+
 ## Claude Code skills
 
 This repository ships two Claude Code skills. Install them as plugins:

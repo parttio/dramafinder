@@ -251,6 +251,13 @@ one with `RANDOM_PORT`); annotate the test only to change properties or the web
 environment. A copy generated for DramaFinder before 2.0 still needs
 `@SpringBootTest(webEnvironment = RANDOM_PORT)` on each test.
 
+Spring Security app, DramaFinder newer than 2.0.0: don't drive the login view to reach
+a protected view. Put `@WithMockUser(username = "alice", roles = "ADMIN")` or
+`@WithUserDetails("alice")` (from `spring-security-test`, test scope) on the test
+method or class and `page` starts signed in; `loginAs(user, roles...)` switches user
+and `newPageAs(user, roles...)` opens a second user's page. Test the login view
+itself the ordinary way.
+
 ### Component test patterns
 
 **Smoke test (one per component):**
