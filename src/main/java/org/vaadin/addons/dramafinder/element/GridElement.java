@@ -798,8 +798,8 @@ public class GridElement extends VaadinElement
 
     /**
      * Find a spot of the cell content where a click reaches the grid rather than a component rendered
-     * in the cell: one that hits the cell content itself or non-interactive content in it. Tries the middle of the left padding first, then the
-     * top left corner, then the centre.
+     * in the cell: one that hits the cell content itself or non-interactive content in it. Tries the
+     * middle of the left padding first, then the top left corner, then the centre.
      *
      * @param cell the body cell to check
      * @return the position relative to the cell content, empty if every spot hits interactive content
@@ -950,7 +950,8 @@ public class GridElement extends VaadinElement
     /**
      * Open the details of a row by clicking it (see {@link RowElement#click()}), which relies on the
      * grid toggling details on click: Flow's {@code Grid.setDetailsVisibleOnClick(true)}, the default.
-     * Does nothing if the details are already open.
+     * Does nothing if the details are already open. In a single-select grid the click also selects
+     * the row.
      * Override this method if the details are opened another way, for example by a button.
      *
      * @param row row for which to open details
@@ -1700,7 +1701,8 @@ public class GridElement extends VaadinElement
          * Clicks the first data cell, skipping the selection column, at a spot free of interactive
          * content (typically its padding), so a button or link rendered in the cell is not
          * triggered; falls back to the next data cell when interactive content covers a cell
-         * entirely.
+         * entirely. As for a user, the click also toggles the row's selection in a single-select
+         * grid.
          *
          * @throws IllegalStateException if interactive content covers every data cell of the row
          */
