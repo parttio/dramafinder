@@ -47,6 +47,10 @@ public class GridElement extends VaadinElement
 
     public static final String FIELD_TAG_NAME = "vaadin-grid";
 
+    // JS expression for the visible leaf columns of grid `g` in display order: what a column index counts
+    private static final String VISIBLE_COLUMNS_JS =
+            "g._getColumns().filter(c => !c.hidden).sort((a, b) => a._order - b._order)";
+
     /**
      * Create a new {@code GridElement}.
      *
@@ -125,8 +129,7 @@ public class GridElement extends VaadinElement
             throw new IllegalArgumentException("Column id must not be null or empty");
         }
         int index = ((Number) locator.evaluate(
-                "(g, id) => g._getColumns().filter(c => !c.hidden)"
-                        + ".sort((a, b) => a._order - b._order).findIndex(c => c.id === id)",
+                "(g, id) => " + VISIBLE_COLUMNS_JS + ".findIndex(c => c.id === id)",
                 id)).intValue();
         return index < 0 ? OptionalInt.empty() : OptionalInt.of(index);
     }
@@ -278,7 +281,8 @@ public class GridElement extends VaadinElement
      * Every returned cell reports {@code columnIndex} as its column index.
      *
      * @param columnIndex 0-based visible column index, in display order (see the class description)
-     * @return the header cells, top row first; empty only if the grid has no header rows
+     * @return the header cells, top row first, leaving out header rows the grid hides because all
+     *         their cells are empty; empty if the column has no shown header cell
      * @throws IllegalArgumentException if the column index is negative or no visible column has it
      */
     @SuppressWarnings("unchecked")
@@ -289,8 +293,7 @@ public class GridElement extends VaadinElement
         // [header row index, index of the th within its row] of the column's cell and each enclosing group's cell
         var positions = (List<List<Number>>) locator.evaluate("""
                 (g, index) => {
-                    const column = g._getColumns().filter(c => !c.hidden)
-                            .sort((a, b) => a._order - b._order)[index];
+                    const column = %s[index];
                     if (!column) return null;
                     const rows = [...g.shadowRoot.querySelectorAll('thead tr')];
                     const positions = [];
@@ -298,12 +301,13 @@ public class GridElement extends VaadinElement
                         const th = c._headerCell;
                         if (!th || !th.parentElement) continue;
                         const row = rows.indexOf(th.parentElement);
-                        if (row < 0) continue;
+                        // The grid hides a header row whose cells are all empty
+                        if (row < 0 || th.parentElement.hidden) continue;
                         positions.push([row, [...th.parentElement.querySelectorAll(':scope > th')].indexOf(th)]);
                     }
                     return positions.sort((a, b) => a[0] - b[0]);
                 }
-                """, columnIndex);
+                """.formatted(VISIBLE_COLUMNS_JS), columnIndex);
         if (positions == null) {
             throw new IllegalArgumentException("No visible column at index " + columnIndex
                     + ": the grid has " + getColumnCount() + " visible columns");
@@ -1482,6 +1486,9 @@ public class GridElement extends VaadinElement
      * the cell content and sorting.
      */
     public class HeaderCellElement extends CellElement {
+        // A sorter cycles none, ascending, descending: two clicks reach any direction
+        private static final int MAX_SORT_CLICKS = 2;
+
         public HeaderCellElement(Locator tableCell, int columnIndex) {
             super(tableCell, columnIndex);
         }
@@ -1516,7 +1523,7 @@ public class GridElement extends VaadinElement
          * @return {@code true} if the column is sorted in ascending order, {@code false} otherwise
          */
         public boolean isSortAscending() {
-            return "asc".equals(getSortDirectionAttribute());
+            return getSortDirection() == SortDirection.ASCENDING;
         }
 
         /**
@@ -1525,7 +1532,7 @@ public class GridElement extends VaadinElement
          * @return {@code true} if the column is sorted in descending order, {@code false} otherwise
          */
         public boolean isSortDescending() {
-            return "desc".equals(getSortDirectionAttribute());
+            return getSortDirection() == SortDirection.DESCENDING;
         }
 
         /**
@@ -1534,8 +1541,7 @@ public class GridElement extends VaadinElement
          * @return {@code true} if the column is not sorted, {@code false} otherwise
          */
         public boolean isNotSorted() {
-            var sortDirection = getSortDirectionAttribute();
-            return sortDirection == null || sortDirection.isEmpty();
+            return getSortDirection() == SortDirection.NONE;
         }
 
         /**
@@ -1563,6 +1569,17 @@ public class GridElement extends VaadinElement
         }
 
         /**
+         * Assert that the column is sorted in the given direction.
+         *
+         * @param expected the expected direction; {@link SortDirection#NONE} asserts the column is not sorted
+         */
+        public void assertSortDirection(SortDirection expected) {
+            Objects.requireNonNull(expected, "Sort direction must not be null");
+            assertEventually(locator.page(), "Sort direction of column " + getColumnIndex(),
+                    this::getSortDirection, expected);
+        }
+
+        /**
          * Assert that the header cell supports sorting.
          */
         public void assertSortable() {
@@ -1580,19 +1597,20 @@ public class GridElement extends VaadinElement
         /**
          * Sort the column in the given direction by clicking its sorter until it shows that
          * direction, waiting for the grid to load after each click. A sorter cycles
-         * none, ascending, descending, so this takes at most two clicks. Does nothing if the column
+         * none, ascending, descending, so this takes at most two clicks. Does nothing if the
+         * column
          * is already sorted that way.
          *
          * @param direction the direction to sort in; {@link SortDirection#NONE} clears the sort
          * @throws IllegalStateException if the header cell has no sorter, or the sorter did not
-         *                               reach the direction within a full cycle
+         *                               reach the direction within two clicks
          */
         public void sort(SortDirection direction) {
             Objects.requireNonNull(direction, "Sort direction must not be null");
             for (int clicks = 0; getSortDirection() != direction; clicks++) {
-                if (clicks == SortDirection.values().length) {
+                if (clicks == MAX_SORT_CLICKS) {
                     throw new IllegalStateException("Column " + getColumnIndex() + " did not reach sort direction "
-                            + direction + " after a full cycle of sorter clicks; it shows " + getSortDirection());
+                            + direction + " after " + MAX_SORT_CLICKS + " sorter clicks; it shows " + getSortDirection());
                 }
                 clickSort();
             }
@@ -1616,7 +1634,11 @@ public class GridElement extends VaadinElement
 
         // The sort direction as shown in an assertion message: "none" when unsorted.
         private String sortDirectionForMessage() {
-            return isNotSorted() ? "none" : getSortDirectionAttribute();
+            return switch (getSortDirection()) {
+                case ASCENDING -> "asc";
+                case DESCENDING -> "desc";
+                case NONE -> "none";
+            };
         }
 
         // The sorter's direction attribute: "asc", "desc", or null/empty when not sorted

@@ -1436,6 +1436,7 @@ Represents a header cell in the grid, providing access to the table cell (th), t
 - `void assertSortAscending()` — Assert that the column is sorted in ascending order.
 - `void assertSortDescending()` — Assert that the column is sorted in descending order.
 - `void assertNotSorted()` — Assert that the column is not sorted.
+- `void assertSortDirection(SortDirection expected)` — Assert that the column is sorted in the given direction.
 - `void assertSortable()` — Assert that the header cell supports sorting.
 - `void assertNotSortable()` — Assert that the header cell does not support sorting.
 - `void sort(SortDirection direction)` — Sort the column in the given direction by clicking its sorter until it shows that direction, waiting for the grid to load after each click.

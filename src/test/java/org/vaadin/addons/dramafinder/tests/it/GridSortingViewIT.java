@@ -114,7 +114,7 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
         assertEquals(SortDirection.NONE, headerCell.getSortDirection());
 
         headerCell.sort(SortDirection.DESCENDING);
-        assertEquals(SortDirection.DESCENDING, headerCell.getSortDirection());
+        headerCell.assertSortDirection(SortDirection.DESCENDING);
         grid.assertCellContent(0, 0, "First9");
 
         headerCell.sort(SortDirection.ASCENDING);
@@ -122,6 +122,7 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
         grid.assertCellContent(0, 0, "First1");
 
         headerCell.sort(SortDirection.NONE);
+        headerCell.assertSortDirection(SortDirection.NONE);
         headerCell.assertNotSorted();
     }
 

@@ -135,6 +135,7 @@ field in an appended row below. Scope a component lookup to a cell's content:
 
 ```java
 // Header rows: joined "Name" | "Last Name" with sorter | filter field
+// The column has Column.setId("last-name") in Flow
 var cells = grid.getHeaderCells(grid.getColumnIndexById("last-name"));
 TextFieldElement filter = TextFieldElement.getById(cells.get(2).getCellContentLocator(), "last-filter");
 filter.setValue("Smith");
@@ -234,6 +235,7 @@ Extends `CellElement` with sorting support.
 | `clickSort()` | Click the sorter to cycle sort direction |
 | `sort(SortDirection direction)` | Click the sorter until it shows `direction` (`ASCENDING`, `DESCENDING`, `NONE`); no-op if already there |
 | `getSortDirection()` | Current `GridElement.SortDirection`; `NONE` when unsorted |
+| `assertSortDirection(SortDirection expected)` | Assert the direction (retrying); `NONE` asserts unsorted |
 | `isSortAscending()` | Whether the column is sorted ascending |
 | `isSortDescending()` | Whether the column is sorted descending |
 | `isNotSorted()` | Whether the column is not sorted |
@@ -332,7 +334,7 @@ assertTrue(headerCell.get().isNotSorted());
 
 // Or go straight to a direction (at most two clicks, waits for the grid to load)
 headerCell.get().sort(GridElement.SortDirection.DESCENDING);
-assertEquals(GridElement.SortDirection.DESCENDING, headerCell.get().getSortDirection());
+headerCell.get().assertSortDirection(GridElement.SortDirection.DESCENDING);
 ```
 
 `sort`, `getSortDirection` and `clickSort` throw `IllegalStateException` on a
