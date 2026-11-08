@@ -17,5 +17,11 @@ public class TabSheetView extends Main {
         tabSheet.add("Tab 2", new Div(new Text("This is page 2")));
         tabSheet.add("Tab 3", new Div(new Text("This is page 3")));
         add(tabSheet);
+
+        TabSheet withDisabled = new TabSheet();
+        withDisabled.setId("disabled-tabsheet");
+        withDisabled.add("Open", new Div(new Text("Open page")));
+        withDisabled.add("Locked", new Div(new Text("Locked page"))).setEnabled(false);
+        add(withDisabled);
     }
 }

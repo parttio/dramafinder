@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import java.util.List;
+
 import com.microsoft.playwright.Locator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +12,9 @@ import org.vaadin.addons.dramafinder.element.TabSheetElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TabSheetViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -45,5 +50,22 @@ public class TabSheetViewIT extends SpringPlaywrightIT implements HasTestView {
 
         assertThat(page1).isHidden();
         assertThat(page2).isVisible();
+    }
+
+    @Test
+    public void testTabLabels() {
+        TabSheetElement tabs = TabSheetElement.get(page);
+        assertEquals(List.of("Tab 1", "Tab 2", "Tab 3"), tabs.getTabLabels());
+        tabs.assertTabLabels("Tab 1", "Tab 2", "Tab 3");
+    }
+
+    @Test
+    public void testSelectDisabledTabFails() {
+        TabSheetElement tabs = TabSheetElement.getById(page, "disabled-tabsheet");
+        tabs.getTab("Locked").assertDisabled();
+        var e = assertThrows(IllegalStateException.class, () -> tabs.selectTab("Locked"));
+        assertTrue(e.getMessage().contains("Locked"), e.getMessage());
+        tabs.assertSelectedTab("Open");
+        assertThat(tabs.getContentLocator()).hasText("Open page");
     }
 }

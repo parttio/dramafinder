@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
@@ -138,12 +139,33 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
         return orientation == null ? ORIENTATION_HORIZONTAL : orientation;
     }
 
+    /**
+     * Get the labels of all tabs, in DOM order, as {@link TabElement#getLabel()} reads them.
+     *
+     * @return the tab labels; empty when the strip has no tabs
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getTabLabels() {
+        return (List<String>) getTabs().evaluateAll("tabs => tabs.map(t => t.textContent)");
+    }
+
+    /**
+     * Assert the labels of all tabs, in order. Each label must match its tab's whole text
+     * (whitespace normalized), and the strip must hold exactly that many tabs.
+     *
+     * @param expected the expected tab labels, in DOM order; none asserts the strip has no tabs
+     */
+    public void assertTabLabels(String... expected) {
+        assertThat(getTabs()).hasText(expected);
+    }
+
     // ── Actions ───────────────────────────────────────────────────────
 
     /**
      * Select a tab by its label.
      *
      * @param label the tab label
+     * @throws IllegalStateException if the tab is disabled
      */
     public void selectTab(String label) {
         getTab(label).select();
@@ -153,6 +175,7 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
      * Select a tab by its zero-based index.
      *
      * @param index the tab index
+     * @throws IllegalStateException if the tab is disabled
      */
     public void selectTab(int index) {
         getTab(index).select();

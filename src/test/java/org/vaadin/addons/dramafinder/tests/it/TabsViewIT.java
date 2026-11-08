@@ -1,16 +1,24 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import java.time.Duration;
+import java.util.List;
+
 import com.microsoft.playwright.Locator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
+import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.TabElement;
 import org.vaadin.addons.dramafinder.element.TabsElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class TabsViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -94,5 +102,46 @@ public class TabsViewIT extends SpringPlaywrightIT implements HasTestView {
         assertEquals("minimal", tabs.getTheme());
         tabs.assertTheme("minimal");
         tabs.assertCssClass("order-tabs");
+    }
+
+    // ── Tab labels ─────────────────────────────────────────────────────
+
+    @Test
+    public void testTabLabels() {
+        TabsElement tabs = TabsElement.getById(page, "order-tabs");
+        assertEquals(List.of("Details", "Payment", "Shipping"), tabs.getTabLabels());
+        tabs.assertTabLabels("Details", "Payment", "Shipping");
+        assertThrows(AssertionError.class, () -> tabs.assertTabLabels("Details", "Shipping", "Payment"));
+    }
+
+    // ── Disabled tabs ──────────────────────────────────────────────────
+
+    @Test
+    public void testDisabledTab() {
+        TabsElement tabs = TabsElement.getById(page, "account-tabs");
+        TabElement billing = tabs.getTab("Billing");
+        assertFalse(billing.isEnabled());
+        billing.assertDisabled();
+        tabs.getTab("Profile").assertEnabled();
+        assertTrue(tabs.getTab("Profile").isEnabled());
+    }
+
+    @Test
+    public void testSelectDisabledTabFailsAtOnce() {
+        TabsElement tabs = TabsElement.getById(page, "account-tabs");
+        var e = assertTimeout(Duration.ofSeconds(5),
+                () -> assertThrows(IllegalStateException.class, () -> tabs.selectTab("Billing")));
+        assertTrue(e.getMessage().contains("Billing") && e.getMessage().contains("disabled"), e.getMessage());
+        tabs.assertSelectedTab("Profile");
+        assertThrows(IllegalStateException.class, () -> tabs.selectTab(1));
+    }
+
+    @Test
+    public void testSelectTabOnceEnabled() {
+        TabsElement tabs = TabsElement.getById(page, "account-tabs");
+        ButtonElement.getByText(page, "Enable billing").click();
+        tabs.getTab("Billing").assertEnabled();
+        tabs.selectTab("Billing");
+        tabs.assertSelectedTab("Billing");
     }
 }

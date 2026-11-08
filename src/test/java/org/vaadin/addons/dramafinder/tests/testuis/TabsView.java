@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.tabs.Tab;
@@ -19,6 +20,17 @@ public class TabsView extends Main {
     public TabsView() {
         add(createHorizontalTabs());
         add(createVerticalTabs());
+        add(createAccountTabs());
+    }
+
+    // The "Billing" tab starts disabled; the button enables it on the server
+    private Component createAccountTabs() {
+        Tab billing = new Tab("Billing");
+        billing.setEnabled(false);
+        Tabs tabs = new Tabs(new Tab("Profile"), billing, new Tab("Security"));
+        tabs.setId("account-tabs");
+        Button enable = new Button("Enable billing", e -> billing.setEnabled(true));
+        return new Div(tabs, enable);
     }
 
     private Component createHorizontalTabs() {
