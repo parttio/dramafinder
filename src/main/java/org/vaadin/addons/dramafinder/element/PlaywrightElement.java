@@ -12,9 +12,11 @@ import java.lang.annotation.Target;
 public @interface PlaywrightElement {
 
     /**
-     * The tag for the element.
+     * The tag for the element, or a CSS selector narrowing it (e.g.
+     * {@code vaadin-notification-card[slot]} for open notifications only).
+     * The typed query searches for it.
      *
-     * @return the tag for the element
+     * @return the tag or selector for the element
      */
     String value();
 
