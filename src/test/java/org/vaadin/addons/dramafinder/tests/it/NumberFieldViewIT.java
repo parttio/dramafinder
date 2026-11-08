@@ -7,6 +7,9 @@ import org.vaadin.addons.dramafinder.element.NumberFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class NumberFieldViewIT extends SpringPlaywrightIT {
@@ -79,5 +82,54 @@ public class NumberFieldViewIT extends SpringPlaywrightIT {
         // Decrement
         numberField.clickDecreaseButton();
         numberField.assertValue("0.1");
+    }
+
+    // ── Typed value ────────────────────────────────────────────────────
+
+    @Test
+    public void testSetWholeNumberTypesItWithoutFraction() {
+        NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Weight");
+        numberField.setValue(170.0);
+        numberField.assertValue("170");
+        numberField.assertValue(170.0);
+        assertEquals(170.0, numberField.getValueAsDouble());
+        assertThat(page.locator("#weight-server-value")).hasText("Server value: 170.0");
+    }
+
+    @Test
+    public void testSetFractionalNumber() {
+        NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Weight");
+        numberField.setValue(180.5);
+        numberField.assertValue("180.5");
+        numberField.assertValue(180.5);
+        assertEquals(180.5, numberField.getValueAsDouble());
+        assertThat(page.locator("#weight-server-value")).hasText("Server value: 180.5");
+    }
+
+    @Test
+    public void testNullClearsTheField() {
+        NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Measurement");
+        assertEquals(1.5, numberField.getValueAsDouble());
+        numberField.assertValue(1.5);
+
+        numberField.setValue((Double) null);
+        numberField.assertValue("");
+        numberField.assertValue((Double) null);
+        assertNull(numberField.getValueAsDouble());
+    }
+
+    @Test
+    public void testAssertValueComparesNumbers() {
+        NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Weight");
+        numberField.setValue("2.50");
+        numberField.assertValue(2.5);
+        assertThrows(AssertionError.class, () -> numberField.assertValue(3.0));
+    }
+
+    @Test
+    public void testNonFiniteValueIsRejected() {
+        NumberFieldElement numberField = NumberFieldElement.getByLabel(page, "Weight");
+        assertThrows(IllegalArgumentException.class, () -> numberField.setValue(Double.NaN));
+        assertThrows(IllegalArgumentException.class, () -> numberField.setValue(Double.POSITIVE_INFINITY));
     }
 }

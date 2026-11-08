@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.math.BigDecimal;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
@@ -9,6 +11,7 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.NumberUtils;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-number-field>}.
@@ -198,6 +201,48 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public static NumberFieldElement getByLabelContaining(Locator locator, String text) {
         return new NumberFieldElement(ElementQueries.find(locator, NumberFieldElement.class).withLabelContaining(text).getLocator());
+    }
+
+    // ── Typed value ────────────────────────────────────────────────────
+
+    /**
+     * Set the value as a number, typed the way a user would type it: a whole number without a
+     * fraction ({@code 170}, not {@code 170.0}) and no exponent. See
+     * {@link #setValue(String)} for how the value is entered.
+     *
+     * @param value the value to set; {@code null} clears the field
+     * @throws IllegalArgumentException if the value is NaN or infinite
+     */
+    public void setValue(Double value) {
+        if (value == null) {
+            clear();
+            return;
+        }
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Cannot type a non-finite number: " + value);
+        }
+        setValue(BigDecimal.valueOf(value).stripTrailingZeros().toPlainString());
+    }
+
+    /**
+     * Get the current value as a number.
+     *
+     * @return the value, or {@code null} when the field is empty (or holds text the browser does
+     *         not accept as a number, which it reports as an empty value)
+     */
+    public Double getValueAsDouble() {
+        String value = getValue();
+        return value == null || value.isEmpty() ? null : Double.valueOf(value);
+    }
+
+    /**
+     * Assert the value as a number, compared numerically so {@code 2.5} matches the text
+     * {@code 2.50}. Retries until the value matches or the timeout passes.
+     *
+     * @param expected the expected value; {@code null} asserts the field is empty
+     */
+    public void assertValue(Double expected) {
+        assertEventually(getLocator().page(), "Number field value", this::getValueAsDouble, expected);
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

@@ -3,6 +3,7 @@ package org.vaadin.addons.dramafinder.tests.testuis;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -20,7 +21,12 @@ public class NumberFieldView extends Main {
     private void createBasicExample() {
         NumberField numberField = new NumberField("Weight");
         numberField.setHelperText("Enter the weight in kg");
+        // The value the server received, to check the typed value reaches it
+        Span serverValue = new Span("Server value: " + numberField.getValue());
+        serverValue.setId("weight-server-value");
+        numberField.addValueChangeListener(e -> serverValue.setText("Server value: " + e.getValue()));
         addExample("Basic NumberField", numberField);
+        add(serverValue);
     }
 
     private void createMinMaxStepExample() {

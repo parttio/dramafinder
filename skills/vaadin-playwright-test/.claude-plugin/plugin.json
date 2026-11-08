@@ -1,7 +1,7 @@
 {
   "name": "vaadin-playwright-test",
   "description": "Generate Playwright integration tests for Vaadin views using the DramaFinder library — element interaction, form validation, grid assertions, and navigation checks.",
-  "version": "0.14.6",
+  "version": "0.14.7",
   "author": {
     "name": "jcgueriaud1"
   },

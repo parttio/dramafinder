@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-integer-field>}.
@@ -197,6 +198,42 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
      */
     public static IntegerFieldElement getByLabelContaining(Locator locator, String text) {
         return new IntegerFieldElement(ElementQueries.find(locator, IntegerFieldElement.class).withLabelContaining(text).getLocator());
+    }
+
+    // ── Typed value ────────────────────────────────────────────────────
+
+    /**
+     * Set the value as a number, typed in its plain decimal form. See {@link #setValue(String)}
+     * for how the value is entered.
+     *
+     * @param value the value to set; {@code null} clears the field
+     */
+    public void setValue(Integer value) {
+        if (value == null) {
+            clear();
+        } else {
+            setValue(value.toString());
+        }
+    }
+
+    /**
+     * Get the current value as a number.
+     *
+     * @return the value, or {@code null} when the field is empty
+     * @throws NumberFormatException if the field holds text that is not a whole number
+     */
+    public Integer getValueAsInteger() {
+        String value = getValue();
+        return value == null || value.isEmpty() ? null : Integer.valueOf(value);
+    }
+
+    /**
+     * Assert the value as a number. Retries until the value matches or the timeout passes.
+     *
+     * @param expected the expected value; {@code null} asserts the field is empty
+     */
+    public void assertValue(Integer expected) {
+        assertEventually(getLocator().page(), "Integer field value", this::getValueAsInteger, expected);
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

@@ -3,6 +3,7 @@ package org.vaadin.addons.dramafinder.tests.testuis;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -20,7 +21,12 @@ public class IntegerFieldView extends Main {
     private void createBasicExample() {
         IntegerField integerField = new IntegerField("Quantity");
         integerField.setHelperText("Enter the number of items");
+        // The value the server received, to check the typed value reaches it
+        Span serverValue = new Span("Server value: " + integerField.getValue());
+        serverValue.setId("quantity-server-value");
+        integerField.addValueChangeListener(e -> serverValue.setText("Server value: " + e.getValue()));
         addExample("Basic IntegerField", integerField);
+        add(serverValue);
     }
 
     private void createMinMaxStepExample() {
