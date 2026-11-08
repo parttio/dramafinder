@@ -39,6 +39,12 @@ and override `getUrl()` with the running application's address. `SpringPlaywrigh
 needs `spring-boot-starter-test`, which a Spring Boot project already has; DramaFinder
 itself never adds Spring to the classpath.
 
+With Spring Security, don't log in through the login view: annotate the test method or
+class with Spring Security Test's `@WithMockUser(username = "alice", roles = "ADMIN")`
+(or `@WithUserDetails("alice")`) and the page starts signed in. `loginAs("bob", "USER")`
+switches user mid-test; `newPageAs("bob")` returns a second user's page on the same
+view. Needs `spring-security-test` in test scope.
+
 `AbstractBasePlaywrightIT` opens the `page` field before each test, navigates it to
 `getUrl() + getView()`, waits for Vaadin to go idle, and closes it after. The browser
 is headless unless the `headless` system property or the `HEADLESS` environment

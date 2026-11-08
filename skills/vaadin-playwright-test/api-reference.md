@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.0.0-SNAPSHOT — 59 element wrappers.
+> DramaFinder 2.0.1-SNAPSHOT — 59 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -62,6 +62,7 @@ Base class for Playwright integration tests of a Vaadin view.
 **Methods:**
 
 - `void setupTest()`
+- `protected void prepareBrowserContext(BrowserContext context)` — Called before each test opens its view, with the fresh browser context of #page: the place to add cookies or sign in.
 - `void cleanupTest()`
 - `protected Page getPage()`
 - `protected void navigate(Class<?> view)` — Open view — its path resolved from @Route and the layouts' @RoutePrefix — under #getUrl(), and wait for Vaadin to finish loading.
@@ -82,6 +83,10 @@ Base class for Playwright integration tests of a Spring Boot Vaadin app.
 **Methods:**
 
 - `String getUrl()` — The URL of the running application, e.g. http://localhost:54321/ or http://localhost:54321/ctx/ with a servlet context path.
+- `protected void prepareBrowserContext(BrowserContext context)` — Signs the browser context in as the test's Spring Security user (@WithMockUser, @WithUserDetails, …), if it has one and Spring Security is on the classpath.
+- `protected void loginAs(String username, String... roles)` — Sign the test's #page in as username, replacing its session, and reload it.
+- `protected Page newPageAs(String username, String... roles)` — Open the view in a new browser context — its own cookies and session — signed in as username, e.g. to drive a second user alongside the test's #page.
+- `void closeExtraPages()` — Closes the browser contexts #newPageAs(String, String...) opened.
 
 ### HasTestView
 

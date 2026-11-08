@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
@@ -56,10 +57,22 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
     @BeforeEach
     public void setupTest() throws Exception {
         page = browser.get().newPage();
+        prepareBrowserContext(page.context());
         page.navigate(getUrl() + getView());
         page.waitForFunction(WAIT_FOR_VAADIN_SCRIPT);
         page.setDefaultNavigationTimeout(4000);
         page.setDefaultTimeout(15000);
+    }
+
+    /**
+     * Called before each test opens its view, with the fresh browser context
+     * of {@link #page}: the place to add cookies or sign in. Does nothing by
+     * default; {@code SpringPlaywrightIT} signs in the test's Spring Security
+     * user here.
+     *
+     * @param context the browser context the test's page runs in
+     */
+    protected void prepareBrowserContext(BrowserContext context) {
     }
 
     @AfterEach

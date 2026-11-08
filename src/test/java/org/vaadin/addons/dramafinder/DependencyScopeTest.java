@@ -18,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * DramaFinder must not drag Spring or Vaadin into a consumer's classpath:
  * every {@code org.springframework*} or {@code com.vaadin} dependency is
  * {@code provided}, {@code test} or {@code optional}, so Maven never passes it
- * on. Spring is needed only by {@code spring.SpringPlaywrightIT}, Flow only by
- * {@code RouteNavigation}, and the projects that use them already have both.
+ * on. Spring (and Spring Security) is needed only by the {@code spring}
+ * package, Flow only by {@code RouteNavigation}, and the projects that use them
+ * already have both.
  */
 class DependencyScopeTest {
 

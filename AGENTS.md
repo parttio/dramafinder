@@ -498,6 +498,14 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   and no Spring or Vaadin dependency may become compile/runtime scope, so
   DramaFinder never adds either to a consumer's classpath. `DependencyScopeTest`
   fails otherwise. The repo's own ITs extend the library's `SpringPlaywrightIT`.
+- **Spring Security is optional too.** `spring-security-web`, `spring-security-test`
+  and the servlet API are `provided`, used only by the `spring` package's test
+  sign-in (`@WithMockUser`, `loginAs`; issue #216). Only `SecurityLogin` may name a
+  Spring Security type; `SpringPlaywrightIT`, `TestLoginFilter` and
+  `TestLoginConfiguration` must load without it, so check
+  `TestLoginConfiguration.isAvailable()` before calling `SecurityLogin`.
+  `SpringSecurityOptionalTest` loads them with Spring Security hidden. The test
+  server's `TestSecurityConfiguration` leaves every view open but `security/admin`.
 - `com.vaadin:flow-server` is a `provided` dependency, used only by
   `RouteNavigation` (navigation by route class). Keep Vaadin types out of
   `AbstractBasePlaywrightIT`'s method signatures — JUnit reflects over them, and a
