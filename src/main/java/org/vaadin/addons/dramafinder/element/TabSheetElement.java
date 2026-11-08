@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.List;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
@@ -55,12 +57,22 @@ public class TabSheetElement extends VaadinElement implements Findable<Component
         return tabsElement.getSelectedTab();
     }
 
-    /** Select a tab by label text. */
+    /**
+     * Select a tab by label text.
+     *
+     * @param label the tab label
+     * @throws IllegalStateException if the tab is disabled
+     */
     public void selectTab(String label) {
         tabsElement.selectTab(label);
     }
 
-    /** Select a tab by its zero-based index. */
+    /**
+     * Select a tab by its zero-based index.
+     *
+     * @param index the tab index
+     * @throws IllegalStateException if the tab is disabled
+     */
     public void selectTab(int index) {
         tabsElement.selectTab(index);
     }
@@ -68,6 +80,26 @@ public class TabSheetElement extends VaadinElement implements Findable<Component
     /** Assert that the tab with the given label is selected. */
     public void assertSelectedTab(String label) {
         tabsElement.assertSelectedTab(label);
+    }
+
+    /**
+     * Get the labels of all tabs, in order.
+     * See {@link TabsElement#getTabLabels()}.
+     *
+     * @return the tab labels; empty when the tabsheet has no tabs
+     */
+    public List<String> getTabLabels() {
+        return tabsElement.getTabLabels();
+    }
+
+    /**
+     * Assert the labels of all tabs, in order.
+     * See {@link TabsElement#assertTabLabels(String...)}.
+     *
+     * @param expected the expected tab labels, in order
+     */
+    public void assertTabLabels(String... expected) {
+        tabsElement.assertTabLabels(expected);
     }
 
     /** Locator for the currently visible content panel. */

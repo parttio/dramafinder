@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
@@ -13,6 +14,7 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-tabs>}.
@@ -138,12 +140,35 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
         return orientation == null ? ORIENTATION_HORIZONTAL : orientation;
     }
 
+    /**
+     * Get the labels of all tabs, in DOM order, read as {@link TabElement#getLabel()} does: own
+     * text, whitespace collapsed and trimmed.
+     *
+     * @return the tab labels; empty when the strip has no tabs
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getTabLabels() {
+        return (List<String>) getTabs().evaluateAll("tabs => tabs.map(" + TabElement.LABEL_JS + ")");
+    }
+
+    /**
+     * Assert the labels of all tabs, in order, as {@link #getTabLabels()} reads them. Each label
+     * must match exactly, and the strip must hold exactly that many tabs. Retries until the labels
+     * match or the timeout passes.
+     *
+     * @param expected the expected tab labels, in DOM order; none asserts the strip has no tabs
+     */
+    public void assertTabLabels(String... expected) {
+        assertEventually(getLocator().page(), "Tab labels", this::getTabLabels, List.of(expected));
+    }
+
     // ── Actions ───────────────────────────────────────────────────────
 
     /**
      * Select a tab by its label.
      *
      * @param label the tab label
+     * @throws IllegalStateException if the tab is disabled
      */
     public void selectTab(String label) {
         getTab(label).select();
@@ -153,6 +178,7 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
      * Select a tab by its zero-based index.
      *
      * @param index the tab index
+     * @throws IllegalStateException if the tab is disabled
      */
     public void selectTab(int index) {
         getTab(index).select();

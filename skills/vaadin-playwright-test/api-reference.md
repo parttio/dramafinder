@@ -2233,7 +2233,7 @@ PlaywrightElement for <vaadin-switch>.
 PlaywrightElement for tabs <vaadin-tab>.
 
 **Extends:** VaadinElement  
-**Implements:** Findable  
+**Implements:** HasEnabledElement, Findable  
 
 **Constants:** `String FIELD_PARENT_TAG_NAME = "vaadin-tabs"`, `String FIELD_TAG_NAME = "vaadin-tab"`
 
@@ -2254,7 +2254,7 @@ PlaywrightElement for tabs <vaadin-tab>.
 
 - `boolean isSelected()` — Whether the tab is currently selected.
 - `void select()` — Select the tab by clicking it.
-- `String getLabel()` — Get the tab label text.
+- `String getLabel()` — Get the tab label: the tab's own text, with whitespace collapsed and trimmed.
 - `void assertSelected()` — Assert that the tab is selected.
 - `void assertNotSelected()` — Assert that the tab is not selected.
 
@@ -2288,6 +2288,8 @@ PlaywrightElement for <vaadin-tabsheet>.
 - `void selectTab(String label)` — Select a tab by label text.
 - `void selectTab(int index)` — Select a tab by its zero-based index.
 - `void assertSelectedTab(String label)` — Assert that the tab with the given label is selected.
+- `List<String> getTabLabels()` — Get the labels of all tabs, in order.
+- `void assertTabLabels(String... expected)` — Assert the labels of all tabs, in order.
 - `Locator getContentLocator()` — Locator for the currently visible content panel.
 
 ### TabsElement  `<vaadin-tabs>`
@@ -2321,6 +2323,8 @@ PlaywrightElement for <vaadin-tabs>.
 - `TabElement getSelectedTab()` — Get the currently selected tab.
 - `int getSelectedIndex()` — Get the zero-based index of the selected tab.
 - `String getOrientation()` — Get the current orientation.
+- `List<String> getTabLabels()` — Get the labels of all tabs, in DOM order, read as TabElement#getLabel() does: own text, whitespace collapsed and trimmed.
+- `void assertTabLabels(String... expected)` — Assert the labels of all tabs, in order, as #getTabLabels() reads them.
 - `void selectTab(String label)` — Select a tab by its label.
 - `void selectTab(int index)` — Select a tab by its zero-based index.
 - `void assertTabCount(int count)` — Assert the number of tabs in the tab strip.

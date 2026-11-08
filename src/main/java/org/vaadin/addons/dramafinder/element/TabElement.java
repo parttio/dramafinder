@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.query.TextQuery;
+import org.vaadin.addons.dramafinder.element.shared.HasEnabledElement;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
@@ -11,12 +12,24 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 /**
  * PlaywrightElement for tabs {@code <vaadin-tab>}.
+ * <p>
+ * A single tab of a {@code vaadin-tabs} strip: selects it, reads its label and
+ * its selected and enabled state. A disabled tab sets {@code aria-disabled} on its
+ * {@code tab} role, so the enabled checks of {@link HasEnabledElement} apply to it.
  */
 @PlaywrightElement(TabElement.FIELD_TAG_NAME)
-public class TabElement extends VaadinElement implements Findable<TextQuery<TabElement>> {
+public class TabElement extends VaadinElement implements HasEnabledElement, Findable<TextQuery<TabElement>> {
 
     public static final String FIELD_PARENT_TAG_NAME = "vaadin-tabs";
     public static final String FIELD_TAG_NAME = "vaadin-tab";
+
+    // A tab's label: its own text, leaving out children placed in a named slot, with whitespace
+    // collapsed and trimmed as a user sees it
+    static final String LABEL_JS = """
+            el => Array.from(el.childNodes)
+                .filter(node => !(node.nodeType === Node.ELEMENT_NODE && node.hasAttribute('slot')))
+                .map(node => node.textContent)
+                .join('').replace(/\\s+/g, ' ').trim()""";
 
     /** Create a {@code TabElement} from an existing locator. */
     public TabElement(Locator locator) {
@@ -28,15 +41,29 @@ public class TabElement extends VaadinElement implements Findable<TextQuery<TabE
         return getLocator().getAttribute("selected") != null;
     }
 
-    /** Select the tab by clicking it. */
+    /**
+     * Select the tab by clicking it.
+     *
+     * @throws IllegalStateException if the tab is disabled; checked once before the click, not
+     *                               retried, so the call fails at once instead of waiting for
+     *                               the tab to become clickable
+     */
     public void select() {
+        if (!isEnabled()) {
+            throw new IllegalStateException("Cannot select tab '" + getLabel() + "': it is disabled");
+        }
         getLocator().click();
         waitAfterAction();
     }
 
-    /** Get the tab label text. */
+    /**
+     * Get the tab label: the tab's own text, with whitespace collapsed and trimmed. Children in a
+     * named slot (such as a tooltip) are left out.
+     *
+     * @return the label; empty when the tab has no text
+     */
     public String getLabel() {
-        return getLocator().textContent();
+        return (String) getLocator().evaluate(LABEL_JS);
     }
 
     /** Assert that the tab is selected. */
