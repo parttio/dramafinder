@@ -1,8 +1,12 @@
 # Drama Finder
 
+📖 **Documentation: <https://parttio.github.io/dramafinder/>** · [Javadoc](https://parttio.github.io/dramafinder/javadoc/) · [API reference](https://parttio.github.io/dramafinder/skills/vaadin-playwright-test/api-reference/)
+
 ## Documentation
 
-The documentation can be found in this repository.
+The documentation is published at <https://parttio.github.io/dramafinder/>,
+with the [Javadoc](https://parttio.github.io/dramafinder/javadoc/). Its sources
+are the Markdown files in this repository.
 
 ### API reference (and offline agents)
 
@@ -249,6 +253,17 @@ public void testPattern() {
 There is no standalone demo application. The views used to exercise the
 library are test-only (`src/test/java/.../tests/testuis/`) and are served by the
 Spring Boot test harness (`@SpringBootTest`) when the `*IT.java` tests run.
+
+### Documentation site
+
+The `Documentation site` workflow publishes the Markdown documentation and the
+Javadoc to GitHub Pages on every push to `master`. `site/build.py` collects the
+published files (listed in its `NAV`) without moving them; to preview locally:
+
+```
+pip install -r site/requirements.txt
+python3 site/build.py && mkdocs serve -f target/docs-site/mkdocs.yml
+```
 
 ### Javadoc
 

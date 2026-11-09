@@ -1,0 +1,74 @@
+name: Documentation site
+
+# Publishes the documentation to GitHub Pages (https://parttio.github.io/dramafinder/):
+# the Markdown docs (README, START-HERE, migration guide, generated API
+# references, component specifications, ADRs, release notes) rendered with
+# MkDocs, plus the Javadoc under /javadoc/. See site/build.py.
+#
+# Pull requests only build the site, so a broken link or nav entry fails there.
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '**/*.md'
+      - 'site/**'
+      - '.github/workflows/docs-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: site/requirements.txt
+      - name: Install MkDocs
+        run: pip install -r site/requirements.txt
+      - name: Build the Markdown site
+        run: |
+          python3 site/build.py
+          mkdocs build --strict -f target/docs-site/mkdocs.yml
+      - name: Build the Javadoc
+        run: |
+          mvn -B -DskipTests org.apache.maven.plugins:maven-javadoc-plugin:3.6.3:javadoc
+          cp -r target/site/apidocs target/docs-site/site/javadoc
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: target/docs-site/site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
