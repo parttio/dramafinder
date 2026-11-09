@@ -1,5 +1,7 @@
 # Drama Finder
 
+📖 **Documentation: <https://parttio.github.io/dramafinder/>** · [Javadoc](https://parttio.github.io/dramafinder/javadoc/) · [API reference](https://parttio.github.io/dramafinder/skills/vaadin-playwright-test/api-reference/)
+
 ## Documentation
 
 The documentation is published at <https://parttio.github.io/dramafinder/>,
