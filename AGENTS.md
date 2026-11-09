@@ -19,6 +19,11 @@
 - Run a single IT: `./mvnw -Dit.test=MyViewIT -Pit verify`
 - Debug an IT with a visible browser: `./mvnw -Pdebug-ui -Dit.test=MyViewIT verify`
   (or `-Dheadless=false`)
+- Documentation site (GitHub Pages, published from `master` by
+  `.github/workflows/docs-site.yml`): `python3 site/build.py && mkdocs build
+  --strict -f target/docs-site/mkdocs.yml`. A new top-level Markdown document
+  that should appear on the site needs an entry in `NAV` in `site/build.py`;
+  specifications, ADRs and release notes are picked up automatically.
 
 ## Coding Style & Naming Conventions
 

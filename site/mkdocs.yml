@@ -1,0 +1,44 @@
+# Base configuration of the documentation site. site/build.py copies the
+# documentation into target/docs-site/src and appends the navigation; build
+# with: python3 site/build.py && mkdocs build -f target/docs-site/mkdocs.yml
+site_name: DramaFinder
+site_description: Playwright element wrappers for testing Vaadin applications.
+site_url: https://parttio.github.io/dramafinder/
+repo_url: https://github.com/parttio/dramafinder
+repo_name: parttio/dramafinder
+edit_uri: ""
+docs_dir: src
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+validation:
+  links:
+    unrecognized_links: warn
