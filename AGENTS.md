@@ -493,6 +493,10 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `vaadin-playwright-test`'s. A new skill goes into `marketplace.json` and
   `tile.json`; `SkillDistributionTest` fails when one is missing or the tile
   version drifts.
+- A new public element gets a row in
+  `skills/vaadin-playwright-test/element-mapping.md`, and a new mixin in
+  `element/shared/` a line in `llms.txt` ("Mixin Interfaces") and in `TODO.md`;
+  `DocumentationListsTest` fails otherwise.
 - **Spring is optional.** `spring-boot-test` is a `provided` dependency, used only
   by the `spring` package (`SpringPlaywrightIT`, issue #205, and its test sign-in);
   nothing outside it may reference Spring,
