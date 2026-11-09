@@ -595,19 +595,80 @@ class GenerateApiReference {
         // <p> separating it from any elaboration that follows.
         text = text.replaceAll("^\\{@inheritDoc}\\s*(<p>)?\\s*", "").trim();
         if (text.isBlank()) return Optional.empty();
-        // Strip leftover inline-tag braces that toText may keep.
-        text = text.replaceAll("\\{@\\w+\\s+([^}]+)}", "$1");
+        // Inline tags as Markdown code, so "{@code <vaadin-grid>}" is not read as HTML.
+        text = text.replaceAll("</?(strong|b)>", "**").replaceAll("</?(em|i)>", "*");
+        text = inlineTags(text);
         // Truncate at the first real sentence end, skipping "e.g." / "i.e." abbreviations.
-        int from = 0;
-        while (true) {
-            int dot = text.indexOf(". ", from);
-            if (dot < 0) break;
-            String before = text.substring(0, dot);
-            if (before.endsWith("e.g") || before.endsWith("i.e")) { from = dot + 2; continue; }
-            text = text.substring(0, dot + 1);
+        // A ". " inside a code span is not a sentence end.
+        boolean inCode = false;
+        for (int k = 0; k + 1 < text.length(); k++) {
+            char c = text.charAt(k);
+            if (c == '`') { inCode = !inCode; continue; }
+            if (inCode || c != '.' || text.charAt(k + 1) != ' ') continue;
+            String before = text.substring(0, k);
+            if (before.endsWith("e.g") || before.endsWith("i.e")) continue;
+            text = text.substring(0, k + 1);
             break;
         }
         return Optional.of(text.trim());
+    }
+
+    /**
+     * Render Javadoc inline tags as Markdown: {@code {@code x}} and
+     * {@code {@link #m()}} become {@code `x`} and {@code `m()`}, so a tag name
+     * such as {@code <vaadin-grid>} is not swallowed as an HTML tag. A link
+     * label is kept as plain text. Braces nest, so {@code {@code Map<K, {V}>}}
+     * is read to its matching brace.
+     */
+    static String inlineTags(String text) {
+        StringBuilder out = new StringBuilder();
+        int i = 0;
+        while (i < text.length()) {
+            if (!text.startsWith("{@", i)) {
+                out.append(text.charAt(i++));
+                continue;
+            }
+            int depth = 0;
+            int end = i;
+            for (; end < text.length(); end++) {
+                char c = text.charAt(end);
+                if (c == '{') depth++;
+                else if (c == '}' && --depth == 0) break;
+            }
+            if (end >= text.length()) { // unbalanced: leave the rest as written
+                out.append(text, i, text.length());
+                break;
+            }
+            String body = text.substring(i + 2, end);
+            int space = body.indexOf(' ');
+            String tag = space < 0 ? body : body.substring(0, space);
+            String arg = space < 0 ? "" : body.substring(space + 1).trim();
+            out.append(switch (tag) {
+                case "code", "literal" -> code(arg);
+                case "link", "linkplain", "value" -> linkText(arg);
+                default -> arg;
+            });
+            i = end + 1;
+        }
+        return out.toString();
+    }
+
+    /** The label of a link, or else its target as code ({@code #m()} → {@code m()}, {@code T#m} → {@code T.m}). */
+    static String linkText(String arg) {
+        int depth = 0;
+        for (int k = 0; k < arg.length(); k++) {
+            char c = arg.charAt(k);
+            if (c == '(') depth++;
+            else if (c == ')') depth--;
+            else if (c == ' ' && depth == 0) return arg.substring(k + 1).trim();
+        }
+        if (arg.isEmpty()) return arg;
+        String ref = arg.startsWith("#") ? arg.substring(1) : arg.replace('#', '.');
+        return code(ref);
+    }
+
+    static String code(String s) {
+        return s.contains("`") ? "`` " + s + " ``" : "`" + s + "`";
     }
 
     static String anchor(String name) {

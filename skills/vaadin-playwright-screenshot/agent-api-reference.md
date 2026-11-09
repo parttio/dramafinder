@@ -1,7 +1,7 @@
 # DramaFinder Agent Helpers API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-agent-api-reference.java`.
-> DramaFinder 2.0.0-SNAPSHOT — 6 agent helper types.
+> DramaFinder 2.0.2-SNAPSHOT — 6 agent helper types.
 
 Public API of the `org.vaadin.addons.dramafinder.agent` helpers used by the **vaadin-playwright-screenshot** skill. Method one-liners come from Javadoc.
 
@@ -15,7 +15,7 @@ A temp verification test extends `VisualVerificationTest`; the other types are i
 
 ## VisualVerificationTest
 
-Base class for temporary, agent-driven visual verification tests that run against an <strong>already running</strong> application.
+Base class for temporary, agent-driven visual verification tests that run against an **already running** application.
 
 *abstract class* · **implements** AgentReportProvider
 
@@ -27,7 +27,7 @@ Base class for temporary, agent-driven visual verification tests that run agains
 
 ## AgentReport
 
-Writes agent-oriented verification artifacts for a single test into a report directory (target/agent-report/ for Maven, build/agent-report/ for Gradle).
+Writes agent-oriented verification artifacts for a single test into a report directory (`target/agent-report/` for Maven, `build/agent-report/` for Gradle).
 
 **Constructors:**
 
@@ -36,17 +36,17 @@ Writes agent-oriented verification artifacts for a single test into a report dir
 
 **Static methods:**
 
-- `Path defaultReportDirectory()` — Resolve the default report directory for the current build tool: build/agent-report when a Gradle build file is present, otherwise target/agent-report (Maven).
+- `Path defaultReportDirectory()` — Resolve the default report directory for the current build tool: `build/agent-report` when a Gradle build file is present, otherwise `target/agent-report` (Maven).
 
 **Methods:**
 
-- `void captureFailure(Throwable error)` — Write the failure bundle for a failed test: failure.txt (message + trimmed stack trace + page URL), failure.png (full-page screenshot), component-snapshot.txt (semantic snapshot), and view-outline.txt (each component with its verified lookup).
+- `void captureFailure(Throwable error)` — Write the failure bundle for a failed test: `failure.txt` (message + trimmed stack trace + page URL), `failure.png` (full-page screenshot), `component-snapshot.txt` (semantic snapshot), and `view-outline.txt` (each component with its verified lookup).
 - `Path directory()` — The directory this report writes to.
 - `Path shot(String name)` — Capture a numbered screenshot of the current page state.
 
 ## AgentReportProvider
 
-Implemented by tests that want the AgentReporting extension to write a failure bundle using a specific page and report instance.
+Implemented by tests that want the `AgentReporting` extension to write a failure bundle using a specific page and report instance.
 
 *interface*
 
@@ -57,7 +57,7 @@ Implemented by tests that want the AgentReporting extension to write a failure b
 
 ## AgentReporting
 
-JUnit 5 extension that, on test failure, writes an agent-oriented report to target/agent-report/ (Maven) or build/agent-report/ (Gradle): a failure.txt with the assertion message and a trimmed stack trace, a screenshot of the page at failure time, and a semantic ComponentSnapshot component snapshot.
+JUnit 5 extension that, on test failure, writes an agent-oriented report to `target/agent-report/` (Maven) or `build/agent-report/` (Gradle): a `failure.txt` with the assertion message and a trimmed stack trace, a screenshot of the page at failure time, and a semantic component snapshot.
 
 **implements** AfterTestExecutionCallback
 
@@ -71,13 +71,13 @@ Produces a compact, human- and agent-readable summary of the Vaadin components c
 
 ## ViewOutline
 
-Lists the Vaadin components of the page that is open in a Page, each with the DramaFinder lookup a test should use to reach it.
+Lists the Vaadin components of the page that is open in a `Page`, each with the DramaFinder lookup a test should use to reach it.
 
 **Constants:** `String FILE_NAME`
 
 **Static methods:**
 
 - `String capture(Page page)` — Capture the outline of the page as text: one entry per component, with the verified lookup on the line below it.
-- `Path write(Page page)` — Capture the outline and write it to #FILE_NAME in the default report directory (target/agent-report/, or build/ under Gradle).
-- `Path write(Page page, Path directory)` — Capture the outline and write it to #FILE_NAME in the given directory, creating the directory if needed.
+- `Path write(Page page)` — Capture the outline and write it to `FILE_NAME` in the default report directory (`target/agent-report/`, or `build/` under Gradle).
+- `Path write(Page page, Path directory)` — Capture the outline and write it to `FILE_NAME` in the given directory, creating the directory if needed.
 
