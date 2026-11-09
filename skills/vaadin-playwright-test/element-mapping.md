@@ -33,7 +33,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `DatePicker` | `DatePickerElement` | `getByLabel(page, label)`, `setValue(LocalDate)`, `assertValue(LocalDate)`, `assertValid()`, `assertInvalid()` |
 | `TimePicker` | `TimePickerElement` | `getByLabel(page, label)`, `setValue(LocalTime)`, `assertValue(LocalTime)` |
 | `DateTimePicker` | `DateTimePickerElement` | `getByLabel(page, label)`, `setValue(LocalDateTime)`, `assertValue(LocalDateTime)`, `setDate()`, `setTime()` |
-| `Grid` | `GridElement` | `get(page)`, `getById(page, id)`, `assertRowCount()`, `assertCellContent(row, col, text)`, `assertHeaderCellContents()`, `select(rowIndex)`, `assertRowSelected()`, `scrollToRow()`, `findRow()`, `findCell()`; sorting via `findHeaderCellByText(text)` → `HeaderCellElement.clickSort()` / `assertSortAscending()` |
+| `Grid` | `GridElement` | `get(page)`, `getById(page, id)`, `assertRowCount()`, `assertCellContent(row, col, text)`, `assertHeaderCellContents()`, `select(rowIndex)`, `assertRowSelected()`, `scrollToRow()`, `findRow()`, `findCell()`; rows: `findRow(index)` → `RowElement.click()`, `doubleClick()`, `openDetails()`; sorting via `findHeaderCellByText(text)` → `HeaderCellElement.sort(GridElement.SortDirection)` / `assertSortDirection()`; header rows (filters) via `getHeaderCells(columnIndex)` |
 | `TreeGrid` | `TreeGridElement` | `get(page)`, `expandRow()`, `collapseRow()`, `assertRowCount()`, `assertCellContent()` — extends `GridElement` |
 | `VirtualList` | `VirtualListElement` | `get(page)`, `assertRowCount()`, `assertItemRendered()`, `scrollToRow()` |
 | `ConfirmDialog` | `ConfirmDialogElement` | `getByHeaderText(page, header)` or `get(page)`, `assertMessage()`, `assertHeaderText()`, `confirm()`, `cancel()`, `reject()`, `closeWithEscape()`, `assertConfirmText()`, `assertCancelable()`, `assertRejectable()`, `assertClosed()` |
@@ -49,6 +49,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `assertOpened()`, `assertClosed()` |
 | `MenuBar` | `MenuBarElement` | `find(page, MenuBarElement.class).withAccessibleName(name)` or `new MenuBarElement(page)`, `getMenuItemElement(name)`, `openSubMenu(name)` |
+| `MenuBar` sub-menu | `MenuElement` | returned by `menuBar.openSubMenu(name)` (or `new MenuElement(page)`), `getMenuItemElement(name)`, `openSubMenu(name)` for a nested sub-menu |
+| `MenuBar` item | `MenuItemElement` | returned by `menuBar.getMenuItemElement(name)`, `click()`, `assertExpanded()`, `assertCollapsed()` |
 | `ContextMenu` | `ContextMenuElement` | `ContextMenuElement.openOn(target)` then `new ContextMenuElement(page)`, `selectItem()`, `assertOpen()`, `assertClosed()` |
 | `SplitLayout` | `SplitLayoutElement` | `get(page)`, `assertHorizontal()`, `assertVertical()`, `dragSplitterBy()` |
 | `FormLayout` | `FormLayoutElement` | `get(page)`, `get(locator)`, `getById(page, id)`, `getFields()`, `getField(index)`, `getFieldCount()`, `getFormItems()`, `getColumnCount()`, `getLabelPosition()`, `assertColumnCount(int)`, `assertLabelPosition(String)`, `assertFieldCount(int)` |
@@ -63,11 +65,16 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Popover` | `PopoverElement` | `find(page, PopoverElement.class).withAccessibleName(name)` or `new PopoverElement(page)`, `assertOpen()`, `assertClosed()` |
 | `Tooltip` | `TooltipElement` | `get(page)`, `get(locator)` scoped to the target component, `getByText(page, text)`, or `someElement.getTooltip()`; `getText()`, `assertText()`, `isOpened()`, `assertOpened()`, `assertClosed()`, `getPosition()`, `assertPosition()`, `hoverTarget()`, `closeWithEscape()` |
 | `SideNavigation` | `SideNavigationElement` | `getByLabel(page, label)`, `clickItem(label)`, `getItem(label)`, `assertCollapsed()`, `assertExpanded()` |
+| `SideNavItem` | `SideNavigationItemElement` | returned by `sideNav.getItem(label)`, or `getByLabel(page, label)`; `navigate()`, `toggle()`, `isExpanded()`, `assertExpanded()`, `assertCollapsed()`, `assertCurrent()`, `assertNotCurrent()` |
 | `Card` | `CardElement` | `getByTitle(page, title)`, `assertTitle()`, `assertSubtitle()` |
 | `Markdown` | `MarkdownElement` | `get(page)`, `getRenderedLocator()`, `getText()`, `assertContainsText()`, `getHeadings()`, `getLinks()`, `getCodeBlocks()`, `assertHeading(index, text)`, `assertLink(text, href)`, `assertCodeBlockLanguage(index, language)` |
 | `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
 | `Breadcrumbs` | `BreadcrumbsElement` | `get(page)`, `find(page, BreadcrumbsElement.class).withAccessibleName(name)`, `getItems()`, `getItem(text)`, `getCurrentItem()`, `assertItemTexts()`, `assertItemCount()`, `hasOverflow()`, `openOverflow()`, `getOverflowItems()` |
 | `BreadcrumbsItem` | `BreadcrumbsItemElement` | `getByText(page, text)`, `getText()`, `getPath()`, `isLink()`, `click()`, `isCurrent()`, `assertCurrent()`, `assertHasPrefix()`, `assertDisabled()` |
+
+The abstract bases `AbstractNumberFieldElement` (of `IntegerFieldElement` and
+`NumberFieldElement`) and `AbstractLoginElement` (of `LoginFormElement` and
+`LoginOverlayElement`) hold their shared methods; use the concrete classes.
 
 ## Factory method conventions
 
@@ -96,7 +103,7 @@ DialogElement dialog = DialogElement.getByHeaderText(page, "Edit person");
 ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Unsaved changes");
 
 // A few elements have no static factory at all (AccordionElement,
-// ProgressBarElement, SideNavigationItemElement, ...) — construct them
+// ProgressBarElement, ...) — construct them
 // from a Locator, which is always available on every element:
 // (also useful for elements inside dialogs, grid cells, etc.)
 TextFieldElement field = new TextFieldElement(dialog.getLocator().locator("vaadin-text-field"));

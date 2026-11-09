@@ -133,14 +133,24 @@ dialog.assertClosed();
 ```
 
 ### Mixin Interfaces
-Common behaviors are provided via interfaces:
-- `HasInputFieldElement` - value get/set
+Common behaviors are provided via interfaces in `element/shared/`:
+- `HasLocatorElement` - the underlying Playwright locator (base of every mixin)
+- `HasValueElement` - text value get/set/clear/assert through the input slot
+- `HasInputFieldElement` - value, label, helper and CSS classes of an input field, combined
 - `HasValidationPropertiesElement` - required, invalid, error message
-- `HasEnabledElement` - enabled/disabled state
+- `HasEnabledElement` - enabled/disabled state, read the way Playwright does
+- `HasDisabledAttributeElement` - enabled/disabled state from the `disabled` attribute, for hosts that are not form controls
+- `HasReadOnlyElement` - read-only state
+- `HasCheckedElement` - checked state of a checkbox-like input
 - `FocusableElement` - focus/blur operations
 - `HasThemeElement` - theme variant assertions
+- `HasStyleElement` - CSS class names
+- `HasAriaLabelElement` - `aria-label`
 - `HasClearButtonElement` - clear button click
 - `HasPlaceholderElement` - placeholder text
+- `HasAllowedCharPatternElement` - `allowedCharPattern`
+- `HasPrefixElement` - content of the `prefix` slot
+- `HasSuffixElement` - content of the `suffix` slot
 - `HasTooltipElement` - tooltip content
 - `HasLabelElement` - label text
 - `HasHelperElement` - helper text
