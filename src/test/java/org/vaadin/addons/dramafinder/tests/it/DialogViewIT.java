@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,10 @@ import org.vaadin.addons.dramafinder.element.DialogElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
@@ -114,4 +119,33 @@ public class DialogViewIT extends SpringPlaywrightIT implements HasTestView {
         dialog.assertTheme("no-padding");
     }
 
+
+    @Test
+    public void testQueryMatchesOpenDialogsOnly() {
+        ButtonElement.getByText(page, "Open kept dialog").click();
+        DialogElement kept = DialogElement.getByHeaderText(page, "Kept dialog");
+        kept.assertOpen();
+        assertTrue(kept.isOpen());
+        ButtonElement.getByText(kept.getFooterLocator(), "Close").click();
+        kept.assertClosed();
+        assertFalse(kept.isOpen());
+
+        // the closed dialog is still in the page
+        DialogElement keptById = new DialogElement(page.locator("vaadin-dialog").filter(
+                new Locator.FilterOptions().setHas(page.getByText("Kept in the page."))));
+        assertThat(keptById.getLocator()).hasCount(1);
+        assertFalse(keptById.isOpen());
+        keptById.assertClosed();
+
+        ButtonElement.getByText(page, "Open other dialog").click();
+        DialogElement open = find(page, DialogElement.class).single();
+        open.assertOpen();
+        assertTrue(open.isOpen());
+        open.assertHeaderText("Other dialog");
+
+        ButtonElement.getByText(open.getFooterLocator(), "Close").click();
+        open.assertClosed();
+        assertFalse(open.isOpen());
+        assertEquals(0, find(page, DialogElement.class).count());
+    }
 }

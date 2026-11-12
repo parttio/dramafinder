@@ -187,7 +187,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `DateTimePickerQuery` |
 | `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` + id, test id | `ComponentQuery` |
-| `<vaadin-dialog>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-dialog[opened]>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-grid>` | [GridElement](#gridelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
@@ -197,7 +197,6 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-login-overlay>` | [LoginOverlayElement](#loginoverlayelement) | `get(Page)`, `getByTitle(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-markdown>` | [MarkdownElement](#markdownelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-menu-bar>` | [MenuBarElement](#menubarelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
-| `<vaadin-menu-bar-button>` | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` | `TextQuery` |
 | `<vaadin-menu-bar-list-box>` | [MenuElement](#menuelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` | `ComponentQuery` |
 | `<vaadin-message-input>` | [MessageInputElement](#messageinputelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-message-list>` | [MessageListElement](#messagelistelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
@@ -226,6 +225,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | — | [AbstractLoginElement](#abstractloginelement) | *constructor only* | — |
 | — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* | — |
 | — | [ContextMenuElement](#contextmenuelement) | *constructor only* | — |
+| — | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` | `TextQuery` |
 | — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 
 ## Typed queries
@@ -1016,6 +1016,7 @@ PlaywrightElement for `<vaadin-combo-box>`.
 - `String getValue()` — Get the selected value label.
 - `void assertValue(String expected)` — Assert that the displayed value equals the expected string.
 - `void setValue(String value)` — Select the item whose label equals `value`, by typing it as a filter and closing the overlay once the matching item is shown.
+- `void clear()` — Clear the selection as a user does: click the clear button when it is visible, otherwise empty the input and leave the field.
 - `void selectItem(String item)` — Select an item by its visible label.
 - `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item.
 - `void filterAndSelectFirstItem(String filter)` — Type filter text into the input, then click the first item the drop-down offers for it, whatever its label.
@@ -1179,7 +1180,7 @@ PlaywrightElement for `<vaadin-date-picker>`.
 
 - `void setValue(LocalDate date)` — Set the value using a `LocalDate` formatted as ISO-8601.
 - `LocalDate getValueAsLocalDate()` — Get the current value as a `LocalDate`.
-- `void setValue(String value)` — Set the value of the input.
+- `void setValue(String value)` — Type `value` into the input and press Enter there, as a user does.
 - `void assertValue(String value)` — Assert that the input value equals the provided string.
 - `void assertValue(LocalDate value)` — Assert that the value equals the provided date.
 
@@ -1211,11 +1212,15 @@ PlaywrightElement for `<vaadin-date-time-picker>`.
 
 - `void setValue(LocalDateTime date)` — Set the value using a `LocalDateTime`.
 - `LocalDateTime getValueAsLocalDateTime()` — Get the current value as a `LocalDateTime`.
-- `void setValue(String value)` — Set the value of the input.
+- `void setValue(String value)` — Fill the date half's input with `value` and dispatch a `change` event on the host.
 - `void assertValue(String value)` — Assert that the input value equals the provided string.
 - `void assertValue(LocalDateTime value)` — Assert that the value equals the provided date-time.
-- `void setDate(String date)` — Set only the date part (string input) and dispatch change events.
-- `void setTime(String date)` — Set only the time part (string input) and dispatch change events.
+- `void setDate(String date)` — Type `date` into the date half, press Enter there and leave the field, as a user does.
+- `void setTime(String time)` — Type `time` into the time half, press Enter there and leave the field, as a user does.
+- `void typeText(String date, String time)` — Type into both halves as a user does, then leave the field.
+- `void clear()` — Empty both halves and leave the field, so the value becomes empty (`null` on the server).
+- `DatePickerElement getDatePicker()` — Get the date half of this field.
+- `TimePickerElement getTimePicker()` — Get the time half of this field.
 - `String getDateValue()` — Get the text of the date sub-field, as the user sees it.
 - `String getTimeValue()` — Get the text of the time sub-field, as the user sees it.
 - `void assertDateValue(String date)` — Assert the date sub-field value equals the expected string.
@@ -1248,13 +1253,14 @@ PlaywrightElement for `<vaadin-details>`.
 - `void assertClosed()` — Assert that the details is closed.
 - `boolean isOpen()` — Whether the details is opened.
 - `void setOpen(boolean open)` — Set the opened state by clicking the summary when necessary.
-- `Locator getSummaryLocator()` — Locator for the summary element.
+- `void toggle()` — Open closed details, or close open ones, by clicking the summary.
+- `Locator getSummaryLocator()` — Locator for the summary element: this component's own `vaadin-details-summary`, not the summary of details nested in the content.
 - `String getSummaryText()` — Text of the summary element.
-- `Locator getContentLocator()` — Locator for the currently visible content container.
+- `Locator getContentLocator()` — Locator for the content container: the direct child that is neither the summary nor slotted (such as a tooltip).
 - `void assertContentVisible()` — Assert that the content is visible.
 - `void assertContentNotVisible()` — Assert that the content is not visible.
 
-### DialogElement  `<vaadin-dialog>`
+### DialogElement  `<vaadin-dialog[opened]>`
 
 PlaywrightElement for `<vaadin-dialog>`.
 
@@ -1280,7 +1286,7 @@ PlaywrightElement for `<vaadin-dialog>`.
 
 - `void closeWithEscape()` — Close the dialog using the Escape key.
 - `Locator getOverlayLocator()` — Locator for the overlay rendered in the dialog's shadow DOM.
-- `boolean isOpen()` — Whether the dialog is open (visible).
+- `boolean isOpen()` — Whether the dialog is open: it has the `opened` attribute, the state `assertOpen()` checks.
 - `void assertOpen()` — Assert that the dialog is open.
 - `boolean isVisible()` — Whether the dialog (its overlay) is visible.
 - `void assertVisible()` — Assert that the dialog overlay is visible.
@@ -1288,7 +1294,7 @@ PlaywrightElement for `<vaadin-dialog>`.
 - `boolean isModal()` — Whether the dialog is modal (i.e. not modeless).
 - `void assertModal()` — Assert that the dialog is modal.
 - `void assertModeless()` — Assert that the dialog is modeless.
-- `void assertClosed()` — Assert that the dialog is closed (its overlay is hidden).
+- `void assertClosed()` — Assert that the dialog is closed: it has no `opened` attribute and its overlay is hidden (the overlay stays visible while it animates out).
 - `String getHeaderText()` — Get the header text from the title slot.
 - `void assertHeaderText(String headerText)` — Assert the header text matches.
 - `Locator getHeaderLocator()` — Locator for the header content slot.
@@ -1714,12 +1720,14 @@ PlaywrightElement for `<vaadin-menu-bar>`.
 
 **Methods:**
 
-- `MenuItemElement getMenuItemElement(String name)` — Get a menu item by visible label.
-- `MenuElement openSubMenu(String name)` — Click a menu item to open its submenu and return the submenu overlay.
+- `MenuItemElement getMenuItemElement(String name)` — Get a top-level item of this menu bar by its label.
+- `List<String> getItemLabels()` — Get the labels of the top-level items, in display order: each item's own text, or its `aria-label` when it has no text.
+- `MenuElement openSubMenu(String name)` — Click a top-level item and return the sub-menu it opens.
+- `void close()` — Close every open sub-menu of this menu bar and wait until they are gone.
 
 ### MenuElement  `<vaadin-menu-bar-list-box>`
 
-PlaywrightElement for the menu overlay list `<vaadin-menu-bar-list-box>`.
+PlaywrightElement for a menu bar sub-menu, the list `<vaadin-menu-bar-list-box>`.
 
 **Extends:** VaadinElement  
 **Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement, Findable  
@@ -1728,7 +1736,7 @@ PlaywrightElement for the menu overlay list `<vaadin-menu-bar-list-box>`.
 
 **Constructors:**
 
-- `MenuElement(Page page)` — Create a `MenuElement` from the page.
+- `MenuElement(Page page)` — Create a `MenuElement` matching every menu bar list box on the page.
 - `MenuElement(Locator locator)` — Create a `MenuElement` from an existing locator.
 
 **Static factory methods:**
@@ -1738,17 +1746,18 @@ PlaywrightElement for the menu overlay list `<vaadin-menu-bar-list-box>`.
 
 **Methods:**
 
-- `MenuItemElement getMenuItemElement(String name)` — Get a menu item by its visible label within this menu.
-- `MenuElement openSubMenu(String name)` — Click a menu item to open its submenu and return the next overlay.
+- `MenuItemElement getMenuItemElement(String name)` — Get an item of this menu by its label.
+- `List<String> getItemLabels()` — Get the labels of this menu's items, in display order: each item's own text, or its `aria-label` when it has no text.
+- `MenuElement openSubMenu(String name)` — Click an item of this menu and return the nested sub-menu it opens.
 
-### MenuItemElement  `<vaadin-menu-bar-button>`
+### MenuItemElement
 
-PlaywrightElement for individual menu items `<vaadin-menu-bar-button>`.
+PlaywrightElement for a menu bar item: a top-level `<vaadin-menu-bar-button>` or a sub-menu `<vaadin-menu-bar-item>`.
 
 **Extends:** VaadinElement  
-**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement, Findable  
+**Implements:** HasThemeElement, HasStyleElement, HasAriaLabelElement, HasEnabledElement, Findable  
 
-**Constants:** `String FIELD_TAG_NAME = "vaadin-menu-bar-button"`
+**Constants:** `String FIELD_TAG_NAME = "vaadin-menu-bar-button"`, `String SUB_MENU_ITEM_TAG_NAME = "vaadin-menu-bar-item"`, `String SELECTOR = …`
 
 **Constructors:**
 
@@ -1872,6 +1881,7 @@ PlaywrightElement for `<vaadin-multi-select-combo-box>`.
 - `void assertValue(String expected)` — Assert that the displayed value equals the expected string.
 - `void selectItem(String item)` — Select an item by its visible label.
 - `void deselectItem(String item)` — Deselect an item by its visible label.
+- `void clear()` — Clear the selection as a user does: click the clear button when it is visible, otherwise deselect every selected item in the overlay and close it.
 - `void selectItems(String... items)` — Select multiple items in sequence.
 - `void deselectItems(String... items)` — Deselect multiple items in sequence.
 - `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item.
@@ -2345,7 +2355,7 @@ PlaywrightElement for `<vaadin-tabsheet>`.
 - `void assertSelectedTab(String label)` — Assert that the tab with the given label is selected.
 - `List<String> getTabLabels()` — Get the labels of all tabs, in order.
 - `void assertTabLabels(String... expected)` — Assert the labels of all tabs, in order.
-- `Locator getContentLocator()` — Locator for the currently visible content panel.
+- `Locator getContentLocator()` — Locator for the currently visible content panel: this tabsheet's own panel, not the panels of a tabsheet nested in it.
 
 ### TabsElement  `<vaadin-tabs>`
 
@@ -2373,12 +2383,12 @@ PlaywrightElement for `<vaadin-tabs>`.
 
 - `Locator getTabs()` — Locator matching every tab of this tab strip, in DOM order.
 - `int getTabCount()` — Get the number of tabs currently in the tab strip.
-- `TabElement getTab(String label)` — Get a tab by its label.
+- `TabElement getTab(String label)` — Get a tab by its label, the one `getTabLabels()` returns.
 - `TabElement getTab(int index)` — Get a tab by its zero-based index.
 - `TabElement getSelectedTab()` — Get the currently selected tab.
 - `int getSelectedIndex()` — Get the zero-based index of the selected tab.
 - `String getOrientation()` — Get the current orientation.
-- `List<String> getTabLabels()` — Get the labels of all tabs, in DOM order, read as `TabElement.getLabel()` does: own text, whitespace collapsed and trimmed.
+- `List<String> getTabLabels()` — Get the labels of all tabs, in DOM order, read as `TabElement.getLabel()` does: own text, whitespace collapsed and trimmed, or the `aria-label` of a tab with no text.
 - `void assertTabLabels(String... expected)` — Assert the labels of all tabs, in order, as `getTabLabels()` reads them.
 - `void selectTab(String label)` — Select a tab by its label.
 - `void selectTab(int index)` — Select a tab by its zero-based index.

@@ -21,6 +21,17 @@ public class DialogView extends Main {
         createModalDialog();
         createNonModalDialogs();
         createDialogWithHeaderComponent();
+        createDialogsKeptInPage();
+    }
+
+    private void createDialogsKeptInPage() {
+        // added to the view, so they stay in the page after closing
+        Dialog kept = createDialog("Kept dialog", false, new Span("Kept in the page."));
+        Dialog other = createDialog("Other dialog", false, new Span("Another dialog."));
+        add(kept, other);
+        Button openKept = new Button("Open kept dialog", e -> kept.open());
+        Button openOther = new Button("Open other dialog", e -> other.open());
+        addExample("Dialogs kept in the page", new HorizontalLayout(openKept, openOther));
     }
 
     private void createModalDialog() {

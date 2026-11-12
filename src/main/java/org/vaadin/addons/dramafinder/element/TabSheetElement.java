@@ -13,7 +13,8 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
  * <p>
  * Provides helpers to access/select tabs and current content panel. Tab lookup
  * and selection are delegated to the {@link TabsElement} of the embedded
- * {@code <vaadin-tabs>} strip.
+ * {@code <vaadin-tabs>} strip. The strip and the panel are this tabsheet's direct
+ * children, so a tabsheet nested in a panel does not interfere.
  */
 @PlaywrightElement(TabSheetElement.FIELD_TAG_NAME)
 public class TabSheetElement extends VaadinElement implements Findable<ComponentQuery<TabSheetElement>> {
@@ -25,7 +26,7 @@ public class TabSheetElement extends VaadinElement implements Findable<Component
     /** Create a {@code TabSheetElement} from an existing locator. */
     public TabSheetElement(Locator locator) {
         super(locator);
-        this.tabsElement = TabsElement.get(locator);
+        this.tabsElement = new TabsElement(locator.locator(":scope > " + TabsElement.FIELD_TAG_NAME));
     }
 
     /** Get the first tabsheet instance on the page. */
@@ -102,9 +103,14 @@ public class TabSheetElement extends VaadinElement implements Findable<Component
         tabsElement.assertTabLabels(expected);
     }
 
-    /** Locator for the currently visible content panel. */
+    /**
+     * Locator for the currently visible content panel: this tabsheet's own panel,
+     * not the panels of a tabsheet nested in it.
+     *
+     * @return the visible panel locator
+     */
     public Locator getContentLocator() {
-        return getLocator().locator("[tab]:not([hidden])");
+        return getLocator().locator(":scope > [tab]:not([hidden])");
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

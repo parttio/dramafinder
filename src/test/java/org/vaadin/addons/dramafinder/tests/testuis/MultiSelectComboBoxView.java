@@ -37,6 +37,19 @@ public class MultiSelectComboBoxView extends Main {
         createAutoExpandExample();
         createLazyLoadingExample();
         createCustomRendererExample();
+        createClearExample();
+    }
+
+    private void createClearExample() {
+        MultiSelectComboBox<String> comboBox = new MultiSelectComboBox<>("Clearable MultiSelect");
+        comboBox.setItems("Apple", "Banana", "Cherry", "Date");
+        comboBox.setValue(Set.of("Banana", "Date"));
+        Span value = new Span("Banana, Date");
+        value.setId("clearable-multi-value");
+        comboBox.addValueChangeListener(e -> value.setText(e.getValue().isEmpty()
+                ? "empty"
+                : e.getValue().stream().sorted().collect(Collectors.joining(", "))));
+        addExample("Clearable Example", comboBox, value);
     }
 
     private void createBasicExample() {
