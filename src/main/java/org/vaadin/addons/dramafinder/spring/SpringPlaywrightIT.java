@@ -38,7 +38,8 @@ import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
  * starts signed out. {@link #loginAs(String, String...)} switches user during a
  * test, {@link #newPageAs(String, String...)} opens a second user's page and
  * {@link #loginAs(BrowserContext, String, String...)} signs in a browser context
- * the test opened itself.
+ * the test opened itself. Code that does not extend this class signs in through
+ * {@link SpringTestLogin} and {@link TestLoginConfiguration}.
  * The user is put into the HTTP session by an endpoint that exists only in the
  * test's Spring context, so the application must keep its security context in
  * the session (Spring Security's default, and Vaadin's). Needs
@@ -100,7 +101,7 @@ public abstract class SpringPlaywrightIT extends AbstractBasePlaywrightIT {
     @Override
     protected void prepareBrowserContext(BrowserContext context) {
         if (TestLoginConfiguration.isAvailable()) {
-            SecurityLogin.signInTestUser(applicationContext, context, getUrl());
+            SpringTestLogin.signInTestUser(applicationContext, context, getUrl());
         }
     }
 
@@ -136,7 +137,7 @@ public abstract class SpringPlaywrightIT extends AbstractBasePlaywrightIT {
         if (!TestLoginConfiguration.isAvailable()) {
             throw new IllegalStateException("Signing in needs Spring Security (spring-security-web) on the classpath");
         }
-        SecurityLogin.signIn(applicationContext, context, getUrl(), username, roles);
+        SpringTestLogin.signIn(applicationContext, context, getUrl(), username, roles);
     }
 
     /**

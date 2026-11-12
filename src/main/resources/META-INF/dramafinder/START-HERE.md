@@ -43,7 +43,10 @@ With Spring Security, don't log in through the login view: annotate the test met
 class with Spring Security Test's `@WithMockUser(username = "alice", roles = "ADMIN")`
 (or `@WithUserDetails("alice")`) and the page starts signed in. `loginAs("bob", "USER")`
 switches user mid-test; `newPageAs("bob")` returns a second user's page on the same
-view. Needs `spring-security-test` in test scope.
+view. Needs `spring-security-test` in test scope. Without `SpringPlaywrightIT` (your
+own `BrowserContext`), add `@Import(TestLoginConfiguration.class)` to the
+`@SpringBootTest` and call `SpringTestLogin.signIn(applicationContext, context, baseUrl,
+"bob", "USER")`.
 
 `AbstractBasePlaywrightIT` opens the `page` field before each test, navigates it to
 `getUrl() + getView()`, waits for Vaadin to go idle, and closes it after. The browser

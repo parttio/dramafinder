@@ -512,10 +512,11 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   fails otherwise. The repo's own ITs extend the library's `SpringPlaywrightIT`.
 - **Spring Security is optional too.** `spring-security-web`, `spring-security-test`
   and the servlet API are `provided`, used only by the `spring` package's test
-  sign-in (`@WithMockUser`, `loginAs`; issue #216). Only `SecurityLogin` may name a
+  sign-in (`@WithMockUser`, `loginAs`; issues #216, #236). Only `SpringTestLogin` (the
+  public entry point for code that doesn't extend `SpringPlaywrightIT`) may name a
   Spring Security type; `SpringPlaywrightIT`, `TestLoginFilter` and
-  `TestLoginConfiguration` must load without it, so check
-  `TestLoginConfiguration.isAvailable()` before calling `SecurityLogin`.
+  `TestLoginConfiguration` (public, for `@Import`) must load without it, so check
+  `TestLoginConfiguration.isAvailable()` before calling `SpringTestLogin`.
   `SpringSecurityOptionalTest` loads them with Spring Security hidden. The test
   server's `TestSecurityConfiguration` leaves every view open but `security/admin`.
 - `com.vaadin:flow-server` is a `provided` dependency, used only by

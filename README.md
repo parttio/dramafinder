@@ -66,6 +66,13 @@ through the login view; `loginAs("alice", "ADMIN")` switches user during a test 
 user goes into the HTTP session through an endpoint registered only in the test's
 Spring context. It needs `spring-security-test` in test scope.
 
+A test that manages its own Playwright `BrowserContext` instead of extending
+`SpringPlaywrightIT` (a JUnit extension, another framework) adds
+`@Import(TestLoginConfiguration.class)` to its `@SpringBootTest` and signs in with
+`SpringTestLogin.signIn(applicationContext, browserContext, baseUrl, "alice", "ADMIN")`,
+`signIn(..., authentication)` or `signInTestUser(...)` (the `@WithMockUser` user);
+`signInUrl(...)` returns a one-time URL for a browser DramaFinder does not drive.
+
 ## Claude Code skills
 
 This repository ships two Claude Code skills. Install them as plugins:
