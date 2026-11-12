@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.FilePayload;
+import org.vaadin.addons.dramafinder.AutoWait;
 import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
@@ -32,6 +34,19 @@ public class UploadElement extends VaadinElement
 
     public static final String FIELD_TAG_NAME = "vaadin-upload";
     public static final String FILE_ITEM_TAG_NAME = "vaadin-upload-file";
+
+    private static final String SETTLED_PROPERTY = "__dramafinderSettledFiles";
+    private static final String TRACK_SETTLED_FILES = """
+            el => {
+                if (el.%1$s === undefined) {
+                    el.%1$s = 0;
+                    const settle = () => el.%1$s++;
+                    for (const type of ['upload-success', 'upload-error', 'file-reject']) {
+                        el.addEventListener(type, settle);
+                    }
+                }
+                return el.%1$s;
+            }""".formatted(SETTLED_PROPERTY);
 
     /**
      * Create a new {@code UploadElement}.
@@ -102,12 +117,58 @@ public class UploadElement extends VaadinElement
 
     /**
      * Upload one or more files by feeding the hidden input.
+     * <p>
+     * Returns once every file has settled — its upload request answered, or the
+     * file rejected by a client-side constraint (type, size, number of files) —
+     * and the server round trip that follows is done, so the app's completion
+     * listener has run even if it clears the file list. A request the server
+     * answers with an error also settles the file: the method returns normally
+     * and the file row shows the error.
      *
      * @param files file paths to upload
      */
     public void uploadFiles(Path... files) {
+        int settled = trackSettledFiles();
         getFileInputLocator().setInputFiles(files);
+        waitUntilSettled(settled + files.length);
         waitAfterAction();
+    }
+
+    /**
+     * Upload one or more files built in memory, without writing them to disk
+     * first.
+     * <p>
+     * Waits like {@link #uploadFiles(Path...)}: until every file has settled and
+     * the server round trip that follows is done.
+     *
+     * @param files the files' names, MIME types and contents
+     */
+    public void uploadFiles(FilePayload... files) {
+        int settled = trackSettledFiles();
+        getFileInputLocator().setInputFiles(files);
+        waitUntilSettled(settled + files.length);
+        waitAfterAction();
+    }
+
+    /**
+     * Start counting settled files on the host, once per element, and return
+     * the count so far. The count only grows, so the wait cannot miss a file
+     * whose row the app removes as soon as it succeeds.
+     */
+    private int trackSettledFiles() {
+        return ((Number) getLocator().evaluate(TRACK_SETTLED_FILES)).intValue();
+    }
+
+    /**
+     * Wait for the settled count to reach {@code expected}. Skipped when
+     * automatic waiting is off, and with {@code noAuto}, which sends no request
+     * until the app starts the upload.
+     */
+    private void waitUntilSettled(int expected) {
+        if (!AutoWait.isEnabled() || Boolean.TRUE.equals(getLocator().evaluate("el => el.noAuto"))) {
+            return;
+        }
+        assertThat(getLocator()).hasJSProperty(SETTLED_PROPERTY, expected);
     }
 
     /**

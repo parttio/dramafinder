@@ -2544,6 +2544,7 @@ PlaywrightElement for `vaadin-upload`.
 - `Locator getFileItemLocator(String fileName)` — Locator for a specific file row.
 - `Locator getFileStatusLocator(String fileName)` — Locator for the status cell of a given file row.
 - `void uploadFiles(Path... files)` — Upload one or more files by feeding the hidden input.
+- `void uploadFiles(FilePayload... files)` — Upload one or more files built in memory, without writing them to disk first.
 - `void removeFile(String fileName)` — Remove a file from the list using the remove button.
 - `void assertHasFile(String fileName)` — Assert that a file is listed in the upload file list.
 - `void assertNoFile(String fileName)` — Assert that a file is not present in the upload file list.

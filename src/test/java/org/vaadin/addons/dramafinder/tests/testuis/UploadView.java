@@ -19,6 +19,8 @@ public class UploadView extends Main {
     public UploadView() {
         createSingleUpload();
         createMultiUpload();
+        createClearingUpload();
+        createFailingUpload();
     }
 
     private void createSingleUpload() {
@@ -57,6 +59,47 @@ public class UploadView extends Main {
         Button clear = new Button("Clear uploads", event -> upload.clearFileList());
 
         addExample("Multi upload", new Div(upload, clear, status));
+    }
+
+    /**
+     * The "attach one file" pattern: the handler is slow, so the upload request
+     * outlasts the Flow round trip that feeding the input triggers, and the
+     * completion callback clears the list, so the file row vanishes as soon as the
+     * upload succeeds. Only a wait on the upload request itself sees the status.
+     */
+    private void createClearingUpload() {
+        Span status = new Span("Nothing received");
+        status.setId("clearing-upload-status");
+        Upload upload = new Upload();
+        upload.setUploadHandler(UploadHandler.inMemory((metadata, data) -> {
+                    slowDown();
+                })
+                .whenComplete((context, success) -> {
+                    upload.clearFileList();
+                    status.setText("Received " + context.fileName());
+                }));
+        upload.setUploadButton(new Button("Attach file"));
+
+        addExample("Clearing upload", new Div(upload, status));
+    }
+
+    /** An upload whose server handler fails every request, after a delay. */
+    private void createFailingUpload() {
+        Upload upload = new Upload(event -> {
+            slowDown();
+            throw new IllegalStateException("Refused by the server");
+        });
+        upload.setUploadButton(new Button("Attach to failing upload"));
+
+        addExample("Failing upload", upload);
+    }
+
+    private static void slowDown() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void addExample(String title, Component component) {

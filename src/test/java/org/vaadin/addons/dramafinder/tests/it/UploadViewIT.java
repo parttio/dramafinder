@@ -1,9 +1,11 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.microsoft.playwright.options.FilePayload;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +14,8 @@ import org.vaadin.addons.dramafinder.element.UploadElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class UploadViewIT extends SpringPlaywrightIT {
@@ -79,5 +83,43 @@ public class UploadViewIT extends SpringPlaywrightIT {
         assertThat(page.locator("#multi-upload-status")).hasText("Rejected: Incorrect File Type.");
     }
 
+    // The clearing upload's handler is slow and its completion callback clears
+    // the file list. The status is read once, without retrying: it only holds the
+    // file name if uploadFiles waited for the upload request and the round trip
+    // after it.
 
+    @Test
+    public void uploadFilesReturnsAfterTheServerHandledTheFile() throws IOException {
+        Path file = Files.writeString(tempDir.resolve("attached.txt"), "attached");
+
+        UploadElement upload = UploadElement.getByButtonText(page, "Attach file");
+        upload.uploadFiles(file);
+
+        assertEquals("Received attached.txt", page.locator("#clearing-upload-status").textContent());
+        upload.assertNoFile("attached.txt");
+    }
+
+    @Test
+    public void uploadFilesWithInMemoryContentReturnsAfterTheServerHandledIt() {
+        FilePayload payload = new FilePayload("in-memory.txt", "text/plain",
+                "built in the test".getBytes(StandardCharsets.UTF_8));
+
+        UploadElement upload = UploadElement.getByButtonText(page, "Attach file");
+        upload.uploadFiles(payload);
+
+        assertEquals("Received in-memory.txt", page.locator("#clearing-upload-status").textContent());
+        upload.assertNoFile("in-memory.txt");
+    }
+
+    @Test
+    public void uploadFilesReturnsWhenTheServerFailsTheUpload() {
+        FilePayload payload = new FilePayload("fail.txt", "text/plain",
+                "refused".getBytes(StandardCharsets.UTF_8));
+
+        UploadElement upload = UploadElement.getByButtonText(page, "Attach to failing upload");
+        upload.uploadFiles(payload);
+
+        assertNotNull(upload.getFileItemLocator("fail.txt").getAttribute("error"),
+                "the file row should already show the upload error");
+    }
 }
