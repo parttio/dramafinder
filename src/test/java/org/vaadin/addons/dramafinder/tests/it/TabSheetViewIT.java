@@ -68,4 +68,22 @@ public class TabSheetViewIT extends SpringPlaywrightIT implements HasTestView {
         tabs.assertSelectedTab("Open");
         assertThat(tabs.getContentLocator()).hasText("Open page");
     }
+
+    @Test
+    public void testNestedTabSheetContent() {
+        TabSheetElement outer = TabSheetElement.getById(page, "outer-tabsheet");
+        outer.assertTabsCount(2);
+        outer.assertTabLabels("Outer 1", "Outer 2");
+        assertThat(outer.getContentLocator()).hasCount(1);
+        assertThat(outer.getContentLocator()).containsText("Outer page 1");
+
+        TabSheetElement inner = TabSheetElement.getById(page, "inner-tabsheet");
+        assertThat(inner.getContentLocator()).hasText("Inner page 1");
+        inner.selectTab("Inner 2");
+        assertThat(inner.getContentLocator()).hasText("Inner page 2");
+        outer.assertSelectedTab("Outer 1");
+
+        outer.selectTab("Outer 2");
+        assertThat(outer.getContentLocator()).hasText("Outer page 2");
+    }
 }

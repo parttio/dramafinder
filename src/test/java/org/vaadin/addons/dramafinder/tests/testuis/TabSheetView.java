@@ -23,5 +23,15 @@ public class TabSheetView extends Main {
         withDisabled.add("Open", new Div(new Text("Open page")));
         withDisabled.add("Locked", new Div(new Text("Locked page"))).setEnabled(false);
         add(withDisabled);
+
+        TabSheet inner = new TabSheet();
+        inner.setId("inner-tabsheet");
+        inner.add("Inner 1", new Div(new Text("Inner page 1")));
+        inner.add("Inner 2", new Div(new Text("Inner page 2")));
+        TabSheet outer = new TabSheet();
+        outer.setId("outer-tabsheet");
+        outer.add("Outer 1", new Div(new Text("Outer page 1"), inner));
+        outer.add("Outer 2", new Div(new Text("Outer page 2")));
+        add(outer);
     }
 }
