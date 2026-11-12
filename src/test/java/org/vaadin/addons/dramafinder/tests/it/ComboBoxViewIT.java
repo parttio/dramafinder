@@ -350,4 +350,29 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
         comboBox.selectItem("Rating: high to low");
         assertEquals("Rating: high to low", comboBox.getSelectedItemLabel());
     }
+
+    @Test
+    public void testClearWithoutClearButton() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Clearable ComboBox");
+        comboBox.assertValue("Banana");
+        comboBox.assertClearButtonNotVisible();
+
+        comboBox.clear();
+
+        assertThat(page.locator("#clearable-value")).hasText("null");
+        comboBox.assertValue("");
+        comboBox.assertClosed();
+    }
+
+    @Test
+    public void testClearWithClearButton() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Clearable ComboBox with clear button");
+        comboBox.assertValue("Banana");
+        comboBox.assertClearButtonVisible();
+
+        comboBox.clear();
+
+        assertThat(page.locator("#clearable-with-button-value")).hasText("null");
+        comboBox.assertValue("");
+    }
 }
