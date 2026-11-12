@@ -470,9 +470,11 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `unzip -p ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar META-INF/dramafinder/api-reference.md`.
 - The build copies `api-reference.md` and `agent-api-reference.md` into the jar
   under `META-INF/dramafinder/` (see `maven-resources-plugin` in `pom.xml`), next
-  to the hand-written `src/main/resources/META-INF/dramafinder/START-HERE.md` and
+  to the hand-written `src/main/resources/META-INF/dramafinder/START-HERE.md`,
   `MIGRATION-2.0.md` (the 1.x → 2.0 guide: keep its list of changed methods in
-  step with any further change to label-lookup behaviour before 2.0 ships).
+  step with any further change to label-lookup behaviour before 2.0 ships) and
+  `MIGRATION-FROM-MOPO.md` (Mopo → DramaFinder; update its tables when an
+  element it maps changes).
   That bundled set is the only documentation an offline agent can reach — Maven
   puts nothing but the jar and the pom in `~/.m2` — so keep it working:
   `DocumentationBundledInJarTest` fails if a file stops being bundled, and

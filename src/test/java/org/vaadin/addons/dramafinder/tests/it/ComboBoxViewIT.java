@@ -14,6 +14,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ComboBoxViewIT extends SpringPlaywrightIT {
@@ -179,6 +181,25 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
         comboBox.filterAndSelectItem("Apr", "Apricot");
         comboBox.assertValue("Apricot");
+    }
+
+    @Test
+    public void testFilterAndSelectFirstItem() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
+        comboBox.filterAndSelectFirstItem("ap");
+        comboBox.assertValue("Apple");
+        comboBox.assertClosed();
+        comboBox.filterAndSelectFirstItem("berry");
+        comboBox.assertValue("Blueberry");
+    }
+
+    @Test
+    public void testFilterAndSelectFirstItemFailsWithoutMatch() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
+        page.setDefaultTimeout(1000);
+        AssertionError error = assertThrows(AssertionError.class,
+                () -> comboBox.filterAndSelectFirstItem("xyz"));
+        assertTrue(error.getMessage().contains("xyz"), error.getMessage());
     }
 
     @Test

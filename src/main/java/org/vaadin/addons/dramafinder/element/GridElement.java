@@ -1091,6 +1091,34 @@ public class GridElement extends VaadinElement
                         + " return r.bottom > top && r.top < bottom; }");
     }
 
+    /**
+     * Get the index of the first row that is at least partially scrolled into
+     * view between the header and footer, without triggering any scrolling.
+     *
+     * @return the row index, starting from 0, or {@code -1} when no row is in view
+     *         (e.g. an empty grid)
+     */
+    public int getFirstVisibleRowIndex() {
+        return visibleRowIndex("_firstVisibleIndex");
+    }
+
+    /**
+     * Get the index of the last row that is at least partially scrolled into
+     * view between the header and footer, without triggering any scrolling.
+     *
+     * @return the row index, starting from 0, or {@code -1} when no row is in view
+     *         (e.g. an empty grid)
+     */
+    public int getLastVisibleRowIndex() {
+        return visibleRowIndex("_lastVisibleIndex");
+    }
+
+    private int visibleRowIndex(String property) {
+        Object index = locator.evaluate("(g, p) => { const i = g[p];"
+                + " return typeof i === 'number' && i >= 0 ? i : -1; }", property);
+        return ((Number) index).intValue();
+    }
+
     // ── Assertions ─────────────────────────────────────────────────────
 
     /**
@@ -1354,6 +1382,24 @@ public class GridElement extends VaadinElement
      */
     public void assertRowNotInView(int rowIndex) {
         assertEventually(locator.page(), "grid row " + rowIndex + " not to be in view", () -> !isRowInView(rowIndex));
+    }
+
+    /**
+     * Assert that the first row scrolled into view has the given index.
+     *
+     * @param expected the expected row index, starting from 0, or {@code -1} for no row in view
+     */
+    public void assertFirstVisibleRow(int expected) {
+        assertEventually(locator.page(), "Grid first visible row", this::getFirstVisibleRowIndex, expected);
+    }
+
+    /**
+     * Assert that the last row scrolled into view has the given index.
+     *
+     * @param expected the expected row index, starting from 0, or {@code -1} for no row in view
+     */
+    public void assertLastVisibleRow(int expected) {
+        assertEventually(locator.page(), "Grid last visible row", this::getLastVisibleRowIndex, expected);
     }
 
     /**

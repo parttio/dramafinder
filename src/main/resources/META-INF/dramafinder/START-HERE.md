@@ -139,5 +139,6 @@ before editing the test. Turn it off with
 
 - Full API reference: `META-INF/dramafinder/api-reference.md` (in this jar)
 - Upgrading tests written for 1.x: `META-INF/dramafinder/MIGRATION-2.0.md` (in this jar)
+- Moving tests from Mopo (`in.virit:mopo`): `META-INF/dramafinder/MIGRATION-FROM-MOPO.md` (in this jar)
 - Source and issues: https://github.com/parttio/dramafinder
 - Claude Code skills: `/plugin marketplace add parttio/dramafinder`

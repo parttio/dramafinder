@@ -24,6 +24,7 @@ unzip -p "$JAR" META-INF/dramafinder/START-HERE.md          # short guide, ~4 KB
 unzip -p "$JAR" META-INF/dramafinder/api-reference.md       # every signature
 unzip -p "$JAR" META-INF/dramafinder/agent-api-reference.md # screenshot helpers
 unzip -p "$JAR" META-INF/dramafinder/MIGRATION-2.0.md       # upgrading from 1.x
+unzip -p "$JAR" META-INF/dramafinder/MIGRATION-FROM-MOPO.md # moving from Mopo
 ```
 
 ### Upgrading from 1.x
@@ -42,6 +43,14 @@ Most 1.x tests compile unchanged; lookups that relied on the old matching fail a
 runtime. The [migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md)
 lists every changed method, what no longer compiles, and how to rewrite each
 lookup.
+
+### Moving from Mopo
+
+Tests written with [Mopo](https://github.com/viritin/mopo) (`GridPw`,
+`ComboBoxPw`, `DatePickerPw`, `DateTimePickerPw`, `Mopo`) map onto DramaFinder
+call for call; the
+[Mopo migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-FROM-MOPO.md)
+has the table for each helper.
 
 ### Spring Boot
 

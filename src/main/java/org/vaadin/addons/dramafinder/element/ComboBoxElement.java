@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.query.InputFieldQuery;
@@ -125,6 +126,44 @@ public class ComboBoxElement extends VaadinElement
         setFilter(filter);
         getOverlayItem(item).click();
         waitAfterAction();
+    }
+
+    /**
+     * Type filter text into the input, then click the first item the drop-down
+     * offers for it, whatever its label. Use it when the filter alone identifies
+     * the item, e.g. a unique code or the start of a long label; prefer
+     * {@link #filterAndSelectItem(String, String)} when the label is known, so a
+     * change in item order cannot select a different item unnoticed.
+     *
+     * @param filter text to type for filtering
+     * @throws AssertionError if no item matches the filter before the timeout
+     */
+    public void filterAndSelectFirstItem(String filter) {
+        setFilter(filter);
+        assertThat(getLocator()).not().hasAttribute("loading", "");
+        Locator[] first = new Locator[1];
+        AssertionWaits.assertEventually(getLocator().page(),
+                "an item matching the filter \"" + filter + "\"",
+                () -> (first[0] = findFirstOverlayItem()) != null);
+        first[0].click();
+        waitAfterAction();
+    }
+
+    /**
+     * Find the rendered item for index 0 of the filtered items: the virtual
+     * list reuses item elements, so DOM order is not item order.
+     */
+    private Locator findFirstOverlayItem() {
+        for (Locator item : getLocator().locator(FIELD_ITEM_TAG_NAME + ":not([hidden])").all()) {
+            try {
+                if (item.evaluate("el => el.index") instanceof Number index && index.intValue() == 0) {
+                    return item;
+                }
+            } catch (PlaywrightException e) {
+                // the item was re-rendered while being read: try the next poll
+            }
+        }
+        return null;
     }
 
     /**

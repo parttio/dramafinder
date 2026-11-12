@@ -53,6 +53,7 @@ NAV = [
     {"Getting started": [
         {"Start here": META + "START-HERE.md"},
         {"Migrating to 2.0": META + "MIGRATION-2.0.md"},
+        {"Migrating from Mopo": META + "MIGRATION-FROM-MOPO.md"},
         {"Glossary": "GLOSSARY.md"},
     ]},
     {"Reference": [

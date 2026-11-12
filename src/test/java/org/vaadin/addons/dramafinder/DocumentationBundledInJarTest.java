@@ -66,6 +66,16 @@ class DocumentationBundledInJarTest {
                 "MIGRATION-2.0.md no longer names the partial-match replacement");
     }
 
+    /** Hand-written, lives in {@code src/main/resources}. */
+    @Test
+    void mopoMigrationGuideIsBundled() throws IOException {
+        String content = bundled("MIGRATION-FROM-MOPO.md");
+        assertTrue(content.startsWith("# Migrating from Mopo to DramaFinder"),
+                "MIGRATION-FROM-MOPO.md does not look like the Mopo migration guide");
+        assertTrue(content.contains("ClientSideErrors"),
+                "MIGRATION-FROM-MOPO.md no longer maps Mopo's client-side error tracking");
+    }
+
     private static String bundled(String name) throws IOException {
         String path = "/META-INF/dramafinder/" + name;
         try (InputStream in = DocumentationBundledInJarTest.class.getResourceAsStream(path)) {

@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,8 @@ public class DateTimePickerViewIT extends SpringPlaywrightIT {
         // The value in the input is not formatted the same way as the value in the property
         dateTimePicker.assertDateValue(dateFormatter.format(testDate));
         dateTimePicker.assertTimeValue(timeFormatter.format(testDate));
+        assertEquals(dateFormatter.format(testDate), dateTimePicker.getDateValue());
+        assertEquals(timeFormatter.format(testDate), dateTimePicker.getTimeValue());
         dateTimePicker.assertValue(testDate);
     }
 
