@@ -89,6 +89,26 @@ Base class for Playwright integration tests of a Spring Boot Vaadin app.
 - `protected Page newPageAs(String username, String... roles)` — Open the view in a new browser context — its own cookies and session — signed in as `username`, e.g. to drive a second user alongside the test's `page`.
 - `void closeExtraContexts()` — Closes the browser contexts `newPageAs(String, String...)` opened.
 
+### SpringTestLogin
+
+Signs a browser in as a Spring Security user without going through the login view, for code that manages its own Playwright `BrowserContext` instead of extending `SpringPlaywrightIT` — a JUnit extension, or a framework on top of DramaFinder.
+
+**Static methods:**
+
+- `boolean signInTestUser(ApplicationContext applicationContext, BrowserContext browserContext, String baseUrl)` — Sign `browserContext` in as the user Spring Security Test set up for the running test (`@WithMockUser`, `@WithUserDetails` or any other `@WithSecurityContext` annotation).
+- `void signIn(ApplicationContext applicationContext, BrowserContext browserContext, String baseUrl, String username, String... roles)` — Sign `browserContext` in as the user `@WithMockUser(username = ..., roles = ...)` creates: password `"password"`, each role given without and granted with the `ROLE_` prefix, and `USER` when no role is given.
+- `void signIn(ApplicationContext applicationContext, BrowserContext browserContext, String baseUrl, Authentication authentication)` — Sign `browserContext` in as `authentication`, e.g. a token holding the application's own `UserDetails` or authorities that are not roles.
+- `String signInUrl(ApplicationContext applicationContext, String baseUrl, Authentication authentication)` — A one-time URL that signs in, as `authentication`, the browser that requests it, for a browser DramaFinder does not drive (e.g. Selenium's `driver.get(url)`).
+- `String signInUrl(ApplicationContext applicationContext, String baseUrl, String username, String... roles)` — A one-time URL that signs in the browser requesting it as the user `signIn(ApplicationContext, BrowserContext, String, String, String...)` creates; see `signInUrl(ApplicationContext, String, Authentication)`.
+
+### TestLoginConfiguration
+
+Adds the test-only sign-in endpoint behind `SpringTestLogin` to the test's Spring context when Spring Security is on the classpath; without it, the import adds nothing.
+
+**Static methods:**
+
+- `boolean isAvailable()` — Whether Spring Security's web support and the servlet API are on the classpath, so `SpringTestLogin` can sign a browser in.
+
 ### HasTestView
 
 **Methods:**

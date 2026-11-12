@@ -47,6 +47,7 @@ class GenerateApiReference {
     // They are how you get a Page at all, so the reference is useless without
     // them — leaving them out is what sent agents to `javap -c` on the jar.
     static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "spring/SpringPlaywrightIT",
+            "spring/SpringTestLogin", "spring/TestLoginConfiguration",
             "HasTestView", "AutoWait", "RouteNavigation", "ClientSideErrors");
 
     // Method keys (name/arity) declared by the shared mixins and by VaadinElement.

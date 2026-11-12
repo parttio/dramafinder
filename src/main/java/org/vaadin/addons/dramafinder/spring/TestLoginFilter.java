@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.core.Ordered;
 
 /**
- * The test-only sign-in endpoint behind {@link SpringPlaywrightIT}: a servlet
+ * The test-only sign-in endpoint behind {@link SpringTestLogin}: a servlet
  * filter, registered only in the test's Spring context, that puts a security
  * context the test registered into a new HTTP session.
  * <p>

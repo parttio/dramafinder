@@ -256,7 +256,9 @@ a protected view. Put `@WithMockUser(username = "alice", roles = "ADMIN")` or
 `@WithUserDetails("alice")` (from `spring-security-test`, test scope) on the test
 method or class and `page` starts signed in; `loginAs(user, roles...)` switches user
 and `newPageAs(user, roles...)` opens a second user's page. Test the login view
-itself the ordinary way.
+itself the ordinary way. A test that opens its own `BrowserContext` without extending
+`SpringPlaywrightIT` (DramaFinder newer than 2.0.1) imports `TestLoginConfiguration`
+and calls `SpringTestLogin.signIn(...)` / `signInTestUser(...)`.
 
 ### Component test patterns
 
