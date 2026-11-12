@@ -16,7 +16,7 @@ public interface PlaceholderFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withPlaceholder(String placeholder) {
-        return refine(candidates -> candidates.and(
+        return refine(QueryText.quote("with placeholder", placeholder), candidates -> candidates.and(
                 candidates.page().locator(QueryText.attributeSelector("placeholder", placeholder))));
     }
 }

@@ -35,7 +35,7 @@ public class TextQuery<T extends VaadinElement> extends ElementQuery<T, TextQuer
      */
     @Override
     public TextQuery<T> withAccessibleName(String name) {
-        return refine(l -> QueryText.labelledOrOwnText(l, name, true));
+        return refine(QueryText.quote("with accessible name", name), l -> QueryText.labelledOrOwnText(l, name, true));
     }
 
     /**
@@ -48,6 +48,7 @@ public class TextQuery<T extends VaadinElement> extends ElementQuery<T, TextQuer
      */
     @Override
     public TextQuery<T> withAccessibleNameContaining(String text) {
-        return refine(l -> QueryText.labelledOrOwnText(l, text, false));
+        return refine(QueryText.quote("with accessible name containing", text),
+                l -> QueryText.labelledOrOwnText(l, text, false));
     }
 }

@@ -48,7 +48,12 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
     @Override
     @SuppressWarnings("unchecked")
     public Q refine(UnaryOperator<Locator> refinement) {
-        return (Q) ElementQueries.newQuery(getClass(), type, refinement.apply(candidates));
+        Locator refined = refinement.apply(candidates);
+        if (refined.description() == null && candidates.description() != null) {
+            // An undescribed custom filter keeps what the query matched so far readable.
+            refined = QueryText.describe(refined, candidates, "with a custom filter");
+        }
+        return (Q) ElementQueries.newQuery(getClass(), type, refined);
     }
 
     // ── Filters available on every component ───────────────────────────
@@ -60,7 +65,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withId(String id) {
-        return withAttribute("id", id);
+        return refine(QueryText.quote("with id", id),
+                l -> l.and(l.page().locator(QueryText.attributeSelector("id", id))));
     }
 
     /**
@@ -73,7 +79,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withTestId(String testId) {
-        return refine(l -> l.and(l.page().getByTestId(testId)));
+        return refine(QueryText.quote("with test id", testId),
+                l -> l.and(l.page().getByTestId(testId)));
     }
 
     /**
@@ -83,7 +90,7 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withAttribute(String name) {
-        return refine(l -> l.and(l.page().locator("[" + name + "]")));
+        return refine("with attribute " + name, l -> l.and(l.page().locator("[" + name + "]")));
     }
 
     /**
@@ -94,7 +101,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withAttribute(String name, String value) {
-        return refine(l -> l.and(l.page().locator(QueryText.attributeSelector(name, value))));
+        return refine(QueryText.quote("with attribute " + name + " =", value),
+                l -> l.and(l.page().locator(QueryText.attributeSelector(name, value))));
     }
 
     /**
@@ -104,7 +112,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withClassName(String className) {
-        return refine(l -> l.and(l.page().locator(QueryText.attributeWordSelector("class", className))));
+        return refine(QueryText.quote("with class", className),
+                l -> l.and(l.page().locator(QueryText.attributeWordSelector("class", className))));
     }
 
     // ── Terminals ──────────────────────────────────────────────────────
@@ -128,7 +137,7 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return the element; lazy like {@link #single()}
      */
     public T first() {
-        return wrap(candidates.first());
+        return wrap(QueryText.describe(candidates.first(), candidates, "(first)"));
     }
 
     /**
@@ -138,7 +147,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return the element; lazy like {@link #single()}
      */
     public T get(int index) {
-        return wrap(candidates.nth(index));
+        return wrap(QueryText.describe(candidates.nth(index), candidates,
+                "(index " + index + ")"));
     }
 
     /**

@@ -35,7 +35,7 @@ public class TooltipQuery<T extends VaadinElement> extends ElementQuery<T, Toolt
      */
     @Override
     public TooltipQuery<T> withText(String text) {
-        return refine(l -> l.filter(new Locator.FilterOptions()
+        return refine(QueryText.quote("with text", text), l -> l.filter(new Locator.FilterOptions()
                 .setHas(l.page().locator(TOOLTIP_TEXT).locator(QueryText.ownTextIs(text)))));
     }
 
@@ -48,7 +48,7 @@ public class TooltipQuery<T extends VaadinElement> extends ElementQuery<T, Toolt
      */
     @Override
     public TooltipQuery<T> withTextContaining(String text) {
-        return refine(l -> l.filter(new Locator.FilterOptions()
+        return refine(QueryText.quote("with text containing", text), l -> l.filter(new Locator.FilterOptions()
                 .setHas(l.page().locator(TOOLTIP_TEXT).locator(QueryText.ownTextContains(text)))));
     }
 

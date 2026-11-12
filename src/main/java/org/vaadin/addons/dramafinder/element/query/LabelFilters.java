@@ -22,7 +22,8 @@ public interface LabelFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withLabel(String label) {
-        return refine(candidates -> candidates.filter(new Locator.FilterOptions()
+        return refine(QueryText.quote("with label", label),
+                candidates -> candidates.filter(new Locator.FilterOptions()
                 .setHas(candidates.page().locator(QueryText.OWN_LABEL)
                         .filter(new Locator.FilterOptions().setHasText(QueryText.exact(label))))));
     }
@@ -35,7 +36,8 @@ public interface LabelFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withLabelContaining(String text) {
-        return refine(candidates -> candidates.filter(new Locator.FilterOptions()
+        return refine(QueryText.quote("with label containing", text),
+                candidates -> candidates.filter(new Locator.FilterOptions()
                 .setHas(candidates.page().locator(QueryText.OWN_LABEL)
                         .filter(new Locator.FilterOptions().setHasText(text)))));
     }

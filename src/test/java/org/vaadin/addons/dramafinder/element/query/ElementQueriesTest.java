@@ -53,6 +53,7 @@ class ElementQueriesTest {
             Page page = mock(Page.class);
             Locator candidates = mock(Locator.class, RETURNS_DEEP_STUBS);
             when(page.locator(anyString())).thenReturn(candidates);
+            when(candidates.describe(anyString())).thenReturn(candidates);
 
             Object query = findRaw(page, type);
 
@@ -84,6 +85,8 @@ class ElementQueriesTest {
         when(page.locator(anyString())).thenReturn(candidates);
         when(candidates.page()).thenReturn(page);
         when(candidates.and(any())).thenReturn(narrowed);
+        when(candidates.description()).thenReturn("vaadin-button");
+        when(narrowed.describe(anyString())).thenReturn(narrowed);
 
         ButtonQuery<ButtonElement> all = ElementQueries.find(page, ButtonElement.class);
         ButtonQuery<ButtonElement> byId = all.withId("save");
@@ -91,6 +94,8 @@ class ElementQueriesTest {
         assertSame(candidates, all.getLocator());
         assertSame(narrowed, byId.getLocator());
         verify(page).locator("[id=\"save\"]");
+        verify(candidates).describe("vaadin-button");
+        verify(narrowed).describe("vaadin-button with id \"save\"");
     }
 
     @Test
@@ -98,6 +103,7 @@ class ElementQueriesTest {
         Locator scope = mock(Locator.class);
         Locator candidates = mock(Locator.class);
         when(scope.locator("vaadin-button")).thenReturn(candidates);
+        when(candidates.describe("vaadin-button")).thenReturn(candidates);
 
         assertSame(candidates, ElementQueries.find(scope, ButtonElement.class).getLocator());
     }

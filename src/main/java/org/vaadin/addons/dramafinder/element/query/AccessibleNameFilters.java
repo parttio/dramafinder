@@ -30,7 +30,7 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withAccessibleName(String name) {
-        return refine(candidates -> named(candidates, name, true));
+        return refine(QueryText.quote("with accessible name", name), candidates -> named(candidates, name, true));
     }
 
     /**
@@ -46,7 +46,8 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withAccessibleNameContaining(String text) {
-        return refine(candidates -> named(candidates, text, false));
+        return refine(QueryText.quote("with accessible name containing", text),
+                candidates -> named(candidates, text, false));
     }
 
     private static Locator named(Locator candidates, String name, boolean exact) {

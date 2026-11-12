@@ -47,7 +47,8 @@ public final class ElementQueries {
      */
     public static <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(
             Page page, Class<T> type) {
-        return query(type, page.locator(tagOf(type)));
+        String tag = tagOf(type);
+        return query(type, page.locator(tag).describe(tag));
     }
 
     /**
@@ -63,7 +64,10 @@ public final class ElementQueries {
      */
     public static <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(
             Locator scope, Class<T> type) {
-        return query(type, scope.locator(tagOf(type)));
+        String tag = tagOf(type);
+        String scopeDescription = scope.description();
+        return query(type, scope.locator(tag)
+                .describe(scopeDescription == null ? tag : tag + " inside " + scopeDescription));
     }
 
     @SuppressWarnings("unchecked")

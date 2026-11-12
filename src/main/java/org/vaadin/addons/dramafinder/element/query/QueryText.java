@@ -119,6 +119,21 @@ final class QueryText {
         return "concat('" + value.replace("'", "', \"'\", '") + "')";
     }
 
+    /**
+     * Describe {@code refined} as the description of {@code candidates}
+     * followed by {@code description}; {@code candidates} without a description
+     * contribute nothing.
+     */
+    static Locator describe(Locator refined, Locator candidates, String description) {
+        String previous = candidates.description();
+        return refined.describe(previous == null ? description : previous + " " + description);
+    }
+
+    /** Readable filter description: {@code what "value"}. */
+    static String quote(String what, String value) {
+        return what + " \"" + value + "\"";
+    }
+
     /** CSS attribute selector {@code [name="value"]} with the value escaped. */
     static String attributeSelector(String name, String value) {
         return "[" + name + "=" + quoted(value) + "]";

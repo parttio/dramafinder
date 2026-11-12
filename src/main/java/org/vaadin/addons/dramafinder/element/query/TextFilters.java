@@ -23,7 +23,8 @@ public interface TextFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withText(String text) {
-        return refine(candidates -> candidates.locator(QueryText.ownTextIs(text)));
+        return refine(QueryText.quote("with text", text),
+                candidates -> candidates.locator(QueryText.ownTextIs(text)));
     }
 
     /**
@@ -34,6 +35,7 @@ public interface TextFilters<Q> extends Refinable<Q> {
      * @return a new, narrowed query
      */
     default Q withTextContaining(String text) {
-        return refine(candidates -> candidates.locator(QueryText.ownTextContains(text)));
+        return refine(QueryText.quote("with text containing", text),
+                candidates -> candidates.locator(QueryText.ownTextContains(text)));
     }
 }
