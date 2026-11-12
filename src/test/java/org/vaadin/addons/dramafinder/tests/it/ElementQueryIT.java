@@ -2,8 +2,10 @@ package org.vaadin.addons.dramafinder.tests.it;
 
 import java.util.List;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.PlaywrightException;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.BadgeElement;
@@ -240,5 +242,47 @@ public class ElementQueryIT extends SpringPlaywrightIT {
     public void textQuery_onTabs() {
         assertEquals(1, find(page, TabElement.class).withText("Home").count());
         assertEquals(2, find(page, TabElement.class).withTextContaining("home").count());
+    }
+
+    @Test
+    public void queriesDescribeTheirFilters() {
+        assertEquals("vaadin-button with text \"Save\"",
+                find(page, ButtonElement.class).withText("Save").getLocator().description());
+        assertEquals("vaadin-text-field with label containing \"name\" with id \"name-field\"",
+                find(page, TextFieldElement.class).withLabelContaining("name").withId("name-field")
+                        .getLocator().description());
+        assertEquals("vaadin-checkbox (index 1)",
+                find(page, CheckboxElement.class).get(1).getLocator().description());
+        assertEquals("vaadin-checkbox with label \"Subscribe\" (first)",
+                find(page, CheckboxElement.class).withLabel("Subscribe").first().getLocator().description());
+    }
+
+    @Test
+    public void scopedQueriesDescribeTheirScope() {
+        ButtonElement save = find(page, ButtonElement.class).withText("Save").single();
+        assertEquals("vaadin-tooltip inside vaadin-button with text \"Save\"",
+                save.find(TooltipElement.class).getLocator().description());
+        // an undescribed scope adds nothing
+        assertEquals("vaadin-checkbox", find(page.locator("#form"), CheckboxElement.class).getLocator().description());
+    }
+
+    @Test
+    public void customFiltersKeepTheDescription() {
+        assertEquals("vaadin-button with text \"Save\" with a custom filter",
+                find(page, ButtonElement.class).withText("Save")
+                        .refine(l -> l.filter(new Locator.FilterOptions().setVisible(true)))
+                        .getLocator().description());
+        assertEquals("vaadin-button visible",
+                find(page, ButtonElement.class)
+                        .refine("visible", l -> l.filter(new Locator.FilterOptions().setVisible(true)))
+                        .getLocator().description());
+    }
+
+    @Test
+    public void failedAssertion_namesTheQuery() {
+        ButtonElement missing = find(page, ButtonElement.class).withText("No such button").single();
+        AssertionFailedError e = assertThrows(AssertionFailedError.class, () -> missing.assertTheme("success"));
+        // the call log reads the description instead of the raw XPath
+        assertTrue(e.getMessage().contains("vaadin-button with text \"No such button\""), e.getMessage());
     }
 }

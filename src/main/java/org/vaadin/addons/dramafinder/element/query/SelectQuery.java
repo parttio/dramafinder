@@ -39,7 +39,8 @@ public class SelectQuery<T extends VaadinElement> extends ElementQuery<T, Select
      */
     @Override
     public SelectQuery<T> withPlaceholder(String placeholder) {
-        return refine(candidates -> candidates.filter(new Locator.FilterOptions()
+        return refine(QueryText.quote("with placeholder", placeholder),
+                candidates -> candidates.filter(new Locator.FilterOptions()
                 .setHas(candidates.page().locator(PLACEHOLDER_SHOWN)
                         .filter(new Locator.FilterOptions().setHasText(QueryText.exact(placeholder))))));
     }

@@ -345,6 +345,7 @@ Base contract of the query filter mixins: a query that can be narrowed by transf
 **Methods:**
 
 - `Q refine(UnaryOperator<Locator> refinement)` — Return a query whose candidates are narrowed by `refinement`.
+- `Q refine(String description, UnaryOperator<Locator> refinement)` — Like `refine(UnaryOperator)`, and also add `description` to the query's readable description, e.g. `with text "Save"`.
 
 ### SelectQuery
 

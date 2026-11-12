@@ -25,4 +25,22 @@ public interface Refinable<Q> {
      * @return a new query over the narrowed candidates
      */
     Q refine(UnaryOperator<Locator> refinement);
+
+    /**
+     * Like {@link #refine(UnaryOperator)}, and also add {@code description} to
+     * the query's readable description, e.g. {@code with text "Save"}.
+     * <p>
+     * The description is set with {@link Locator#describe(String)}, so a
+     * failing assertion's call log and the trace viewer show
+     * {@code vaadin-button with text "Save"} instead of the raw selector.
+     * Named filters use this; a custom filter should too.
+     *
+     * @param description what the filter keeps, appended to the description
+     *                    of the candidates
+     * @param refinement  transformation applied to the candidate locator
+     * @return a new query over the narrowed candidates
+     */
+    default Q refine(String description, UnaryOperator<Locator> refinement) {
+        return refine(candidates -> QueryText.describe(refinement.apply(candidates), candidates, description));
+    }
 }

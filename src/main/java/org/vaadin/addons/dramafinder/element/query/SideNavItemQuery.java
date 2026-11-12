@@ -32,7 +32,7 @@ public class SideNavItemQuery<T extends VaadinElement> extends ElementQuery<T, S
      */
     @Override
     public SideNavItemQuery<T> withLabel(String label) {
-        return refine(l -> l.locator(QueryText.ownTextIs(label)));
+        return refine(QueryText.quote("with label", label), l -> l.locator(QueryText.ownTextIs(label)));
     }
 
     /**
@@ -44,6 +44,6 @@ public class SideNavItemQuery<T extends VaadinElement> extends ElementQuery<T, S
      */
     @Override
     public SideNavItemQuery<T> withLabelContaining(String text) {
-        return refine(l -> l.locator(QueryText.ownTextContains(text)));
+        return refine(QueryText.quote("with label containing", text), l -> l.locator(QueryText.ownTextContains(text)));
     }
 }

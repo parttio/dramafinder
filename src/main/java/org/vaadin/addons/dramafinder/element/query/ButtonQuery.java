@@ -36,7 +36,7 @@ public class ButtonQuery<T extends VaadinElement> extends ElementQuery<T, Button
      */
     @Override
     public ButtonQuery<T> withAccessibleName(String name) {
-        return refine(l -> QueryText.labelledOrOwnText(l, name, true));
+        return refine(QueryText.quote("with accessible name", name), l -> QueryText.labelledOrOwnText(l, name, true));
     }
 
     /**
@@ -49,6 +49,7 @@ public class ButtonQuery<T extends VaadinElement> extends ElementQuery<T, Button
      */
     @Override
     public ButtonQuery<T> withAccessibleNameContaining(String text) {
-        return refine(l -> QueryText.labelledOrOwnText(l, text, false));
+        return refine(QueryText.quote("with accessible name containing", text),
+                l -> QueryText.labelledOrOwnText(l, text, false));
     }
 }
