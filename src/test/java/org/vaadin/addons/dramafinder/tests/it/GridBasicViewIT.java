@@ -368,6 +368,23 @@ public class GridBasicViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testVisibleRowIndexes() {
+        GridElement grid = GridElement.getById(page, "basic-grid");
+        assertEquals(0, grid.getFirstVisibleRowIndex());
+        int last = grid.getLastVisibleRowIndex();
+        assertTrue(last > 0 && last < 99, "last visible row: " + last);
+        assertTrue(grid.isRowInView(last));
+        assertFalse(grid.isRowInView(last + 1));
+
+        grid.scrollToEnd();
+        grid.assertLastVisibleRow(99);
+        assertTrue(grid.getFirstVisibleRowIndex() > 0);
+        assertTrue(grid.isRowInView(grid.getFirstVisibleRowIndex()));
+        grid.scrollToStart();
+        grid.assertFirstVisibleRow(0);
+    }
+
+    @Test
     public void testAssertRowIndexesWithColumnText() {
         GridElement grid = GridElement.getById(page, "basic-grid");
         grid.assertRowIndexesWithColumnText(0, "First1", 0);
