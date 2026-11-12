@@ -127,6 +127,21 @@ Navigates by Vaadin route class and asserts which view the browser is on.
 - `void assertPath(Page page, String baseUrl, String path)` — Assert, retrying until the timeout, that the browser's path is exactly `path`, whatever the query string.
 - `void assertQueryParameter(Page page, String name, String value)` — Assert, retrying until the timeout, that the URL's query string holds `name` with `value` (compared decoded), or no `name` at all when `value` is `null`.
 
+### ClientSideErrors
+
+Collects the errors the browser reports while a test drives a page: messages logged with `console.error` and uncaught exceptions (Playwright's `pageerror`).
+
+**Static methods:**
+
+- `ClientSideErrors track(Page page)` — Start recording the client-side errors of `page`.
+
+**Methods:**
+
+- `List<String> getErrors()` — Get the errors recorded so far, oldest first: the text of each `console.error` message and the message of each uncaught exception.
+- `void clear()` — Forget the errors recorded so far, e.g. after asserting an expected one; recording continues.
+- `void assertNone()` — Assert that no client-side error has been recorded.
+- `void stop()` — Stop recording.
+
 ## Element index
 
 Wrapped web-component tag, its wrapper class, and the wrapper's actual static factory methods. **Factory methods are not uniform** — an element only has the factories listed here (e.g. most fields use `getByLabel`, containers use `get`). Do not assume a factory that isn't listed. "+ id, test id" marks a wrapper that also has `getById` and `getByTestId` (each with a `Page` and a `Locator` overload) — fallbacks for a component without a user-visible name. Every wrapper is also constructible via `new <Name>(Locator)`. The last column is the query that `find(page, <Name>.class)` returns (see **Typed queries**); a wrapper without one cannot be used with `find`.
@@ -983,6 +998,7 @@ PlaywrightElement for `<vaadin-combo-box>`.
 - `void clear()` — Clear the selection as a user does: click the clear button when it is visible, otherwise empty the input and leave the field.
 - `void selectItem(String item)` — Select an item by its visible label.
 - `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item.
+- `void filterAndSelectFirstItem(String filter)` — Type filter text into the input, then click the first item the drop-down offers for it, whatever its label.
 - `void setFilter(String filter)` — Type into the input to trigger filtering.
 - `String getFilter()` — Get the current filter value from the DOM property.
 - `void open()` — Open the combo box overlay.
@@ -1184,6 +1200,8 @@ PlaywrightElement for `<vaadin-date-time-picker>`.
 - `void clear()` — Empty both halves and leave the field, so the value becomes empty (`null` on the server).
 - `DatePickerElement getDatePicker()` — Get the date half of this field.
 - `TimePickerElement getTimePicker()` — Get the time half of this field.
+- `String getDateValue()` — Get the text of the date sub-field, as the user sees it.
+- `String getTimeValue()` — Get the text of the time sub-field, as the user sees it.
 - `void assertDateValue(String date)` — Assert the date sub-field value equals the expected string.
 - `void assertTimeValue(String time)` — Assert the time sub-field value equals the expected string.
 
@@ -1380,6 +1398,8 @@ PlaywrightElement for `<vaadin-grid>`.
 - `void uncheckSelectAll()` — Uncheck the select-all checkbox.
 - `void waitForGridToStopLoading()` — Wait for the grid to finish loading after a scroll or other action that triggers loading of new rows.
 - `boolean isRowInView(int rowIndex)` — Whether the row with the given index is currently scrolled into view (at least partially visible between the header and footer), without triggering any scrolling.
+- `int getFirstVisibleRowIndex()` — Get the index of the first row that is at least partially scrolled into view between the header and footer, without triggering any scrolling.
+- `int getLastVisibleRowIndex()` — Get the index of the last row that is at least partially scrolled into view between the header and footer, without triggering any scrolling.
 - `void assertRowCount(int expected)` — Assert that the grid has the given total number of rows (data items).
 - `void assertEmpty()` — Assert that the grid has no rows.
 - `void assertColumnCount(int expected)` — Assert that the grid has the given number of visible (non-hidden) columns.
@@ -1405,6 +1425,8 @@ PlaywrightElement for `<vaadin-grid>`.
 - `void assertRowNotPresent(int rowIndex)` — Assert that no row exists at the given index.
 - `void assertRowInView(int rowIndex)` — Assert that the row with the given index is currently scrolled into view.
 - `void assertRowNotInView(int rowIndex)` — Assert that the row with the given index is not currently scrolled into view.
+- `void assertFirstVisibleRow(int expected)` — Assert that the first row scrolled into view has the given index.
+- `void assertLastVisibleRow(int expected)` — Assert that the last row scrolled into view has the given index.
 - `void assertRowIndexesWithColumnText(int column, String text, Integer... expected)` — Assert that the cells in the given column with the given text appear at exactly the given row indexes.
 - `void assertSelectedItemCount(int expected)` — Assert that the given number of items are currently selected.
 - `void assertRowSelected(int rowIndex)` — Assert that the row at the given index is selected.

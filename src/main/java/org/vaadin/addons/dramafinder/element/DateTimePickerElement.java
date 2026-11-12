@@ -324,6 +324,26 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
     }
 
     /**
+     * Get the text of the date sub-field, as the user sees it.
+     *
+     * @return the date input's text, formatted for the component's locale (e.g.
+     *         {@code "6/15/2024"}); empty when no date is entered
+     */
+    public String getDateValue() {
+        return datePickerElement.getInputLocator().inputValue();
+    }
+
+    /**
+     * Get the text of the time sub-field, as the user sees it.
+     *
+     * @return the time input's text, formatted for the component's locale (e.g.
+     *         {@code "10:30 AM"}); empty when no time is entered
+     */
+    public String getTimeValue() {
+        return timePickerElement.getInputLocator().inputValue();
+    }
+
+    /**
      * Assert the date sub-field value equals the expected string.
      */
     public void assertDateValue(String date) {

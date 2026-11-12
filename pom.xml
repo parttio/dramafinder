@@ -240,6 +240,9 @@
                             <Dramafinder-Migration-2-0>
                                 META-INF/dramafinder/MIGRATION-2.0.md
                             </Dramafinder-Migration-2-0>
+                            <Dramafinder-Migration-From-Mopo>
+                                META-INF/dramafinder/MIGRATION-FROM-MOPO.md
+                            </Dramafinder-Migration-From-Mopo>
                         </manifestEntries>
                     </archive>
                 </configuration>
