@@ -32,7 +32,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `ListBox` | `ListBoxElement` | `find(page, ListBoxElement.class).withAccessibleName(name)`, `selectItem()`, `assertSelectedValue()`, `assertItemEnabled()`, `assertItemDisabled()` |
 | `DatePicker` | `DatePickerElement` | `getByLabel(page, label)`, `setValue(LocalDate)`, `setValue(String)` (types + Enter), `assertValue(LocalDate)`, `assertValid()`, `assertInvalid()` |
 | `TimePicker` | `TimePickerElement` | `getByLabel(page, label)`, `setValue(LocalTime)`, `assertValue(LocalTime)` |
-| `DateTimePicker` | `DateTimePickerElement` | `getByLabel(page, label)`, `setValue(LocalDateTime)`, `assertValue(LocalDateTime)`, `setDate()`, `setTime()` |
+| `DateTimePicker` | `DateTimePickerElement` | `getByLabel(page, label)`, `setValue(LocalDateTime)`, `assertValue(LocalDateTime)`, `typeText(date, time)`, `setDate()`, `setTime()`, `clear()` (both halves), `getDatePicker()`, `getTimePicker()` |
 | `Grid` | `GridElement` | `get(page)`, `getById(page, id)`, `assertRowCount()`, `assertCellContent(row, col, text)`, `assertHeaderCellContents()`, `select(rowIndex)`, `assertRowSelected()`, `scrollToRow()`, `findRow()`, `findCell()`; rows: `findRow(index)` → `RowElement.click()`, `doubleClick()`, `openDetails()`; sorting via `findHeaderCellByText(text)` → `HeaderCellElement.sort(GridElement.SortDirection)` / `assertSortDirection()`; header rows (filters) via `getHeaderCells(columnIndex)` |
 | `TreeGrid` | `TreeGridElement` | `get(page)`, `expandRow()`, `collapseRow()`, `assertRowCount()`, `assertCellContent()` — extends `GridElement` |
 | `VirtualList` | `VirtualListElement` | `get(page)`, `assertRowCount()`, `assertItemRendered()`, `scrollToRow()` |

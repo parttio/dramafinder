@@ -18,6 +18,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasInputFieldElement;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
 import org.vaadin.addons.dramafinder.element.shared.HasPlaceholderElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
+import org.vaadin.addons.dramafinder.element.shared.HasValueElement;
 import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
@@ -28,8 +29,10 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 /**
  * PlaywrightElement for {@code <vaadin-date-time-picker>}.
  * <p>
- * Composes a {@link DatePickerElement} and {@link TimePickerElement} and exposes
- * helpers to interact using {@link LocalDateTime}.
+ * Composes a {@link DatePickerElement} and {@link TimePickerElement} (see
+ * {@link #getDatePicker()} and {@link #getTimePicker()}) and exposes helpers to
+ * interact using {@link LocalDateTime}; {@link #typeText(String, String)} types
+ * into both halves as a user does and {@link #clear()} empties both.
  */
 @PlaywrightElement(DateTimePickerElement.FIELD_TAG_NAME)
 public class DateTimePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
@@ -117,9 +120,14 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
     }
 
     /**
-     * Set the value of the input.
+     * Fill the date half's input with {@code value} and dispatch a
+     * {@code change} event on the host.
+     * <p>
+     * Only the date half is touched, so {@code setValue("")} leaves the time:
+     * use {@link #typeText(String, String)} to type into both halves as a user
+     * does, and {@link #clear()} to empty both.
      *
-     * @param value value formatted as in the view dd/mm/yyyy hh:mm.
+     * @param value the text for the date half's input
      */
     @Override
     public void setValue(String value) {
@@ -222,22 +230,96 @@ public class DateTimePickerElement extends VaadinElement implements HasInputFiel
     }
 
     /**
-     * Set only the date part (string input) and dispatch change events.
+     * Type {@code date} into the date half, press Enter there and leave the
+     * field, as a user does.
+     * <p>
+     * No synthetic {@code change} event is dispatched. Leaving the field makes
+     * the picker check its halves, so while the time half is still empty the
+     * field is invalid (incomplete) until {@link #setTime(String)} fills it; use
+     * {@link #typeText(String, String)} to type both halves before leaving.
+     * Waits for the server round-trip afterwards.
+     *
+     * @param date the date text in the locale's format (e.g. {@code dd/mm/yyyy});
+     *             an empty string empties the date half
      */
     public void setDate(String date) {
-        datePickerElement.setValue(date);
-        getLocator().press("Enter");
-        getLocator().dispatchEvent("change");
-        waitAfterAction();
+        typeInto(datePickerElement, date);
+        leave(datePickerElement);
     }
 
     /**
-     * Set only the time part (string input) and dispatch change events.
+     * Type {@code time} into the time half, press Enter there and leave the
+     * field, as a user does.
+     * <p>
+     * No synthetic {@code change} event is dispatched; see
+     * {@link #setDate(String)} for what leaving the field checks. Waits for the
+     * server round-trip afterwards.
+     *
+     * @param time the time text in the locale's format (e.g. {@code hh:mm});
+     *             an empty string empties the time half
      */
-    public void setTime(String date) {
-        timePickerElement.setValue(date);
-        getLocator().press("Enter");
-        getLocator().dispatchEvent("change");
+    public void setTime(String time) {
+        typeInto(timePickerElement, time);
+        leave(timePickerElement);
+    }
+
+    /**
+     * Type into both halves as a user does, then leave the field.
+     * <p>
+     * Fills the date input and presses Enter on it, does the same in the time
+     * input, then blurs the time input. No synthetic {@code change} event is
+     * dispatched; leaving the field makes the picker check its halves, so text
+     * it cannot parse leaves the value empty and the field invalid (bad input),
+     * and one empty half leaves it empty and invalid (incomplete). Waits for the
+     * server round-trip afterwards.
+     *
+     * @param date the date text in the locale's format (e.g. {@code dd/mm/yyyy});
+     *             an empty string leaves the date half empty
+     * @param time the time text in the locale's format (e.g. {@code hh:mm});
+     *             an empty string leaves the time half empty
+     */
+    public void typeText(String date, String time) {
+        typeInto(datePickerElement, date);
+        typeInto(timePickerElement, time);
+        leave(timePickerElement);
+    }
+
+    /**
+     * Empty both halves and leave the field, so the value becomes empty
+     * ({@code null} on the server). Same as {@code typeText("", "")}.
+     */
+    @Override
+    public void clear() {
+        typeText("", "");
+    }
+
+    /**
+     * Get the date half of this field.
+     *
+     * @return the nested {@code vaadin-date-picker} as a {@link DatePickerElement}
+     */
+    public DatePickerElement getDatePicker() {
+        return datePickerElement;
+    }
+
+    /**
+     * Get the time half of this field.
+     *
+     * @return the nested {@code vaadin-time-picker} as a {@link TimePickerElement}
+     */
+    public TimePickerElement getTimePicker() {
+        return timePickerElement;
+    }
+
+    private void typeInto(HasValueElement half, String text) {
+        Locator input = half.getInputLocator();
+        input.fill(text);
+        input.press("Enter");
+        waitAfterAction();
+    }
+
+    private void leave(HasValueElement half) {
+        half.getInputLocator().blur();
         waitAfterAction();
     }
 
