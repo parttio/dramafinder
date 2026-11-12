@@ -194,7 +194,8 @@ public class ElementQueryIT extends SpringPlaywrightIT {
     public void menuItems_byTextAndName() {
         assertEquals(1, find(page, MenuItemElement.class).withText("File").count());
         assertEquals(1, find(page, MenuItemElement.class).withAccessibleName("Edit").count());
-        assertEquals(1, find(page, MenuItemElement.class).withAccessibleName("More options").count());
+        // the hidden overflow button ("More options") is not an item
+        assertEquals(0, find(page, MenuItemElement.class).withAccessibleName("More options").count());
         assertEquals(1, find(page, MenuBarElement.class).withAccessibleName("Main menu").count());
     }
 

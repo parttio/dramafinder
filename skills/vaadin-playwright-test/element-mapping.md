@@ -48,9 +48,9 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Accordion` | `AccordionElement` | `new AccordionElement(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `toggle()`, `assertOpened()`, `assertClosed()`, `getSummaryLocator()`, `getContentLocator()` (open or closed), `assertContentVisible()`, `assertContentNotVisible()` |
-| `MenuBar` | `MenuBarElement` | `find(page, MenuBarElement.class).withAccessibleName(name)` or `new MenuBarElement(page)`, `getMenuItemElement(name)`, `openSubMenu(name)` |
-| `MenuBar` sub-menu | `MenuElement` | returned by `menuBar.openSubMenu(name)` (or `new MenuElement(page)`), `getMenuItemElement(name)`, `openSubMenu(name)` for a nested sub-menu |
-| `MenuBar` item | `MenuItemElement` | returned by `menuBar.getMenuItemElement(name)`, `click()`, `assertExpanded()`, `assertCollapsed()` |
+| `MenuBar` | `MenuBarElement` | `find(page, MenuBarElement.class).withAccessibleName(name)` or `new MenuBarElement(page)`, `getMenuItemElement(name)` (text, or `aria-label` for icon-only items), `getItemLabels()`, `openSubMenu(name)`, `close()` (waits until the sub-menus are gone) |
+| `MenuBar` sub-menu | `MenuElement` | returned by `menuBar.openSubMenu(name)`, scoped to that menu bar and level (`new MenuElement(page)` matches every level), `getMenuItemElement(name)`, `getItemLabels()`, `openSubMenu(name)` for a nested sub-menu |
+| `MenuBar` item | `MenuItemElement` | returned by `menuBar.getMenuItemElement(name)` / `menu.getMenuItemElement(name)`, or `find(page, MenuItemElement.class).withText(text)` (buttons and sub-menu items), `click()`, `assertExpanded()`, `assertCollapsed()`, `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
 | `ContextMenu` | `ContextMenuElement` | `ContextMenuElement.openOn(target)` then `new ContextMenuElement(page)`, `selectItem()`, `assertOpen()`, `assertClosed()` |
 | `SplitLayout` | `SplitLayoutElement` | `get(page)`, `assertHorizontal()`, `assertVertical()`, `dragSplitterBy()` |
 | `FormLayout` | `FormLayoutElement` | `get(page)`, `get(locator)`, `getById(page, id)`, `getFields()`, `getField(index)`, `getFieldCount()`, `getFormItems()`, `getColumnCount()`, `getLabelPosition()`, `assertColumnCount(int)`, `assertLabelPosition(String)`, `assertFieldCount(int)` |
