@@ -60,12 +60,15 @@ public class AddressFormIT extends SpringPlaywrightIT {
 
     @Test
     public void savesAddress() {
-        TextFieldElement.getByLabel(page, "Street").setValue("Main St 1");
-        ButtonElement.getByText(page, "Save").click();
+        find(page, TextFieldElement.class).withLabel("Street").single().setValue("Main St 1");
+        find(page, ButtonElement.class).withText("Save").single().click();
         assertThat(page.getByText("Saved")).isVisible();
     }
 }
 ```
+
+`find` is `org.vaadin.addons.dramafinder.element.query.ElementQueries.find`,
+imported statically. The examples below use it throughout; see section 6.
 
 `navigate(AddressView.class)` opens another view by its route class, and
 `assertAt(AddressView.class)` checks where the browser is.
@@ -74,7 +77,7 @@ public class AddressFormIT extends SpringPlaywrightIT {
 
 | Mopo | DramaFinder |
 |---|---|
-| `mopo.click(locator)` / `mopo.click(selector)` | `ButtonElement.getByText(page, "Save").click()` — every element action waits for the round-trip it triggers |
+| `mopo.click(locator)` / `mopo.click(selector)` | `find(page, ButtonElement.class).withText("Save").single().click()` — every element action waits for the round-trip it triggers |
 | `Mopo.waitForConnectionToSettle(page)` / `mopo.waitForConnectionToSettle()` | `AutoWait.waitForVaadinIdle(page)` |
 | raw `locator.click()` followed by `waitForConnectionToSettle` | `locator.click(); AutoWait.afterAction(page);` |
 
@@ -109,10 +112,10 @@ recording. To check every test, track in an overridden `setupTest()` (after
 - **`mopo.driveIn(locator, task)`** has no direct equivalent; write the three
   steps out, which also lets you use the component's own assertions:
   ```java
-  DialogElement dialog = DialogElement.getByHeaderText(page, "Edit address");
+  DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Edit address").single();
   dialog.assertOpen();
-  TextFieldElement.getByLabel(dialog.getLocator(), "Street").setValue("Main St 1");
-  ButtonElement.getByText(dialog.getLocator(), "Save").click();
+  dialog.find(TextFieldElement.class).withLabel("Street").single().setValue("Main St 1");
+  dialog.find(ButtonElement.class).withText("Save").single().click();
   dialog.assertClosed();
   ```
   For any other component, `assertThat(locator).isVisible()` before and
@@ -124,31 +127,52 @@ recording. To check every test, track in an overridden `setupTest()` (after
 
 ## 6. Finding components
 
-Mopo wraps a locator you build; DramaFinder finds the component for you:
+Mopo wraps a locator you build; DramaFinder finds the component for you with a
+typed query:
 
 ```java
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
 // Mopo
 GridPw grid = new GridPw(page.locator("#people"));
 ComboBoxPw country = new ComboBoxPw(page.getByLabel("Country"));
 
 // DramaFinder
-GridElement grid = GridElement.getById(page, "people");
-ComboBoxElement country = ComboBoxElement.getByLabel(page, "Country");
+GridElement grid = find(page, GridElement.class).withId("people").single();
+ComboBoxElement country = find(page, ComboBoxElement.class).withLabel("Country").single();
 ```
 
+`find(page, X.class)` returns a query typed for that component, so a filter that
+cannot apply to it does not compile (`find(page, ButtonElement.class).withLabel(..)`
+is an error: a button has text, not a label). Common filters:
+
+| Filter | Matches |
+|---|---|
+| `withLabel("Country")` | the visible label of a field |
+| `withText("Save")` | the text of a button or other text component |
+| `withAccessibleName("Edit address")` | the accessible name: an `aria-label`, or a dialog's header title |
+| `withPlaceholder("Street")` | a field's placeholder |
+| `withId("people")` / `withTestId("people")` | `id` / `data-testid` (Flow's `setTestId`) |
+
+Exact filters match the **whole** value, case-sensitively; each has a
+`…Containing` sibling for a case-insensitive part, e.g.
+`withLabelContaining("count")`. Finish the query with `single()`, which fails
+when several components match instead of picking the first one; `first()`,
+`get(i)`, `all()` and `count()` are there when several are expected. Scope a
+query to a container with `find(locator, X.class)` or
+`dialog.find(ButtonElement.class)`.
+
 Every element also has a `new XElement(locator)` constructor, so an existing
-locator keeps working during the migration. Label lookups match the **whole**
-visible label, case-sensitively, and fail on duplicates instead of picking the
-first one; use `getByLabelContaining` to match part of a label. Scope a lookup to a
-container by passing a `Locator` instead of the `Page`, or with
-`dialog.find(ButtonElement.class).withText("Save").single()`.
+Mopo locator keeps working during the migration, and static factories such as
+`TextFieldElement.getByLabel(page, "Street")` are shorthands for the same
+queries.
 
 ## 7. `GridPw` → `GridElement`
 
 | Mopo | DramaFinder |
 |---|---|
-| `new GridPw(page)` | `GridElement.get(page)` |
-| `new GridPw(locator)` | `new GridElement(locator)`, or `GridElement.getById(page, id)` |
+| `new GridPw(page)` | `find(page, GridElement.class).first()` |
+| `new GridPw(locator)` | `find(page, GridElement.class).withId("people").single()`, or `new GridElement(locator)` |
 | `getRenderedRowCount()` | `getRenderedRowCount()` |
 | `getFirstVisibleRowIndex()` / `getLastVisibleRowIndex()` | same names; `-1` when no row is in view. Assert with `assertFirstVisibleRow(i)` / `assertLastVisibleRow(i)` |
 | `isRowInView(i)` | `isRowInView(i)`, or `assertRowInView(i)` / `assertRowNotInView(i)` |
@@ -176,7 +200,7 @@ Notes:
 
 | Mopo | DramaFinder |
 |---|---|
-| `new ComboBoxPw(locator)` | `ComboBoxElement.getByLabel(page, "Country")` |
+| `new ComboBoxPw(locator)` | `find(page, ComboBoxElement.class).withLabel("Country").single()` |
 | `filterAndSelectFirst("fin")` | `filterAndSelectFirstItem("fin")` |
 | `filter("fin")` | `setFilter("fin")` |
 | `selectOption("Finland")` | `selectItem("Finland")`; or `filterAndSelectItem("fin", "Finland")` to filter first |
@@ -195,7 +219,7 @@ field.
 
 | Mopo | DramaFinder |
 |---|---|
-| `new DatePickerPw(locator)` | `DatePickerElement.getByLabel(page, "Birthday")` |
+| `new DatePickerPw(locator)` | `find(page, DatePickerElement.class).withLabel("Birthday").single()` |
 | `getValue()` (a `LocalDate`) | `getValueAsLocalDate()`; assert with `assertValue(LocalDate)` |
 | `setValue(LocalDate)` | `setValue(LocalDate)` |
 | `getInputString()` | `getInputLocator().inputValue()`; assert with `assertValue("6/15/2024")` |
@@ -206,7 +230,7 @@ field.
 
 | Mopo | DramaFinder |
 |---|---|
-| `new DateTimePickerPw(locator)` | `DateTimePickerElement.getByLabel(page, "Meeting")` |
+| `new DateTimePickerPw(locator)` | `find(page, DateTimePickerElement.class).withLabel("Meeting").single()` |
 | `getValue()` (a `LocalDateTime`) | `getValueAsLocalDateTime()`; assert with `assertValue(LocalDateTime)` |
 | `setValue(LocalDateTime)` | `setValue(LocalDateTime)` |
 | `getDateInputString()` | `getDateValue()`; assert with `assertDateValue(...)` |
