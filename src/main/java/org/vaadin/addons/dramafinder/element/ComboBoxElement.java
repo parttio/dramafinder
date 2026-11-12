@@ -104,6 +104,25 @@ public class ComboBoxElement extends VaadinElement
     }
 
     /**
+     * Clear the selection as a user does: click the clear button when it is
+     * visible, otherwise empty the input and leave the field.
+     * <p>
+     * Either way the value becomes empty ({@code null} on the server). Unlike
+     * {@code setValue("")}, this does not look for an item labelled {@code ""}.
+     * Waits for the server round-trip afterwards.
+     */
+    @Override
+    public void clear() {
+        if (isClearButtonVisible()) {
+            clickClearButton();
+            return;
+        }
+        getInputLocator().fill("");
+        getInputLocator().blur();
+        waitAfterAction();
+    }
+
+    /**
      * Select an item by its visible label.
      * Opens the overlay, clicks the matching item.
      *

@@ -124,6 +124,28 @@ public class MultiSelectComboBoxElement extends VaadinElement
     }
 
     /**
+     * Clear the selection as a user does: click the clear button when it is
+     * visible, otherwise deselect every selected item in the overlay and close
+     * it.
+     * <p>
+     * Either way nothing is selected afterwards (an empty set on the server).
+     * Unlike the inherited {@code setValue("")}, this does not leave the
+     * selection in place. Waits for the server round-trip after each click.
+     */
+    @Override
+    public void clear() {
+        if (isClearButtonVisible()) {
+            clickClearButton();
+            return;
+        }
+        List<String> selected = getSelectedItems();
+        if (!selected.isEmpty()) {
+            deselectItems(selected.toArray(String[]::new));
+            close();
+        }
+    }
+
+    /**
      * Select multiple items in sequence.
      *
      * @param items labels of the items to select
