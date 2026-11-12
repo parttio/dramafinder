@@ -30,7 +30,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `assertSelectedItems()`, `assertSelectedCount()`, `getSelectedItems()`, `getItemLabels()` (all items, lazy pages loaded) |
 | `Select` | `SelectElement` | `getByLabel(page, label)`, `selectItem()`, `assertValue()` |
 | `ListBox` | `ListBoxElement` | `find(page, ListBoxElement.class).withAccessibleName(name)`, `selectItem()`, `assertSelectedValue()`, `assertItemEnabled()`, `assertItemDisabled()` |
-| `DatePicker` | `DatePickerElement` | `getByLabel(page, label)`, `setValue(LocalDate)`, `assertValue(LocalDate)`, `assertValid()`, `assertInvalid()` |
+| `DatePicker` | `DatePickerElement` | `getByLabel(page, label)`, `setValue(LocalDate)`, `setValue(String)` (types + Enter), `assertValue(LocalDate)`, `assertValid()`, `assertInvalid()` |
 | `TimePicker` | `TimePickerElement` | `getByLabel(page, label)`, `setValue(LocalTime)`, `assertValue(LocalTime)` |
 | `DateTimePicker` | `DateTimePickerElement` | `getByLabel(page, label)`, `setValue(LocalDateTime)`, `assertValue(LocalDateTime)`, `setDate()`, `setTime()` |
 | `Grid` | `GridElement` | `get(page)`, `getById(page, id)`, `assertRowCount()`, `assertCellContent(row, col, text)`, `assertHeaderCellContents()`, `select(rowIndex)`, `assertRowSelected()`, `scrollToRow()`, `findRow()`, `findCell()`; rows: `findRow(index)` → `RowElement.click()`, `doubleClick()`, `openDetails()`; sorting via `findHeaderCellByText(text)` → `HeaderCellElement.sort(GridElement.SortDirection)` / `assertSortDirection()`; header rows (filters) via `getHeaderCells(columnIndex)` |
