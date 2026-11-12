@@ -8,6 +8,8 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.DetailsElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -79,5 +81,36 @@ public class DetailsViewIT extends SpringPlaywrightIT implements HasTestView {
         details.assertClosed();
         buttonElement.click();
         details.assertOpened();
+    }
+
+    @Test
+    public void testNestedDetails() {
+        DetailsElement outer = DetailsElement.getBySummaryText(page, "Outer Details");
+        outer.assertClosed();
+        assertThat(outer.getContentLocator()).hasCount(1);
+        outer.assertContentNotVisible();
+        assertThat(outer.getSummaryLocator()).hasCount(1);
+
+        outer.setOpen(true);
+        outer.assertOpened();
+        outer.assertContentVisible();
+        assertThat(outer.getContentLocator()).containsText("Outer content.");
+
+        DetailsElement inner = DetailsElement.getBySummaryText(page, "Inner Details");
+        inner.assertClosed();
+        inner.assertContentNotVisible();
+        inner.toggle();
+        inner.assertOpened();
+        inner.assertContentVisible();
+        assertEquals("Inner Details", inner.getSummaryText());
+
+        outer.setOpen(false);
+        outer.assertClosed();
+        outer.assertContentNotVisible();
+
+        outer.toggle();
+        outer.assertOpened();
+        // the inner details kept their state while hidden
+        inner.assertOpened();
     }
 }
