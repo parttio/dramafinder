@@ -55,7 +55,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `SplitLayout` | `SplitLayoutElement` | `get(page)`, `assertHorizontal()`, `assertVertical()`, `dragSplitterBy()` |
 | `FormLayout` | `FormLayoutElement` | `get(page)`, `get(locator)`, `getById(page, id)`, `getFields()`, `getField(index)`, `getFieldCount()`, `getFormItems()`, `getColumnCount()`, `getLabelPosition()`, `assertColumnCount(int)`, `assertLabelPosition(String)`, `assertFieldCount(int)` |
 | `AppLayout` | `AppLayoutElement` | `get(page)`, `get(locator)`, `getById(page, id)`, `getNavbarLocator()`, `getDrawerLocator()`, `getContentLocator()`, `getDrawerToggle()`, `toggleDrawer()`, `openDrawer()`, `closeDrawer()`, `setDrawerOpened(boolean)`, `isDrawerOpened()`, `assertDrawerOpened()`, `assertDrawerClosed()`, `isOverlayMode()`, `assertOverlayMode()`, `assertPrimarySection()` |
-| `Upload` | `UploadElement` | `getByButtonText(page, text)`, `uploadFiles(Path...)`, `assertHasFile()`, `assertFileComplete()` |
+| `Upload` | `UploadElement` | `getByButtonText(page, text)`, `uploadFiles(Path...)`, `uploadFiles(FilePayload...)`, `assertHasFile()`, `assertFileComplete()` |
 | `IntegerSlider` / `DecimalSlider` | `SliderElement` | `getByLabel(page, label)`, `getValue()`, `setValue(double)`, `assertValue()`, `assertMin()`, `assertMax()`, `assertStep()`, `increment()`, `decrement()`, `moveToMin()`, `moveToMax()` |
 | `ProgressBar` | `ProgressBarElement` | `new ProgressBarElement(locator)`, `assertValue()`, `assertIndeterminate()` |
 | `Avatar` | `AvatarElement` | `get(page)`, `getByName(page, name)`, `assertName()`, `assertAbbreviation()` |
