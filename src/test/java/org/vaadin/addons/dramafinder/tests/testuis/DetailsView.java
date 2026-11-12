@@ -21,6 +21,13 @@ public class DetailsView extends Main {
         createOpenedDetails();
         createDisabledDetails();
         createSummaryComponent();
+        createNestedDetails();
+    }
+
+    private void createNestedDetails() {
+        Details inner = new Details("Inner Details", new Span("Inner content."));
+        Details outer = new Details("Outer Details", new Span("Outer content."), inner);
+        addExample("Nested Details", outer);
     }
 
     private void createBasicDetails() {

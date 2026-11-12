@@ -33,6 +33,18 @@ public class ComboBoxView extends Main {
         createCustomValueExample();
         createAllowedCharPatternExample();
         createLazyLoadingExample();
+        createClearExample("Clearable ComboBox", "clearable-value", false);
+        createClearExample("Clearable ComboBox with clear button", "clearable-with-button-value", true);
+    }
+
+    private void createClearExample(String label, String outputId, boolean clearButtonVisible) {
+        ComboBox<String> comboBox = new ComboBox<>(label, "Apple", "Banana", "Cherry");
+        comboBox.setClearButtonVisible(clearButtonVisible);
+        comboBox.setValue("Banana");
+        Span value = new Span("Banana");
+        value.setId(outputId);
+        comboBox.addValueChangeListener(e -> value.setText(String.valueOf(e.getValue())));
+        addExample(label + " Example", comboBox, value);
     }
 
     private void createBasicExample() {

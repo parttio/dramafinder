@@ -88,18 +88,28 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
     }
 
     /**
-     * Get a tab by its label.
+     * Get a tab by its label, the one {@link #getTabLabels()} returns.
      * <p>
-     * The label must match the tab's full accessible name; {@code "Tab 1"} does
-     * not resolve to {@code "Tab 10"}. Two tabs sharing the label fail with a
-     * Playwright strict-mode error.
+     * The label is the tab's own text (children in a named slot, such as a tooltip,
+     * left out), so a tab with both a text and an {@code aria-label} is found by its
+     * text. A tab with no text, such as an icon-only tab, is found by its accessible
+     * name ({@code aria-label}). The label must match in full, case-sensitively;
+     * {@code "Tab 1"} does not resolve to {@code "Tab 10"}. Two tabs sharing the
+     * label fail with a Playwright strict-mode error.
      *
      * @param label the full tab label
      * @return the matching {@code TabElement}
      */
     public TabElement getTab(String label) {
-        return new TabElement(ItemLocator.byExactName(getLocator(), AriaRole.TAB, label));
+        Locator byText = find(TabElement.class).withText(label).getLocator();
+        Locator byName = getTabs().locator(NO_OWN_TEXT)
+                .and(ItemLocator.byExactName(getLocator(), AriaRole.TAB, label));
+        return new TabElement(byText.or(byName));
     }
+
+    // A tab with no own text: no text node and no unslotted child holding text
+    private static final String NO_OWN_TEXT =
+            "xpath=self::*[not(text()[normalize-space()]) and not(*[not(@slot)][normalize-space()])]";
 
     /**
      * Get a tab by its zero-based index.
@@ -142,7 +152,8 @@ public class TabsElement extends VaadinElement implements HasThemeElement, HasSt
 
     /**
      * Get the labels of all tabs, in DOM order, read as {@link TabElement#getLabel()} does: own
-     * text, whitespace collapsed and trimmed.
+     * text, whitespace collapsed and trimmed, or the {@code aria-label} of a tab with no text.
+     * Each label selects its tab through {@link #getTab(String)}.
      *
      * @return the tab labels; empty when the strip has no tabs
      */

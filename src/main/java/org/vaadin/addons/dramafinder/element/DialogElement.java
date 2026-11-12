@@ -15,12 +15,25 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * PlaywrightElement for {@code <vaadin-dialog>}.
  * <p>
  * Provides access to header/content/footer slots, modal flags and open state.
+ * <p>
+ * The typed query {@code find(page, DialogElement.class)} searches open dialogs
+ * only ({@code vaadin-dialog[opened]}): a closed dialog kept in the page, or one of
+ * the dev tools' dialogs, is not part of what a user sees. The id and test id
+ * factories still match a dialog whether it is open or not. The open state is the
+ * {@code opened} attribute for both {@link #isOpen()} and {@link #assertOpen()}.
  */
-@PlaywrightElement(DialogElement.FIELD_TAG_NAME)
+@PlaywrightElement(DialogElement.OPEN_SELECTOR)
 public class DialogElement extends VaadinElement implements HasThemeElement, HasStyleElement,
         Findable<ComponentQuery<DialogElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-dialog";
+
+    /**
+     * CSS selector matching only open dialogs; also the selector the typed query
+     * searches. A literal, so the API reference generator can read it from the
+     * annotation.
+     */
+    static final String OPEN_SELECTOR = "vaadin-dialog[opened]";
 
     /**
      * Create a {@code DialogElement} by resolving the dialog with ARIA role.
@@ -54,9 +67,15 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         return getLocator().locator("vaadin-dialog-overlay");
     }
 
-    /** Whether the dialog is open (visible). */
+    /**
+     * Whether the dialog is open: it has the {@code opened} attribute, the state
+     * {@link #assertOpen()} checks. Does not wait; {@code false} when the dialog is
+     * not in the page.
+     *
+     * @return {@code true} if the dialog is open
+     */
     public boolean isOpen() {
-        return getOverlayLocator().isVisible();
+        return getLocator().and(getLocator().page().locator("[opened]")).count() > 0;
     }
 
     /** Assert that the dialog is open. */
@@ -97,8 +116,14 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
         assertThat(getLocator()).hasAttribute("modeless", "");
     }
 
-    /** Assert that the dialog is closed (its overlay is hidden). */
+    /**
+     * Assert that the dialog is closed: it has no {@code opened} attribute and its
+     * overlay is hidden (the overlay stays visible while it animates out). Passes
+     * when the dialog is no longer in the page.
+     */
     public void assertClosed() {
+        // a count, so a dialog no longer in the page passes too
+        assertThat(getLocator().and(getLocator().page().locator("[opened]"))).hasCount(0);
         assertThat(getOverlayLocator()).isHidden();
     }
 

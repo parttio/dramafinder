@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.DatePickerElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 import java.time.LocalDate;
@@ -66,6 +68,58 @@ public class DatePickerViewIT extends SpringPlaywrightIT {
         // Set a valid value again
         datePicker.setValue(initialDate);
         datePicker.assertValid();
+    }
+
+    @Test
+    public void testTypeValidText() {
+        DatePickerElement datePicker = DatePickerElement.getByLabel(page, "Typed date");
+        countHostChangeEvents(datePicker);
+
+        datePicker.setValue("20/09/2025");
+
+        assertThat(page.locator("#typed-date-value")).hasText("2025-09-20");
+        datePicker.assertValue(LocalDate.of(2025, 9, 20));
+        datePicker.assertValid();
+        // Only the picker's own change: nothing synthetic was dispatched on the host
+        assertEquals(1, hostChangeEvents());
+    }
+
+    @Test
+    public void testTypeUnparsableText() {
+        DatePickerElement datePicker = DatePickerElement.getByLabel(page, "Typed date");
+        datePicker.setValue("20/09/2025");
+        assertThat(page.locator("#typed-date-value")).hasText("2025-09-20");
+
+        datePicker.setValue("dsdds");
+
+        assertThat(page.locator("#typed-date-value")).hasText("null");
+        // The text stays in the input; the picker's value is empty
+        datePicker.assertValue("dsdds");
+        assertThat(datePicker.getLocator()).hasJSProperty("value", "");
+        datePicker.assertInvalid();
+        datePicker.assertErrorMessage("Bad input.");
+    }
+
+    @Test
+    public void testClear() {
+        DatePickerElement datePicker = DatePickerElement.getByLabel(page, "Typed date");
+        datePicker.setValue("20/09/2025");
+        assertThat(page.locator("#typed-date-value")).hasText("2025-09-20");
+
+        datePicker.clear();
+
+        assertThat(page.locator("#typed-date-value")).hasText("null");
+        datePicker.assertValue((LocalDate) null);
+        datePicker.assertValid();
+    }
+
+    private void countHostChangeEvents(DatePickerElement datePicker) {
+        datePicker.getLocator().evaluate("el => { window.__hostChanges = 0; "
+                + "el.addEventListener('change', e => { if (e.target === el) window.__hostChanges++; }); }");
+    }
+
+    private int hostChangeEvents() {
+        return ((Number) page.evaluate("() => window.__hostChanges")).intValue();
     }
 
     @Test

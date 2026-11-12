@@ -341,4 +341,30 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
         assertEquals(expected, comboBox.getItemLabels());
         comboBox.assertClosed();
     }
+
+    @Test
+    public void testClearDeselectsEveryItem() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Clearable MultiSelect");
+        comboBox.assertSelectedItems("Banana", "Date");
+        comboBox.assertClearButtonNotVisible();
+
+        comboBox.clear();
+
+        assertThat(page.locator("#clearable-multi-value")).hasText("empty");
+        comboBox.assertSelectedCount(0);
+        comboBox.assertClosed();
+    }
+
+    @Test
+    public void testClearWithClearButton() {
+        MultiSelectComboBoxElement comboBox =
+                MultiSelectComboBoxElement.getByLabel(page, "MultiSelect with placeholder and clear button");
+        comboBox.selectItems("Apple", "Cherry");
+        comboBox.close();
+        comboBox.assertSelectedItems("Apple", "Cherry");
+
+        comboBox.clear();
+
+        comboBox.assertSelectedCount(0);
+    }
 }

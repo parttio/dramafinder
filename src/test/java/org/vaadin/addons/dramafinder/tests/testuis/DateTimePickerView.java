@@ -6,6 +6,7 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePickerVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -21,6 +22,18 @@ public class DateTimePickerView extends Main {
         createMinMaxExample();
         createAriaLabelExample();
         createEnabledDisabledExample();
+        createTypedTextExample();
+    }
+
+    private void createTypedTextExample() {
+        DateTimePicker dateTimePicker = new DateTimePicker("Typed date time");
+        dateTimePicker.setI18n(new DateTimePicker.DateTimePickerI18n()
+                .setBadInputErrorMessage("Bad input.")
+                .setIncompleteInputErrorMessage("Incomplete input."));
+        Span value = new Span("null");
+        value.setId("typed-date-time-value");
+        dateTimePicker.addValueChangeListener(e -> value.setText(String.valueOf(e.getValue())));
+        addExample("Typed text Example", new HorizontalLayout(dateTimePicker, value));
     }
 
     private void createBasicExample() {

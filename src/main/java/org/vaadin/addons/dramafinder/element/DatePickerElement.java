@@ -27,6 +27,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * PlaywrightElement for {@code <vaadin-date-picker>}.
  * <p>
  * Adds convenience methods for {@link LocalDate} values and lookup by label.
+ * {@link #setValue(String)} types into the input as a user does, so text the
+ * picker cannot parse goes down the real bad-input path.
  */
 @PlaywrightElement(DatePickerElement.FIELD_TAG_NAME)
 public class DatePickerElement extends VaadinElement implements HasInputFieldElement, HasValidationPropertiesElement,
@@ -85,15 +87,21 @@ public class DatePickerElement extends VaadinElement implements HasInputFieldEle
     }
 
     /**
-     * Set the value of the input.
+     * Type {@code value} into the input and press Enter there, as a user does.
+     * <p>
+     * No synthetic {@code change} event is dispatched: the picker parses and
+     * commits the text itself, so the web component and Flow see the events of
+     * a real browser. Text the picker cannot parse (e.g. {@code "dsdds"})
+     * leaves the value empty and the field invalid (bad input); an empty
+     * string clears the value. Waits for the server round-trip afterwards.
      *
-     * @param value value formatted as in the view dd/mm/yyyy.
+     * @param value the text to type, in the locale's display format (e.g.
+     *              {@code dd/mm/yyyy}); an empty string clears the field
      */
     @Override
     public void setValue(String value) {
-        HasInputFieldElement.super.setValue(value);
-        getLocator().press("Enter");
-        getLocator().dispatchEvent("change");
+        getInputLocator().fill(value);
+        getInputLocator().press("Enter");
         waitAfterAction();
     }
 

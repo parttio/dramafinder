@@ -153,4 +153,22 @@ public class TabsViewIT extends SpringPlaywrightIT implements HasTestView {
         tabs.selectTab("Billing");
         tabs.assertSelectedTab("Billing");
     }
+
+    @Test
+    public void testSelectTabByEveryListedLabel() {
+        TabsElement tabs = TabsElement.getById(page, "labelled-tabs");
+        // own text wins over the aria-label; an icon-only tab reads as its aria-label
+        tabs.assertTabLabels("Inbox", "Archive", "Settings");
+        for (String label : tabs.getTabLabels()) {
+            tabs.selectTab(label);
+            tabs.assertSelectedTab(label);
+            assertEquals(label, tabs.getSelectedTab().getLabel());
+        }
+        tabs.selectTab("Inbox");
+        tabs.assertSelectedTab(0);
+        tabs.selectTab("Settings");
+        tabs.assertSelectedTab(2);
+        // the aria-label of a tab that has a text does not find it
+        assertThat(tabs.getTab("Inbox, 3 unread").getLocator()).hasCount(0);
+    }
 }

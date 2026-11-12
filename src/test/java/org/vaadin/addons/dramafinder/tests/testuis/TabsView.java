@@ -9,6 +9,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.PageTitle;
@@ -22,6 +23,18 @@ public class TabsView extends Main {
         add(createHorizontalTabs());
         add(createVerticalTabs());
         add(createAccountTabs());
+        add(createLabelledTabs());
+    }
+
+    // A tab whose aria-label differs from its text, and an icon-only tab named by its aria-label
+    private Component createLabelledTabs() {
+        Tab inbox = new Tab("Inbox");
+        inbox.setAriaLabel("Inbox, 3 unread");
+        Tab settings = new Tab(VaadinIcon.COG.create());
+        settings.setAriaLabel("Settings");
+        Tabs tabs = new Tabs(inbox, new Tab("Archive"), settings);
+        tabs.setId("labelled-tabs");
+        return tabs;
     }
 
     // The "Billing" tab starts disabled; the button enables it on the server

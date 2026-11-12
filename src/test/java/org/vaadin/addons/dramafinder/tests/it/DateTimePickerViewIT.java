@@ -6,10 +6,13 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.DateTimePickerElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -78,6 +81,65 @@ public class DateTimePickerViewIT extends SpringPlaywrightIT {
         dateTimePicker.assertInvalid();
     }
 
+
+    @Test
+    public void testTypeText() {
+        DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Typed date time");
+
+        dateTimePicker.typeText("20/09/2025", "10:00");
+
+        assertThat(page.locator("#typed-date-time-value")).hasText("2025-09-20T10:00");
+        dateTimePicker.assertValue(LocalDateTime.of(2025, 9, 20, 10, 0));
+        dateTimePicker.assertValid();
+    }
+
+    @Test
+    public void testTypeUnparsableDate() {
+        DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Typed date time");
+
+        dateTimePicker.typeText("dsdds", "10:00");
+
+        assertThat(page.locator("#typed-date-time-value")).hasText("null");
+        assertThat(dateTimePicker.getLocator()).hasJSProperty("value", "");
+        dateTimePicker.assertInvalid();
+        dateTimePicker.assertErrorMessage("Bad input.");
+    }
+
+    @Test
+    public void testTypeOnlyTime() {
+        DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Typed date time");
+
+        dateTimePicker.typeText("", "10:00");
+
+        assertThat(page.locator("#typed-date-time-value")).hasText("null");
+        assertThat(dateTimePicker.getLocator()).hasJSProperty("value", "");
+        dateTimePicker.assertInvalid();
+        dateTimePicker.assertErrorMessage("Incomplete input.");
+    }
+
+    @Test
+    public void testClearEmptiesBothHalves() {
+        DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Typed date time");
+        dateTimePicker.typeText("20/09/2025", "10:00");
+        assertThat(page.locator("#typed-date-time-value")).hasText("2025-09-20T10:00");
+
+        dateTimePicker.clear();
+
+        assertThat(page.locator("#typed-date-time-value")).hasText("null");
+        dateTimePicker.assertDateValue("");
+        dateTimePicker.assertTimeValue("");
+        dateTimePicker.assertValue((LocalDateTime) null);
+        dateTimePicker.assertValid();
+    }
+
+    @Test
+    public void testHalvesAreExposed() {
+        DateTimePickerElement dateTimePicker = DateTimePickerElement.getByLabel(page, "Typed date time");
+        dateTimePicker.typeText("20/09/2025", "10:00");
+
+        dateTimePicker.getDatePicker().assertValue(LocalDate.of(2025, 9, 20));
+        dateTimePicker.getTimePicker().assertValue(LocalTime.of(10, 0));
+    }
 
     @Test
     public void testMinMax() {

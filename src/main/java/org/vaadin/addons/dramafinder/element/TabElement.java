@@ -24,12 +24,12 @@ public class TabElement extends VaadinElement implements HasEnabledElement, Find
     public static final String FIELD_TAG_NAME = "vaadin-tab";
 
     // A tab's label: its own text, leaving out children placed in a named slot, with whitespace
-    // collapsed and trimmed as a user sees it
+    // collapsed and trimmed as a user sees it; the aria-label of a tab with no text (icon only)
     static final String LABEL_JS = """
             el => Array.from(el.childNodes)
                 .filter(node => !(node.nodeType === Node.ELEMENT_NODE && node.hasAttribute('slot')))
                 .map(node => node.textContent)
-                .join('').replace(/\\s+/g, ' ').trim()""";
+                .join('').replace(/\\s+/g, ' ').trim() || (el.getAttribute('aria-label') || '').trim()""";
 
     /** Create a {@code TabElement} from an existing locator. */
     public TabElement(Locator locator) {
@@ -58,9 +58,10 @@ public class TabElement extends VaadinElement implements HasEnabledElement, Find
 
     /**
      * Get the tab label: the tab's own text, with whitespace collapsed and trimmed. Children in a
-     * named slot (such as a tooltip) are left out.
+     * named slot (such as a tooltip) are left out. A tab with no text, such as an icon-only tab,
+     * reads as its {@code aria-label}.
      *
-     * @return the label; empty when the tab has no text
+     * @return the label; empty when the tab has neither text nor {@code aria-label}
      */
     public String getLabel() {
         return (String) getLocator().evaluate(LABEL_JS);

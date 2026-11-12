@@ -16,7 +16,9 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 /**
  * PlaywrightElement for {@code <vaadin-details>}.
  * <p>
- * Provides helpers to open/close and access the summary/content.
+ * Provides helpers to open/close and access the summary/content. The summary and
+ * content locators only look at the component's direct children, so details nested
+ * in the content do not interfere.
  */
 @PlaywrightElement(DetailsElement.FIELD_TAG_NAME)
 public class DetailsElement extends VaadinElement implements HasStyleElement, HasThemeElement,
@@ -48,14 +50,24 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
     /** Set the opened state by clicking the summary when necessary. */
     public void setOpen(boolean open) {
         if (isOpen() != open) {
-            getSummaryLocator().click();
-            waitAfterAction();
+            toggle();
         }
     }
 
-    /** Locator for the summary element. */
+    /** Open closed details, or close open ones, by clicking the summary. */
+    public void toggle() {
+        getSummaryLocator().click();
+        waitAfterAction();
+    }
+
+    /**
+     * Locator for the summary element: this component's own
+     * {@code vaadin-details-summary}, not the summary of details nested in the content.
+     *
+     * @return the summary locator
+     */
     public Locator getSummaryLocator() {
-        return getLocator().locator("vaadin-details-summary");
+        return getLocator().locator(":scope > vaadin-details-summary");
     }
 
     /** Text of the summary element. */
@@ -64,9 +76,17 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
     }
 
 
-    /** Locator for the currently visible content container. */
+    /**
+     * Locator for the content container: the direct child that is neither the
+     * summary nor slotted (such as a tooltip). It resolves whether the details are
+     * open or closed, so {@link #assertContentNotVisible()} checks a closed
+     * component's content is hidden.
+     *
+     * @return the content locator
+     */
     public Locator getContentLocator() {
-        return getLocator().locator("> div[aria-hidden='false']");
+        // XPath, so the children of the shadow root are not matched as direct children
+        return getLocator().locator("xpath=./*[not(self::vaadin-details-summary)][not(@slot)]");
     }
 
     /**
