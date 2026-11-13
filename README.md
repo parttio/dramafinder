@@ -1,356 +1,114 @@
-# Drama Finder
+# DramaFinder
 
-📖 **Documentation: <https://parttio.github.io/dramafinder/>** · [Javadoc](https://parttio.github.io/dramafinder/javadoc/) · [API reference](https://parttio.github.io/dramafinder/skills/vaadin-playwright-test/api-reference/)
+**Playwright element wrappers for testing Vaadin applications in Java.**
+
+📖 [Documentation](https://parttio.github.io/dramafinder/) ·
+[Getting started](docs/guide/getting-started.md) ·
+[Components](docs/specifications/index.md) ·
+[API reference](skills/vaadin-playwright-test/api-reference.md) ·
+[Javadoc](https://parttio.github.io/dramafinder/javadoc/)
+
+DramaFinder gives every Vaadin component a typed Java wrapper — an *element* —
+that finds the component the way a user does, acts on it like a user, waits for
+the server, and asserts what the user sees:
+
+```java
+public class ContactViewIT extends SpringPlaywrightIT {
+
+    @Override
+    public String getView() {
+        return "contact";
+    }
+
+    @Test
+    void savesAContact() {
+        TextFieldElement.getByLabel(page, "Name").setValue("Ada Lovelace");
+        ComboBoxElement.getByLabel(page, "Country").selectItem("United Kingdom");
+        DatePickerElement.getByLabel(page, "Birthday").setValue(LocalDate.of(1815, 12, 10));
+        ButtonElement.getByText(page, "Save").click();
+
+        NotificationElement.getByText(page, "Contact saved").assertOpen();
+        GridElement.get(page).assertCellContent(0, "Name", "Ada Lovelace");
+    }
+}
+```
+
+- **Find components by what the user sees** — the visible label, the text on a
+  button, the header of a dialog — matched exactly, so a test never silently
+  picks the wrong field.
+- **Every action waits for the server round-trip**, so there is no
+  `Thread.sleep` in your tests.
+- **Every state has a retrying assertion**: `assertValue`, `assertInvalid`,
+  `assertErrorMessage`, `assertRowCount`, `assertSelected`, `assertOpen`...
+- **Covers the Vaadin component set**: fields, pickers, combo boxes, grids and
+  tree grids, dialogs, menus, tabs, side navigation, upload and more.
+- **Test base classes** for any server or Spring Boot, with navigation by route
+  class, a Spring Security sign-in through `@WithMockUser`, and a failure report
+  with screenshot and component snapshot.
+- Works with **plain Playwright** too: an element only needs a `Page`.
+
+## Installation
+
+```xml
+<dependency>
+    <groupId>org.vaadin.addons</groupId>
+    <artifactId>dramafinder</artifactId>
+    <version>2.0.2</version>
+    <scope>test</scope>
+</dependency>
+```
+
+DramaFinder targets Vaadin 25 and Java 21, and follows semantic versioning.
+Continue with [Getting started](docs/guide/getting-started.md).
 
 ## Documentation
 
-The documentation is published at <https://parttio.github.io/dramafinder/>,
-with the [Javadoc](https://parttio.github.io/dramafinder/javadoc/). Its sources
-are the Markdown files in this repository.
+| | |
+|---|---|
+| [Getting started](docs/guide/getting-started.md) | dependency, Failsafe, the first test, base classes |
+| [Core concepts](docs/guide/core-concepts.md) | elements, factories, actions, assertions, locators, mixins |
+| [Finding components](docs/guide/finding-components.md) | labels, text, ids, items and the typed query builder |
+| [Assertions](docs/guide/assertions.md) | retrying assertions, `null` semantics, timeouts |
+| [Actions and waiting](docs/guide/actions-and-waiting.md) | automatic waiting for the server, in-flight states |
+| [Navigation](docs/guide/navigation.md) | `navigate(View.class)`, `assertAt`, query parameters |
+| [Spring Boot and Spring Security](docs/guide/spring.md) | `SpringPlaywrightIT`, `@WithMockUser`, several users |
+| [Recipes](docs/guide/recipes.md) | forms, grids, dialogs, uploads, menus end to end |
+| [Debugging failed tests](docs/guide/debugging.md) | failure report, view outline, traces, client-side errors |
+| [Writing your own element](docs/guide/extending.md) | wrap add-ons and your own components |
+| [Components](docs/specifications/index.md) | one page per component, with examples |
+| [API reference](skills/vaadin-playwright-test/api-reference.md) | every element and signature, generated from source |
 
-### API reference (and offline agents)
+Upgrading? See [Migrating to 2.0](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md)
+and [Migrating from Mopo](src/main/resources/META-INF/dramafinder/MIGRATION-FROM-MOPO.md).
 
-The complete public API — test setup, every element wrapper, every signature —
-is generated from source into
-[skills/vaadin-playwright-test/api-reference.md](skills/vaadin-playwright-test/api-reference.md).
+## AI coding agents
 
-The same file ships **inside the jar**, so it is readable with no network and no
-checkout. That is the copy to reach for in a consumer project, and the reason
-there is never a need to run `javap` on the classes:
+The API reference, a short guide (`START-HERE.md`) and the migration guides ship
+**inside the jar**, so an agent can read them offline instead of decompiling:
 
-```
+```bash
 JAR=$(ls ~/.m2/repository/org/vaadin/addons/dramafinder/*/dramafinder-*.jar | tail -1)
-unzip -p "$JAR" META-INF/dramafinder/START-HERE.md          # short guide, ~4 KB
-unzip -p "$JAR" META-INF/dramafinder/api-reference.md       # every signature
-unzip -p "$JAR" META-INF/dramafinder/agent-api-reference.md # screenshot helpers
-unzip -p "$JAR" META-INF/dramafinder/MIGRATION-2.0.md       # upgrading from 1.x
-unzip -p "$JAR" META-INF/dramafinder/MIGRATION-FROM-MOPO.md # moving from Mopo
+unzip -p "$JAR" META-INF/dramafinder/START-HERE.md
+unzip -p "$JAR" META-INF/dramafinder/api-reference.md
 ```
 
-### Upgrading from 1.x
+The repository also ships two Claude Code skills:
 
-DramaFinder 2.0 changes how components are found:
-
-- label lookups match exactly by default: the whole label, case-sensitively,
-  with no first-match fallback;
-- a label is the **visible** label: `getByLabel` no longer matches an
-  `aria-label` or a placeholder. Find those with the query builder,
-  `find(page, TextFieldElement.class).withAccessibleName("Search")` or
-  `.withPlaceholder("Street")`;
-- every element action waits for the Vaadin server round-trip it triggers.
-
-Most 1.x tests compile unchanged; lookups that relied on the old matching fail at
-runtime. The [migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md)
-lists every changed method, what no longer compiles, and how to rewrite each
-lookup.
-
-### Moving from Mopo
-
-Tests written with [Mopo](https://github.com/viritin/mopo) (`GridPw`,
-`ComboBoxPw`, `DatePickerPw`, `DateTimePickerPw`, `Mopo`) map onto DramaFinder
-call for call; the
-[Mopo migration guide](src/main/resources/META-INF/dramafinder/MIGRATION-FROM-MOPO.md)
-has the table for each helper.
-
-### Spring Boot
-
-A Spring Boot app's tests extend `org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT`,
-which starts the app on a random port and builds `getUrl()` from it. Spring is
-optional: DramaFinder declares it `provided` and never adds it to the classpath; a
-project without Spring extends `AbstractBasePlaywrightIT` and overrides `getUrl()`.
-
-With Spring Security, a test starts signed in as the user of Spring Security Test's
-`@WithMockUser` or `@WithUserDetails` (on the test method or class) without going
-through the login view; `loginAs("alice", "ADMIN")` switches user during a test and
-`newPageAs("bob")` opens the view as a second user in its own browser context. The
-user goes into the HTTP session through an endpoint registered only in the test's
-Spring context. It needs `spring-security-test` in test scope.
-
-A test that manages its own Playwright `BrowserContext` instead of extending
-`SpringPlaywrightIT` (a JUnit extension, another framework) adds
-`@Import(TestLoginConfiguration.class)` to its `@SpringBootTest` and signs in with
-`SpringTestLogin.signIn(applicationContext, browserContext, baseUrl, "alice", "ADMIN")`,
-`signIn(..., authentication)` or `signInTestUser(...)` (the `@WithMockUser` user);
-`signInUrl(...)` returns a one-time URL for a browser DramaFinder does not drive.
-
-## Claude Code skills
-
-This repository ships two Claude Code skills. Install them as plugins:
-
-```
+```text
 /plugin marketplace add parttio/dramafinder
 /plugin install vaadin-playwright-test@dramafinder
 /plugin install vaadin-playwright-screenshot@dramafinder
 ```
 
-- **vaadin-playwright-test** — generates Playwright integration tests for
-  Vaadin views using Drama Finder.
-- **vaadin-playwright-screenshot** — captures screenshots of UI changes by
-  writing a temporary Drama Finder test that batch-captures every key visual
-  state against the running app in one run. Backed by the
-  `org.vaadin.addons.dramafinder.agent` helpers (`VisualVerificationTest`,
-  `AgentReporting`, `ComponentSnapshot`, `ViewOutline`), which write a
-  screenshot, semantic component snapshot, view outline (each component with a
-  verified DramaFinder lookup), and stack trace to `target/agent-report/` on
-  failure.
-  Tests extending `AbstractBasePlaywrightIT` get the same failure report, per
-  test, under `target/agent-report/<TestClass>/<testMethod>/`; disable it with
-  `-Ddramafinder.agentReport=false`. Call `ViewOutline.write(page)` in a
-  throwaway test to get `view-outline.txt` before writing lookups for a view.
+- **vaadin-playwright-test** generates Playwright integration tests for Vaadin
+  views with DramaFinder.
+- **vaadin-playwright-screenshot** captures screenshots of UI changes with the
+  `org.vaadin.addons.dramafinder.agent` helpers.
 
-To get later updates, run `/plugin marketplace update dramafinder`.
+Run `/plugin marketplace update dramafinder` to get later updates.
 
-## Usage
+## Contributing
 
-Drama Finder is a set of helper classes to test a Vaadin application using
-Playwright.
-It gives you access to a list of assertions and actions you can do for our
-components.
-
-For example:
-
-```java
-
-@Test
-public void testTooltip() {
-    // get the text field whose visible label is "Textfield"
-    TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-    // assert that is visible
-    textfield.assertVisible();
-    // assert that the textfield has a tooltip
-    textfield.assertTooltipHasText("Tooltip for textfield");
-}
-```
-
-It also gives you some inner locators.
-
-```java
-
-@Test
-public void testHelper() {
-    // get the text field whose visible label is "TextField with helper component"
-    TextFieldElement textfield = TextFieldElement.getByLabel(page, "TextField with helper component");
-    // Use the helperLocator to get the TextField added as a helper component
-    TextFieldElement helperComponent = new TextFieldElement(textfield.getHelperLocator());
-    // You can use Playwright assertions
-    assertThat(helperComponent.getHelperLocator()).hasText("Internal helper");
-    // or reuse the locator with the API
-
-}
-
-```
-
-## Getting started
-
-Add the addon as a test dependency.
-
-```xml
-
-<dependency>
-    <groupId>org.vaadin.addons</groupId>
-    <artifactId>dramafinder</artifactId>
-    <version>2.0.0</version>
-    <scope>test</scope>
-</dependency>
-```
-
-The Drama Finder element classes are built around a plain Playwright `Page`
-(or `Locator`). They have no dependency on any particular test base class, so
-you can use them with whatever Playwright setup you already have. Just hand a
-`Page` to the factory helpers (e.g. `getByLabel`) or to an element constructor.
-
-The simplest way to get started is to let Spring Boot start the server for you
-with `@SpringBootTest(webEnvironment = RANDOM_PORT)` and manage the Playwright
-`Page` yourself:
-
-```java
-
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class SimpleExampleViewIT {
-
-    @LocalServerPort
-    private int port;
-
-    Playwright playwright;
-    Browser browser;
-    Page page;
-
-    @BeforeEach
-    public void setup() {
-        playwright = Playwright.create();
-        browser = playwright.chromium().launch();
-        page = browser.newPage();
-        page.navigate(String.format("http://localhost:%d/", port));
-    }
-
-    @AfterEach
-    public void tearDown() {
-        browser.close();
-        playwright.close();
-    }
-
-    @Test
-    public void testTooltip() {
-        // The only thing the element API needs is a Playwright Page
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-        textfield.assertVisible();
-        textfield.assertTooltipHasText("Tooltip for textfield");
-    }
-}
-```
-
-Letting `@SpringBootTest` start the server is not the only option. You can also
-write the tests as plain integration tests (e.g. classes ending in `IT.java`
-run by the `maven-failsafe-plugin`) and start/stop the server separately with
-Maven — for example using the `spring-boot:start` and `spring-boot:stop` goals
-bound to the `pre-integration-test` / `post-integration-test` phases — before
-the ITs execute. In that case the test simply navigates to the externally
-started server's URL. Either way, the element API only ever needs a Playwright
-`Page`, so you are free to obtain it however suits your project.
-
-### Optional: `AbstractBasePlaywrightIT` convenience base class
-
-If you don't already have a Playwright setup, Drama Finder ships an optional
-`AbstractBasePlaywrightIT` base class that handles the boilerplate for you:
-creating and closing the `Playwright`/`Browser`, opening a fresh `page` and
-navigating to your view before each test, waiting for Vaadin to finish loading,
-sensible default timeouts, and headless toggling (via the `headless` system
-property or `HEADLESS` environment variable). Extending it is purely a
-convenience — it is never required to use the element API.
-
-```java
-
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class SimpleExampleViewIT extends AbstractBasePlaywrightIT {
-
-    @LocalServerPort
-    private int port;
-
-    @Override
-    public String getUrl() {
-        return String.format("http://localhost:%d/", port);
-    }
-
-    @Test
-    public void testTooltip() {
-        TextFieldElement textfield = TextFieldElement.getByLabel(page, "Textfield");
-        textfield.assertVisible();
-        textfield.assertTooltipHasText("Tooltip for textfield");
-    }
-}
-```
-
-## Note
-
-Drama Finder covers most of the Vaadin components (see [TODO.md](TODO.md) for
-the list of supported components and the remaining gaps) and follows semantic
-versioning since 1.0. It is built and tested against Vaadin 25.
-
-If you notice something missing please create a ticket or a Pull Request.
-
-The integration tests in this repository are not meant to be a best practice
-since they are primarily here to test the API.
-For example they test getters like `getMinLength` without waiting, which is
-a bad practice.
-
-```java
-
-@Test
-public void testPattern() {
-    // use Playwright assertion to wait
-    textfield.assertMinLength(6);
-    // doesn't wait but will test `getMinLength`, use the previous in your code
-    assertEquals(6, textfield.getMinLength());
-}
-```
-
-## Development instructions
-
-There is no standalone demo application. The views used to exercise the
-library are test-only (`src/test/java/.../tests/testuis/`) and are served by the
-Spring Boot test harness (`@SpringBootTest`) when the `*IT.java` tests run.
-
-### Documentation site
-
-The `Documentation site` workflow publishes the Markdown documentation and the
-Javadoc to GitHub Pages on every push to `master`. `site/build.py` collects the
-published files (listed in its `NAV`) without moving them; to preview locally:
-
-```
-pip install -r site/requirements.txt
-python3 site/build.py && mkdocs serve -f target/docs-site/mkdocs.yml
-```
-
-### Javadoc
-
-Public APIs in the `dramafinder` library are documented with concise Javadoc:
-
-- Element classes include a short summary referencing the underlying Vaadin
-  tag (e.g., `vaadin-text-field`) and any noteworthy behaviors.
-- Public methods document parameters, return values, and null semantics.
-- Factory helpers (e.g., `getByLabel`) note the ARIA role used to locate the
-  element.
-
-## Running tests
-
-To run the unit tests, execute the following command:
-
-```bash
-mvn test
-```
-
-## Integration tests
-
-The integration tests are built using Spring Boot, Playwright, and Axe-core.
-The tests are located in files ending with `IT.java` under `src/test/java`.
-The tests are run with the `maven-failsafe-plugin` when the `it` profile is
-activated.
-
-To run the integration tests, execute the following command:
-
-```bash
-mvn -Pit verify
-```
-
-To debug the UI with a visible browser, disable headless mode using either the
-`headless` property or the `debug-ui` profile:
-
-```bash
-# system property
-mvn -Dit.test=ContextMenuViewIT -Dheadless=false verify
-
-# convenient profile
-mvn -Pdebug-ui -Dit.test=ContextMenuViewIT verify
-```
-
-You will need to add the profile in your pom.xml:
-
-```xml
-
-<profile>
-    <id>debug-ui</id>
-    <properties>
-        <headless>false</headless>
-    </properties>
-</profile>
-
-```
-
-## Cutting a release
-
-Before cutting a release, make sure the build passes properly locally and in
-GitHub Actions based verification build.
-
-To tag a release and increment versions, issue:
-
-```bash
-mvn release:prepare release:clean
-```
-
-Answer questions, defaults most often fine. Note that release:perform is not
-needed as there is a GitHub Action is set up build and to push release to Maven
-Central automatically.
-
-Directory will automatically pick up new releases within about half an hour, but
-if browser or Vaadin version support change, be sure to adjust the metadata in
-Vaadin Directory UI.
+Missing a component or a method? [Open an issue](https://github.com/parttio/dramafinder/issues)
+or a pull request. [Development](docs/development.md) explains how to build,
+test and release, and `AGENTS.md` holds the coding conventions.

@@ -63,36 +63,77 @@ naming rule, and the handful of things that are easy to get wrong.
 - [MIGRATION-2.0.md](src/main/resources/META-INF/dramafinder/MIGRATION-2.0.md) - Upgrading 1.x tests: label lookups are exact by default, a label is the visible label (aria-labels and placeholders go through the query builder), every changed method
 - [MIGRATION-FROM-MOPO.md](src/main/resources/META-INF/dramafinder/MIGRATION-FROM-MOPO.md) - Moving tests from Mopo (in.virit:mopo): each GridPw, ComboBoxPw, DatePickerPw, DateTimePickerPw and Mopo call and its DramaFinder equivalent
 
-## Element Specifications
+## Developer guide
+
+- [Getting started](docs/guide/getting-started.md) - Dependency, Failsafe, first test, base classes, headless mode
+- [Core concepts](docs/guide/core-concepts.md) - Elements, factories, actions, assertions, locators, mixins
+- [Finding components](docs/guide/finding-components.md) - Visible label vs accessible name, exact vs containing, ids, items, typed queries
+- [Assertions](docs/guide/assertions.md) - Retrying assertions, null semantics, timeouts, Playwright interop
+- [Actions and waiting](docs/guide/actions-and-waiting.md) - Automatic server round-trip waits, AutoWait.withoutWaiting
+- [Navigation](docs/guide/navigation.md) - navigate(View.class), assertAt, assertPath, assertQueryParameter
+- [Spring Boot and Spring Security](docs/guide/spring.md) - SpringPlaywrightIT, @WithMockUser, loginAs, newPageAs
+- [Recipes](docs/guide/recipes.md) - Forms, grids, dialogs, uploads, menus end to end
+- [Debugging failed tests](docs/guide/debugging.md) - Failure report, ViewOutline, traces, ClientSideErrors
+- [Writing your own element](docs/guide/extending.md) - Custom wrappers, mixins, Findable
+
+## Component pages
 
 Signatures for **every** element live in the auto-generated
 [api-reference.md](https://raw.githubusercontent.com/parttio/dramafinder/master/skills/vaadin-playwright-test/api-reference.md).
-The files below are hand-written prose docs, kept only for components whose
-behaviour isn't obvious from the signatures:
+Every component also has a hand-written page with examples (view code next to
+test code) and its pitfalls; the [index](docs/specifications/index.md) lists them
+by category:
 
-- [VaadinElement](docs/specifications/VaadinElement.md) - Base class + how to extend it
-- [BadgeElement](docs/specifications/BadgeElement.md) - Text vs number vs icon, theme-variant assertions
-- [BreadcrumbsElement](docs/specifications/BreadcrumbsElement.md) - Overflow overlay model, experimental feature flag
-- [GridElement](docs/specifications/GridElement.md) - Auto-scroll & stale-element caveats, renderer/lazy examples
-- [TreeGridElement](docs/specifications/TreeGridElement.md) - Tree-state reading, hierarchy-column location
-- [VirtualListElement](docs/specifications/VirtualListElement.md) - Debouncer flush, typed component queries
-- [ComboBoxElement](docs/specifications/ComboBoxElement.md) - Lazy data providers, filter-and-select
-- [DatePickerElement](docs/specifications/DatePickerElement.md) - String vs LocalDate value formats
-- [TimePickerElement](docs/specifications/TimePickerElement.md) - String vs LocalTime value formats
-- [DateTimePickerElement](docs/specifications/DateTimePickerElement.md) - Composite enabled/aria semantics
-- [AvatarGroupElement](docs/specifications/AvatarGroupElement.md) - Overflow model, xpath scoping, maxItemsVisible budget
-- [MessageInputElement](docs/specifications/MessageInputElement.md) - Submit behaviour
-- [LoginElement](docs/specifications/LoginElement.md) - Login form/overlay lookups, i18n-driven assertions
-- [MarkdownElement](docs/specifications/MarkdownElement.md) - Rendered-output assertions, not Markdown source
-- [ConfirmDialogElement](docs/specifications/ConfirmDialogElement.md) - Detached when closed, message vs header/button text
-- [CustomFieldElement](docs/specifications/CustomFieldElement.md) - Reaching wrapped fields, why there is no value getter
-- [NotificationElement](docs/specifications/NotificationElement.md) - Open-card scoping
-- [CheckboxGroupElement](docs/specifications/CheckboxGroupElement.md) - Label-based selection, exhaustive assertSelected
-- [RadioButtonElement](docs/specifications/RadioButtonElement.md) - Internal use via group
-- [SliderElement](docs/specifications/SliderElement.md) - Keyboard-driven value changes, step snapping
-- [TextAreaElement](docs/specifications/TextAreaElement.md) - Input-locator override
-- [UploadElement](docs/specifications/UploadElement.md) - Hidden-file-input pattern
-- [TooltipElement](docs/specifications/TooltipElement.md) - Opened state without visibility, hover delay, position on the overlay
+- [AccordionElement](docs/specifications/AccordionElement.md)
+- [AppLayoutElement](docs/specifications/AppLayoutElement.md)
+- [AvatarElement](docs/specifications/AvatarElement.md)
+- [AvatarGroupElement](docs/specifications/AvatarGroupElement.md)
+- [BadgeElement](docs/specifications/BadgeElement.md)
+- [BigDecimalFieldElement](docs/specifications/BigDecimalFieldElement.md)
+- [BreadcrumbsElement](docs/specifications/BreadcrumbsElement.md)
+- [ButtonElement](docs/specifications/ButtonElement.md)
+- [CardElement](docs/specifications/CardElement.md)
+- [CheckboxElement](docs/specifications/CheckboxElement.md)
+- [CheckboxGroupElement](docs/specifications/CheckboxGroupElement.md)
+- [ComboBoxElement](docs/specifications/ComboBoxElement.md)
+- [ConfirmDialogElement](docs/specifications/ConfirmDialogElement.md)
+- [ContextMenuElement](docs/specifications/ContextMenuElement.md)
+- [CustomFieldElement](docs/specifications/CustomFieldElement.md)
+- [DatePickerElement](docs/specifications/DatePickerElement.md)
+- [DateTimePickerElement](docs/specifications/DateTimePickerElement.md)
+- [DetailsElement](docs/specifications/DetailsElement.md)
+- [DialogElement](docs/specifications/DialogElement.md)
+- [EmailFieldElement](docs/specifications/EmailFieldElement.md)
+- [FormLayoutElement](docs/specifications/FormLayoutElement.md)
+- [GridElement](docs/specifications/GridElement.md)
+- [IntegerFieldElement](docs/specifications/IntegerFieldElement.md)
+- [ListBoxElement](docs/specifications/ListBoxElement.md)
+- [LoginElement](docs/specifications/LoginElement.md)
+- [MarkdownElement](docs/specifications/MarkdownElement.md)
+- [MenuBarElement](docs/specifications/MenuBarElement.md)
+- [MessageInputElement](docs/specifications/MessageInputElement.md)
+- [MultiSelectComboBoxElement](docs/specifications/MultiSelectComboBoxElement.md)
+- [NotificationElement](docs/specifications/NotificationElement.md)
+- [NumberFieldElement](docs/specifications/NumberFieldElement.md)
+- [PasswordFieldElement](docs/specifications/PasswordFieldElement.md)
+- [PopoverElement](docs/specifications/PopoverElement.md)
+- [ProgressBarElement](docs/specifications/ProgressBarElement.md)
+- [RadioButtonGroupElement](docs/specifications/RadioButtonGroupElement.md)
+- [SelectElement](docs/specifications/SelectElement.md)
+- [SideNavigationElement](docs/specifications/SideNavigationElement.md)
+- [SliderElement](docs/specifications/SliderElement.md)
+- [SplitLayoutElement](docs/specifications/SplitLayoutElement.md)
+- [SwitchElement](docs/specifications/SwitchElement.md)
+- [TabSheetElement](docs/specifications/TabSheetElement.md)
+- [TabsElement](docs/specifications/TabsElement.md)
+- [TextAreaElement](docs/specifications/TextAreaElement.md)
+- [TextFieldElement](docs/specifications/TextFieldElement.md)
+- [TimePickerElement](docs/specifications/TimePickerElement.md)
+- [TooltipElement](docs/specifications/TooltipElement.md)
+- [TreeGridElement](docs/specifications/TreeGridElement.md)
+- [UploadElement](docs/specifications/UploadElement.md)
+- [VaadinElement](docs/specifications/VaadinElement.md)
+- [VirtualListElement](docs/specifications/VirtualListElement.md)
 
 ## Key Patterns
 

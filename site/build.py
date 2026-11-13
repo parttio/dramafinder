@@ -48,37 +48,89 @@ def entries(paths, label=title):
 
 
 META = "src/main/resources/META-INF/dramafinder/"
+SPECS = "docs/specifications/"
+
+
+def components(*names):
+    """Component pages, titled by their first heading."""
+    return entries([SPECS + n + "Element.md" for n in names])
+
+
 NAV = [
     {"Home": "README.md"},
-    {"Getting started": [
-        {"Start here": META + "START-HERE.md"},
-        {"Migrating to 2.0": META + "MIGRATION-2.0.md"},
-        {"Migrating from Mopo": META + "MIGRATION-FROM-MOPO.md"},
+    {"Guide": [
+        {"Getting started": "docs/guide/getting-started.md"},
+        {"Core concepts": "docs/guide/core-concepts.md"},
+        {"Finding components": "docs/guide/finding-components.md"},
+        {"Assertions": "docs/guide/assertions.md"},
+        {"Actions and waiting": "docs/guide/actions-and-waiting.md"},
+        {"Navigation": "docs/guide/navigation.md"},
+        {"Spring Boot and Spring Security": "docs/guide/spring.md"},
+        {"Recipes": "docs/guide/recipes.md"},
+        {"Debugging failed tests": "docs/guide/debugging.md"},
+        {"Writing your own element": "docs/guide/extending.md"},
         {"Glossary": "GLOSSARY.md"},
+    ]},
+    {"Components": [
+        {"Overview": SPECS + "index.md"},
+        {"Text input": components(
+            "TextField", "EmailField", "PasswordField", "TextArea",
+            "NumberField", "IntegerField", "BigDecimalField", "CustomField")},
+        {"Date and time": components(
+            "DatePicker", "TimePicker", "DateTimePicker")},
+        {"Selection": components(
+            "ComboBox", "MultiSelectComboBox", "Select", "ListBox", "Checkbox",
+            "CheckboxGroup", "RadioButtonGroup", "Switch", "Slider", "Upload")},
+        {"Actions and menus": components("Button", "MenuBar", "ContextMenu")},
+        {"Overlays and feedback": components(
+            "Dialog", "ConfirmDialog", "Notification", "Popover", "Tooltip",
+            "ProgressBar", "Login")},
+        {"Layout": components(
+            "AppLayout", "FormLayout", "SplitLayout", "Accordion", "Details",
+            "Card")},
+        {"Navigation": components(
+            "Tabs", "TabSheet", "SideNavigation", "Breadcrumbs")},
+        {"Data": components("Grid", "TreeGrid", "VirtualList")},
+        {"Display": components(
+            "Avatar", "AvatarGroup", "Badge", "Markdown", "MessageList",
+            "MessageInput")},
+        {"Base class": SPECS + "VaadinElement.md"},
     ]},
     {"Reference": [
         {"API reference": "skills/vaadin-playwright-test/api-reference.md"},
-        {"Agent helpers API reference": "skills/vaadin-playwright-screenshot/agent-api-reference.md"},
         {"Component to element mapping": "skills/vaadin-playwright-test/element-mapping.md"},
+        {"Agent helpers API reference": "skills/vaadin-playwright-screenshot/agent-api-reference.md"},
         {"Javadoc": "https://parttio.github.io/dramafinder/javadoc/"},
     ]},
-    {"Component specifications": entries(
-        files("docs/specifications/*.md"), lambda p: Path(p).stem)},
-    {"Agent skills": [
-        {"vaadin-playwright-test": "skills/vaadin-playwright-test/SKILL.md"},
-        {"Project setup": "skills/vaadin-playwright-test/setup.md"},
+    {"Migration": [
+        {"Migrating to 2.0": META + "MIGRATION-2.0.md"},
+        {"Migrating from Mopo": META + "MIGRATION-FROM-MOPO.md"},
+    ]},
+    {"AI agents": [
+        {"Start here (bundled in the jar)": META + "START-HERE.md"},
+        {"vaadin-playwright-test skill": "skills/vaadin-playwright-test/SKILL.md"},
+        {"Project setup runbook": "skills/vaadin-playwright-test/setup.md"},
         {"Testing guidelines": "skills/vaadin-playwright-test/TESTING.md"},
-        {"vaadin-playwright-screenshot": "skills/vaadin-playwright-screenshot/SKILL.md"},
+        {"vaadin-playwright-screenshot skill": "skills/vaadin-playwright-screenshot/SKILL.md"},
     ]},
     {"Architecture decisions": entries(files("docs/adr/*.md"))},
     {"Release notes": entries(
         list(reversed(files("docs/release-notes/*.md"))), lambda p: Path(p).stem)},
     {"Contributing": [
+        {"Development": "docs/development.md"},
         {"Repository guidelines": "AGENTS.md"},
         *entries(files("docs/agents/*.md")),
     ]},
 ]
 
+
+def check_components():
+    """Fail when a component page exists but is not in the navigation."""
+    listed = set(nav_paths(NAV))
+    missing = [p for p in files(SPECS + "*.md") if p not in listed]
+    if missing:
+        raise SystemExit("Component pages missing from NAV in site/build.py: "
+                         + ", ".join(missing))
 
 def nav_paths(nav):
     for item in nav:
@@ -149,6 +201,7 @@ def yaml_nav(nav, indent=2):
 
 
 def main():
+    check_components()
     if OUT.exists():
         shutil.rmtree(OUT)
     for path in sorted(PUBLISHED):

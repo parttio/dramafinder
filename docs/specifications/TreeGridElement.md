@@ -1,152 +1,234 @@
-# TreeGridElement Specification
+# Tree Grid
 
-> For the authoritative method list and signatures, see the auto-generated
-> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
-> file focuses on behaviour and usage that signatures alone don't convey.
+`TreeGridElement` wraps the `<vaadin-grid>` of a Flow `TreeGrid`. It adds
+expanding, collapsing and hierarchy queries to everything
+[`GridElement`](GridElement.md) does: cells, headers, selection, sorting, details.
 
-## Overview
+| | |
+|---|---|
+| Web component | `<vaadin-grid>` (with `<vaadin-grid-tree-toggle>` in the hierarchy column) |
+| Flow component | `com.vaadin.flow.component.treegrid.TreeGrid` |
+| Wrapper | `org.vaadin.addons.dramafinder.element.TreeGridElement` (extends `GridElement`) |
+| Typed query | `find(page, TreeGridElement.class)` → `ComponentQuery`, typed as `GridElement` |
+| API | [TreeGridElement](../../skills/vaadin-playwright-test/api-reference.md#treegridelement) |
 
-`TreeGridElement` is a Playwright element wrapper for `<vaadin-grid>` backed by a Vaadin `TreeGrid`. It extends `GridElement` with tree-specific APIs for querying hierarchy levels, checking expanded/collapsed/leaf state, and performing single-row or level-based bulk expand and collapse operations.
+Vaadin's `TreeGrid` renders with the **same `<vaadin-grid>` web component** as the
+plain `Grid`. The hierarchy is expressed through `<vaadin-grid-tree-toggle>`
+elements that Vaadin renders inside each row's hierarchy column cell content, so
+`TreeGridElement` shares `GridElement`'s tag name constant
+(`FIELD_TAG_NAME = "vaadin-grid"`) and inherits all of its APIs. Row indexes are
+**flat**: they count every visible row, expanded children included, from the top.
 
-> **Note:** Vaadin's `TreeGrid` renders using the **same `<vaadin-grid>` web component** as the plain `Grid`. The hierarchy is expressed through `<vaadin-grid-tree-toggle>` elements that Vaadin renders inside each row's hierarchy column cell content. `TreeGridElement` therefore shares the same tag name constant as `GridElement` and inherits all of its row, cell, header, selection, and sorting APIs.
-
-All row and cell access methods auto-scroll the grid as needed to bring virtualized rows into view.
-
-## Tag Name
-
-```
-vaadin-grid
-```
-
-## Class Hierarchy
-
-```
-VaadinElement
-    └── GridElement
-            └── TreeGridElement
-```
-
-## Implemented Interfaces
-
-Inherited from `GridElement`:
-
-| Interface | Description |
-|-----------|-------------|
-| `FocusableElement` | Focus operations |
-| `HasStyleElement` | CSS class support |
-| `HasThemeElement` | Theme attribute support |
-| `HasEnabledElement` | Enabled/disabled state |
-
-## Constants
-
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `FIELD_TAG_NAME` | `"vaadin-grid"` | Same tag as `GridElement` |
-
-## API Methods
-
-### Constructor
+## Finding the component
 
 ```java
-TreeGridElement(Locator locator)
+TreeGridElement grid = TreeGridElement.getById(page, "two-level-tree-grid");
+TreeGridElement first = TreeGridElement.get(page);                         // first grid on the page
+TreeGridElement scoped = TreeGridElement.get(page.locator("#org-chart"));  // first grid in a container
+TreeGridElement byTestId = TreeGridElement.getByTestId(page, "org-tree");
 ```
 
-Creates a new `TreeGridElement` from a Playwright locator pointing to the `<vaadin-grid>` element backed by a `TreeGrid`.
-
-### Static Factory Methods
-
-#### get(Page page)
-
-Get the first `TreeGridElement` on the page.
+`TreeGridElement` inherits `GridElement`'s query binding (Java forbids two
+parameterizations of one interface), so `find(page, TreeGridElement.class)`
+returns `TreeGridElement` instances whose static type is `GridElement`. Cast to
+get the tree API:
 
 ```java
-TreeGridElement grid = TreeGridElement.get(page);
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
+TreeGridElement grid = (TreeGridElement) find(page, TreeGridElement.class)
+        .withId("two-level-tree-grid").single();
 ```
 
-#### get(Locator parent)
+## The example tree
 
-Get the first `TreeGridElement` within a parent locator.
+The examples below use this view:
 
 ```java
-TreeGridElement grid = TreeGridElement.get(page.locator("#container"));
+// View
+TreeData<String> data = new TreeData<>();
+data.addRootItems("Root 0", "Root 1", "Root 2");
+data.addItems("Root 0", "Child 0-0", "Child 0-1");
+data.addItems("Root 1", "Child 1-0", "Child 1-1", "Child 1-2");
+data.addItems("Root 2", "Child 2-0");
+
+TreeGrid<String> grid = new TreeGrid<>(new TreeDataProvider<>(data));
+grid.setId("two-level-tree-grid");
+grid.addHierarchyColumn(s -> s).setHeader("Name");
+grid.addColumn(s -> s + " desc").setHeader("Description");
 ```
 
-#### getById(Page page, String id)
+Initially only the three root items are visible.
 
-Get a `TreeGridElement` by its `id` attribute.
+## Expanding and collapsing rows
 
 ```java
-TreeGridElement grid = TreeGridElement.getById(page, "my-tree-grid");
+// Test
+TreeGridElement grid = TreeGridElement.getById(page, "two-level-tree-grid");
+grid.assertRowCount(3);                    // only the roots
+
+grid.expandRow(0);                         // Root 0
+grid.assertRowCount(5);                    // 3 roots + 2 children
+grid.assertCellContent(1, "Name", "Child 0-0");
+
+grid.collapseRow(0);
+grid.assertRowCount(3);
+
+grid.toggleRow(0);                         // expands a collapsed row ...
+grid.toggleRow(0);                         // ... and collapses an expanded one
 ```
 
-### Row-Level Query Methods
+`expandRow` does nothing on a row that is already expanded or a leaf,
+`collapseRow` on a row that is already collapsed or a leaf, and `toggleRow` on a
+leaf. Each one waits for the grid to load the new rows.
 
-| Method | Return Type | Description |
-|--------|-------------|-------------|
-| `findTreeRow(int rowIndex)` | `Optional<TreeRowElement>` | Like `findRow` but returns a `TreeRowElement` with tree-specific APIs; auto-scrolls if needed |
-| `isRowExpanded(int rowIndex)` | `boolean` | `true` if the row's tree toggle has `expanded = true` |
-| `isRowCollapsed(int rowIndex)` | `boolean` | `true` if the row has children but is not expanded |
-| `isRowLeaf(int rowIndex)` | `boolean` | `true` if the row has no children (`leaf = true` on the toggle) |
-| `getRowLevel(int rowIndex)` | `int` | 0-based hierarchy depth of the row (root items = 0) |
-| `getExpandedRowCount()` | `int` | Number of currently visible expanded rows |
-
-### Row-Level Expand / Collapse
-
-| Method | Description |
-|--------|-------------|
-| `expandRow(int rowIndex)` | Expand the row. No-op if already expanded or a leaf node |
-| `collapseRow(int rowIndex)` | Collapse the row. No-op if already collapsed or a leaf node |
-| `toggleRow(int rowIndex)` | Toggle expanded/collapsed state. No-op if the row is a leaf |
-
-### Inherited Grid Methods
-
-All `GridElement` methods are inherited unchanged, including:
-
-- `getTotalRowCount()`, `getRenderedRowCount()`, `getColumnCount()`
-- `findRow(int rowIndex)`, `findCell(int row, int col)`, `findCell(int row, String header)`
-- `findHeaderCell(...)`, `getHeaderCellContents()`
-- `select(int)`, `deselect(int)`, `getSelectedItemCount()`
-- `checkSelectAll()`, `uncheckSelectAll()`, `isSelectAllChecked()`, `isSelectAllIndeterminate()`, `isSelectAllUnchecked()`
-- `waitForGridToStopLoading()`, `scrollToRow(int)`, `scrollToStart()`, `scrollToEnd()`
-
-## Inner Classes
-
-### TreeRowElement extends GridElement.RowElement
-
-Represents a row in a `TreeGrid`, extending `RowElement` with tree-specific state queries and expand/collapse actions. Use `findTreeRow(int)` to obtain one, or construct from an existing `RowElement`.
-
-#### Constructors
+Because indexes are flat, expanding a row shifts the rows below it:
 
 ```java
-// Obtain directly (preferred — use findTreeRow on the grid)
-TreeRowElement row = grid.findTreeRow(0).get();
-
-// Upgrade an existing RowElement
-TreeRowElement row = new TreeRowElement(grid.findRow(0).get());
+grid.expandRow(0);      // Root 0 now has its 2 children at indexes 1 and 2
+grid.expandRow(3);      // so Root 1 is at index 3
 ```
 
-#### Tree-Specific Methods
+## Reading the hierarchy state
 
-| Method | Return Type | Description |
-|--------|-------------|-------------|
-| `getTreeToggleLocator()` | `Locator` | Locator for the `<vaadin-grid-tree-toggle>` in this row's hierarchy cell |
-| `isExpanded()` | `boolean` | `true` if this row is expanded |
-| `isCollapsed()` | `boolean` | `true` if this row has children but is not expanded |
-| `isLeaf()` | `boolean` | `true` if this row has no children |
-| `getLevel()` | `int` | 0-based hierarchy depth of this row |
-| `expand()` | `void` | Expand this row. No-op if already expanded or a leaf |
-| `collapse()` | `void` | Collapse this row. No-op if already collapsed or a leaf |
-| `toggle()` | `void` | Toggle expanded/collapsed state. No-op if a leaf |
+```java
+grid.expandRow(0);
 
-#### Inherited RowElement Methods
+grid.isRowExpanded(0);       // Root 0 -> true
+grid.isRowCollapsed(3);      // Root 1: has children, not expanded -> true
+grid.isRowLeaf(1);           // Child 0-0 -> true
+grid.getRowLevel(0);         // 0: root items are level 0
+grid.getRowLevel(1);         // 1
+grid.getExpandedRowCount();  // 1: expanded rows currently rendered
+```
 
-All `RowElement` methods are available: `getRowLocator()`, `getRowIndex()`, `getCell(int)`, `getCell(String)`, `isSelected()`, `select()`, `deselect()`, `click()`, `doubleClick()`, `openDetails()`, `closeDetails()`, `isDetailsOpen()`.
+These are getters and do not retry. Right after `expandRow` / `collapseRow` they
+are safe, since those wait for the grid. For a retrying check after something
+else changed the tree, assert on the toggle locator:
 
-## Implementation Notes
+```java
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
+var row = grid.findTreeRow(0).orElseThrow();
+assertThat(row.getTreeToggleLocator()).hasAttribute("expanded", "");
+assertThat(row.getTreeToggleLocator()).not().hasAttribute("expanded", "");   // collapsed
+```
+
+## Working with a tree row
+
+`findTreeRow` returns an `Optional<TreeRowElement>`: a `GridElement.RowElement`
+with the tree state and actions. It auto-scrolls the grid like `findRow`.
+
+```java
+TreeGridElement.TreeRowElement row = grid.findTreeRow(0).orElseThrow();
+
+row.getLevel();        // 0
+row.isLeaf();          // false
+row.isCollapsed();     // true
+row.expand();          // no-op if already expanded or a leaf
+row.isExpanded();      // true
+row.collapse();        // no-op if already collapsed or a leaf
+row.toggle();          // no-op on a leaf
+
+Locator toggle = row.getTreeToggleLocator();   // <vaadin-grid-tree-toggle>
+```
+
+Every `RowElement` method is there too: `getCell(int)`, `getCell(String)`,
+`select()`, `assertSelected()`, `click()`, `doubleClick()`, `openDetails()`,
+`getRowLocator()`, `getRowIndex()`...
+
+```java
+row.getCell("Name").assertText("Root 0");
+row.select();
+row.assertSelected();
+```
+
+A `RowElement` obtained from a generic grid helper can be upgraded. `TreeRowElement`
+is an inner class of the grid, so create it on the grid instance:
+
+```java
+GridElement.RowElement plainRow = grid.findRow(0).orElseThrow();
+TreeGridElement.TreeRowElement treeRow = grid.new TreeRowElement(plainRow);
+treeRow.getLevel();   // 0
+```
+
+## Three levels
+
+```java
+// View
+data.addRootItems("Division A", "Division B");
+data.addItems("Division A", "Dept A1", "Dept A2");
+data.addItems("Division B", "Dept B1");
+data.addItems("Dept A1", "Employee A1a", "Employee A1b");
+data.addItems("Dept A2", "Employee A2a");
+data.addItems("Dept B1", "Employee B1a");
+```
+
+```java
+// Test
+TreeGridElement grid = TreeGridElement.getById(page, "three-level-tree-grid");
+grid.assertRowCount(2);                 // only the divisions
+
+grid.expandRow(0);                      // Division A
+grid.assertRowCount(4);                 // + Dept A1, Dept A2
+
+grid.expandRow(1);                      // Dept A1
+grid.assertRowCount(6);                 // + Employee A1a, Employee A1b
+grid.assertCellContent(2, "Name", "Employee A1a");
+
+var employee = grid.findTreeRow(2).orElseThrow();
+employee.getLevel();                    // 2
+employee.isLeaf();                      // true
+
+grid.collapseRow(0);                    // hides all of Division A's descendants
+grid.assertRowCount(2);
+```
+
+## Selection
+
+Selection is inherited from `GridElement` and uses flat indexes:
+
+```java
+TreeGridElement grid = TreeGridElement.getById(page, "two-level-tree-grid");
+grid.select(0);
+grid.expandRow(0);
+grid.assertRowSelected(0);          // still selected after expanding
+
+grid.select(1);                     // Child 0-0: single select moves the selection
+grid.assertRowNotSelected(0);
+grid.assertRowSelected(1);
+grid.assertSelectedItemCount(1);
+```
+
+In multi-select mode Vaadin inserts the checkbox selection column first, pushing
+the hierarchy column to index 1. `TreeGridElement` finds the toggle anyway (see
+below), and the grid's select-all helpers work as usual:
+
+```java
+// View
+grid.setSelectionMode(Grid.SelectionMode.MULTI);
+```
+
+```java
+// Test
+TreeGridElement grid = TreeGridElement.getById(page, "multi-select-tree-grid");
+grid.expandRow(0);                  // works although the toggle is in column 1
+grid.select(0);
+grid.select(1);                     // first child of Root 0
+grid.assertSelectedItemCount(2);
+
+grid.checkSelectAll();
+grid.assertSelectAllChecked();
+grid.uncheckSelectAll();
+grid.assertSelectedItemCount(0);
+```
+
+## How it works
 
 ### How tree state is read
 
-`<vaadin-grid-tree-toggle>` exposes three key values, but they are surfaced differently:
+`<vaadin-grid-tree-toggle>` exposes three key values, but they are surfaced
+differently:
 
 | Value | Reflected as HTML attribute? | How it is read |
 |-------|------------------------------|----------------|
@@ -154,145 +236,52 @@ All `RowElement` methods are available: `getRowLocator()`, `getRowIndex()`, `get
 | `leaf` | **Yes** | `toggle.getAttribute("leaf") != null` |
 | `level` | **No** (DOM property only) | `toggle.evaluate("el => el.level")` |
 
-Because `expanded` and `leaf` are reflected boolean attributes, their presence in the DOM means `true` and their absence means `false`. This also means CSS attribute selectors work for them:
-
-```java
-// Count all visible expanded toggles using a CSS selector — no JS needed
-locator.locator("vaadin-grid-tree-toggle[expanded]").count();
-```
-
-`level` is not reflected, so it must be read via JavaScript:
-
-```javascript
-toggle.evaluate("el => el.level")  // returns a Number
-```
+Because `expanded` and `leaf` are reflected boolean attributes, their presence
+means `true` and their absence `false`, and CSS attribute selectors work on them —
+`getExpandedRowCount()` simply counts `vaadin-grid-tree-toggle[expanded]` in the
+DOM, so it only sees rendered rows. `level` is not reflected, so it is read with
+JavaScript.
 
 ### How the hierarchy column is located
 
-`TreeGridElement` searches **all cells** in the row for the one whose cell content contains a `<vaadin-grid-tree-toggle>`, rather than assuming the toggle is always in cell 0. This correctly handles:
+`TreeGridElement` searches **all cells** of the row for the one whose cell
+content holds a `<vaadin-grid-tree-toggle>`, rather than assuming the toggle is
+always in cell 0. This handles:
 
-- **Multi-select mode:** Vaadin inserts a checkbox selection column at DOM index 0, pushing the hierarchy column to index 1.
-- **Column reordering:** The hierarchy column may be at any position.
+- **Multi-select mode:** Vaadin inserts a checkbox selection column at index 0,
+  pushing the hierarchy column to index 1.
+- **Column reordering:** the hierarchy column may be at any position.
 
-### Why expand/collapse uses a JS synthetic click
+### Why expand/collapse uses a synthetic click
 
-`<vaadin-grid-cell-content>` intercepts pointer events, which causes Playwright's coordinate-based `.click()` to never reach the `<vaadin-grid-tree-toggle>` inside it. Toggle clicks are therefore performed via:
+`<vaadin-grid-cell-content>` intercepts pointer events, so Playwright's
+coordinate-based `.click()` never reaches the `<vaadin-grid-tree-toggle>` inside
+it. The toggle is clicked with `toggle.evaluate("el => el.click()")`, the same
+way Vaadin's TestBench does it with Selenium's `WebElement.click()`. Override the
+protected `clickTreeToggle(Locator)` to click it differently.
 
-```javascript
-toggle.evaluate("el => el.click()")
-```
+## Pitfalls
 
-This matches how Vaadin's own TestBench performs the same operation via Selenium's `WebElement.click()`.
+- **Flat indexes.** Row indexes count visible rows; expanding or collapsing a row
+  moves every row below it. Re-read indexes after changing the tree.
+- **No retrying tree assertions.** `isRowExpanded`, `isRowLeaf`, `getRowLevel`
+  and friends read the state once; assert on `getTreeToggleLocator()` with
+  Playwright when the state changes asynchronously.
+- **`getExpandedRowCount()` counts rendered rows only**, not expanded items that
+  are scrolled out of the rendered range.
+- **`find` is typed as `GridElement`.** Cast the result to `TreeGridElement`
+  for the tree API.
+- **`getTotalRowCount()` / `assertRowCount` count visible rows**: children of a
+  collapsed row are not counted.
 
-## Usage Examples
+## See also
 
-### Basic Tree State Queries
-
-```java
-TreeGridElement grid = TreeGridElement.getById(page, "my-tree-grid");
-
-// Row counts
-int total = grid.getTotalRowCount();       // visible rows (collapsed children not counted)
-int expanded = grid.getExpandedRowCount(); // number of currently expanded rows
-
-// Hierarchy state of row at index 0
-boolean isLeaf = grid.isRowLeaf(0);
-boolean isExpanded = grid.isRowExpanded(0);
-boolean isCollapsed = grid.isRowCollapsed(0);
-int level = grid.getRowLevel(0);           // 0 = root
-```
-
-### Single-Row Expand / Collapse
-
-```java
-TreeGridElement grid = TreeGridElement.getById(page, "my-tree-grid");
-
-// Expand root row 0 (no-op if already expanded or a leaf)
-grid.expandRow(0);
-assertTrue(grid.isRowExpanded(0));
-
-// Access a child row that is now visible at flat index 1
-var child = grid.findCell(1, "Name");
-assertEquals("Child 0-0", child.get().getCellContentLocator().innerText());
-
-// Collapse it again
-grid.collapseRow(0);
-assertEquals(3, grid.getTotalRowCount());
-```
-
-### TreeRowElement API
-
-```java
-TreeGridElement grid = TreeGridElement.getById(page, "my-tree-grid");
-
-// Obtain a tree-aware row object
-TreeGridElement.TreeRowElement row = grid.findTreeRow(0).get();
-
-System.out.println(row.getLevel());    // 0
-System.out.println(row.isLeaf());      // false
-System.out.println(row.isExpanded());  // false
-
-row.expand();
-assertTrue(row.isExpanded());
-
-row.collapse();
-assertFalse(row.isExpanded());
-```
-
-### Upgrading a RowElement to TreeRowElement
-
-```java
-// If you already have a RowElement from a generic helper, wrap it:
-GridElement.RowElement plainRow = grid.findRow(0).get();
-TreeGridElement.TreeRowElement treeRow = new TreeGridElement.TreeRowElement(plainRow);
-
-assertEquals(0, treeRow.getLevel());
-assertFalse(treeRow.isLeaf());
-```
-
-### Selection in a Multi-Select TreeGrid
-
-```java
-// Multi-select mode adds a checkbox column at index 0.
-// TreeGridElement handles this automatically.
-TreeGridElement grid = TreeGridElement.getById(page, "multi-select-tree-grid");
-
-grid.select(0);
-grid.select(1);
-assertEquals(2, grid.getSelectedItemCount());
-
-// Expand, then select a child row too
-grid.expandRow(0);
-grid.select(1); // first child of row 0
-assertTrue(grid.findRow(1).get().isSelected());
-
-// Select-all checkbox
-grid.checkSelectAll();
-assertTrue(grid.isSelectAllChecked());
-
-grid.uncheckSelectAll();
-assertEquals(0, grid.getSelectedItemCount());
-```
-
-### Multi-Level Tree (Three Levels)
-
-```java
-TreeGridElement grid = TreeGridElement.getById(page, "three-level-tree-grid");
-assertEquals(2, grid.getTotalRowCount()); // only root divisions visible
-
-// Expand Division A (index 0) to reveal its departments
-grid.expandRow(0);
-assertEquals(4, grid.getTotalRowCount()); // 2 divisions + Dept A1, Dept A2
-
-// Expand Dept A1 (now at index 1) to reveal its employees
-grid.expandRow(1);
-assertEquals(6, grid.getTotalRowCount()); // + Employee A1a, Employee A1b
-
-// Verify grandchild level and leaf state
-assertEquals(2, grid.findTreeRow(2).get().getLevel()); // Employee A1a is level 2
-assertTrue(grid.findTreeRow(2).get().isLeaf());
-
-// Collapse Division A — hides all its descendants
-grid.collapseRow(0);
-assertEquals(2, grid.getTotalRowCount());
-```
+- [Grid](GridElement.md) — every inherited feature: cells, headers, sorting, details, renderers
+- [Assertions](../guide/assertions.md)
+- [Finding components](../guide/finding-components.md)
+- [Actions and waiting](../guide/actions-and-waiting.md)
+- [Core concepts](../guide/core-concepts.md)
+- Full examples: [TreeGridBasicViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/TreeGridBasicViewIT.java),
+  [TreeGridExpandCollapseViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/TreeGridExpandCollapseViewIT.java),
+  [TreeGridSelectionViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/TreeGridSelectionViewIT.java),
+  [TreeGridMultiSelectViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/TreeGridMultiSelectViewIT.java)

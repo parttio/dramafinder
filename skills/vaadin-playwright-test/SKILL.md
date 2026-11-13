@@ -162,8 +162,8 @@ looking for alternatives.
 > The complete, always-current signature reference is bundled beside this skill
 > in [api-reference.md](api-reference.md) (auto-generated from source). If a
 > method isn't there, it doesn't exist in this version — do not guess or dig
-> into the jar. The few components with non-obvious behaviour also have prose
-> docs in the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
+> into the jar. Every component also has a page with examples and pitfalls in
+> the [specifications folder](https://github.com/parttio/dramafinder/tree/master/docs/specifications).
 >
 > If you somehow have neither this skill nor a network, the same reference ships
 > inside the jar — read it, don't decompile:
