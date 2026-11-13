@@ -18,6 +18,8 @@ theme:
     - navigation.footer
     - search.highlight
     - content.code.copy
+    - content.tabs.link
+    - navigation.indexes
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -38,6 +40,9 @@ markdown_extensions:
       permalink: true
   - pymdownx.highlight
   - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
 
 validation:
   links:

@@ -1,193 +1,180 @@
-# VirtualListElement Specification
+# Virtual List
 
-> For the authoritative method list and signatures, see the auto-generated
-> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
-> file focuses on behaviour and usage that signatures alone don't convey.
+`VirtualListElement` wraps `<vaadin-virtual-list>` (Flow: `VirtualList`), a
+scrollable list that renders only the items in view. It lets a test count items,
+scroll, check which rows are in view and reach the components rendered inside an
+item.
 
-## Overview
+| | |
+|---|---|
+| Web component | `<vaadin-virtual-list>` |
+| Flow component | `com.vaadin.flow.component.virtuallist.VirtualList` |
+| Wrapper | `org.vaadin.addons.dramafinder.element.VirtualListElement` |
+| Typed query | `find(page, VirtualListElement.class)` → `ComponentQuery` |
+| API | [VirtualListElement](../../skills/vaadin-playwright-test/api-reference.md#virtuallistelement) |
 
-`VirtualListElement` is a Playwright element wrapper for the `<vaadin-virtual-list>` web component. It wraps a virtualized scrollable list that lazily renders items as the user scrolls. It provides helpers for scrolling, querying visible rows, accessing rendered item content, and retrieving typed component elements inside items.
-
-## Tag Name
-
-```
-vaadin-virtual-list
-```
-
-## Class Hierarchy
-
-```
-VaadinElement
-    └── VirtualListElement
-```
-
-## Implemented Interfaces
-
-| Interface | Description |
-|-----------|-------------|
-| `FocusableElement` | Focus operations |
-| `HasStyleElement` | Style attribute support |
-
-## Constants
-
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `FIELD_TAG_NAME` | `"vaadin-virtual-list"` | HTML tag name |
-
-## API Methods
-
-### Constructor
+## Finding the component
 
 ```java
-VirtualListElement(Locator locator)
+VirtualListElement list = VirtualListElement.getById(page, "basic-virtual-list");
+VirtualListElement first = VirtualListElement.get(page);        // first list on the page
+VirtualListElement byTestId = VirtualListElement.getByTestId(page, "messages");
+VirtualListElement scoped = VirtualListElement.getById(page.locator("#sidebar"), "contacts");
 ```
 
-Creates a new `VirtualListElement` from a Playwright locator.
-
-### Static Factory Methods
-
-#### get(Page page)
-
-Get the first `VirtualListElement` on the page.
+The typed query has the filters every component has:
 
 ```java
-VirtualListElement list = VirtualListElement.get(page);
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
+VirtualListElement styled = find(page, VirtualListElement.class)
+        .withClassName("custom-virtual-list").single();
 ```
 
-### Properties / Getters
-
-| Method | Description |
-|--------|-------------|
-| `getRowCount()` | Total number of items (including items not yet rendered) |
-| `getFirstVisibleRowIndex()` | 0-based index of the first visible row |
-| `getLastVisibleRowIndex()` | 0-based index of the last visible row |
-| `getVisibleRowCount()` | Count of rows visible in the viewport |
-| `isRowInView(int rowIndex)` | Whether the given row index is currently visible |
-
-All visibility methods flush the connector debouncer before reading the property.
-
-### Item Query Methods
-
-| Method | Description |
-|--------|-------------|
-| `getRenderedItems()` | Locator for all currently rendered child elements |
-| `getItemByIndex(int index)` | Locator for the rendered item at the given virtual index (must be in view) |
-| `getItemByText(String text)` | Locator for the first rendered item containing the given text |
-
-### Component Query Methods
-
-| Method | Description |
-|--------|-------------|
-| `getItemComponent(int index, Class<T> type)` | Get a typed component from the item at the given virtual index |
-| `getItemComponentByText(String text, Class<T> type)` | Get a typed component from the item matching the given text |
-| `getComponent(Class<T> type)` | Get the first typed component found in any rendered item |
-
-Component query methods read the tag from the `@PlaywrightElement` annotation on the target class and require a public constructor accepting a single `Locator` parameter.
-
-### Scroll Actions
-
-| Method | Description |
-|--------|-------------|
-| `scrollToRow(int rowIndex)` | Scroll the list so the given row index becomes visible |
-| `scrollToStart()` | Scroll to the very beginning of the list |
-| `scrollToEnd()` | Scroll to the very end of the list |
-
-### Assertions
-
-| Method | Description |
-|--------|-------------|
-| `assertRowCount(int expected)` | Assert the total number of items matches (auto-retry) |
-| `assertEmpty()` | Assert the list has zero items |
-| `assertRowInView(int rowIndex)` | Assert the given row is currently visible (auto-retry) |
-| `assertRowNotInView(int rowIndex)` | Assert the given row is NOT currently visible (auto-retry) |
-| `assertFirstVisibleRow(int expected)` | Assert the first visible row index (hasJSProperty, auto-retry) |
-| `assertLastVisibleRow(int expected)` | Assert the last visible row index (hasJSProperty, auto-retry) |
-| `assertItemRendered(String text)` | Assert an item containing the given text is visible in the DOM |
-
-## Usage Examples
-
-### Basic Scrolling
+## Counting items
 
 ```java
-VirtualListElement list = new VirtualListElement(page.locator("#my-list"));
-
-list.scrollToRow(50);       // scroll to index 50
-list.scrollToStart();       // scroll to the top
-list.scrollToEnd();         // scroll to the bottom
+// View
+VirtualList<String> list = new VirtualList<>();
+list.setId("basic-virtual-list");
+list.setHeight("200px");
+list.setItems(IntStream.rangeClosed(1, 100).mapToObj(i -> "Item " + i).toList());
+list.setRenderer(new ComponentRenderer<>(item -> {
+    Span span = new Span(item);
+    span.addClassName("virtual-list-item");
+    return span;
+}));
 ```
 
-### Querying Items
-
 ```java
-VirtualListElement list = new VirtualListElement(page.locator("#my-list"));
+// Test
+VirtualListElement list = VirtualListElement.getById(page, "basic-virtual-list");
+list.assertRowCount(100);        // all items, rendered or not
 
-// Total item count (including non-rendered)
-int total = list.getRowCount();
-
-// Visibility info
-int first = list.getFirstVisibleRowIndex();
-int last = list.getLastVisibleRowIndex();
-int visible = list.getVisibleRowCount();
-boolean inView = list.isRowInView(50);
-
-// Get rendered items
-Locator allRendered = list.getRenderedItems();
-Locator itemAtIndex = list.getItemByIndex(0);
-Locator itemByText = list.getItemByText("Item 1");
+VirtualListElement.getById(page, "empty-virtual-list").assertEmpty();
 ```
 
-### Getting Typed Components Inside Items
+`getRowCount()` returns the same number, including items not yet rendered. A lazy
+list backed by `DataProvider.fromCallbacks(...)` reports the count its count
+callback returns (`assertRowCount(500)` for a 500-item provider).
+
+## Scrolling and what is in view
 
 ```java
-VirtualListElement list = new VirtualListElement(page.locator("#my-list"));
+VirtualListElement list = VirtualListElement.getById(page, "basic-virtual-list");
+list.assertFirstVisibleRow(0);
+list.assertRowInView(0);
+list.assertRowNotInView(50);
 
-// Get a ButtonElement from item at index 0
-ButtonElement btn = list.getItemComponent(0, ButtonElement.class);
+list.scrollToRow(50);
+list.assertRowInView(50);
+list.assertRowNotInView(0);
 
-// Get a ButtonElement from item matching text
-ButtonElement btn = list.getItemComponentByText("Row 1", ButtonElement.class);
-
-// Get the first ButtonElement in any rendered item
-ButtonElement btn = list.getComponent(ButtonElement.class);
+list.scrollToEnd();
+list.assertRowInView(99);
+list.scrollToStart();
+list.assertFirstVisibleRow(0);
 ```
 
-### Scroll and Read
+A row is "in view" when it is at least partially visible. The assertions retry;
+`assertFirstVisibleRow` / `assertLastVisibleRow` use Playwright's `hasJSProperty`,
+and the connector's 50 ms debouncer settles within the retry window. The getters
+read the same state once, when the number itself is needed:
+
+| Getter | Returns |
+|--------|---------|
+| `getFirstVisibleRowIndex()` | 0-based index of the first (partially) visible row |
+| `getLastVisibleRowIndex()` | 0-based index of the last (partially) visible row |
+| `getVisibleRowCount()` | Number of rows visible in the viewport |
+| `isRowInView(int rowIndex)` | Whether the row is between the first and last visible index |
+
+All of them flush the connector debouncer and read the value in a single browser
+round trip.
 
 ```java
-VirtualListElement list = new VirtualListElement(page.locator("#my-list"));
+int pageSize = list.getVisibleRowCount();   // e.g. to page through the list
+list.scrollToRow(list.getLastVisibleRowIndex() + 1);
+```
+
+## Reading rendered items
+
+Items are only in the DOM while rendered, so scroll to an item before reading it:
+
+```java
+list.assertItemRendered("Item 1");
 
 list.scrollToRow(50);
 list.assertItemRendered("Item 51");
+
+assertThat(list.getItemByIndex(50)).hasText("Item 51");   // virtual index, must be in view
 assertThat(list.getItemByText("Item 51")).isVisible();
+assertThat(list.getRenderedItems()).not().hasCount(0);   // every rendered item root
 ```
 
-### Assertions
+`getItemByText` and `assertItemRendered` match the text **case-insensitively as a
+substring** and take the first match: an item renders an arbitrary component, so
+there is no single label to match in full. Pass enough text to be unambiguous —
+`"Item 1"` also matches `"Item 10"` to `"Item 19"` when they are rendered.
+
+## Components inside items
+
+When the renderer creates Vaadin components, get them as typed elements:
 
 ```java
-VirtualListElement list = new VirtualListElement(page.locator("#my-list"));
-
-// Row count
-list.assertRowCount(100);
-list.assertEmpty();
-
-// Visibility
-list.assertRowInView(0);
-list.assertRowNotInView(99);
-list.assertFirstVisibleRow(0);
-list.assertLastVisibleRow(10);
-
-// Item content
-list.assertItemRendered("Item 1");
+// View
+list.setRenderer(new ComponentRenderer<>(item -> {
+    Span label = new Span(item);
+    Button button = new Button("Action " + item);
+    return new HorizontalLayout(label, button);
+}));
 ```
-
-### Empty List
 
 ```java
-VirtualListElement empty = new VirtualListElement(page.locator("#empty-list"));
-empty.assertEmpty();
-assertEquals(0, empty.getRowCount());
+// Test
+VirtualListElement list = VirtualListElement.getById(page, "component-virtual-list");
+
+ButtonElement first = list.getItemComponent(0, ButtonElement.class);       // item at index 0
+assertThat(first.getLocator()).hasText("Action Row 1");
+
+ButtonElement third = list.getItemComponentByText("Row 3", ButtonElement.class);
+third.click();
+
+ButtonElement any = list.getComponent(ButtonElement.class);   // first in any rendered item
+
+list.scrollToRow(20);
+list.getItemComponentByText("Row 21", ButtonElement.class).assertVisible();
 ```
 
-## Related Elements
+These methods read the tag from the `@PlaywrightElement` annotation on the target
+class and need a public constructor taking a single `Locator`; they throw
+`IllegalArgumentException` otherwise. They return the **first** matching
+component inside the item, and `getItemComponentByText` finds the item the same
+substring way as `getItemByText`.
 
-- `ListBoxElement` - Non-virtualized list with selection support
+## Styling and focus
+
+```java
+VirtualListElement list = VirtualListElement.getById(page, "styled-virtual-list");
+list.assertCssClass("custom-virtual-list");   // list.addClassName("custom-virtual-list")
+list.focus();
+```
+
+## Pitfalls
+
+- **Only rendered items exist.** `getItemByIndex`, `getItemByText`,
+  `assertItemRendered` and the component lookups work on items currently in the
+  DOM. Scroll with `scrollToRow` first.
+- **Substring text matching.** `"Row 1"` also matches `"Row 10"`; use enough text,
+  or `getItemByIndex` / `getItemComponent` with an index.
+- **First match wins.** The text and component lookups end in `.first()`; they do
+  not fail on ambiguity.
+
+## See also
+
+- [Grid](GridElement.md) — a virtualized list with columns, selection and sorting
+- [List Box](ListBoxElement.md) — a non-virtualized list with selection
+- [Assertions](../guide/assertions.md)
+- [Finding components](../guide/finding-components.md)
+- [Actions and waiting](../guide/actions-and-waiting.md)
+- [Core concepts](../guide/core-concepts.md)
+- Full example: [VirtualListViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/VirtualListViewIT.java)

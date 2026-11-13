@@ -488,8 +488,13 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
   `skills/vaadin-playwright-screenshot/agent-api-reference.md`
   (`tools/generate-agent-api-reference.java`; same never-edit-by-hand, CI-enforced
   rule). After changing that package's public API, regenerate and commit it.
-- Refer to `docs/specifications/` for the prose docs on components with
-  non-obvious behaviour (Grid, TreeGrid, VirtualList, and extension guidance).
+- `docs/guide/` is the developer guide (setup, concepts, lookups, assertions,
+  waiting, navigation, Spring, recipes, debugging, extending) and
+  `docs/specifications/<Name>Element.md` has one page per component with
+  examples and pitfalls. A new public element gets a page there (listed in
+  `docs/specifications/index.md`, `NAV` in `site/build.py` — the site build
+  fails otherwise — and `llms.txt`); a change to an element's behaviour updates
+  its page.
 - The skills in `skills/` ship three ways: as Claude Code plugins
   (`.claude-plugin/marketplace.json` plus each skill's
   `.claude-plugin/plugin.json`), as a Tessl tile (`tile.json`), and through

@@ -1,172 +1,229 @@
-# MarkdownElement Specification
+# Markdown
 
-> For the authoritative method list and signatures, see the auto-generated
-> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
-> file focuses on behaviour and usage that signatures alone don't convey.
+`MarkdownElement` wraps `<vaadin-markdown>` (Flow: `Markdown`). It asserts the
+**rendered** output: text, headings, links and code blocks.
 
-## Overview
+| | |
+|---|---|
+| Web component | `<vaadin-markdown>` |
+| Flow component | `com.vaadin.flow.component.markdown.Markdown` |
+| Wrapper | `org.vaadin.addons.dramafinder.element.MarkdownElement` |
+| Typed query | `find(page, MarkdownElement.class)` → `ComponentQuery` |
+| API | [MarkdownElement](../../skills/vaadin-playwright-test/api-reference.md#markdownelement) |
 
-`MarkdownElement` is a Playwright element wrapper for the `<vaadin-markdown>` web component.
+The component parses its `content` property as Markdown and writes the resulting
+HTML into its **own light DOM**, which is projected through the default slot in
+the shadow root. Everything this wrapper exposes therefore describes the
+**rendered output** — `# Title` is asserted as the text `Title` inside an `<h1>`,
+never as the source string `# Title`. There is no accessor for the Markdown
+source.
 
-The component parses its `content` property as Markdown and writes the resulting HTML
-into its **own light DOM**, which is projected through the default slot in the shadow
-root. Everything this wrapper exposes therefore describes the **rendered output** —
-`# Title` is asserted as the text `Title` inside an `<h1>`, never as the source
-string `# Title`.
+Headings and links are located by their ARIA roles (`heading` and `link`). Code
+blocks have no ARIA role and are located structurally as `pre > code`, which
+deliberately excludes inline code (`` `code` ``).
 
-Headings and links are located by their ARIA roles (`heading` and `link`), following
-the repository's preference for role-based locators. Code blocks have no ARIA role and
-are located structurally as `pre > code`, which deliberately excludes inline code
-(`` `code` ``).
-
-## Tag Name
-
-```
-vaadin-markdown
-```
-
-## Class Hierarchy
-
-```
-VaadinElement
-    └── MarkdownElement
-```
-
-## Implemented Interfaces
-
-| Interface | Description |
-|-----------|-------------|
-| `HasThemeElement` | `theme` attribute support |
-| `HasStyleElement` | Style/class attribute support |
-
-## Constants
-
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `FIELD_TAG_NAME` | `"vaadin-markdown"` | HTML tag name |
-
-## API Methods
-
-### Constructor
+## Finding the component
 
 ```java
-MarkdownElement(Locator locator)
+MarkdownElement notes = MarkdownElement.getById(page, "release-notes");
+MarkdownElement first = MarkdownElement.get(page);                    // first on the page
+MarkdownElement scoped = MarkdownElement.get(page.locator("#help-panel"));
+MarkdownElement byTestId = MarkdownElement.getByTestId(page, "changelog");
 ```
 
-### Static Factory Methods
-
-| Method | Description |
-|--------|-------------|
-| `get(Page page)` | First `<vaadin-markdown>` on the page |
-| `get(Locator locator)` | First `<vaadin-markdown>` inside the given scope |
-
-For a page with several Markdown components, construct the wrapper from a locator:
+The typed query has the filters every component has:
 
 ```java
-MarkdownElement second = new MarkdownElement(
-        page.locator(MarkdownElement.FIELD_TAG_NAME).nth(1));
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
+MarkdownElement help = find(page, MarkdownElement.class).withClassName("help-text").single();
 ```
 
-### Rendered Content
+Without an id or test id, a page with several Markdown components can still be
+addressed by position: `new MarkdownElement(page.locator(MarkdownElement.FIELD_TAG_NAME).nth(1))`.
 
-| Method | Description |
-|--------|-------------|
-| `getRenderedLocator()` | Locator scoping the rendered output — the component root, because the rendered HTML lives in its light DOM |
-| `getText()` | Rendered text, trimmed. Overrides `VaadinElement.getText()`, which returns the raw `textContent` |
-| `assertContainsText(String expected)` | Assert the rendered output contains the text |
-| `assertText(String expected)` | Assert the full rendered text (whitespace normalized) |
+## Rendered text
 
-### Headings
+````java
+// View
+Markdown markdown = new Markdown("""
+        # Release notes
 
-| Method | Description |
-|--------|-------------|
-| `getHeadings()` | Locator for all `h1`–`h6`, in document order |
-| `getHeadings(int level)` | Locator for the headings of one level (1–6) |
-| `getHeading(int index)` | Locator for the heading at the given index |
-| `assertHeadingCount(int count)` | Assert the number of headings |
-| `assertHeading(int index, String expected)` | Assert a heading's text |
+        DramaFinder is a **Playwright** helper library for Vaadin.
+        See the [documentation](https://vaadin.com/docs) and the
+        [add-on page](https://vaadin.com/directory) for details.
 
-### Links
+        ## Getting started
 
-| Method | Description |
-|--------|-------------|
-| `getLinks()` | Locator for all rendered links, in document order |
-| `getLink(String text)` | Locator for the link with the given accessible name, matched **exactly**. Strict: fails if several links share the name |
-| `assertLinkCount(int count)` | Assert the number of links |
-| `assertLink(String text, String href)` | Assert a link's target. The text is matched exactly and must be unique |
+        ```java
+        ButtonElement.getByText(page, "Save").click();
+        ```
 
-The link name is matched exactly, so `getLink("docs")` does not match a link named
-`API docs`, and it is not disambiguated with `.first()`: several links with the same
-accessible name is an ambiguity in the test, and Playwright's strict mode reports it
-instead of picking an arbitrary one. To address one of a set of same-named links, use
-`getLinks().nth(int)`.
+        ### Notes
 
-### Code Blocks
-
-| Method | Description |
-|--------|-------------|
-| `getCodeBlocks()` | Locator for all `pre > code` blocks — inline code is not matched |
-| `getCodeBlock(int index)` | Locator for the code block at the given index |
-| `assertCodeBlockCount(int count)` | Assert the number of code blocks |
-| `assertCodeBlock(int index, String expected)` | Assert a code block's text (whitespace normalized) |
-| `assertCodeBlockLanguage(int index, String language)` | Assert the fence language — rendered as the class `language-<language>` |
-
-## Usage Examples
-
-### Asserting rendered text
+        Use `assertContainsText` for partial matches.
+        """);
+````
 
 ```java
+// Test
 MarkdownElement markdown = MarkdownElement.get(page);
+markdown.assertContainsText("Getting started");                 // not "## Getting started"
+markdown.assertContainsText("DramaFinder is a Playwright helper");  // no ** in the output
 
-markdown.assertContainsText("Getting started"); // not "## Getting started"
-String text = markdown.getText();               // rendered text, trimmed
+String text = markdown.getText();   // "Release notes\n...", trimmed; null without text
 ```
 
-### Structure
+`assertContainsText` checks a part of the rendered text; `assertText` the whole
+of it, with whitespace normalized. Both retry. `getText()` overrides
+`VaadinElement.getText()`, which returns the raw `textContent`, to return the
+rendered text with leading and trailing whitespace removed.
+
+## Headings
 
 ```java
-MarkdownElement markdown = MarkdownElement.get(page);
-
 markdown.assertHeadingCount(3);
 markdown.assertHeading(0, "Release notes");
-assertThat(markdown.getHeadings(2)).hasText("Getting started");
+markdown.assertHeading(1, "Getting started");
+markdown.assertHeading(2, "Notes");
 
-markdown.assertLinkCount(2);
-markdown.assertLink("documentation", "https://vaadin.com/docs");
-
-markdown.assertCodeBlockCount(1);
-markdown.assertCodeBlockLanguage(0, "java");
-markdown.assertCodeBlock(0, "ButtonElement.getByText(page, \"Save\").click();");
+assertThat(markdown.getHeadings(2)).hasText("Getting started");   // all h2s
+assertThat(markdown.getHeading(0)).hasText("Release notes");
+assertThat(markdown.getHeadings()).hasCount(3);                    // h1–h6, in order
 ```
 
-### Custom queries
+`getHeadings(int level)` takes a level from 1 to 6.
 
-Use `getRenderedLocator()` as the scope for anything the wrapper doesn't cover — the
-rendered Markdown is plain HTML:
+## Links
 
 ```java
-MarkdownElement markdown = MarkdownElement.get(page);
+markdown.assertLinkCount(2);
+markdown.assertLink("documentation", "https://vaadin.com/docs");
+markdown.assertLink("add-on page", "https://vaadin.com/directory");
 
-assertThat(markdown.getRenderedLocator().locator("ul > li")).hasCount(3);
+assertThat(markdown.getLink("documentation")).hasText("documentation");
+markdown.getLink("documentation").click();
+```
+
+The link name is matched **exactly**, so `getLink("docs")` does not match a link
+named `API docs`, and it is not disambiguated with `.first()`: several links with
+the same accessible name is an ambiguity in the test, and Playwright's strict mode
+reports it instead of picking an arbitrary one. To address one of a set of
+same-named links, use `getLinks().nth(int)`:
+
+```java
+// View
+Markdown markdown = new Markdown("""
+        Read the [API docs](https://vaadin.com/api) or just the
+        [docs](https://vaadin.com/docs).
+
+        Two links share a name: [guide](https://vaadin.com/guide/a)
+        and [guide](https://vaadin.com/guide/b).
+        """);
+```
+
+```java
+// Test
+markdown.assertLink("docs", "https://vaadin.com/docs");      // not "API docs"
+markdown.assertLink("API docs", "https://vaadin.com/api");
+assertThat(markdown.getLink("API")).hasCount(0);             // a fragment matches nothing
+
+Locator guides = markdown.getLink("guide");                   // matches two links
+assertThat(guides).hasCount(2);
+assertThat(guides.nth(1)).hasAttribute("href", "https://vaadin.com/guide/b");
+// markdown.assertLink("guide", ...) would fail with a strict-mode error
+```
+
+## Code blocks
+
+```java
+markdown.assertCodeBlockCount(1);    // the inline `assertContainsText` is not counted
+markdown.assertCodeBlock(0, "ButtonElement.getByText(page, \"Save\").click();");
+markdown.assertCodeBlockLanguage(0, "java");   // the ```java fence → class "language-java"
+
+assertThat(markdown.getCodeBlock(0)).containsText("getByText");
+assertThat(markdown.getCodeBlocks()).hasCount(1);
+```
+
+`assertCodeBlock` normalizes whitespace before comparing. `getCodeBlocks()`
+matches fenced and indented blocks (`pre > code`), never inline code.
+
+## Custom queries
+
+The rendered Markdown is plain HTML; use `getRenderedLocator()` as the scope for
+anything the wrapper doesn't cover. It is the component root, because the
+rendered HTML lives in its light DOM — so a heading placed next to the component
+in the view is not matched:
+
+```java
+assertThat(markdown.getRenderedLocator().locator("h2")).hasText("Getting started");
+assertThat(markdown.getRenderedLocator().locator("strong")).hasText("Playwright");
+```
+
+## Line breaks
+
+With `setLineBreaks(true)` on the server side, single newlines render as `<br>`;
+by default they collapse into a space:
+
+```java
+// View
+Markdown markdown = new Markdown("""
+        First line
+        Second line
+        """);
+markdown.setLineBreaks(true);
+```
+
+```java
+// Test
+markdown.assertContainsText("First line");
+markdown.assertContainsText("Second line");
 assertThat(markdown.getRenderedLocator().locator("br")).hasCount(1);
 ```
 
-## Notes and Pitfalls
+## Empty content
 
-- **Rendered, not source.** There is no accessor for the Markdown source; assertions
-  are made against the DOM the component produced.
-- **Empty content is not visible.** A `<vaadin-markdown>` without content renders
-  nothing, so it has no size and Playwright reports it as hidden. Assert
-  `isAttached()` plus `assertText("")` instead of `assertVisible()`.
-- **Soft line breaks.** With `setLineBreaks(true)` on the server side, single newlines
-  render as `<br>`; by default they collapse into a space.
+A `<vaadin-markdown>` without content renders nothing, so it has no size and
+Playwright reports it as hidden. Assert that it is attached and empty instead of
+calling `assertVisible()`:
+
+```java
+// View
+add(new Markdown());
+```
+
+```java
+// Test
+assertThat(markdown.getLocator()).isAttached();
+markdown.assertText("");
+markdown.assertHeadingCount(0);
+markdown.assertLinkCount(0);
+markdown.assertCodeBlockCount(0);
+```
+
+## Theme and style
+
+```java
+markdown.assertCssClass("help-text");     // markdown.addClassName("help-text")
+markdown.assertTheme(null);               // no theme attribute
+```
+
+## Pitfalls
+
+- **Rendered, not source.** Assertions are made against the DOM the component
+  produced; Markdown syntax characters are never part of the text.
+- **Empty content is not visible.** Use `isAttached()` plus `assertText("")`.
+- **Soft line breaks** collapse into a space unless `setLineBreaks(true)`.
 - **Inline code is not a code block.** `getCodeBlocks()` matches `pre > code` only.
-- **Link names are exact and unique.** `getLink(String)` matches the accessible name
-  exactly and does not pick a first match, so a name that is a substring of another
-  link's name no longer resolves to the wrong link. Two links with the same name make
-  the locator fail; use `getLinks().nth(int)` there.
+- **Link names are exact and unique.** A name that is a substring of another
+  link's name does not resolve to the wrong link; two links with the same name
+  make the locator fail. Use `getLinks().nth(int)` there.
 
-## Related Elements
+## See also
 
-- `MessageListElement` — message content rendering
-- `CardElement` — slot-based content container
+- [Message List](MessageListElement.md)
+- [Card](CardElement.md) — slot-based content container
+- [Assertions](../guide/assertions.md)
+- [Finding components](../guide/finding-components.md)
+- [Core concepts](../guide/core-concepts.md)
+- Full example: [MarkdownViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/MarkdownViewIT.java)

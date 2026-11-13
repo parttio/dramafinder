@@ -1,19 +1,21 @@
-# VaadinElement Specification
+# VaadinElement (base class)
 
-> For the authoritative method list and signatures, see the auto-generated
-> [api-reference.md](../../skills/vaadin-playwright-test/api-reference.md). This
-> file focuses on behaviour and usage that signatures alone don't convey.
+`VaadinElement` is the base class of every DramaFinder element. Whatever the
+component, these methods are always available: clicking, reading text,
+visibility, DOM properties, the underlying locator and scoped queries.
 
-## Overview
+| | |
+|---|---|
+| Wrapper | `org.vaadin.addons.dramafinder.element.VaadinElement` (abstract) |
+| Implements | `HasLocatorElement` |
+| API | [VaadinElement](../../skills/vaadin-playwright-test/api-reference.md#vaadinelement) |
 
-`VaadinElement` is the abstract base class for all typed Playwright wrappers around Vaadin components. It exposes common helpers such as clicking, visibility assertions, text retrieval and generic DOM property access. Concrete components add component-specific APIs on top of this.
+## Class hierarchy
 
-## Class Hierarchy
+Most wrappers extend `VaadinElement` directly. A few share a base with a
+sibling:
 
-Every public element wrapper extends `VaadinElement`, most of them directly. The
-exceptions share a base with a sibling:
-
-```
+```text
 VaadinElement (abstract)
     ├── TextFieldElement
     │     ├── EmailFieldElement
@@ -30,137 +32,147 @@ VaadinElement (abstract)
     └── … every other wrapper
 ```
 
-The complete, generated list of wrappers, with the tag each one wraps and its
-factory methods, is the
-[Element index](../../skills/vaadin-playwright-test/api-reference.md#element-index).
+So an `EmailFieldElement` can be passed wherever a `TextFieldElement` is
+expected, and a `TreeGridElement` has every `GridElement` method.
 
-## Implemented Interfaces
-
-| Interface | Description |
-|-----------|-------------|
-| `HasLocatorElement` | Provides access to underlying Playwright locator |
-
-## API Methods
-
-### Constructor
+## Clicking and reading text
 
 ```java
-VaadinElement(Locator locator)
+ButtonElement save = ButtonElement.getByText(page, "Save");
+save.click();                 // clicks the host, then waits for the server round-trip
+
+CardElement card = CardElement.getByTitle(page, "Revenue");
+String text = card.getText(); // text content of the component root
 ```
 
-Creates a new VaadinElement wrapper from a Playwright locator.
+`click()` clicks the centre of the component host. Many elements offer a more
+precise action (`selectTab`, `check`, `RowElement.click()`); prefer those.
 
-### Basic Actions
-
-| Method | Description |
-|--------|-------------|
-| `click()` | Click the component root |
-| `getText()` | Get textual content of component |
-
-### Locator Access
-
-| Method | Description |
-|--------|-------------|
-| `getLocator()` | Get the underlying Playwright Locator |
-
-### Property Access
-
-| Method | Description |
-|--------|-------------|
-| `setProperty(String name, Object value)` | Set a DOM property |
-| `getProperty(String name)` | Get a DOM property value |
-
-### Visibility
-
-| Method | Description |
-|--------|-------------|
-| `isVisible()` | Whether component is visible |
-| `isHidden()` | Whether component is hidden |
-| `assertVisible()` | Assert component is visible |
-| `assertHidden()` | Assert component is hidden |
-
-## Usage Examples
-
-### Basic Usage
+## Visibility
 
 ```java
-// All element classes extend VaadinElement
-ButtonElement button = ButtonElement.getByText(page, "Save");
+// View: details.setVisible(false) until "Show details" is clicked
+DetailsElement details = DetailsElement.getBySummaryText(page, "Advanced");
+details.assertHidden();
+ButtonElement.getByText(page, "Show details").click();
+details.assertVisible();
 
-// Common methods available
-button.click();
-String text = button.getText();
+details.assertVisible(true);  // boolean variant, handy in parameterised tests
+boolean shown = details.isVisible(); // one-shot read, no retry
 ```
 
-### Visibility Checks
+`assertVisible` / `assertHidden` retry; `isVisible` / `isHidden` don't.
+Overlay components refine them: a `DialogElement` checks its overlay, a
+`ConfirmDialogElement.assertHidden()` also passes when the dialog is gone.
+
+## DOM properties
+
+Read or set a property of the web component when no dedicated method exists:
 
 ```java
-DialogElement dialog = new DialogElement(page);
+TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+Object autoselect = name.getProperty("autoselect");
 
-// Check visibility
-if (dialog.isVisible()) {
-    dialog.click();
-}
-
-// Assert visibility
-dialog.assertVisible();
-dialog.assertHidden();
+ProgressBarElement progress = ProgressBarElement.getById(page, "upload-progress");
+progress.setProperty("value", 0.5); // waits for the server if the property is synchronised
 ```
 
-### Property Access
+To assert a property with retries, use Playwright on the locator:
 
 ```java
-TextFieldElement field = TextFieldElement.getByLabel(page, "Name");
-
-// Set DOM property
-field.setProperty("value", "John");
-
-// Get DOM property
-Object disabled = field.getProperty("disabled");
+assertThat(name.getLocator()).hasJSProperty("autoselect", true);
 ```
 
-### Locator Access
+Remember the difference between an HTML **attribute** (`getLocator().getAttribute("theme")`)
+and a DOM **property** (`getProperty("value")`): many Vaadin properties are not
+reflected to attributes.
+
+## The locator
+
+`getLocator()` returns the Playwright `Locator` of the component host, for
+anything the API does not cover:
 
 ```java
-CardElement card = CardElement.getByTitle(page, "Product");
-
-// Get underlying locator for custom operations
-Locator locator = card.getLocator();
-locator.screenshot();
-locator.evaluate("el => el.scrollIntoView()");
+CardElement card = CardElement.getByTitle(page, "Revenue");
+card.getLocator().screenshot(new Locator.ScreenshotOptions().setPath(Paths.get("target/card.png")));
+card.getLocator().scrollIntoViewIfNeeded();
+assertThat(card.getLocator()).hasAttribute("theme", "outlined");
 ```
 
-## Extending VaadinElement
-
-To create a new element wrapper:
+It is also the scope for lookups inside the component:
 
 ```java
-@PlaywrightElement(MyElement.FIELD_TAG_NAME)
-public class MyElement extends VaadinElement {
+DialogElement dialog = DialogElement.getByHeaderText(page, "New contact");
+TextFieldElement.getByLabel(dialog.getLocator(), "Name").setValue("Ada");
+```
 
-    public static final String FIELD_TAG_NAME = "my-component";
+## Scoped queries
 
-    public MyElement(Locator locator) {
+`find(..)` starts a [typed query](../guide/finding-components.md#the-typed-query-builder)
+inside the component:
+
+```java
+DialogElement dialog = DialogElement.getByHeaderText(page, "Delete account?");
+dialog.find(ButtonElement.class).withText("Delete").single().click();
+
+FormLayoutElement form = FormLayoutElement.get(page);
+List<TextFieldElement> fields = form.find(TextFieldElement.class).all();
+```
+
+## Waiting for the server
+
+Every element exposes, through `HasLocatorElement`:
+
+- `waitAfterAction()` — waits for the round-trip an action just triggered,
+  unless automatic waiting is off. Element actions call it for you; call it
+  yourself after a raw Playwright action in a [custom element](../guide/extending.md).
+- `waitForVaadinIdle()` — waits until Vaadin has no request in flight, always.
+  Use it in a test after a raw Playwright action, or inside
+  `AutoWait.withoutWaiting(..)`.
+
+```java
+TextFieldElement search = TextFieldElement.getByLabel(page, "Search");
+search.getInputLocator().press("Enter"); // raw Playwright: does not wait
+search.waitForVaadinIdle();
+```
+
+See [Actions and waiting](../guide/actions-and-waiting.md).
+
+## Shared behaviour through mixins
+
+Elements add behaviour by implementing mixin interfaces — `HasValueElement`,
+`HasEnabledElement`, `HasThemeElement`... — listed for each element in the API
+reference and documented once under
+[Shared mixins](../../skills/vaadin-playwright-test/api-reference.md#shared-mixins).
+[Core concepts](../guide/core-concepts.md#mixins-shared-behaviour) has the
+overview, [Assertions](../guide/assertions.md) shows them in use.
+
+## Writing your own element
+
+Extend `VaadinElement` to wrap a component DramaFinder doesn't cover:
+
+```java
+@PlaywrightElement(RatingElement.TAG_NAME)
+public class RatingElement extends VaadinElement implements HasLabelElement {
+
+    public static final String TAG_NAME = "rating-stars";
+
+    public RatingElement(Locator locator) {
         super(locator);
     }
 
-    // Add component-specific methods
-    public void doSomething() {
-        getLocator().locator(".internal").click();
+    public void rate(int stars) {
+        getLocator().locator("button").nth(stars - 1).click();
+        waitAfterAction();
     }
 }
 ```
 
-## Related Interfaces
+The full walk-through, with factories, mixins and the typed query, is in
+[Writing your own element](../guide/extending.md).
 
-Elements add behaviour by implementing shared mixin interfaces, such as
-`HasEnabledElement`, `HasValueElement` or `HasThemeElement`. The full, generated
-list with every default method is
-[Shared mixins](../../skills/vaadin-playwright-test/api-reference.md#shared-mixins).
-Two choices need care:
+## See also
 
-- `HasEnabledElement` or `HasDisabledAttributeElement`: use the second when the
-  host's ARIA role is one Playwright does not treat as disableable (see pitfall 7
-  in `AGENTS.md`).
-- `HasLocatorElement` is the base of every mixin: it provides `getLocator()` and
-  `waitAfterAction()`.
+- [Core concepts](../guide/core-concepts.md)
+- [Finding components](../guide/finding-components.md)
+- [Element index](../../skills/vaadin-playwright-test/api-reference.md#element-index)
