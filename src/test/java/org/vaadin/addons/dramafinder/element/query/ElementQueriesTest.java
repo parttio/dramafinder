@@ -5,7 +5,9 @@ import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.microsoft.playwright.Locator;
@@ -29,6 +31,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.RETURNS_SELF;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,22 +83,70 @@ class ElementQueriesTest {
     @Test
     void filtersReturnNewQueries() {
         Page page = mock(Page.class);
-        Locator candidates = mock(Locator.class, RETURNS_SELF);
-        Locator narrowed = mock(Locator.class);
-        when(page.locator(anyString())).thenReturn(candidates);
-        when(candidates.page()).thenReturn(page);
-        when(candidates.and(any())).thenReturn(narrowed);
-        when(candidates.description()).thenReturn("vaadin-button");
-        when(narrowed.describe(anyString())).thenReturn(narrowed);
+        Map<String, Locator> locators = selfDescribingLocators(page);
 
         ButtonQuery<ButtonElement> all = ElementQueries.find(page, ButtonElement.class);
         ButtonQuery<ButtonElement> byId = all.withId("save");
 
-        assertSame(candidates, all.getLocator());
-        assertSame(narrowed, byId.getLocator());
-        verify(page).locator("[id=\"save\"]");
-        verify(candidates).describe("vaadin-button");
-        verify(narrowed).describe("vaadin-button with id \"save\"");
+        assertSame(locators.get("vaadin-button"), all.getLocator());
+        assertSame(locators.get("vaadin-button[id=\"save\"]"), byId.getLocator());
+        verify(byId.getLocator()).describe("vaadin-button with id \"save\"");
+    }
+
+    @Test
+    void cssFiltersCompileIntoOneSelector() {
+        Page page = mock(Page.class);
+        Map<String, Locator> locators = selfDescribingLocators(page);
+
+        var query = ElementQueries.find(page, ButtonElement.class)
+                .withTestId("users").withClassName("x").withAttribute("theme", "primary");
+
+        String selector = "vaadin-button[data-testid=\"users\"][class~=\"x\"][theme=\"primary\"]";
+        assertSame(locators.get(selector), query.getLocator());
+        verify(query.getLocator()).describe(
+                "vaadin-button with test id \"users\" with class \"x\" with attribute theme = \"primary\"");
+        locators.values().forEach(l -> verify(l, never()).and(any()));
+    }
+
+    @Test
+    void cssFiltersAfterOtherFiltersIntersect() {
+        Page page = mock(Page.class);
+        Map<String, Locator> locators = selfDescribingLocators(page);
+        Locator textFiltered = mock(Locator.class, RETURNS_SELF);
+        Locator intersected = mock(Locator.class, RETURNS_SELF);
+        when(textFiltered.page()).thenReturn(page);
+        when(textFiltered.and(any())).thenReturn(intersected);
+
+        var query = ElementQueries.find(page, ButtonElement.class)
+                .refine(l -> textFiltered)
+                .withId("save");
+
+        // A filter CSS cannot express ends the single selector: later ones intersect
+        assertSame(intersected, query.getLocator());
+        verify(textFiltered).and(locators.get("[id=\"save\"]"));
+    }
+
+    @Test
+    void onlyPlainCssSelectorsAreExtended() {
+        assertTrue(ElementQuery.CssSelector.canExtend("vaadin-button"));
+        assertTrue(ElementQuery.CssSelector.canExtend("vaadin-dialog[opened]"));
+        assertTrue(ElementQuery.CssSelector.canExtend(":is(vaadin-menu-item:not([hidden]), x[role='a,b'])"));
+        assertFalse(ElementQuery.CssSelector.canExtend("vaadin-button, vaadin-icon"));
+        assertFalse(ElementQuery.CssSelector.canExtend("xpath=//vaadin-button"));
+        assertFalse(ElementQuery.CssSelector.canExtend("vaadin-dialog >> vaadin-button"));
+    }
+
+    /** Make {@code page.locator(selector)} return one mock per selector, describing to itself. */
+    private static Map<String, Locator> selfDescribingLocators(Page page) {
+        Map<String, Locator> locators = new HashMap<>();
+        when(page.locator(anyString())).thenAnswer(invocation -> locators.computeIfAbsent(
+                invocation.getArgument(0), selector -> {
+                    Locator locator = mock(Locator.class);
+                    when(locator.describe(anyString())).thenReturn(locator);
+                    when(locator.page()).thenReturn(page);
+                    return locator;
+                }));
+        return locators;
     }
 
     @Test

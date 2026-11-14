@@ -48,7 +48,7 @@ public final class ElementQueries {
     public static <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(
             Page page, Class<T> type) {
         String tag = tagOf(type);
-        return query(type, page.locator(tag).describe(tag));
+        return query(type, new ElementQuery.CssSelector(page::locator, tag, tag));
     }
 
     /**
@@ -66,13 +66,17 @@ public final class ElementQueries {
             Locator scope, Class<T> type) {
         String tag = tagOf(type);
         String scopeDescription = scope.description();
-        return query(type, scope.locator(tag)
-                .describe(scopeDescription == null ? tag : tag + " inside " + scopeDescription));
+        return query(type, new ElementQuery.CssSelector(scope::locator, tag,
+                scopeDescription == null ? tag : tag + " inside " + scopeDescription));
     }
 
     @SuppressWarnings("unchecked")
-    private static <Q> Q query(Class<?> type, Locator candidates) {
-        return (Q) newQuery(QUERY_TYPES.get(type), type, candidates);
+    private static <Q> Q query(Class<?> type, ElementQuery.CssSelector candidates) {
+        var query = (ElementQuery<?, ?>) newQuery(QUERY_TYPES.get(type), type, candidates.locator());
+        if (ElementQuery.CssSelector.canExtend(candidates.selector())) {
+            query.startCss(candidates);
+        }
+        return (Q) query;
     }
 
     private static String tagOf(Class<?> type) {

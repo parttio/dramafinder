@@ -136,8 +136,8 @@ public class TextAreaElement extends TextFieldElement {
     /**
      * Get a {@code TextAreaElement} by its test id, searching the entire page.
      * <p>
-     * The test id is Playwright's test id attribute, {@code data-testid} unless
-     * reconfigured — the attribute Flow's {@code Component.setTestId(String)} sets.
+     * The test id is the {@code data-testid} attribute, which Flow's
+     * {@code Component.setTestId(String)} sets.
      * A fallback for a component without a user-visible name; it must match in
      * full, and two components with that test id fail with a strict-mode error.
      *
