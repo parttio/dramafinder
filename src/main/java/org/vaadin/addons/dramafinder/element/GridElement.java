@@ -51,6 +51,28 @@ public class GridElement extends VaadinElement
     private static final String VISIBLE_COLUMNS_JS =
             "g._getColumns().filter(c => !c.hidden).sort((a, b) => a._order - b._order)";
 
+    // Per visible column, in display order: the innerText of its cell in the first row of the
+    // section (the column's own cell or that of an enclosing group), "" when it has none there,
+    // or [row index, cell index] when the cell has no rendered content yet. Null without rows.
+    private static final String FIRST_ROW_CELL_TEXTS_JS = """
+            (g, [section, cellProperty]) => {
+                const rows = [...g.shadowRoot.querySelectorAll(section + ' tr')];
+                if (rows.length === 0) return null;
+                return %s.map(column => {
+                    for (let c = column; c && c.localName.startsWith('vaadin-grid-column'); c = c.parentElement) {
+                        const cell = c[cellProperty];
+                        if (!cell || cell.parentElement !== rows[0]) continue;
+                        const slot = cell.querySelector('slot');
+                        const content = slot && g.querySelector(
+                                ':scope > vaadin-grid-cell-content[slot="' + CSS.escape(slot.name) + '"]');
+                        return content ? content.innerText
+                                : [0, [...rows[0].children].indexOf(cell)];
+                    }
+                    return '';
+                });
+            }
+            """.formatted(VISIBLE_COLUMNS_JS);
+
     /**
      * Create a new {@code GridElement}.
      *
@@ -323,21 +345,50 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Get the text content of all visible header cells.
+     * Get the text content of all visible header cells, one per visible column in display
+     * order, read from the first header row. A cell joined over several columns (a column group
+     * header) is repeated for each column it spans; a column with no cell in that row gets an
+     * empty string. The texts are read in one script; a column is scrolled into view only if its
+     * cell content is not rendered.
      *
      * @return list of header cell text contents
+     * @throws IllegalStateException if the grid has no header row
      */
     public List<String> getHeaderCellContents() {
-        int count = getColumnCount();
-        List<String> headers = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            var headerCell = findHeaderCell(i);
-            if (!headerCell.isPresent()) {
-                throw new IllegalStateException("No header cell found at column index " + i);
-            }
-            headers.add(headerCell.get().getCellContentLocator().innerText());
+        return readFirstRowCellTexts("thead", "_headerCell");
+    }
+
+    /**
+     * Read the text of every visible column's cell in the first header or footer row with one
+     * script, scrolling only the cells whose content is not rendered and reading again.
+     */
+    @SuppressWarnings("unchecked")
+    private List<String> readFirstRowCellTexts(String section, String cellProperty) {
+        var args = List.of(section, cellProperty);
+        var values = (List<Object>) locator.evaluate(FIRST_ROW_CELL_TEXTS_JS, args);
+        if (values == null) {
+            throw new IllegalStateException("The grid has no " + section + " row");
         }
-        return headers;
+        boolean scrolled = false;
+        for (var value : values) {
+            if (value instanceof List<?> position) {
+                locator.locator(section + " tr").nth(((Number) position.get(0)).intValue())
+                        .locator(":scope > *").nth(((Number) position.get(1)).intValue())
+                        .scrollIntoViewIfNeeded();
+                scrolled = true;
+            }
+        }
+        if (scrolled) {
+            values = (List<Object>) locator.evaluate(FIRST_ROW_CELL_TEXTS_JS, args);
+        }
+        var texts = new ArrayList<String>(values.size());
+        for (int i = 0; i < values.size(); i++) {
+            if (!(values.get(i) instanceof String text)) {
+                throw new IllegalStateException("The " + section + " cell of column " + i + " is not rendered");
+            }
+            texts.add(text);
+        }
+        return texts;
     }
 
     /**
@@ -442,21 +493,16 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Get the text content of all visible footer cells.
+     * Get the text content of all visible footer cells, one per visible column in display
+     * order, read from the first footer row. A cell joined over several columns is repeated for
+     * each column it spans; a column with no cell in that row gets an empty string. The texts are
+     * read in one script; a column is scrolled into view only if its cell content is not rendered.
      *
      * @return list of footer cell text contents
+     * @throws IllegalStateException if the grid has no footer row
      */
     public List<String> getFooterCellContents() {
-        int count = getColumnCount();
-        List<String> footers = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            var footerCell = findFooterCell(i);
-            if (!footerCell.isPresent()) {
-                throw new IllegalStateException("No footer cell found at column index " + i);
-            }
-            footers.add(footerCell.get().getCellContentLocator().innerText());
-        }
-        return footers;
+        return readFirstRowCellTexts("tfoot", "_footerCell");
     }
 
     /**

@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.0.2-SNAPSHOT — 59 element wrappers.
+> DramaFinder 2.0.3-SNAPSHOT — 59 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -1395,12 +1395,12 @@ PlaywrightElement for `<vaadin-grid>`.
 - `Optional<HeaderCellElement> findHeaderCellByText(String text)` — Find a header cell by its text content.
 - `Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text)` — Find a header cell by header row index and text content.
 - `List<HeaderCellElement> getHeaderCells(int columnIndex)` — Get the header cells of a column in every header row, top row first: the cell of the column itself and those of the column groups around it.
-- `List<String> getHeaderCellContents()` — Get the text content of all visible header cells.
+- `List<String> getHeaderCellContents()` — Get the text content of all visible header cells, one per visible column in display order, read from the first header row.
 - `Optional<FooterCellElement> findFooterCell(int columnIndex)` — Find a footer cell by column index.
 - `Optional<FooterCellElement> findFooterCell(int footerRowIndex, int columnIndex)` — Find a footer cell by footer row index and column index.
 - `Optional<FooterCellElement> findFooterCellByText(String text)` — Find a footer cell by its text content.
 - `Optional<FooterCellElement> findFooterCellByText(int footerRowIndex, String text)` — Find a footer cell by footer row index and text content.
-- `List<String> getFooterCellContents()` — Get the text content of all visible footer cells.
+- `List<String> getFooterCellContents()` — Get the text content of all visible footer cells, one per visible column in display order, read from the first footer row.
 - `Optional<CellElement> findCell(int row, int column)` — Find a body cell by row index and column index.
 - `Optional<CellElement> findCell(int row, String columnHeaderText)` — Find a body cell by row index and column header text.
 - `List<Integer> findRowIndexesWithColumnText(int columnIndex, String text)` — Find row indexes where the cell in the given column has the given text.
