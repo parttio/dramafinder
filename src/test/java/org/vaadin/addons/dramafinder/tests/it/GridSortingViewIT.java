@@ -184,6 +184,17 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testRowsUnderSeveralHeaderRows() {
+        GridElement grid = GridElement.getById(page, "filter-grid");
+        // Three header rows: rows are found by index, not by an aria-rowindex offset
+        assertEquals("First1", grid.findRow(0).orElseThrow().getCell(1).getText());
+        assertEquals("Last20", grid.findRow(19).orElseThrow().getCell(2).getText());
+        assertTrue(grid.isRowInView(19));
+        assertFalse(grid.isRowInView(0));
+        assertTrue(grid.findRow(20).isEmpty());
+    }
+
+    @Test
     public void testHeaderCellsOfSingleRowHeader() {
         GridElement grid = GridElement.getById(page, "sortable-grid");
         var cells = grid.getHeaderCells(2);

@@ -293,7 +293,9 @@ returned by the footer methods.
 
 ## Rows
 
-`findRow` returns an `Optional<RowElement>` and **auto-scrolls** to the row:
+`findRow` returns an `Optional<RowElement>` and **auto-scrolls** to the row. A
+row already rendered and fully in view is returned at once, with no scroll and
+no wait:
 
 ```java
 GridElement grid = GridElement.getById(page, "basic-grid");
