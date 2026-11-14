@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -171,6 +174,13 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
         filter.setValue("Last1");
         // Last1 and Last10 to Last19
         grid.assertRowCount(11);
+    }
+
+    @Test
+    public void testHeaderCellContentsReadTheFirstHeaderRow() {
+        GridElement grid = GridElement.getById(page, "filter-grid");
+        // The selection column, then the joined "Name" cell once for each column it spans
+        assertEquals(List.of("", "Name", "Name"), grid.getHeaderCellContents());
     }
 
     @Test
