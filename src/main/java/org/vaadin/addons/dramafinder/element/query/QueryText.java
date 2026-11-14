@@ -95,13 +95,71 @@ final class QueryText {
      *              for a case-insensitive substring
      */
     static Locator labelledOrOwnText(Locator candidates, String name, boolean exact) {
-        Page page = candidates.page();
-        Locator labelled = candidates.and(page.getByLabel(name, new Page.GetByLabelOptions().setExact(exact)));
+        Locator labelled = candidates.locator(labelledBy(name, exact));
         String ownText = exact ? ownTextIs(name) : ownTextContains(name);
-        return labelled.or(candidates.and(page.locator(UNLABELLED)).locator(ownText));
+        return labelled.or(candidates.locator(UNLABELLED).locator(ownText));
     }
 
-    private static final String UNLABELLED = ":not([aria-label]):not([aria-labelledby])";
+    // Self-scoped: keeps the candidate when it has neither attribute
+    private static final String UNLABELLED = "xpath=self::*[not(@aria-label) and not(@aria-labelledby)]";
+
+    /**
+     * Selector keeping a candidate that is itself labelled {@code name}, the way
+     * Playwright's {@code getByLabel} reads an element that is not a native form
+     * control: by the text of any element its {@code aria-labelledby} refers to,
+     * or, when it refers to none, by a non-blank {@code aria-label}.
+     * <p>
+     * Evaluated on the candidate alone ({@code self::}), unlike
+     * {@code candidates.and(page.getByLabel(..))}, which computes the labels of
+     * every element on the page each time the locator resolves. The referenced
+     * elements are looked up in the document, so ids inside another component's
+     * shadow root are not followed.
+     *
+     * @param exact {@code true} for a whole, case-sensitive, whitespace-normalized
+     *              match; {@code false} for a substring ignoring the case of ASCII letters
+     */
+    static String labelledBy(String name, boolean exact) {
+        return "xpath=self::*[" + ariaLabelled(name, exact) + "]";
+    }
+
+    /**
+     * Selector keeping a candidate whose accessible name is {@code name}, read on
+     * the candidate itself (see {@link #labelledBy}) or on its own input: an
+     * element slotted directly into it as {@code input}, {@code textarea} or
+     * {@code value} (see {@link #OWN_INPUT}). For that input, when it has neither
+     * a resolving {@code aria-labelledby} nor a non-blank {@code aria-label}, a
+     * native control ({@code input} other than hidden, {@code textarea},
+     * {@code select}) is also named by a {@code <label for>} pointing at it or a
+     * {@code <label>} around it, as Playwright reads {@code element.labels}.
+     * <p>
+     * One XPath evaluated on each candidate alone: neither the page nor the
+     * candidate's shadow DOM is searched, so it costs the same as an id lookup.
+     */
+    static String accessiblyNamed(String name, boolean exact) {
+        String label = "label[" + textMatches("normalize-space()", name, exact) + "]";
+        String nativeLabel = "(not(id(@aria-labelledby)) and normalize-space(@aria-label) = ''"
+                + " and ((local-name() = 'input' and not(@type = 'hidden'))"
+                + " or local-name() = 'textarea' or local-name() = 'select')"
+                + " and ((@id and //" + label + "/@for = @id) or ancestor::" + label + "))";
+        return "xpath=self::*[" + ariaLabelled(name, exact)
+                + " or *[@slot = 'input' or @slot = 'textarea' or @slot = 'value']["
+                + ariaLabelled(name, exact) + " or " + nativeLabel + "]]";
+    }
+
+    /** XPath condition: the context element is named {@code name} by its ARIA attributes. */
+    private static String ariaLabelled(String name, boolean exact) {
+        return "id(@aria-labelledby)[" + textMatches("normalize-space()", name, exact) + "]"
+                + " or (not(id(@aria-labelledby)) and normalize-space(@aria-label) != ''"
+                + " and " + textMatches("normalize-space(@aria-label)", name, exact) + ")";
+    }
+
+    private static String textMatches(String normalizedText, String name, boolean exact) {
+        if (exact) {
+            return normalizedText + "=" + xpathLiteral(normalize(name));
+        }
+        return "contains(translate(" + normalizedText + ", 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), "
+                + xpathLiteral(normalize(name).toLowerCase(java.util.Locale.ROOT)) + ")";
+    }
 
     /** Collapse whitespace runs the way XPath's {@code normalize-space} does. */
     private static String normalize(String text) {

@@ -1,7 +1,6 @@
 package org.vaadin.addons.dramafinder.element.query;
 
 import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
 
 /**
  * Filter by accessible name, available on every query.
@@ -12,6 +11,11 @@ import com.microsoft.playwright.Page;
  * {@code value} slotted directly into a field). Components nested inside it are
  * not considered, so a dialog is not matched by the name of a field it holds.
  * Queries for components named by their content (buttons, tabs) refine this.
+ * <p>
+ * The name is checked on each candidate in place, so the filter costs about as
+ * much as an id lookup however large the page is. An {@code aria-labelledby}
+ * target is looked up in the document; an id inside another component's shadow
+ * root is not followed.
  *
  * @param <Q> the query type returned by the filter
  */
@@ -51,8 +55,9 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
     }
 
     private static Locator named(Locator candidates, String name, boolean exact) {
-        Locator named = candidates.page().getByLabel(name, new Page.GetByLabelOptions().setExact(exact));
-        return candidates.and(named).or(candidates.filter(new Locator.FilterOptions()
-                .setHas(candidates.page().locator(QueryText.OWN_INPUT).and(named))));
+        // Checked on each candidate in place; getByLabel would compute the labels of every
+        // element on the page, and inside `has` of every element in the component, each time
+        // the locator resolves.
+        return candidates.locator(QueryText.accessiblyNamed(name, exact));
     }
 }

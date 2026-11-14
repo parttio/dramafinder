@@ -185,6 +185,20 @@ class ElementQueriesTest {
     }
 
     @Test
+    void accessibleNameSelectorStaysOnTheCandidate() {
+        String exact = QueryText.accessiblyNamed("  It's   Users ", true);
+        // Evaluated on the candidate and its own slotted input only, never page-wide
+        assertTrue(exact.startsWith("xpath=self::*["), exact);
+        assertTrue(exact.contains("normalize-space(@aria-label)=\"It's Users\""), exact);
+        assertTrue(exact.contains("id(@aria-labelledby)[normalize-space()=\"It's Users\"]"), exact);
+        assertTrue(exact.contains("*[@slot = 'input' or @slot = 'textarea' or @slot = 'value']"), exact);
+        assertTrue(exact.contains("//label[normalize-space()=\"It's Users\"]/@for = @id"), exact);
+        String containing = QueryText.accessiblyNamed("SAVE", false);
+        assertTrue(containing.contains("'abcdefghijklmnopqrstuvwxyz'), 'save')"), containing);
+        assertTrue(QueryText.labelledBy("Close", true).startsWith("xpath=self::*[id(@aria-labelledby)"));
+    }
+
+    @Test
     void attributeSelectorEscapesQuotes() {
         assertEquals("[title=\"say \\\"hi\\\"\"]", QueryText.attributeSelector("title", "say \"hi\""));
         assertEquals("[class~=\"primary\"]", QueryText.attributeWordSelector("class", "primary"));
