@@ -73,6 +73,65 @@ public class GridElement extends VaadinElement
             }
             """.formatted(VISIBLE_COLUMNS_JS);
 
+    // Reads column `column` of every body row from flat index `start` on, a rendered page at a
+    // time: read the rendered rows, jump to the first row not read, wait for it to load, repeat.
+    // Returns {total, texts: [[row, text]], missing: rows still unrendered after their jump,
+    // next: the row to resume from when the grid was still loading after a 1 s wait, else -1}.
+    private static final String READ_COLUMN_TEXTS_JS = """
+            async (g, [column, start, knownTotal]) => {
+                const total = knownTotal >= 0 ? knownTotal : g._flatSize;
+                const lastHeaderRow = g.shadowRoot.querySelector('thead tr.last-header-row');
+                const headerRows = (lastHeaderRow && parseInt(lastHeaderRow.getAttribute('aria-rowindex'))) || 0;
+                const texts = new Map();
+                const missing = [];
+                const readRendered = () => {
+                    for (const tr of g.shadowRoot.querySelectorAll('tbody tr[aria-rowindex]')) {
+                        if (tr.hidden || tr.hasAttribute('loading')) continue;
+                        const row = parseInt(tr.getAttribute('aria-rowindex')) - 1 - headerRows;
+                        const cell = tr.querySelectorAll('td')[column];
+                        const slot = cell && cell.querySelector('slot');
+                        const content = slot && g.querySelector(
+                                ':scope > vaadin-grid-cell-content[slot="' + CSS.escape(slot.name) + '"]');
+                        if (content && row >= 0 && row < total) texts.set(row, content.innerText);
+                    }
+                };
+                const frame = () => new Promise(r => requestAnimationFrame(r));
+                // Wait until row i is rendered: at once when its data is cached, else after the grid
+                // has loaded its page. False when still loading after 1 s.
+                const renderRow = async i => {
+                    await g.updateComplete;
+                    readRendered();
+                    if (texts.has(i)) return true;
+                    // A page request starts within a frame or two of the scroll
+                    await frame();
+                    await frame();
+                    const until = performance.now() + 1000;
+                    while (g.isConnected && g.hasAttribute('loading')) {
+                        if (performance.now() > until) return false;
+                        await frame();
+                    }
+                    await g.updateComplete;
+                    readRendered();
+                    if (texts.has(i)) return true;
+                    await frame();
+                    await frame();
+                    readRendered();
+                    return true;
+                };
+                const result = next => ({ total, texts: [...texts], missing, next });
+                readRendered();
+                for (let i = start; i < total; i++) {
+                    if (texts.has(i)) continue;
+                    if (g.isConnected && i < g._flatSize) {
+                        g._scrollToFlatIndex(i);
+                        if (!(await renderRow(i))) return result(i);
+                    }
+                    if (!texts.has(i)) missing.push(i);
+                }
+                return result(-1);
+            }
+            """;
+
     /**
      * Create a new {@code GridElement}.
      *
@@ -592,11 +651,12 @@ public class GridElement extends VaadinElement
 
     /**
      * Read the rendered text of every body cell in the given column, from the first row to the
-     * last. The grid is read a page at a time: one script reads all rows rendered at once, then
-     * the grid jumps to the first row not read yet and waits for it to load. A lazy grid therefore
-     * costs one scroll and one round trip per page instead of several per row. A row that is still
-     * not rendered after the jump is looked up on its own, as {@link #findRow(int)} does. Leaves
-     * the grid scrolled to wherever the last page was.
+     * last. The grid is read a page at a time inside one script: it reads all rows rendered at
+     * once, jumps to the first row not read yet, waits in the browser for that page to load and
+     * reads again, so a whole column usually costs a single round trip. If the grid is still
+     * loading after a short wait, the method waits with Playwright's timeout and resumes. A row
+     * that is still not rendered after the jump is looked up on its own, as {@link #findRow(int)}
+     * does. Leaves the grid scrolled to wherever the last page was.
      *
      * @param columnIndex the column index, starting from 0.
      * @return the cell texts (the {@code innerText} of the cell content), indexed by row; an
@@ -604,60 +664,55 @@ public class GridElement extends VaadinElement
      * @throws IllegalArgumentException if the column index is negative, or the grid has rows and the
      *                                  column does not exist
      */
+    @SuppressWarnings("unchecked")
     public List<String> getColumnTexts(int columnIndex) {
         if (columnIndex < 0) {
             throw new IllegalArgumentException("Column index must be non-negative");
         }
-        int totalRowCount = getTotalRowCount();
-        var texts = new ArrayList<String>(Collections.nCopies(totalRowCount, null));
-        var read = new boolean[totalRowCount];
-        var headerRowCount = getHeaderRowCount();
-
-        readRenderedColumnTexts(columnIndex, headerRowCount, texts, read);
-        for (int i = 0; i < totalRowCount; i++) {
-            if (read[i]) {
-                continue;
+        List<String> texts = null;
+        boolean[] read = null;
+        var missing = new ArrayList<Integer>();
+        int start = 0;
+        int total = -1;
+        while (true) {
+            var result = (Map<String, Object>) locator.evaluate(READ_COLUMN_TEXTS_JS,
+                    List.of(columnIndex, start, total));
+            if (texts == null) {
+                total = ((Number) result.get("total")).intValue();
+                texts = new ArrayList<>(Collections.nCopies(total, null));
+                read = new boolean[total];
             }
-            if (scrollToFlatIndex(i)) {
-                waitForGridToStopLoading();
-                readRenderedColumnTexts(columnIndex, headerRowCount, texts, read);
-            }
-            if (!read[i]) {
-                // Still not rendered (or its cell has no content yet): fall back to the row path
-                var row = findRow(i, headerRowCount);
-                if (row.isPresent()) {
-                    texts.set(i, row.get().getCell(columnIndex).getText());
-                }
-                read[i] = true;
-            }
-        }
-        return texts;
-    }
-
-    /**
-     * Read, in one script, the text of the given column in every body row currently rendered
-     * (not hidden, not loading), and store it under the row's 0-based index.
-     */
-    @SuppressWarnings("unchecked")
-    private void readRenderedColumnTexts(int columnIndex, int headerRowCount, List<String> texts, boolean[] read) {
-        var pairs = (List<List<Object>>) locator.evaluate(
-                "(g, [column, headerRows]) => [...g.shadowRoot.querySelectorAll('tbody tr[aria-rowindex]')]"
-                        + " .filter(tr => !tr.hidden && !tr.hasAttribute('loading'))"
-                        + " .map(tr => {"
-                        + "   const cell = tr.querySelectorAll('td')[column];"
-                        + "   const slot = cell && cell.querySelector('slot');"
-                        + "   const content = slot && g.querySelector(`vaadin-grid-cell-content[slot=\"${slot.name}\"]`);"
-                        + "   return [parseInt(tr.getAttribute('aria-rowindex')) - 1 - headerRows,"
-                        + "     content ? content.innerText : null]; })"
-                        + " .filter(pair => pair[1] !== null)",
-                List.of(columnIndex, headerRowCount));
-        for (var pair : pairs) {
-            int rowIndex = ((Number) pair.get(0)).intValue();
-            if (rowIndex >= 0 && rowIndex < read.length) {
+            for (var pair : (List<List<Object>>) result.get("texts")) {
+                int rowIndex = ((Number) pair.get(0)).intValue();
                 texts.set(rowIndex, (String) pair.get(1));
                 read[rowIndex] = true;
             }
+            for (var rowIndex : (List<Number>) result.get("missing")) {
+                missing.add(rowIndex.intValue());
+            }
+            int next = ((Number) result.get("next")).intValue();
+            if (next < 0) {
+                break;
+            }
+            // Still loading after the script's own short wait: wait with Playwright's timeout, then resume
+            waitForGridToStopLoading();
+            start = next;
         }
+        if (!missing.isEmpty()) {
+            int headerRowCount = getHeaderRowCount();
+            for (int rowIndex : missing) {
+                if (read[rowIndex]) {
+                    continue;
+                }
+                // Still not rendered (or its cell has no content yet): fall back to the row path
+                var row = findRow(rowIndex, headerRowCount);
+                if (row.isPresent()) {
+                    texts.set(rowIndex, row.get().getCell(columnIndex).getText());
+                }
+                read[rowIndex] = true;
+            }
+        }
+        return texts;
     }
 
     /**

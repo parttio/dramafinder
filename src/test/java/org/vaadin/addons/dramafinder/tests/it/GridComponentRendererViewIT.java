@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import java.util.List;
+
 import com.microsoft.playwright.Locator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +20,19 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
     @Override
     public String getView() {
         return "grid-component-renderer";
+    }
+
+    @Test
+    public void testGetColumnTextsReadsComponentsOfReusedRows() {
+        GridElement grid = GridElement.getById(page, "long-component-grid");
+        // Read twice: the second pass starts scrolled to the end, so every page reuses row elements
+        for (int pass = 0; pass < 2; pass++) {
+            List<String> texts = grid.getColumnTexts(1);
+            assertEquals(200, texts.size());
+            for (int i = 0; i < texts.size(); i++) {
+                assertEquals("Badge Last" + (i + 1), texts.get(i), "row " + i);
+            }
+        }
     }
 
     @Test

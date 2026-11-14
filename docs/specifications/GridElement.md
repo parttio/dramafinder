@@ -350,12 +350,12 @@ A cell matches when its rendered text **equals** the given text. To customise
 how a cell matches (ignoring case, a part of the text), override the protected
 `matchesCellText(String cellText, String text)`.
 
-`getColumnTexts` (and `findRowIndexesWithColumnText`, built on it) reads a lazy
-grid a **page** at a time: one script reads every rendered row, then the grid
-jumps to the first unread row and waits for it to load. That is one scroll per
-page instead of several round trips per row, so prefer it over looping on
-`findCell(row, column)`. It returns an empty list for an empty grid and throws
-`IllegalArgumentException` for a negative column index.
+`getColumnTexts` (and `findRowIndexesWithColumnText`, built on it) reads the
+whole column in **one script**, a page at a time: it reads every rendered row,
+jumps to the first unread row, reads again as soon as that row is rendered, and
+waits in the browser only when the grid has to load the page from the server.
+Prefer it over looping on `findCell(row, column)`. It returns an empty list for
+an empty grid and throws `IllegalArgumentException` for a negative column index.
 
 ## Selection
 
