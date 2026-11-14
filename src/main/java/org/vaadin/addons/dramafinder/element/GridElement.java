@@ -47,6 +47,26 @@ public class GridElement extends VaadinElement
 
     public static final String FIELD_TAG_NAME = "vaadin-grid";
 
+    // Waits in the browser until grid `gs[0]` stops loading, then for its update and two frames so
+    // the rows are rendered. True when done, or when the grid is gone; false when it is still
+    // loading after 1 s, so the caller can keep waiting with Playwright's timeout. Holds no handle.
+    private static final String WAIT_FOR_GRID_JS = """
+            async gs => {
+                const g = gs[0];
+                const frame = () => new Promise(r => requestAnimationFrame(r));
+                const until = performance.now() + 1000;
+                while (g && g.isConnected && g.hasAttribute('loading')) {
+                    if (performance.now() > until) return false;
+                    await frame();
+                }
+                if (!g || !g.isConnected) return true;
+                await g.updateComplete;
+                await frame();
+                await frame();
+                return true;
+            }
+            """;
+
     // JS expression for the visible leaf columns of grid `g` in display order: what a column index counts
     private static final String VISIBLE_COLUMNS_JS =
             "g._getColumns().filter(c => !c.hidden).sort((a, b) => a._order - b._order)";
@@ -285,7 +305,7 @@ public class GridElement extends VaadinElement
      * @return count of rows currently rendered in the DOM
      */
     public int getRenderedRowCount() {
-        return (Integer) locator.elementHandle().evaluate("e => e._getRenderedRows().length");
+        return ((Number) locator.evaluate("e => e._getRenderedRows().length")).intValue();
     }
 
     /**
@@ -294,7 +314,7 @@ public class GridElement extends VaadinElement
      * @return total item count
      */
     public int getTotalRowCount() {
-        return (int) locator.elementHandle().evaluate("e => e._flatSize");
+        return ((Number) locator.evaluate("e => e._flatSize")).intValue();
     }
 
     /**
@@ -1255,13 +1275,14 @@ public class GridElement extends VaadinElement
      * navigated to another view.
      */
     public void waitForGridToStopLoading() {
-        if (locator.count() == 0) {
-            return;
-        }
         try {
-            var grid = locator.elementHandle();
-            locator.page().waitForFunction("g => !g.isConnected || !g.hasAttribute('loading')", grid);
-            grid.evaluate("g => g.isConnected && g.updateComplete.then(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))))");
+            // evaluateAll does not wait for the grid, so a grid that is gone returns at once
+            if (!Boolean.TRUE.equals(locator.evaluateAll(WAIT_FOR_GRID_JS))) {
+                // Still loading after the script's own short wait: poll with Playwright's timeout
+                locator.page().waitForCondition(() -> Boolean.TRUE.equals(locator.evaluateAll(
+                        "gs => !gs[0] || !gs[0].isConnected || !gs[0].hasAttribute('loading')")));
+                locator.evaluateAll(WAIT_FOR_GRID_JS);
+            }
         } catch (PlaywrightException e) {
             // The grid was removed, or the page navigated, while waiting
             if (locator.count() > 0) {
