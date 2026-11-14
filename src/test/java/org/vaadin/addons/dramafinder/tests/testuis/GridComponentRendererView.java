@@ -19,6 +19,7 @@ public class GridComponentRendererView extends Main {
     public GridComponentRendererView() {
         createComponentGrid();
         createComponentHeaderGrid();
+        createLongComponentGrid();
         clickOutput.setId("click-output");
         add(clickOutput);
     }
@@ -37,6 +38,18 @@ public class GridComponentRendererView extends Main {
 
         grid.setItems(GridBasicView.generatePersons(10));
         add(new H2("Component Header Grid"), grid);
+    }
+
+    // Enough rows that reading a column jumps through several pages, reusing row elements
+    private void createLongComponentGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("long-component-grid");
+        grid.setHeight("300px");
+        grid.addColumn(GridPerson::firstName).setHeader("First Name");
+        grid.addColumn(new ComponentRenderer<>(person -> new Span("Badge " + person.lastName())))
+                .setHeader("Badge");
+        grid.setItems(GridBasicView.generatePersons(200));
+        add(new H2("Long Component Grid"), grid);
     }
 
     private void createComponentGrid() {
