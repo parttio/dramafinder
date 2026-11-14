@@ -2,6 +2,7 @@ package org.vaadin.addons.dramafinder.element.query;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import com.microsoft.playwright.Locator;
@@ -31,6 +32,10 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
 
     private final Class<T> type;
     private final Locator candidates;
+    // While every filter so far can be written in CSS: the selector they add up to, so the
+    // candidates stay one CSS selector instead of a chain of page-wide intersections.
+    // Null once a filter CSS cannot express has been applied, or for a query built directly.
+    private CssSelector cssSelector;
 
     /**
      * Create a query over the given candidates.
@@ -56,6 +61,28 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
         return (Q) ElementQueries.newQuery(getClass(), type, refined);
     }
 
+    /**
+     * Narrow the candidates with CSS that applies to the component itself, e.g.
+     * {@code [id="x"]}. While the query is still a single CSS selector, the CSS is
+     * appended to it, so the candidates stay one selector; otherwise it is
+     * intersected with {@link Locator#and(Locator)}.
+     */
+    @SuppressWarnings("unchecked")
+    Q refineCss(String description, String css) {
+        if (cssSelector == null) {
+            return refine(description, l -> l.and(l.page().locator(css)));
+        }
+        CssSelector next = cssSelector.append(css, description);
+        Q query = (Q) ElementQueries.newQuery(getClass(), type, next.locator());
+        ((ElementQuery<?, ?>) query).cssSelector = next;
+        return query;
+    }
+
+    /** Let later CSS filters extend {@code selector} instead of intersecting. */
+    void startCss(CssSelector selector) {
+        this.cssSelector = selector;
+    }
+
     // ── Filters available on every component ───────────────────────────
 
     /**
@@ -65,22 +92,21 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withId(String id) {
-        return refine(QueryText.quote("with id", id),
-                l -> l.and(l.page().locator(QueryText.attributeSelector("id", id))));
+        return refineCss(QueryText.quote("with id", id), QueryText.attributeSelector("id", id));
     }
 
     /**
      * Keep components whose test id is {@code testId}.
      * <p>
-     * The attribute is Playwright's test id attribute, {@code data-testid}
-     * unless changed with {@code Selectors.setTestIdAttribute}.
+     * The test id is the {@code data-testid} attribute, which Flow's
+     * {@code Component.setTestId(String)} sets.
      *
      * @param testId the exact test id
      * @return a new, narrowed query
      */
     public Q withTestId(String testId) {
-        return refine(QueryText.quote("with test id", testId),
-                l -> l.and(l.page().getByTestId(testId)));
+        return refineCss(QueryText.quote("with test id", testId),
+                QueryText.attributeSelector("data-testid", testId));
     }
 
     /**
@@ -90,7 +116,7 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withAttribute(String name) {
-        return refine("with attribute " + name, l -> l.and(l.page().locator("[" + name + "]")));
+        return refineCss("with attribute " + name, "[" + name + "]");
     }
 
     /**
@@ -101,8 +127,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withAttribute(String name, String value) {
-        return refine(QueryText.quote("with attribute " + name + " =", value),
-                l -> l.and(l.page().locator(QueryText.attributeSelector(name, value))));
+        return refineCss(QueryText.quote("with attribute " + name + " =", value),
+                QueryText.attributeSelector(name, value));
     }
 
     /**
@@ -112,8 +138,8 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
      * @return a new, narrowed query
      */
     public Q withClassName(String className) {
-        return refine(QueryText.quote("with class", className),
-                l -> l.and(l.page().locator(QueryText.attributeWordSelector("class", className))));
+        return refineCss(QueryText.quote("with class", className),
+                QueryText.attributeWordSelector("class", className));
     }
 
     // ── Terminals ──────────────────────────────────────────────────────
@@ -194,5 +220,47 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
 
     private T wrap(Locator locator) {
         return ElementQueries.newElement(type, locator);
+    }
+
+    /**
+     * A query's candidates as one CSS selector searched from {@code root} (the
+     * page or a scope locator), with the readable description they carry.
+     */
+    record CssSelector(Function<String, Locator> root, String selector, String description) {
+
+        Locator locator() {
+            return root.apply(selector).describe(description);
+        }
+
+        CssSelector append(String css, String filterDescription) {
+            return new CssSelector(root, selector + css, description + " " + filterDescription);
+        }
+
+        /**
+         * Whether CSS for the component itself can be appended to {@code selector}:
+         * plain CSS, with no Playwright engine prefix, no {@code >>} chain and no
+         * top-level comma (appending to {@code a, b} would only narrow {@code b}).
+         */
+        static boolean canExtend(String selector) {
+            if (selector.contains(">>") || selector.matches("^[a-zA-Z_-]+=.*")) {
+                return false;
+            }
+            int depth = 0;
+            char quote = 0;
+            for (char c : selector.toCharArray()) {
+                if (quote != 0) {
+                    quote = c == quote ? 0 : quote;
+                } else if (c == '"' || c == '\'') {
+                    quote = c;
+                } else if (c == '(' || c == '[') {
+                    depth++;
+                } else if (c == ')' || c == ']') {
+                    depth--;
+                } else if (c == ',' && depth == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

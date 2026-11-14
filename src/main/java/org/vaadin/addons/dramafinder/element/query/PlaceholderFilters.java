@@ -15,8 +15,13 @@ public interface PlaceholderFilters<Q> extends Refinable<Q> {
      * @param placeholder the full placeholder text
      * @return a new, narrowed query
      */
+    @SuppressWarnings("unchecked")
     default Q withPlaceholder(String placeholder) {
-        return refine(QueryText.quote("with placeholder", placeholder), candidates -> candidates.and(
-                candidates.page().locator(QueryText.attributeSelector("placeholder", placeholder))));
+        String description = QueryText.quote("with placeholder", placeholder);
+        String css = QueryText.attributeSelector("placeholder", placeholder);
+        if (this instanceof ElementQuery<?, ?> query) {
+            return (Q) query.refineCss(description, css);
+        }
+        return refine(description, candidates -> candidates.and(candidates.page().locator(css)));
     }
 }
