@@ -188,7 +188,7 @@ All `findHeaderCell*` methods return `Optional<HeaderCellElement>`:
 | `findHeaderCell(int headerRowIndex, int columnIndex)` | Header cell by header row index and column index |
 | `findHeaderCellByText(String text)` | Header cell by text content in the first header row |
 | `findHeaderCellByText(int headerRowIndex, String text)` | Header cell by header row index and text content |
-| `getHeaderCellContents()` | `List<String>`: text content of all visible header cells |
+| `getHeaderCellContents()` | `List<String>`: text of each visible column's cell in the first header row, read in one script; a joined group cell repeats for each column it spans |
 | `getHeaderCells(int columnIndex)` | `List<HeaderCellElement>`: the column's header cells in every header row, top row first |
 
 `findHeaderCellByText` matches the whole header text exactly (the cell content's
@@ -289,7 +289,7 @@ returned by the footer methods.
 | `findFooterCell(int footerRowIndex, int columnIndex)` | Footer cell by footer row index and column index |
 | `findFooterCellByText(String text)` | Footer cell by text content in the first footer row |
 | `findFooterCellByText(int footerRowIndex, String text)` | Footer cell by footer row index and text content |
-| `getFooterCellContents()` | `List<String>`: text content of all visible footer cells |
+| `getFooterCellContents()` | `List<String>`: text of each visible column's cell in the first footer row, read in one script; a joined cell repeats for each column it spans |
 
 ## Rows
 
