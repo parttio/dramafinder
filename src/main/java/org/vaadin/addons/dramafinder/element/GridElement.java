@@ -73,6 +73,99 @@ public class GridElement extends VaadinElement
             }
             """.formatted(VISIBLE_COLUMNS_JS);
 
+    // Shared by the cell scripts: the light-DOM content assigned to body cell `td` of grid `g`,
+    // whether `el` lies fully inside the grid's visible body area and the browser viewport, and a spot of cell content `c`
+    // where a click reaches the grid rather than interactive content rendered in the cell (the
+    // middle of the left padding, the top left corner, then the centre), or null.
+    private static final String CELL_HELPERS_JS = """
+            const contentOf = (g, td) => {
+                const slot = td.querySelector('slot');
+                return slot ? g.querySelector(
+                        ':scope > vaadin-grid-cell-content[slot="' + CSS.escape(slot.name) + '"]') : null;
+            };
+            const fullyInView = (g, el) => {
+                const r = el.getBoundingClientRect();
+                const t = g.$.table.getBoundingClientRect();
+                const top = g.$.header.getBoundingClientRect().bottom;
+                const bottom = g.$.footer.getBoundingClientRect().top;
+                // Also inside the browser viewport, where elementFromPoint can hit it
+                return r.left >= Math.max(t.left, 0) - 1 && r.right <= Math.min(t.right, innerWidth) + 1
+                        && r.top >= Math.max(top, 0) - 1 && r.bottom <= Math.min(bottom, innerHeight) + 1;
+            };
+            const freePoint = c => {
+                const r = c.getBoundingClientRect();
+                if (!r.width || !r.height) return null;
+                const padding = parseFloat(getComputedStyle(c).paddingLeft) || 0;
+                const points = [[Math.max(1, padding / 2), r.height / 2], [1, 1], [r.width / 2, r.height / 2]];
+                const interactive = 'a[href], button, input, select, textarea, label, [tabindex], [contenteditable]';
+                for (const [x, y] of points) {
+                    const hit = document.elementFromPoint(r.left + x, r.top + y);
+                    if (!hit || !c.contains(hit)) continue;
+                    let safe = true;
+                    for (let e = hit; e !== c; e = e.parentElement) {
+                        // Custom elements may be interactive inside their shadow root
+                        if (e.matches(interactive) || e.localName.includes('-')) {
+                            safe = false;
+                            break;
+                        }
+                    }
+                    if (safe) return { x, y };
+                }
+                return null;
+            };
+            """;
+
+    // On a body row `tr`: the content slot name of its cell `index` (-1 for the details cell) and
+    // whether the cell is fully in view; null when the row has no such cell.
+    private static final String ROW_CELL_JS = """
+            (tr, index) => {
+                %s
+                const g = tr.getRootNode().host;
+                const td = index < 0 ? tr.querySelector(':scope > td.details-cell')
+                        : tr.querySelectorAll(':scope > td')[index];
+                if (!td) return null;
+                const slot = td.querySelector('slot');
+                return { slot: slot ? slot.name : null, inView: fullyInView(g, td) };
+            }
+            """.formatted(CELL_HELPERS_JS);
+
+    // On a body row `tr`, from cell `from` on: where to click it. With `checkbox`, the first cell's
+    // selection checkbox when it has one ({column: 0, checkbox: true}); else the first data cell,
+    // skipping the selection column when `skipSelection`, with a free spot ({column, slot, x, y}).
+    // A candidate cell not fully in view gives {scroll: column} unless it is `scrolled`, the cell
+    // the caller just scrolled to. Null when no cell has a free spot.
+    private static final String ROW_CLICK_TARGET_JS = """
+            (tr, [from, checkbox, skipSelection, scrolled]) => {
+                %s
+                const g = tr.getRootNode().host;
+                const cells = [...tr.querySelectorAll(':scope > td:not(.details-cell)')];
+                if (checkbox && from === 0 && cells.length) {
+                    const first = contentOf(g, cells[0]);
+                    if (first && first.querySelector('vaadin-checkbox')) return { column: 0, checkbox: true };
+                }
+                for (let i = from; i < cells.length; i++) {
+                    const td = cells[i];
+                    if (skipSelection && td._column && td._column.localName.endsWith('selection-column')) continue;
+                    const content = contentOf(g, td);
+                    if (!content) continue;
+                    if (i !== scrolled && !fullyInView(g, td)) return { scroll: i };
+                    const point = freePoint(content);
+                    if (point) return { column: i, slot: td.querySelector('slot').name, x: point.x, y: point.y };
+                }
+                return null;
+            }
+            """.formatted(CELL_HELPERS_JS);
+
+    // On a cell content element: {checkbox: true} when it holds a selection checkbox, else a free
+    // spot {x, y} to click, or null when interactive content covers it all.
+    private static final String CELL_CLICK_TARGET_JS = """
+            c => {
+                %s
+                if (c.querySelector('vaadin-checkbox')) return { checkbox: true };
+                return freePoint(c);
+            }
+            """.formatted(CELL_HELPERS_JS);
+
     // The rendered body row showing flat index `index`, as {aria: its aria-rowindex, ready: fully
     // in view between header and footer with its data loaded, partlyInView}; null when none does.
     // Rows are matched on the index the grid assigns them, so the header row count is not needed.
@@ -948,18 +1041,10 @@ public class GridElement extends VaadinElement
      * @throws IllegalStateException if interactive content covers every cell of the row, padding included
      */
     protected void clickRowForSelection(RowElement row) {
-        var firstCell = row.getCell(0);
-        if (firstCell.getCellContentLocator().locator("vaadin-checkbox").count() > 0) {
-            clickCellForSelection(firstCell);
+        var target = findRowClickTarget(row, true, false);
+        if (target != null) {
+            clickCellForSelection(row.getCell(((Number) target.get("column")).intValue()));
             return;
-        }
-        var cellCount = row.getRowLocator().locator("td:not(.details-cell)").count();
-        for (int i = 0; i < cellCount; i++) {
-            var cell = i == 0 ? firstCell : row.getCell(i);
-            if (findFreeClickPosition(cell).isPresent()) {
-                clickCellForSelection(cell);
-                return;
-            }
         }
         throw new IllegalStateException("Cannot select row " + row.getRowIndex() + ": interactive content "
                 + "covers every cell, padding included, so any click would hit a component rendered in it; "
@@ -976,57 +1061,46 @@ public class GridElement extends VaadinElement
      * @throws IllegalStateException if interactive content covers the whole cell, padding included
      */
     protected void clickCellForSelection(CellElement cell) {
-        var checkbox = cell.getCellContentLocator().locator("vaadin-checkbox");
-        if (checkbox.count() > 0) {
-            checkbox.click();
+        var target = cell.getCellContentLocator().evaluate(CELL_CLICK_TARGET_JS);
+        if (target instanceof Map<?, ?> map && Boolean.TRUE.equals(map.get("checkbox"))) {
+            cell.getCellContentLocator().locator("vaadin-checkbox").click();
+            waitAfterAction();
+        } else if (target instanceof Map<?, ?> map) {
+            cell.getCellContentLocator().click(new Locator.ClickOptions().setPosition(toPosition(map)));
             waitAfterAction();
         } else {
-            var position = findFreeClickPosition(cell).orElseThrow(() -> new IllegalStateException(
-                    "Cannot click cell " + cell.getColumnIndex() + " for selection: interactive content "
-                            + "covers the whole cell, padding included"));
-            cell.getCellContentLocator().click(new Locator.ClickOptions().setPosition(position));
-            waitAfterAction();
+            throw new IllegalStateException("Cannot click cell " + cell.getColumnIndex() + " for selection: "
+                    + "interactive content covers the whole cell, padding included");
         }
         waitForGridToStopLoading();
     }
 
     /**
-     * Find a spot of the cell content where a click reaches the grid rather than a component rendered
-     * in the cell: one that hits the cell content itself or non-interactive content in it. Tries the
-     * middle of the left padding first, then the top left corner, then the centre.
+     * Find, in one pass over the row's cells in the browser, the cell to click: the first cell's
+     * selection checkbox when {@code checkbox} is set and it has one, otherwise the first data cell
+     * with a spot free of interactive content. A candidate cell that is not fully in view is
+     * scrolled into view first, and the search resumes there.
      *
-     * @param cell the body cell to check
-     * @return the position relative to the cell content, empty if every spot hits interactive content
+     * @param row           the row to click
+     * @param checkbox      whether to prefer the first cell's selection checkbox
+     * @param skipSelection whether to skip the selection column
+     * @return {@code column} and either {@code checkbox} or {@code slot}, {@code x} and {@code y};
+     *         {@code null} when no cell has a free spot
      */
-    private Optional<Position> findFreeClickPosition(CellElement cell) {
-        var point = cell.getCellContentLocator().evaluate("""
-                c => {
-                    const r = c.getBoundingClientRect();
-                    if (!r.width || !r.height) return null;
-                    const padding = parseFloat(getComputedStyle(c).paddingLeft) || 0;
-                    const points = [[Math.max(1, padding / 2), r.height / 2], [1, 1], [r.width / 2, r.height / 2]];
-                    const interactive = 'a[href], button, input, select, textarea, label, [tabindex], [contenteditable]';
-                    for (const [x, y] of points) {
-                        const hit = document.elementFromPoint(r.left + x, r.top + y);
-                        if (!hit || !c.contains(hit)) continue;
-                        let safe = true;
-                        for (let e = hit; e !== c; e = e.parentElement) {
-                            // Custom elements may be interactive inside their shadow root
-                            if (e.matches(interactive) || e.localName.includes('-')) {
-                                safe = false;
-                                break;
-                            }
-                        }
-                        if (safe) return { x, y };
-                    }
-                    return null;
-                }
-                """);
-        if (point instanceof Map<?, ?> map) {
-            return Optional.of(new Position(((Number) map.get("x")).doubleValue(),
-                    ((Number) map.get("y")).doubleValue()));
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> findRowClickTarget(RowElement row, boolean checkbox, boolean skipSelection) {
+        int from = 0;
+        int scrolled = -1;
+        while (true) {
+            var target = (Map<String, Object>) row.getRowLocator().evaluate(ROW_CLICK_TARGET_JS,
+                    List.of(from, checkbox, skipSelection, scrolled));
+            if (target == null || !target.containsKey("scroll")) {
+                return target;
+            }
+            from = ((Number) target.get("scroll")).intValue();
+            scrolled = from;
+            row.getCell(from); // scrolls the cell into view
         }
-        return Optional.empty();
     }
 
     /**
@@ -1039,24 +1113,17 @@ public class GridElement extends VaadinElement
      * @throws IllegalStateException if no data cell of the row has a free spot
      */
     private RowClickTarget findRowClickTarget(RowElement row, String action) {
-        var cellCount = row.getRowLocator().locator("td:not(.details-cell)").count();
-        for (int i = 0; i < cellCount; i++) {
-            var cell = row.getCell(i);
-            if (isSelectionColumnCell(cell)) {
-                continue;
-            }
-            var position = findFreeClickPosition(cell);
-            if (position.isPresent()) {
-                return new RowClickTarget(cell.getCellContentLocator(), position.get());
-            }
+        var target = findRowClickTarget(row, false, true);
+        if (target == null) {
+            throw new IllegalStateException("Cannot " + action + " row " + row.getRowIndex()
+                    + ": the row has no data cell with a spot free of interactive content, padding included");
         }
-        throw new IllegalStateException("Cannot " + action + " row " + row.getRowIndex()
-                + ": the row has no data cell with a spot free of interactive content, padding included");
+        var cellContent = locator.locator("vaadin-grid-cell-content[slot=\"" + target.get("slot") + "\"]").first();
+        return new RowClickTarget(cellContent, toPosition(target));
     }
 
-    private static boolean isSelectionColumnCell(CellElement cell) {
-        return (boolean) cell.getTableCellLocator().evaluate(
-                "td => !!td._column && td._column.localName.endsWith('selection-column')");
+    private static Position toPosition(Map<?, ?> point) {
+        return new Position(((Number) point.get("x")).doubleValue(), ((Number) point.get("y")).doubleValue());
     }
 
     private record RowClickTarget(Locator cellContent, Position position) {
@@ -1636,6 +1703,14 @@ public class GridElement extends VaadinElement
             this.cellContent = locator.locator("vaadin-grid-cell-content[slot=\"" + contentSlotName + "\"]").first();
         }
 
+        // For a cell whose slot name was already read in the browser
+        private CellElement(Locator tableCell, int columnIndex, String contentSlotName) {
+            this.tableCell = tableCell;
+            this.columnIndex = columnIndex;
+            this.contentSlotName = contentSlotName;
+            this.cellContent = locator.locator("vaadin-grid-cell-content[slot=\"" + contentSlotName + "\"]").first();
+        }
+
         /**
          * Get the locator for the table cell (td or th).
          *
@@ -1948,13 +2023,31 @@ public class GridElement extends VaadinElement
                 throw new IllegalArgumentException("Column index must be non-negative");
             }
 
-            var column = row.locator("td").nth(columnIndex);
-            if (column.count() == 0) {
+            var cell = resolveCell(row.locator("td").nth(columnIndex), columnIndex);
+            if (cell == null) {
                 throw new IllegalArgumentException("Column with index " + columnIndex + " does not exist in the row " + rowIndex);
             }
+            return cell;
+        }
 
-            column.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
-            return new CellElement(column, columnIndex);
+        /**
+         * Read the cell's content slot in one script, scrolling the cell into view only when it is
+         * not fully in view (it may not be rendered otherwise).
+         *
+         * @param tableCell   the cell's locator
+         * @param columnIndex the column index, -1 for the details cell
+         * @return the cell, or {@code null} when the row has no such cell
+         */
+        @SuppressWarnings("unchecked")
+        private CellElement resolveCell(Locator tableCell, int columnIndex) {
+            var found = (Map<String, Object>) row.evaluate(ROW_CELL_JS, columnIndex);
+            if (found == null) {
+                return null;
+            }
+            if (!Boolean.TRUE.equals(found.get("inView"))) {
+                tableCell.scrollIntoViewIfNeeded();
+            }
+            return new CellElement(tableCell, columnIndex, (String) found.get("slot"));
         }
 
         /**
@@ -1981,13 +2074,11 @@ public class GridElement extends VaadinElement
          * @return the cell element for the details column.
          */
         public CellElement getDetailsCell() {
-            var detailsCell = row.locator("td.details-cell").first();
-            if (detailsCell.count() == 0) {
+            var cell = resolveCell(row.locator("td.details-cell").first(), -1);
+            if (cell == null) {
                 throw new IllegalArgumentException("Details cell does not exist in the row " + rowIndex);
             }
-
-            detailsCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
-            return new CellElement(detailsCell, -1);
+            return cell;
         }
 
         /**
