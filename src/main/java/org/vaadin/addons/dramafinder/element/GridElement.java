@@ -73,6 +73,26 @@ public class GridElement extends VaadinElement
             }
             """.formatted(VISIBLE_COLUMNS_JS);
 
+    // The rendered body row showing flat index `index`, as {aria: its aria-rowindex, ready: fully
+    // in view between header and footer with its data loaded, partlyInView}; null when none does.
+    // Rows are matched on the index the grid assigns them, so the header row count is not needed.
+    private static final String FIND_RENDERED_ROW_JS = """
+            (g, index) => {
+                const tr = [...g.shadowRoot.querySelectorAll('tbody tr[aria-rowindex]')]
+                        .find(r => r.index === index && !r.hidden);
+                if (!tr) return null;
+                const r = tr.getBoundingClientRect();
+                const top = g.$.header.getBoundingClientRect().bottom;
+                const bottom = g.$.footer.getBoundingClientRect().top;
+                const fullyInView = r.top >= top - 1 && r.bottom <= bottom + 1;
+                return {
+                    aria: tr.getAttribute('aria-rowindex'),
+                    ready: fullyInView && !tr.hasAttribute('loading') && !g.hasAttribute('loading'),
+                    partlyInView: r.bottom > top && r.top < bottom
+                };
+            }
+            """;
+
     // Reads column `column` of every body row from flat index `start` on, a rendered page at a
     // time: read the rendered rows, jump to the first row not read, wait for it to load, repeat.
     // Returns {total, texts: [[row, text]], missing: rows still unrendered after their jump,
@@ -699,13 +719,12 @@ public class GridElement extends VaadinElement
             start = next;
         }
         if (!missing.isEmpty()) {
-            int headerRowCount = getHeaderRowCount();
             for (int rowIndex : missing) {
                 if (read[rowIndex]) {
                     continue;
                 }
                 // Still not rendered (or its cell has no content yet): fall back to the row path
-                var row = findRow(rowIndex, headerRowCount);
+                var row = findRow(rowIndex);
                 if (row.isPresent()) {
                     texts.set(rowIndex, row.get().getCell(columnIndex).getText());
                 }
@@ -717,7 +736,8 @@ public class GridElement extends VaadinElement
 
     /**
      * Find a row by its index.
-     * Scrolls the grid if necessary to find the row.
+     * Scrolls the grid only when the row is not rendered or not fully in view, and then waits for
+     * the grid to stop loading; a row already in view is returned at once.
      *
      * @param rowIndex row index, starting from 0.
      * @return optional row element. Empty if no row exists at the given index.
@@ -727,34 +747,51 @@ public class GridElement extends VaadinElement
             throw new IllegalArgumentException("Row index must be non-negative");
         }
 
-        return findRow(rowIndex, getHeaderRowCount());
-    }
-
-    /**
-     * Find a row by its index, given the number of header rows.
-     *
-     * @param rowIndex       row index, starting from 0.
-     * @param headerRowCount number of header rows in the grid, used to calculate the aria-rowIndex for finding the row.
-     * @return optional row element. Empty if no row exists at the given index.
-     */
-    protected Optional<RowElement> findRow(int rowIndex, int headerRowCount) {
-        var ariaRowIndex = rowIndex + 1 + headerRowCount;
-        var foundRow = locator.locator("tbody tr[aria-rowIndex=\"" + ariaRowIndex + "\"]").first();
-        if (foundRow.count() == 0) {
+        var rendered = findRenderedRow(rowIndex);
+        if (rendered == null) {
             // Row not rendered: jump straight to it instead of paging through the
             // rows in between, which could give up on a slow render
             if (!scrollToFlatIndex(rowIndex)) {
                 return Optional.empty();
             }
             waitForGridToStopLoading();
-            if (foundRow.count() == 0) {
+            rendered = findRenderedRow(rowIndex);
+            if (rendered == null) {
                 return Optional.empty();
             }
         }
-        foundRow.scrollIntoViewIfNeeded();
-        waitForGridToStopLoading();
+        var foundRow = locator.locator("tbody tr[aria-rowIndex=\"" + rendered.get("aria") + "\"]").first();
+        if (!Boolean.TRUE.equals(rendered.get("ready"))) {
+            foundRow.scrollIntoViewIfNeeded();
+            waitForGridToStopLoading();
+        }
 
         return Optional.of(new RowElement(foundRow, rowIndex));
+    }
+
+    /**
+     * Find a row by its index, given the number of header rows.
+     *
+     * @param rowIndex       row index, starting from 0.
+     * @param headerRowCount ignored: the row is found by its index, not by its {@code aria-rowindex}
+     * @return optional row element. Empty if no row exists at the given index.
+     * @deprecated the header row count is no longer needed; use {@link #findRow(int)}. Will be
+     *             removed in 3.0.
+     */
+    @Deprecated(since = "2.0.3", forRemoval = true)
+    protected Optional<RowElement> findRow(int rowIndex, int headerRowCount) {
+        return findRow(rowIndex);
+    }
+
+    /**
+     * Look up, in one script, the rendered body row that shows the given row.
+     *
+     * @return {@code aria} (the row's {@code aria-rowindex}) and {@code ready} (fully in view with
+     *         its data loaded), or {@code null} when no rendered row shows that index
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> findRenderedRow(int rowIndex) {
+        return (Map<String, Object>) locator.evaluate(FIND_RENDERED_ROW_JS, rowIndex);
     }
 
     /**
@@ -1179,17 +1216,8 @@ public class GridElement extends VaadinElement
         if (rowIndex < 0) {
             throw new IllegalArgumentException("Row index must be non-negative");
         }
-        var ariaRowIndex = rowIndex + 1 + getHeaderRowCount();
-        var row = locator.locator("tbody tr[aria-rowIndex=\"" + ariaRowIndex + "\"]").first();
-        if (row.count() == 0) {
-            return false;
-        }
-        return (boolean) row.evaluate(
-                "tr => { const grid = tr.getRootNode().host;"
-                        + " const r = tr.getBoundingClientRect();"
-                        + " const top = grid.$.header.getBoundingClientRect().bottom;"
-                        + " const bottom = grid.$.footer.getBoundingClientRect().top;"
-                        + " return r.bottom > top && r.top < bottom; }");
+        var rendered = findRenderedRow(rowIndex);
+        return rendered != null && Boolean.TRUE.equals(rendered.get("partlyInView"));
     }
 
     /**
