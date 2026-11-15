@@ -119,6 +119,28 @@ FormLayoutElement form = FormLayoutElement.get(page);
 List<TextFieldElement> fields = form.find(TextFieldElement.class).all();
 ```
 
+## Light-DOM children and descendants
+
+Playwright's CSS engine pierces shadow roots, so
+`getLocator().locator("vaadin-button")` also matches buttons a component
+renders internally. To walk only the light DOM — the DOM counterpart of the
+server-side component tree — use:
+
+```java
+VaadinElement layout = ...;
+List<VaadinElement> buttons = layout.getLightDomChildren("vaadin-button");  // direct children
+List<VaadinElement> all = layout.getLightDomDescendants(VaadinElement.ANY_TAG); // any depth
+```
+
+Neither method enters a shadow root, this component's or a nested one's, so
+a text field's internal `vaadin-input-container` is never returned. The tag
+is case-insensitive, `"*"` (`ANY_TAG`) matches any element, and anything that
+is not a tag name throws `IllegalArgumentException`. The list is a snapshot
+taken without waiting, each entry addressed by its position: assert on the
+content you expect first (e.g. with `assertThat(...).hasCount(..)` on a
+locator) when children are still being added. The entries are plain
+`VaadinElement`s; wrap `getLocator()` in a typed element for more.
+
 ## Waiting for the server
 
 Every element exposes, through `HasLocatorElement`:

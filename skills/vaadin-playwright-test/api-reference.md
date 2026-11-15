@@ -2915,6 +2915,8 @@ Base class for typed Playwright wrappers around Vaadin components.
 
 *abstract* **Implements:** HasLocatorElement  
 
+**Constants:** `String ANY_TAG = "*"`
+
 **Constructors:**
 
 - `VaadinElement(Locator locator)` — Create a new VaadinElement wrapper.
@@ -2924,6 +2926,8 @@ Base class for typed Playwright wrappers around Vaadin components.
 - `void click()` — Click the component root, then wait for the server round-trip it triggers (see `org.vaadin.addons.dramafinder.AutoWait`).
 - `String getText()` — Get the textual content of the component root.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for `type` components inside this component, e.g. `dialog.find(ButtonElement.class).withText("Delete").single()`.
+- `List<VaadinElement> getLightDomChildren(String tag)` — Get this component's light-DOM children with the given tag.
+- `List<VaadinElement> getLightDomDescendants(String tag)` — Get this component's light-DOM descendants with the given tag.
 - `void setProperty(String name, Object value)` — Set a DOM property on the underlying element (e.g. `value`, `disabled`), then wait for the server round-trip a synchronized property triggers.
 - `Object getProperty(String name)` — Get a DOM property from the underlying element.
 - `boolean isVisible()` — Whether the component is visible.
