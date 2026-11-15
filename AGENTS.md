@@ -442,16 +442,20 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
 
 ### Best Practices
 
-1. **Prefer ARIA roles over tag names** for element lookup when possible.
-2. **Use `part` selectors** for internal component parts (e.g., `[part~='input']`).
-3. **Chain filters** rather than complex XPath for readability.
-4. **Document null semantics** in assertion method Javadocs.
-5. **Dispatch events** after programmatic value changes if needed:
+1. **Use the standard API, don't rewrite it** (ADR 0002): call Playwright's
+   locators, engines and assertions and the components' own APIs instead of
+   reimplementing their rules in XPath, CSS or JS, even for speed. Fix a slow
+   path by calling the standard API differently.
+2. **Prefer ARIA roles over tag names** for element lookup when possible.
+3. **Use `part` selectors** for internal component parts (e.g., `[part~='input']`).
+4. **Chain filters** rather than complex XPath for readability.
+5. **Document null semantics** in assertion method Javadocs.
+6. **Dispatch events** after programmatic value changes if needed:
    ```java
    getLocator().dispatchEvent("change");
    ```
-6. **Use constants** for tag names and attribute names to avoid typos.
-7. **Inherit behavior** by extending base elements (e.g., `EmailFieldElement extends TextFieldElement`).
+7. **Use constants** for tag names and attribute names to avoid typos.
+8. **Inherit behavior** by extending base elements (e.g., `EmailFieldElement extends TextFieldElement`).
 
 ## Agent-Specific Instructions
 
