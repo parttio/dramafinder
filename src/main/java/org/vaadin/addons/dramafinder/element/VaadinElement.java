@@ -1,6 +1,10 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
@@ -18,6 +22,12 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * component-specific APIs on top of this.
  */
 public abstract class VaadinElement implements HasLocatorElement {
+
+    /** The tag argument of the light-DOM lookups that matches any element. */
+    public static final String ANY_TAG = "*";
+
+    private static final Pattern TAG_NAME = Pattern.compile("[A-Za-z][A-Za-z0-9._-]*");
+
     protected final Locator locator;
 
     /**
@@ -67,6 +77,78 @@ public abstract class VaadinElement implements HasLocatorElement {
      */
     public <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type) {
         return ElementQueries.find(locator, type);
+    }
+
+    /**
+     * Get this component's light-DOM children with the given tag.
+     * <p>
+     * Only the host's own child elements are returned — never an element of
+     * its shadow root, which a CSS lookup such as
+     * {@code getLocator().locator("vaadin-button")} would also match. This is
+     * the DOM counterpart of a server-side component's children. Slotted
+     * children (e.g. a dialog's header content) are included.
+     * <p>
+     * The list is a snapshot in document order taken without waiting; each
+     * entry addresses its element by position, so assert on the expected
+     * count first when children are still being added.
+     *
+     * @param tag the tag name (e.g. {@code vaadin-button}, case-insensitive),
+     *            or {@link #ANY_TAG} ({@code "*"}) for any element; not {@code null}
+     * @return the matching children, empty when there are none
+     * @throws IllegalArgumentException if {@code tag} is not a valid tag name
+     */
+    public List<VaadinElement> getLightDomChildren(String tag) {
+        return lightDom("./", tag);
+    }
+
+    /**
+     * Get this component's light-DOM descendants with the given tag.
+     * <p>
+     * Walks the host's child elements and their children, at any depth,
+     * without entering any shadow root — neither this component's nor a
+     * nested component's. A button inside a layout inside this component is
+     * found; the internals of a nested date picker are not.
+     * <p>
+     * The list is a snapshot in document order taken without waiting; each
+     * entry addresses its element by position.
+     *
+     * @param tag the tag name (e.g. {@code vaadin-button}, case-insensitive),
+     *            or {@link #ANY_TAG} ({@code "*"}) for any element; not {@code null}
+     * @return the matching descendants, empty when there are none
+     * @throws IllegalArgumentException if {@code tag} is not a valid tag name
+     */
+    public List<VaadinElement> getLightDomDescendants(String tag) {
+        return lightDom(".//", tag);
+    }
+
+    private List<VaadinElement> lightDom(String axis, String tag) {
+        // XPath does not pierce shadow roots, unlike Playwright's CSS engine
+        Locator matches = locator.locator("xpath=" + axis + xpathNameTest(tag));
+        List<VaadinElement> elements = new ArrayList<>();
+        for (Locator match : matches.all()) {
+            elements.add(new LightDomElement(match));
+        }
+        return elements;
+    }
+
+    private static String xpathNameTest(String tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException("tag must not be null; use \"*\" for any element");
+        }
+        if (ANY_TAG.equals(tag)) {
+            return ANY_TAG;
+        }
+        if (!TAG_NAME.matcher(tag).matches()) {
+            throw new IllegalArgumentException("Not a tag name: '" + tag + "'");
+        }
+        return tag.toLowerCase(Locale.ROOT);
+    }
+
+    /** Untyped wrapper for an element returned by the light-DOM lookups. */
+    private static final class LightDomElement extends VaadinElement {
+        private LightDomElement(Locator locator) {
+            super(locator);
+        }
     }
 
     /**
