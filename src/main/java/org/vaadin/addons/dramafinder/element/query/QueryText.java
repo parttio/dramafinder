@@ -14,11 +14,13 @@ final class QueryText {
     static final String OWN_LABEL = ":scope > [slot='label']";
 
     /**
-     * The field's own focusable element — the input, textarea or select value
-     * button slotted directly into it — which is where a field's accessible
-     * name lives. Fields nested in a group or custom field sit deeper.
+     * From a labelled element: the element itself and, when it is a field's own
+     * focusable element — the input, textarea or select value button slotted
+     * directly into it, where a field's accessible name lives — that field too.
+     * Fields nested in a group or custom field sit deeper and are not reached.
      */
-    static final String OWN_INPUT = ":scope > :is([slot='input'], [slot='textarea'], [slot='value'])";
+    static final String SELF_OR_OWNING_FIELD = "xpath=self::*"
+            + " | self::*[@slot = 'input' or @slot = 'textarea' or @slot = 'value']/parent::*";
 
     private QueryText() {
     }

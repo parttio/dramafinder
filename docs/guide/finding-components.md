@@ -104,8 +104,7 @@ ButtonElement save = ButtonElement.getByTestId(page, "save-order");
 
 Prefer them for components with no user-visible name — a grid, a layout, an
 icon without a label — or to tell apart components that look identical to the
-user. The test id is always the `data-testid` attribute, the one Flow's
-`setTestId` writes; Playwright's `Selectors.setTestIdAttribute` does not change it.
+user.
 
 ## Inside a container
 
@@ -175,13 +174,13 @@ find(page, ButtonElement.class).withText("Delete").withClassName("danger").singl
 find(page, TextFieldElement.class).withLabelContaining("name").withTestId("customer-name").single();
 ```
 
-`withId`, `withTestId`, `withClassName`, `withAttribute` and `withPlaceholder`
-(on fields that keep the placeholder on their host) are plain CSS. Placed before
-any other filter, they compile into one selector, e.g.
-`vaadin-grid[data-testid="users"][class~="compact"]`, which Playwright resolves
-on every use of the element without scanning the whole page. After a filter CSS
-can't express (label, text, accessible name), they still work, as an
-intersection.
+`withId`, `withClassName`, `withAttribute` and `withPlaceholder` (on fields that
+keep the placeholder on their host) are plain CSS. Placed before any other
+filter, they compile into one selector, e.g. `vaadin-grid[id="users"][class~="compact"]`,
+which Playwright resolves on every use of the element without scanning the whole
+page. After any other filter they still work, as an intersection. `withTestId`
+uses Playwright's `getByTestId`, so it follows a test id attribute changed with
+`Selectors.setTestIdAttribute`.
 
 Search inside a component with `element.find(..)`, or pass a locator:
 

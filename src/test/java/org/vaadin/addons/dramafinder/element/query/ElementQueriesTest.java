@@ -99,12 +99,12 @@ class ElementQueriesTest {
         Map<String, Locator> locators = selfDescribingLocators(page);
 
         var query = ElementQueries.find(page, ButtonElement.class)
-                .withTestId("users").withClassName("x").withAttribute("theme", "primary");
+                .withId("users").withClassName("x").withAttribute("theme", "primary");
 
-        String selector = "vaadin-button[data-testid=\"users\"][class~=\"x\"][theme=\"primary\"]";
+        String selector = "vaadin-button[id=\"users\"][class~=\"x\"][theme=\"primary\"]";
         assertSame(locators.get(selector), query.getLocator());
         verify(query.getLocator()).describe(
-                "vaadin-button with test id \"users\" with class \"x\" with attribute theme = \"primary\"");
+                "vaadin-button with id \"users\" with class \"x\" with attribute theme = \"primary\"");
         locators.values().forEach(l -> verify(l, never()).and(any()));
     }
 

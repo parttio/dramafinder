@@ -8,11 +8,11 @@ import com.microsoft.playwright.Page;
  * <p>
  * Both are fallbacks for components without a user-visible name: prefer a
  * label, text or accessible name when the component has one. The test id is
- * the {@code data-testid} attribute, which Flow's
- * {@code Component.setTestId(String)} sets. Both lookups are a single CSS
- * selector ({@code tag[id="..."]}, {@code tag[data-testid="..."]}). Matches are
- * exact and carry no {@code .first()}: two components sharing the id fail with
- * a strict-mode error.
+ * Playwright's test id attribute — {@code data-testid}, which Flow's
+ * {@code Component.setTestId(String)} sets — unless changed with
+ * {@code Selectors.setTestIdAttribute}, and is matched with Playwright's
+ * {@code getByTestId}. Matches are exact and carry no {@code .first()}: two
+ * components sharing the id fail with a strict-mode error.
  */
 public final class IdLocator {
 
@@ -52,7 +52,7 @@ public final class IdLocator {
      * @return a locator for the matching component(s)
      */
     public static Locator byTestId(Page page, String tagName, String testId) {
-        return page.locator(tagName + testIdSelector(testId));
+        return page.locator(tagName).and(page.getByTestId(testId));
     }
 
     /**
@@ -64,20 +64,11 @@ public final class IdLocator {
      * @return a locator for the matching component(s)
      */
     public static Locator byTestId(Locator scope, String tagName, String testId) {
-        return scope.locator(tagName + testIdSelector(testId));
+        return scope.locator(tagName).and(scope.page().getByTestId(testId));
     }
 
     /** {@code [id="..."]} with the value escaped; unlike {@code #id} it accepts any id. */
     static String idSelector(String id) {
-        return attributeSelector("id", id);
-    }
-
-    /** {@code [data-testid="..."]} with the value escaped. */
-    static String testIdSelector(String testId) {
-        return attributeSelector("data-testid", testId);
-    }
-
-    private static String attributeSelector(String name, String value) {
-        return "[" + name + "=\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"]";
+        return "[id=\"" + id.replace("\\", "\\\\").replace("\"", "\\\"") + "\"]";
     }
 }

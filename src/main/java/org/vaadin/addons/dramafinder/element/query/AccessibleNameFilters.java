@@ -51,8 +51,10 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
     }
 
     private static Locator named(Locator candidates, String name, boolean exact) {
+        // One pass of Playwright's label engine: every labelled element, plus the component
+        // that a labelled input, textarea or value is slotted directly into. Matching the
+        // own input with `has` instead ran the engine again over each candidate's subtree.
         Locator named = candidates.page().getByLabel(name, new Page.GetByLabelOptions().setExact(exact));
-        return candidates.and(named).or(candidates.filter(new Locator.FilterOptions()
-                .setHas(candidates.page().locator(QueryText.OWN_INPUT).and(named))));
+        return candidates.and(named.locator(QueryText.SELF_OR_OWNING_FIELD));
     }
 }

@@ -98,15 +98,17 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
     /**
      * Keep components whose test id is {@code testId}.
      * <p>
-     * The test id is the {@code data-testid} attribute, which Flow's
-     * {@code Component.setTestId(String)} sets.
+     * The attribute is Playwright's test id attribute, {@code data-testid}
+     * unless changed with {@code Selectors.setTestIdAttribute}. Matched with
+     * Playwright's {@code getByTestId}, so unlike the attribute filters it is
+     * not compiled into the query's CSS selector.
      *
      * @param testId the exact test id
      * @return a new, narrowed query
      */
     public Q withTestId(String testId) {
-        return refineCss(QueryText.quote("with test id", testId),
-                QueryText.attributeSelector("data-testid", testId));
+        return refine(QueryText.quote("with test id", testId),
+                l -> l.and(l.page().getByTestId(testId)));
     }
 
     /**
