@@ -7,10 +7,13 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.GenericElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
+import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,7 +23,7 @@ import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 /**
  * A generic element for any tag (#269, #270, #271), queries by tag (#273),
  * {@code withTheme} (#274), {@code withPlaceholderContaining} (#275) and the
- * light-DOM default of the queries (#276).
+ * light-DOM default of the queries (#276), focus and enabled state (#296).
  */
 public class GenericElementIT extends SpringPlaywrightIT {
 
@@ -56,6 +59,45 @@ public class GenericElementIT extends SpringPlaywrightIT {
         List<VaadinElement> children = VaadinElement.of(page.locator("#styled")).getLightDomChildren("span");
         assertEquals(1, children.size());
         assertInstanceOf(GenericElement.class, children.get(0));
+    }
+
+    @Test
+    public void genericElementFocusesTheHost() {
+        GenericElement panel = VaadinElement.of(page.locator("#panel"));
+        panel.assertIsNotFocused();
+        panel.focus();
+        panel.assertIsFocused();
+        assertEquals("0", panel.getTabIndex());
+        panel.blur();
+        panel.assertIsNotFocused();
+    }
+
+    @Test
+    public void genericElementReadsEnabledStateFromTheDisabledAttribute() {
+        GenericElement panel = find(page, "div").withId("panel").single();
+        assertTrue(panel.isEnabled());
+        panel.assertEnabled();
+
+        ButtonElement.getByText(page, "Toggle panel").click();
+        panel.assertDisabled();
+        assertFalse(panel.isEnabled());
+
+        ButtonElement.getByText(page, "Toggle panel").click();
+        panel.assertEnabled();
+
+        GenericElement disabled = VaadinElement.of(page.locator("#disabled-panel"));
+        assertFalse(disabled.isEnabled());
+        disabled.assertDisabled();
+    }
+
+    @Test
+    public void lightDomLookupsReturnFocusableElementsWithEnabledState() {
+        VaadinElement child = VaadinElement.of(page.locator("#disabled-panel").locator("xpath=..")).getLightDomChildren("div").stream()
+                .filter(element -> "disabled-panel".equals(element.getLocator().getAttribute("id")))
+                .findFirst().orElseThrow();
+        assertInstanceOf(FocusableElement.class, child);
+        assertInstanceOf(HasDisabledAttributeElement.class, child);
+        ((HasDisabledAttributeElement) child).assertDisabled();
     }
 
     @Test

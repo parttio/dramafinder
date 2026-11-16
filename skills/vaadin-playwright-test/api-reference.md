@@ -1400,7 +1400,7 @@ PlaywrightElement for `<vaadin-form-layout>`.
 Element for a component of any tag that has no element class of its own: an add-on, a custom component, a layout or a plain HTML element.
 
 **Extends:** VaadinElement  
-**Implements:** HasStyleElement, HasThemeElement  
+**Implements:** FocusableElement, HasDisabledAttributeElement, HasStyleElement, HasThemeElement  
 
 **Constructors:**
 

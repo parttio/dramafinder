@@ -1,6 +1,8 @@
 package org.vaadin.addons.dramafinder.element;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 
@@ -10,12 +12,16 @@ import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
  * <p>
  * It offers the {@link VaadinElement} API (text, DOM properties, tag name,
  * click, visibility) plus CSS classes, inline and computed style
- * ({@link HasStyleElement}) and theme variants ({@link HasThemeElement}).
+ * ({@link HasStyleElement}), theme variants ({@link HasThemeElement}), focus
+ * on the host ({@link FocusableElement}) and enabled state read from the
+ * host's {@code disabled} attribute ({@link HasDisabledAttributeElement}),
+ * which Flow sets on any component disabled with {@code setEnabled(false)}.
  * Get one with {@link VaadinElement#of(Locator)}, or find components by tag
  * with {@code ElementQueries.find(page, "my-component")}. Prefer the
  * component's own element class when there is one.
  */
-public class GenericElement extends VaadinElement implements HasStyleElement, HasThemeElement {
+public class GenericElement extends VaadinElement
+        implements FocusableElement, HasDisabledAttributeElement, HasStyleElement, HasThemeElement {
 
     /**
      * Create a new {@code GenericElement}.

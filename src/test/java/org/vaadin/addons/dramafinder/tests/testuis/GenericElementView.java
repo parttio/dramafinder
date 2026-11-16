@@ -15,7 +15,8 @@ import com.vaadin.flow.router.Route;
 
 /**
  * Components without an element class, theme variants, placeholders and an
- * application-owned shadow root, for the generic element and the tag queries.
+ * application-owned shadow root, for the generic element and the tag queries,
+ * and plain {@code div}s to focus, enable and disable.
  */
 @PageTitle("Generic Element Demo")
 @Route(value = "generic-element", layout = MainLayout.class)
@@ -45,6 +46,16 @@ public class GenericElementView extends Main {
         host.setId("shadow-host");
         host.getElement().attachShadow().appendChild(new Button("In shadow").getElement());
         add(host);
+
+        // Enabled state and focus of a component without an element class
+        Div panel = new Div(new Span("Panel"));
+        panel.setId("panel");
+        panel.getElement().setAttribute("tabindex", "0");
+        Button togglePanel = new Button("Toggle panel", e -> panel.setEnabled(!panel.isEnabled()));
+        Div disabledPanel = new Div(new Span("Disabled panel"));
+        disabledPanel.setId("disabled-panel");
+        disabledPanel.setEnabled(false);
+        add(panel, togglePanel, disabledPanel);
 
         Span uiId = new Span();
         uiId.setId("ui-id");

@@ -186,8 +186,8 @@ Before writing any raw locator, confirm there is genuinely no wrapper: check
 [element-mapping.md](element-mapping.md) **and** scan `src/main/java` for
 `*Element.java` files (custom extensions not in the table). If neither covers
 the component, query it by tag — `find(page, "my-component").withText("Save").single()`
-returns a `GenericElement` with the `VaadinElement` API plus class, style and
-theme helpers — or wrap a locator with `VaadinElement.of(locator)`, before
+returns a `GenericElement` with the `VaadinElement` API plus class, style,
+theme, focus and enabled-state helpers — or wrap a locator with `VaadinElement.of(locator)`, before
 reaching for a plain Playwright locator. For recurring
 needs, create your own element class extending `VaadinElement`,
 or [open an issue](https://github.com/parttio/dramafinder/issues) in the

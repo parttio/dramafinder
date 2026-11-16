@@ -247,7 +247,10 @@ GenericElement box = VaadinElement.of(page.locator("#summary"));   // wrap any l
 
 A `GenericElement` has the `VaadinElement` API (`getText`, `getTagName`,
 `getProperty`, `click`, visibility) plus CSS class, inline and computed style
-(`getInlineStyle`, `getComputedStyle`) and theme helpers.
+(`getInlineStyle`, `getComputedStyle`), theme helpers, `focus()` / `blur()`
+on the host, and `isEnabled()` / `assertEnabled()` / `assertDisabled()` read
+from the host's `disabled` attribute, which Flow sets on any component disabled
+with `setEnabled(false)`.
 
 ## Which lookup to use
 

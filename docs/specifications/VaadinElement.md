@@ -55,7 +55,7 @@ reports it: `"vaadin-button"`, `"input"`.
 
 `VaadinElement.of(locator)` wraps any element — an add-on, a layout, a custom
 component, a plain `div` — in a `GenericElement`. It has the `VaadinElement` API
-plus CSS class, inline and computed style, and theme helpers:
+plus CSS class, inline and computed style, theme, focus and enabled-state helpers:
 
 ```java
 GenericElement box = VaadinElement.of(page.locator("#summary"));
@@ -64,7 +64,14 @@ box.getInlineStyle("background-color");  // what Component.getStyle() set; null 
 box.getComputedStyle("display");         // what the browser applies
 box.assertCssClass("box");
 box.assertTheme("compact");
+box.focus();                             // focuses the host; needs a tabindex on a plain div
+box.assertDisabled();                    // reads the host's disabled attribute
 ```
+
+Flow writes `setEnabled(false)` as a `disabled` attribute on any component, so
+`isEnabled()`, `assertEnabled()` and `assertDisabled()` read that attribute
+(`HasDisabledAttributeElement`) rather than Playwright's enablement check, which
+only understands native form controls and a few ARIA roles.
 
 To find such components, query by tag: `find(page, "x-card").withLabel("Card label")`
 (see [Finding components](../guide/finding-components.md#components-without-an-element-class)).
