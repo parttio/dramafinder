@@ -44,4 +44,20 @@ public class SelectQuery<T extends VaadinElement> extends ElementQuery<T, Select
                 .setHas(candidates.page().locator(PLACEHOLDER_SHOWN)
                         .filter(new Locator.FilterOptions().setHasText(QueryText.exact(placeholder))))));
     }
+
+    /**
+     * Keep selects showing a placeholder that contains {@code text}, matched
+     * case-insensitively as a substring; like {@link #withPlaceholder(String)},
+     * only while nothing is selected.
+     *
+     * @param text part of the placeholder text
+     * @return a new, narrowed query
+     */
+    @Override
+    public SelectQuery<T> withPlaceholderContaining(String text) {
+        return refine(QueryText.quote("with placeholder containing", text),
+                candidates -> candidates.filter(new Locator.FilterOptions()
+                .setHas(candidates.page().locator(PLACEHOLDER_SHOWN)
+                        .filter(new Locator.FilterOptions().setHasText(text)))));
+    }
 }

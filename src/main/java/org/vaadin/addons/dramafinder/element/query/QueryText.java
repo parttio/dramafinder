@@ -141,6 +141,14 @@ final class QueryText {
         return "[" + name + "=" + quoted(value) + "]";
     }
 
+    /**
+     * CSS attribute selector {@code [name*="part" i]}: the value contains
+     * {@code part}, ignoring case.
+     */
+    static String attributeContainsSelector(String name, String part) {
+        return "[" + name + "*=" + quoted(part) + " i]";
+    }
+
     /** CSS attribute selector {@code [name~="word"]}: {@code word} among the space-separated values. */
     static String attributeWordSelector(String name, String word) {
         return "[" + name + "~=" + quoted(word) + "]";

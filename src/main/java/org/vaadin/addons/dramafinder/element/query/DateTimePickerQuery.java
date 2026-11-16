@@ -41,4 +41,20 @@ public class DateTimePickerQuery<T extends VaadinElement> extends ElementQuery<T
                 .setHas(candidates.page().locator(":scope > [slot='date-picker']"
                         + QueryText.attributeSelector("placeholder", placeholder)))));
     }
+
+    /**
+     * Keep pickers whose date placeholder contains {@code text}, matched
+     * case-insensitively as a substring; read where
+     * {@link #withPlaceholder(String)} reads it.
+     *
+     * @param text part of the date placeholder
+     * @return a new, narrowed query
+     */
+    @Override
+    public DateTimePickerQuery<T> withPlaceholderContaining(String text) {
+        return refine(QueryText.quote("with placeholder containing", text),
+                candidates -> candidates.filter(new Locator.FilterOptions()
+                .setHas(candidates.page().locator(":scope > [slot='date-picker']"
+                        + QueryText.attributeContainsSelector("placeholder", text)))));
+    }
 }

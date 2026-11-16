@@ -37,9 +37,12 @@ import static org.mockito.Mockito.when;
 
 class ElementQueriesTest {
 
-    /** Public element classes deliberately left out of {@code find}: overlay or page-bound wrappers. */
+    /**
+     * Public element classes deliberately left out of {@code find(page, Class)}: overlay or
+     * page-bound wrappers, and the tagless GenericElement, which {@code find(page, tag)} returns.
+     */
     private static final Set<String> NOT_FINDABLE = Set.of(
-            "ContextMenuElement");
+            "ContextMenuElement", "GenericElement");
 
     @Test
     void everyPublicElementIsFindable() throws Exception {
@@ -60,7 +63,7 @@ class ElementQueriesTest {
 
             Object query = findRaw(page, type);
 
-            verify(page).locator(type.getAnnotation(PlaywrightElement.class).value());
+            verify(page).locator("css:light=" + type.getAnnotation(PlaywrightElement.class).value());
             ElementQuery<?, ?> elementQuery = (ElementQuery<?, ?>) query;
             assertSame(candidates, elementQuery.getLocator());
             assertInstanceOf(type, elementQuery.single(), type.getSimpleName());
@@ -88,8 +91,8 @@ class ElementQueriesTest {
         ButtonQuery<ButtonElement> all = ElementQueries.find(page, ButtonElement.class);
         ButtonQuery<ButtonElement> byId = all.withId("save");
 
-        assertSame(locators.get("vaadin-button"), all.getLocator());
-        assertSame(locators.get("vaadin-button[id=\"save\"]"), byId.getLocator());
+        assertSame(locators.get("css:light=vaadin-button"), all.getLocator());
+        assertSame(locators.get("css:light=vaadin-button[id=\"save\"]"), byId.getLocator());
         verify(byId.getLocator()).describe("vaadin-button with id \"save\"");
     }
 
@@ -99,13 +102,47 @@ class ElementQueriesTest {
         Map<String, Locator> locators = selfDescribingLocators(page);
 
         var query = ElementQueries.find(page, ButtonElement.class)
-                .withId("users").withClassName("x").withAttribute("theme", "primary");
+                .withId("users").withClassName("x").withAttribute("theme", "primary").withTheme("small");
 
-        String selector = "vaadin-button[id=\"users\"][class~=\"x\"][theme=\"primary\"]";
+        String selector = "css:light=vaadin-button[id=\"users\"][class~=\"x\"][theme=\"primary\"]"
+                + "[theme~=\"small\"]";
         assertSame(locators.get(selector), query.getLocator());
-        verify(query.getLocator()).describe(
-                "vaadin-button with id \"users\" with class \"x\" with attribute theme = \"primary\"");
+        verify(query.getLocator()).describe("vaadin-button with id \"users\" with class \"x\""
+                + " with attribute theme = \"primary\" with theme \"small\"");
         locators.values().forEach(l -> verify(l, never()).and(any()));
+    }
+
+    @Test
+    void placeholderContainingIsACaseInsensitiveSubstring() {
+        Page page = mock(Page.class);
+        Map<String, Locator> locators = selfDescribingLocators(page);
+
+        var query = ElementQueries.find(page, TextFieldElement.class).withPlaceholderContaining("str\"eet");
+
+        assertSame(locators.get("css:light=vaadin-text-field[placeholder*=\"str\\\"eet\" i]"), query.getLocator());
+    }
+
+    @Test
+    void includingShadowDomDropsTheLightDomEngine() {
+        Page page = mock(Page.class);
+        Map<String, Locator> locators = selfDescribingLocators(page);
+
+        var query = ElementQueries.find(page, ButtonElement.class).withId("x").includingShadowDom();
+
+        assertSame(locators.get("vaadin-button[id=\"x\"]"), query.getLocator());
+        verify(query.getLocator()).describe("vaadin-button with id \"x\" including shadow DOM");
+        // later CSS filters keep extending the piercing selector
+        Locator narrowed = query.withClassName("y").getLocator();
+        assertSame(locators.get("vaadin-button[id=\"x\"][class~=\"y\"]"), narrowed);
+    }
+
+    @Test
+    void includingShadowDomAfterANonCssFilterIsRejected() {
+        Page page = mock(Page.class);
+        selfDescribingLocators(page);
+        var query = ElementQueries.find(page, ButtonElement.class).refine(l -> l);
+
+        assertThrows(IllegalStateException.class, query::includingShadowDom);
     }
 
     @Test
@@ -129,6 +166,8 @@ class ElementQueriesTest {
     @Test
     void onlyPlainCssSelectorsAreExtended() {
         assertTrue(ElementQuery.CssSelector.canExtend("vaadin-button"));
+        assertTrue(ElementQuery.CssSelector.canExtend("css:light=vaadin-button"));
+        assertFalse(ElementQuery.CssSelector.canExtend("css:light=vaadin-button, vaadin-icon"));
         assertTrue(ElementQuery.CssSelector.canExtend("vaadin-dialog[opened]"));
         assertTrue(ElementQuery.CssSelector.canExtend(":is(vaadin-menu-item:not([hidden]), x[role='a,b'])"));
         assertFalse(ElementQuery.CssSelector.canExtend("vaadin-button, vaadin-icon"));
@@ -153,7 +192,7 @@ class ElementQueriesTest {
     void scopedFindSearchesInsideScope() {
         Locator scope = mock(Locator.class);
         Locator candidates = mock(Locator.class);
-        when(scope.locator("vaadin-button")).thenReturn(candidates);
+        when(scope.locator("css:light=vaadin-button")).thenReturn(candidates);
         when(candidates.describe("vaadin-button")).thenReturn(candidates);
 
         assertSame(candidates, ElementQueries.find(scope, ButtonElement.class).getLocator());

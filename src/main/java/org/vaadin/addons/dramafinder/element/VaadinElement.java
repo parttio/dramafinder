@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
@@ -40,12 +41,37 @@ public abstract class VaadinElement implements HasLocatorElement {
     }
 
     /**
+     * Wrap any element in a {@link GenericElement}, for a component that has no
+     * element class of its own (an add-on, a layout, a plain {@code div}).
+     * <p>
+     * The element offers the {@code VaadinElement} API plus CSS class, style and
+     * theme helpers. When the component has an element class, use that instead:
+     * {@code new ButtonElement(locator)}.
+     *
+     * @param locator the locator for the element; not {@code null}
+     * @return a generic element for it
+     */
+    public static GenericElement of(Locator locator) {
+        return new GenericElement(Objects.requireNonNull(locator, "locator"));
+    }
+
+    /**
      * Click the component root, then wait for the server round-trip it
      * triggers (see {@link org.vaadin.addons.dramafinder.AutoWait}).
      */
     public void click() {
         locator.click();
         waitAfterAction();
+    }
+
+    /**
+     * Get the element's tag name, in lower case as the DOM's {@code localName}
+     * reports it, e.g. {@code vaadin-button} or {@code input}.
+     *
+     * @return the tag name
+     */
+    public String getTagName() {
+        return (String) locator.evaluate("el => el.localName");
     }
 
     /**
@@ -94,7 +120,8 @@ public abstract class VaadinElement implements HasLocatorElement {
      *
      * @param tag the tag name (e.g. {@code vaadin-button}, case-insensitive),
      *            or {@link #ANY_TAG} ({@code "*"}) for any element; not {@code null}
-     * @return the matching children, empty when there are none
+     * @return the matching children, each a {@link GenericElement}; empty when
+     *         there are none
      * @throws IllegalArgumentException if {@code tag} is not a valid tag name
      */
     public List<VaadinElement> getLightDomChildren(String tag) {
@@ -114,7 +141,8 @@ public abstract class VaadinElement implements HasLocatorElement {
      *
      * @param tag the tag name (e.g. {@code vaadin-button}, case-insensitive),
      *            or {@link #ANY_TAG} ({@code "*"}) for any element; not {@code null}
-     * @return the matching descendants, empty when there are none
+     * @return the matching descendants, each a {@link GenericElement}; empty
+     *         when there are none
      * @throws IllegalArgumentException if {@code tag} is not a valid tag name
      */
     public List<VaadinElement> getLightDomDescendants(String tag) {
@@ -126,7 +154,7 @@ public abstract class VaadinElement implements HasLocatorElement {
         Locator matches = locator.locator("xpath=" + axis + xpathNameTest(tag));
         List<VaadinElement> elements = new ArrayList<>();
         for (Locator match : matches.all()) {
-            elements.add(new LightDomElement(match));
+            elements.add(new GenericElement(match));
         }
         return elements;
     }
@@ -142,13 +170,6 @@ public abstract class VaadinElement implements HasLocatorElement {
             throw new IllegalArgumentException("Not a tag name: '" + tag + "'");
         }
         return tag.toLowerCase(Locale.ROOT);
-    }
-
-    /** Untyped wrapper for an element returned by the light-DOM lookups. */
-    private static final class LightDomElement extends VaadinElement {
-        private LightDomElement(Locator locator) {
-            super(locator);
-        }
     }
 
     /**

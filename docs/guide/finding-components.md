@@ -162,10 +162,10 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error: buttons hav
 | Filter | Available on |
 |---|---|
 | `withLabel`, `withLabelContaining` | fields with a visible label (`InputFieldQuery`, `FieldQuery`, `SelectQuery`...) |
-| `withPlaceholder` | input fields, select, date-time picker |
+| `withPlaceholder`, `withPlaceholderContaining` | input fields, select, date-time picker |
 | `withText`, `withTextContaining` | buttons, badges, tabs, tooltips, menu items... (`ButtonQuery`, `TextQuery`, `TooltipQuery`) |
 | `withAccessibleName`, `withAccessibleNameContaining` | every element |
-| `withId`, `withTestId`, `withClassName`, `withAttribute` | every element |
+| `withId`, `withTestId`, `withClassName`, `withAttribute`, `withTheme` | every element |
 
 Filters combine, and each returns a new query:
 
@@ -174,8 +174,12 @@ find(page, ButtonElement.class).withText("Delete").withClassName("danger").singl
 find(page, TextFieldElement.class).withLabelContaining("name").withTestId("customer-name").single();
 ```
 
-`withId`, `withClassName`, `withAttribute` and `withPlaceholder` (on fields that
-keep the placeholder on their host) are plain CSS. Placed before any other
+`withTheme("primary")` keeps components whose `theme` attribute holds that
+variant as a whole word, whatever other variants they have.
+
+`withId`, `withClassName`, `withAttribute`, `withTheme` and `withPlaceholder` /
+`withPlaceholderContaining` (on fields that keep the placeholder on their host)
+are plain CSS. Placed before any other
 filter, they compile into one selector, e.g. `vaadin-grid[id="users"][class~="compact"]`,
 which Playwright resolves on every use of the element without scanning the whole
 page. After any other filter they still work, as an intersection. `withTestId`
@@ -210,6 +214,40 @@ checkboxes.get(1).assertLabel("Subscribe");
 A subclass shares its parent's query: `find(page, EmailFieldElement.class)`
 returns `EmailFieldElement` instances, and `find(page, TreeGridElement.class)`
 returns tree grids typed as `GridElement`.
+
+### Light DOM only, by default
+
+A query searches the **light DOM**: an element inside a shadow root is left
+out. Vaadin components render their internals there (every text field has a
+`vaadin-input-container` in its shadow root, some components render buttons of
+their own), so a query counts the components the application created, as the
+server-side component tree does. Flow puts a component's children in the light
+DOM, inside dialogs and other overlays too, so this changes nothing for them.
+Content an application renders in a shadow root of its own, such as a Lit
+template's, needs the opt-out:
+
+```java
+find(page, ButtonElement.class).includingShadowDom().withText("In template").single();
+```
+
+Call `includingShadowDom()` right after `find`, or after the plain CSS filters
+above.
+
+### Components without an element class
+
+For an add-on, a custom component, a layout or a plain HTML element, query by
+tag. The query has the label, text and placeholder filters next to the ones
+every query has, and returns `GenericElement`s:
+
+```java
+GenericElement card = find(page, "x-card").withLabel("Card label").single();
+List<GenericElement> chips = find(dialog.getLocator(), "my-chip").withTheme("small").all();
+GenericElement box = VaadinElement.of(page.locator("#summary"));   // wrap any locator
+```
+
+A `GenericElement` has the `VaadinElement` API (`getText`, `getTagName`,
+`getProperty`, `click`, visibility) plus CSS class, inline and computed style
+(`getInlineStyle`, `getComputedStyle`) and theme helpers.
 
 ## Which lookup to use
 

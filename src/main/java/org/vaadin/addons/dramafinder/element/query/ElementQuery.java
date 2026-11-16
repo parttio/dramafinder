@@ -86,6 +86,43 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
     // ── Filters available on every component ───────────────────────────
 
     /**
+     * Also consider components inside shadow roots.
+     * <p>
+     * By default a query leaves out elements inside a shadow root, such as the
+     * internals of Vaadin components (see {@link ElementQueries}). This query
+     * searches every shadow root too, the way a plain Playwright CSS locator
+     * does — for content an application renders in a shadow root, like a Lit
+     * template's.
+     * <p>
+     * Call it right after {@code find}, or after filters that compile into the
+     * query's CSS selector ({@code withId}, {@code withClassName},
+     * {@code withAttribute}, {@code withTheme}, a host {@code withPlaceholder}).
+     *
+     * @return a new query over the same filters, shadow roots included
+     * @throws IllegalStateException if a filter that is not plain CSS came
+     *                               before, or the query was not started by
+     *                               {@code find}
+     */
+    public Q includingShadowDom() {
+        if (cssSelector == null) {
+            throw new IllegalStateException("includingShadowDom() must come right after find(..) or a CSS"
+                    + " filter (withId, withClassName, withAttribute, withTheme), before " + candidates);
+        }
+        if (!cssSelector.selector().startsWith(ElementQueries.LIGHT_DOM)) {
+            @SuppressWarnings("unchecked")
+            Q self = (Q) this;
+            return self;
+        }
+        CssSelector next = new CssSelector(cssSelector.root(),
+                cssSelector.selector().substring(ElementQueries.LIGHT_DOM.length()),
+                cssSelector.description() + " including shadow DOM");
+        @SuppressWarnings("unchecked")
+        Q query = (Q) ElementQueries.newQuery(getClass(), type, next.locator());
+        ((ElementQuery<?, ?>) query).cssSelector = next;
+        return query;
+    }
+
+    /**
      * Keep components whose {@code id} is {@code id}.
      *
      * @param id the exact id
@@ -142,6 +179,21 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
     public Q withClassName(String className) {
         return refineCss(QueryText.quote("with class", className),
                 QueryText.attributeWordSelector("class", className));
+    }
+
+    /**
+     * Keep components that have the theme variant {@code variant}, i.e. whose
+     * space-separated {@code theme} attribute holds it as a whole word.
+     * <p>
+     * {@code withTheme("primary")} keeps a button with {@code theme="primary small"}
+     * but not one with {@code theme="primary-ish"}.
+     *
+     * @param variant a single theme variant, e.g. {@code primary}
+     * @return a new, narrowed query
+     */
+    public Q withTheme(String variant) {
+        return refineCss(QueryText.quote("with theme", variant),
+                QueryText.attributeWordSelector("theme", variant));
     }
 
     // ── Terminals ──────────────────────────────────────────────────────
@@ -240,11 +292,16 @@ public abstract class ElementQuery<T extends VaadinElement, Q extends ElementQue
 
         /**
          * Whether CSS for the component itself can be appended to {@code selector}:
-         * plain CSS, with no Playwright engine prefix, no {@code >>} chain and no
+         * plain CSS (optionally for the {@code css:light} engine), with no other
+         * Playwright engine prefix, no {@code >>} chain and no
          * top-level comma (appending to {@code a, b} would only narrow {@code b}).
          */
         static boolean canExtend(String selector) {
-            if (selector.contains(">>") || selector.matches("^[a-zA-Z_-]+=.*")) {
+            if (selector.startsWith(ElementQueries.LIGHT_DOM)) {
+                // Playwright's non-piercing CSS engine takes the same CSS
+                selector = selector.substring(ElementQueries.LIGHT_DOM.length());
+            }
+            if (selector.contains(">>") || selector.matches("^[a-zA-Z_:-]+=.*")) {
                 return false;
             }
             int depth = 0;

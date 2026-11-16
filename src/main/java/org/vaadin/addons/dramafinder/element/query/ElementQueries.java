@@ -7,9 +7,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.GenericElement;
 import org.vaadin.addons.dramafinder.element.PlaywrightElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
 
@@ -22,6 +25,14 @@ import org.vaadin.addons.dramafinder.element.VaadinElement;
  * the class's {@link PlaywrightElement} annotation. To search inside a
  * component, use {@link VaadinElement#find(Class)} or
  * {@link #find(Locator, Class)}.
+ * <p>
+ * Candidates are searched in the light DOM: an element inside a shadow root —
+ * the internals a Vaadin component renders itself, such as the
+ * {@code vaadin-input-container} of every text field — is left out, so a
+ * query counts the components the application created. Flow puts a
+ * component's children in the light DOM, inside overlays too. Content rendered
+ * in a shadow root by the application (a Lit template) needs
+ * {@link ElementQuery#includingShadowDom()}.
  */
 public final class ElementQueries {
 
@@ -31,6 +42,11 @@ public final class ElementQueries {
             return resolveQueryType(elementType);
         }
     };
+
+    // Playwright's CSS engine without shadow-root piercing: candidates are light-DOM elements.
+    static final String LIGHT_DOM = "css:light=";
+
+    private static final Pattern TAG_NAME = Pattern.compile("[A-Za-z][A-Za-z0-9_-]*");
 
     private ElementQueries() {
     }
@@ -48,14 +64,14 @@ public final class ElementQueries {
     public static <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(
             Page page, Class<T> type) {
         String tag = tagOf(type);
-        return query(type, new ElementQuery.CssSelector(page::locator, tag, tag));
+        return query(type, new ElementQuery.CssSelector(page::locator, LIGHT_DOM + tag, tag));
     }
 
     /**
      * Start a query for every {@code type} component inside {@code scope}.
      *
-     * @param scope the locator whose subtree is searched (the scope itself is
-     *              not a candidate)
+     * @param scope the locator whose light-DOM subtree is searched (the scope
+     *              itself is not a candidate)
      * @param type  the element class, annotated with {@link PlaywrightElement}
      * @param <T>   the element type
      * @param <Q>   the query type bound to {@code T} by {@link Findable}
@@ -66,8 +82,58 @@ public final class ElementQueries {
             Locator scope, Class<T> type) {
         String tag = tagOf(type);
         String scopeDescription = scope.description();
-        return query(type, new ElementQuery.CssSelector(scope::locator, tag,
+        return query(type, new ElementQuery.CssSelector(scope::locator, LIGHT_DOM + tag,
                 scopeDescription == null ? tag : tag + " inside " + scopeDescription));
+    }
+
+    /**
+     * Start a query for every component with the tag {@code tag} on the page,
+     * for components that have no element class: an add-on, a custom component,
+     * a layout or a plain HTML element.
+     * <p>
+     * The query offers the label, text and placeholder filters next to the ones
+     * every query has, and returns {@link GenericElement}s. Like
+     * {@link #find(Page, Class)}, it searches the light DOM. Prefer the
+     * element-class overload when the component has one.
+     *
+     * @param page the Playwright page
+     * @param tag  the tag name, e.g. {@code my-component} (case-insensitive)
+     * @return a query over every element with that tag on the page
+     * @throws IllegalArgumentException if {@code tag} is not a valid tag name
+     */
+    public static TagQuery<GenericElement> find(Page page, String tag) {
+        String name = tagName(tag);
+        return tagQuery(new ElementQuery.CssSelector(page::locator, LIGHT_DOM + name, name));
+    }
+
+    /**
+     * Start a query for every component with the tag {@code tag} inside
+     * {@code scope}; see {@link #find(Page, String)}.
+     *
+     * @param scope the locator whose light-DOM subtree is searched (the scope
+     *              itself is not a candidate)
+     * @param tag   the tag name, e.g. {@code my-component} (case-insensitive)
+     * @return a query over every element with that tag inside the scope
+     * @throws IllegalArgumentException if {@code tag} is not a valid tag name
+     */
+    public static TagQuery<GenericElement> find(Locator scope, String tag) {
+        String name = tagName(tag);
+        String scopeDescription = scope.description();
+        return tagQuery(new ElementQuery.CssSelector(scope::locator, LIGHT_DOM + name,
+                scopeDescription == null ? name : name + " inside " + scopeDescription));
+    }
+
+    private static TagQuery<GenericElement> tagQuery(ElementQuery.CssSelector candidates) {
+        TagQuery<GenericElement> query = new TagQuery<>(GenericElement.class, candidates.locator());
+        query.startCss(candidates);
+        return query;
+    }
+
+    private static String tagName(String tag) {
+        if (tag == null || !TAG_NAME.matcher(tag).matches()) {
+            throw new IllegalArgumentException("Not a tag name: '" + tag + "'");
+        }
+        return tag.toLowerCase(Locale.ROOT);
     }
 
     @SuppressWarnings("unchecked")
