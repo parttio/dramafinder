@@ -64,7 +64,9 @@ sortBy.assertValue("Rating: low to high");
 
 - `selectItem(label)` opens the overlay and clicks the item whose **whole** label
   is `label`: `"Item 1"` does not pick `"Item 10"`, and two items with the same
-  label fail with a strict-mode error.
+  label fail with a strict-mode error. The drop-down renders only the items
+  around its scroll position, so when the item is not rendered yet the overlay
+  is first scrolled to it, loading pages from a lazy data provider as needed.
 - `setValue(label)` types the label as a filter, waits until the matching item
   is shown and closes the overlay. It fails when no item has that label.
 - `assertValue(expected)` reads the text in the input; `assertValue("")` (or
@@ -120,7 +122,9 @@ fruit.assertClosed();
 A combo box backed by a lazy (server-side) data provider works the same way:
 `selectItem`, `setFilter` and `filterAndSelectItem` narrow the results on the
 server exactly as they do for in-memory items, and each action waits for the
-server round-trip.
+server round-trip. An item far down the list needs no filter: `selectItem` and
+`filterAndSelectItem` scroll the overlay to it, which makes the component load
+the page that holds it.
 
 ```java
 // View
@@ -140,6 +144,8 @@ comboBox.setItems(
 ComboBoxElement lazy = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
 lazy.filterAndSelectItem("Item 250", "Item 250");
 lazy.assertValue("Item 250");
+lazy.selectItem("Item 499");  // not rendered yet: scrolled to, its page loaded
+lazy.assertValue("Item 499");
 
 lazy.setFilter("Item 49");   // Item 49, Item 490 … Item 499
 lazy.assertItemCount(11);

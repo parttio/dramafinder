@@ -1054,7 +1054,7 @@ PlaywrightElement for `<vaadin-combo-box>`.
 - `void setValue(String value)` — Select the item whose label equals `value`, by typing it as a filter and closing the overlay once the matching item is shown.
 - `void clear()` — Clear the selection as a user does: click the clear button when it is visible, otherwise empty the input and leave the field.
 - `void selectItem(String item)` — Select an item by its visible label.
-- `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item.
+- `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item, scrolling the overlay to it when the filter leaves more items than it renders.
 - `void filterAndSelectFirstItem(String filter)` — Type filter text into the input, then click the first item the drop-down offers for it, whatever its label.
 - `void setFilter(String filter)` — Type into the input to trigger filtering.
 - `String getFilter()` — Get the current filter value from the DOM property.
@@ -1941,7 +1941,7 @@ PlaywrightElement for `<vaadin-multi-select-combo-box>`.
 - `void clear()` — Clear the selection as a user does: click the clear button when it is visible, otherwise deselect every selected item in the overlay and close it.
 - `void selectItems(String... items)` — Select multiple items in sequence.
 - `void deselectItems(String... items)` — Deselect multiple items in sequence.
-- `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item.
+- `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item, scrolling the overlay to it when the filter leaves more items than it renders.
 - `void setFilter(String filter)` — Type into the input to trigger filtering.
 - `String getFilter()` — Get the current filter value from the DOM property.
 - `void open()` — Open the combo box overlay.

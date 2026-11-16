@@ -125,25 +125,28 @@ public class ComboBoxElement extends VaadinElement
 
     /**
      * Select an item by its visible label.
-     * Opens the overlay, clicks the matching item.
+     * Opens the overlay, clicks the matching item; an item the overlay has not
+     * rendered yet is scrolled into view first, loading its page from a lazy data
+     * provider if needed.
      *
      * @param item label of the item to select
      */
     public void selectItem(String item) {
         open();
-        getOverlayItem(item).click();
+        revealItem(item).click();
         waitAfterAction();
     }
 
     /**
-     * Type filter text into the input, then click the matching item.
+     * Type filter text into the input, then click the matching item, scrolling
+     * the overlay to it when the filter leaves more items than it renders.
      *
      * @param filter text to type for filtering
      * @param item   label of the item to select
      */
     public void filterAndSelectItem(String filter, String item) {
         setFilter(filter);
-        getOverlayItem(item).click();
+        revealItem(item).click();
         waitAfterAction();
     }
 
@@ -358,6 +361,19 @@ public class ComboBoxElement extends VaadinElement
      * does not resolve to {@code "Option 10"}, and two visible items sharing the
      * label fail with a Playwright strict-mode error.
      */
+    /**
+     * The overlay item labelled {@code label}, scrolled into the overlay first when the virtual
+     * list has not rendered it: with many items, or a lazy data provider, only the items around
+     * the scroll position exist in the DOM.
+     */
+    private Locator revealItem(String label) {
+        Locator item = getOverlayItem(label);
+        if (item.count() == 0) {
+            ComboBoxItemLabels.scrollTo(getLocator(), label);
+        }
+        return item;
+    }
+
     private Locator getOverlayItem(String label) {
         return ItemLocator.byExactText(getLocator(),
                 FIELD_ITEM_TAG_NAME + ":not([hidden])", label);
