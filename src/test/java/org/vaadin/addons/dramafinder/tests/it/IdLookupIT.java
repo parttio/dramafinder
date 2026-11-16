@@ -39,7 +39,7 @@ public class IdLookupIT extends SpringPlaywrightIT {
             "ListBoxElement", "LoginFormElement", "LoginOverlayElement", "MarkdownElement",
             "MenuBarElement", "MessageInputElement", "MessageListElement",
             "MultiSelectComboBoxElement", "NumberFieldElement", "PasswordFieldElement",
-            "PopoverElement", "ProgressBarElement", "RadioButtonGroupElement", "SelectElement",
+            "PopoverElement", "ProgressBarElement", "RadioButtonElement", "RadioButtonGroupElement", "SelectElement",
             "SideNavigationElement", "SideNavigationItemElement", "SliderElement",
             "SplitLayoutElement", "SwitchElement", "TabElement", "TabSheetElement", "TabsElement",
             "TextAreaElement", "TextFieldElement", "TimePickerElement", "TreeGridElement",

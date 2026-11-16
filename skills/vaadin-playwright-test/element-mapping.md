@@ -25,7 +25,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
 | `Switch` (experimental, Vaadin 25.3) | `SwitchElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `CheckboxGroup` | `CheckboxGroupElement` | `getByLabel(page, label)`, `getCheckboxes()`, `getCheckbox(label)`, `selectByLabel()`, `deselectByLabel()`, `deselectAll()`, `getSelectedValues()`, `assertSelected()` |
-| `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()`, `getItemLabels()`, `getSelectedLabel()`, `assertSelectedLabel()` |
+| `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `getRadioButtonByLabel(label)`, `assertValue()`, `getItemLabels()`, `getSelectedLabel()`, `assertSelectedLabel()` |
+| `RadioButton` (item of a `RadioButtonGroup`) | `RadioButtonElement` | `group.getRadioButtonByLabel(label)`, `getByLabel(locator, label)`, `check()`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `clear()` (clear button or empty input), `open()`, `assertItemCount()`, `getItemLabels()` (all items, lazy pages loaded), `getSelectedItemLabel()` |
 | `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `clear()` (deselects all), `assertSelectedItems()`, `assertSelectedCount()`, `getSelectedItems()`, `getItemLabels()` (all items, lazy pages loaded) |
 | `Select` | `SelectElement` | `getByLabel(page, label)`, `selectItem()`, `assertValue()` |

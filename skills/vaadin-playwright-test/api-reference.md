@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.0.3-SNAPSHOT — 59 element wrappers.
+> DramaFinder 2.0.3-SNAPSHOT — 60 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -206,6 +206,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | + id, test id | `ComponentQuery` |
+| `<vaadin-radio-button>` | [RadioButtonElement](#radiobuttonelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `SelectQuery` |
 | `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
@@ -459,7 +460,7 @@ Query for `vaadin-tooltip`: the text filters read the tooltip text, which lives 
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ConfirmDialogElement](#confirmdialogelement) · [ContextMenuElement](#contextmenuelement) · [CustomFieldElement](#customfieldelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [FormLayoutElement](#formlayoutelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ConfirmDialogElement](#confirmdialogelement) · [ContextMenuElement](#contextmenuelement) · [CustomFieldElement](#customfieldelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [FormLayoutElement](#formlayoutelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonElement](#radiobuttonelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -2060,6 +2061,30 @@ PlaywrightElement for `<vaadin-progress-bar>`.
 - `void assertNotIndeterminate()` — Assert not indeterminate.
 - `void setIndeterminate(boolean indeterminate)` — Set the indeterminate state.
 
+### RadioButtonElement  `<vaadin-radio-button>`
+
+PlaywrightElement for `<vaadin-radio-button>`.
+
+**Extends:** VaadinElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement, Findable  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-radio-button"`
+
+**Constructors:**
+
+- `RadioButtonElement(Locator locator)` — Create a new `RadioButtonElement`.
+
+**Static factory methods:**
+
+- `RadioButtonElement getByLabel(Page page, String label)` — Get the `RadioButtonElement` whose visible label is exactly `label`, searching the entire page.
+- `RadioButtonElement getByLabelContaining(Page page, String text)` — Get the `RadioButtonElement` whose visible label contains `text`, searching the entire page.
+- `RadioButtonElement getByLabel(Locator locator, String label)` — Get the `RadioButtonElement` whose visible label is exactly `label`, scoped to the given locator.
+- `RadioButtonElement getByLabelContaining(Locator locator, String text)` — Get the `RadioButtonElement` whose visible label contains `text`, scoped to the given locator.
+- `RadioButtonElement getById(Page page, String id)` — Get a `RadioButtonElement` by its `id`, searching the entire page.
+- `RadioButtonElement getById(Locator locator, String id)` — Get a `RadioButtonElement` by its `id`, scoped to the given locator.
+- `RadioButtonElement getByTestId(Page page, String testId)` — Get a `RadioButtonElement` by its test id, searching the entire page.
+- `RadioButtonElement getByTestId(Locator locator, String testId)` — Get a `RadioButtonElement` by its test id, scoped to the given locator.
+
 ### RadioButtonGroupElement  `<vaadin-radio-group>`
 
 PlaywrightElement for `<vaadin-radio-group>`.
@@ -2088,7 +2113,7 @@ PlaywrightElement for `<vaadin-radio-group>`.
 
 - `void selectByLabel(String label)` — Select a radio by its label text.
 - `void selectByValue(String value)` — Select a radio by its value.
-- `RadioButtonElement getRadioButtonByLabel(String label)` — Get a specific radio by its label within the group.
+- `RadioButtonElement getRadioButtonByLabel(String label)` — Get a radio button of this group by its visible label.
 - `void setValue(String value)` — Set the selected value by label.
 - `void assertValue(String value)` — Assert the selected value by label.
 - `List<String> getItemLabels()` — Get the labels of all radio buttons in the group, in order: the text the user sees, which for Flow is the item label, not the item key held in `value`.

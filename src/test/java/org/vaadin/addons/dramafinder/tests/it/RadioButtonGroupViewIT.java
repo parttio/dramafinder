@@ -6,6 +6,7 @@ import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.vaadin.addons.dramafinder.element.RadioButtonElement;
 import org.vaadin.addons.dramafinder.element.RadioButtonGroupElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
@@ -41,6 +42,21 @@ public class RadioButtonGroupViewIT extends SpringPlaywrightIT {
 
         group.selectByLabel("Option 3");
         group.assertValue("Option 3");
+    }
+
+    @Test
+    public void testRadioButtonIsUsableOutsideTheElementPackage() {
+        RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup");
+        RadioButtonElement option2 = group.getRadioButtonByLabel("Option 2");
+        option2.assertNotChecked();
+        option2.assertLabel("Option 2");
+        option2.check();
+        option2.assertChecked();
+        group.assertValue("Option 2");
+        // a partial label is not a label
+        assertThat(group.getRadioButtonByLabel("Option").getLocator()).hasCount(0);
+        // the same lookup through the page-wide factory
+        assertThat(RadioButtonElement.getByLabel(group.getLocator(), "Option 3").getLocator()).hasCount(1);
     }
 
     @Test

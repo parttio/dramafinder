@@ -55,6 +55,7 @@ import org.vaadin.addons.dramafinder.element.NumberFieldElement;
 import org.vaadin.addons.dramafinder.element.PasswordFieldElement;
 import org.vaadin.addons.dramafinder.element.PopoverElement;
 import org.vaadin.addons.dramafinder.element.ProgressBarElement;
+import org.vaadin.addons.dramafinder.element.RadioButtonElement;
 import org.vaadin.addons.dramafinder.element.RadioButtonGroupElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.element.SideNavigationElement;
@@ -138,7 +139,7 @@ public final class ViewOutline {
             MessageInputElement.class, MessageListElement.class,
             MultiSelectComboBoxElement.class, NotificationElement.class,
             NumberFieldElement.class, PasswordFieldElement.class, PopoverElement.class,
-            ProgressBarElement.class, RadioButtonGroupElement.class,
+            ProgressBarElement.class, RadioButtonElement.class, RadioButtonGroupElement.class,
             SelectElement.class, SideNavigationElement.class, SideNavigationItemElement.class,
             SliderElement.class, SplitLayoutElement.class, SwitchElement.class,
             TabElement.class, TabSheetElement.class, TabsElement.class,
