@@ -40,12 +40,14 @@ public abstract class AbstractNumberFieldElement extends VaadinElement
 
     /**
      * Whether the step controls (increase/decrease buttons) are visible.
+     * <p>
+     * Reads the boolean {@code step-buttons-visible} attribute once, without
+     * waiting; use {@link #assertHasControls(boolean)} to wait for a state.
      *
      * @return {@code true} if the attribute is present, otherwise {@code false}
      */
     public boolean getHasControls() {
-        String v = getLocator().getAttribute("step-buttons-visible");
-        return Boolean.parseBoolean(v);
+        return getLocator().getAttribute("step-buttons-visible") != null;
     }
 
     /**

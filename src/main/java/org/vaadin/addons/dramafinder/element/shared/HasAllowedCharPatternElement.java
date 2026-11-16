@@ -1,6 +1,6 @@
 package org.vaadin.addons.dramafinder.element.shared;
 
-import java.util.regex.Pattern;
+import com.microsoft.playwright.TimeoutError;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -15,7 +15,8 @@ public interface HasAllowedCharPatternElement extends HasLocatorElement {
      * @return the pattern string or {@code null}
      */
     default String getAllowedCharPattern() {
-        return getLocator().evaluate("el => el.allowedCharPattern").toString();
+        Object pattern = getLocator().evaluate("el => el.allowedCharPattern");
+        return pattern == null ? null : pattern.toString();
     }
 
     /**
@@ -29,15 +30,28 @@ public interface HasAllowedCharPatternElement extends HasLocatorElement {
     }
 
     /**
-     * Assert that the {@code allowedCharPattern} matches the expected value.
+     * Assert that the {@code allowedCharPattern} property matches the expected
+     * value, retrying until the timeout.
+     * <p>
+     * Note that some fields have a pattern of their own without one being set:
+     * {@code vaadin-integer-field} allows {@code [-+\\d]}.
      *
-     * @param pattern expected pattern, or {@code null} to assert absence
+     * @param pattern expected pattern, or {@code null} to assert that the property
+     *                is unset or empty (the field accepts any character)
      */
     default void assertAllowedCharPattern(String pattern) {
         if (pattern != null) {
             assertThat(getLocator()).hasJSProperty("allowedCharPattern", pattern);
         } else {
-            assertThat(getLocator()).not().hasAttribute("allowedCharPattern", Pattern.compile(".*"));
+            try {
+                getLocator().page().waitForCondition(() -> {
+                    String actual = getAllowedCharPattern();
+                    return actual == null || actual.isEmpty();
+                });
+            } catch (TimeoutError e) {
+                throw new AssertionError("allowedCharPattern mismatch. Expected: <unset>, actual: <"
+                        + getAllowedCharPattern() + ">", e);
+            }
         }
     }
 }

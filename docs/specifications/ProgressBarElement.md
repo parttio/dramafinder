@@ -137,9 +137,9 @@ bar.assertCssClass("upload-bar");
   query.
 - **Values are compared as formatted text** of `aria-valuenow` /
   `aria-valuemin` / `aria-valuemax`, not as numbers with a tolerance.
-- **`assertValue(null)` does not assert absence**: it only checks that
-  `aria-valuenow` is not the string `"undefined"`. Use `assertIndeterminate()` to
-  check a bar that shows no progress value.
+- **`assertValue(null)` asserts that `aria-valuenow` is absent.** A Flow
+  `ProgressBar` always has a value (`0` by default), even when indeterminate,
+  so use `assertIndeterminate()` to check a bar that shows no progress value.
 
 ## See also
 

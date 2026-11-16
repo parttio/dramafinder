@@ -1552,10 +1552,10 @@ PlaywrightElement for `<vaadin-integer-field>`.
 - `void assertStep(Integer step)` — Assert that the `step` attribute matches the expected value.
 - `Integer getMin()` — Get the current `min` value.
 - `void setMin(int min)` — Set the `min` value.
-- `void assertMin(Integer min)` — Assert that the `min` attribute matches the expected value.
+- `void assertMin(Integer min)` — Assert that the `min` attribute matches the expected value, retrying until the timeout.
 - `Integer getMax()` — Get the current `max` value.
 - `void setMax(int max)` — Set the `max` value.
-- `void assertMax(Integer max)` — Assert that the `max` attribute matches the expected value.
+- `void assertMax(Integer max)` — Assert that the `max` attribute matches the expected value, retrying until the timeout.
 - `void setValue(Integer value)` — Set the value as a number, typed in its plain decimal form.
 - `Integer getValueAsInteger()` — Get the current value as a number.
 - `void assertValue(Integer expected)` — Assert the value as a number.
@@ -2049,7 +2049,7 @@ PlaywrightElement for `<vaadin-progress-bar>`.
 
 - `double getValue()` — Current numeric value parsed from `aria-valuenow`.
 - `void setValue(double min)` — Set the progress bar `value`.
-- `void assertValue(Double expected)` — Assert that the numeric value matches.
+- `void assertValue(Double expected)` — Assert that the numeric value matches, retrying until the timeout.
 - `Double getMin()` — Get the `min` value.
 - `void setMin(double min)` — Set the `min` value.
 - `void assertMin(double min)` — Assert that `min` matches the expected value.
@@ -2148,6 +2148,7 @@ PlaywrightElement for `<vaadin-select>`.
 
 - `void selectItem(String item)` — Select an item by its visible label.
 - `String getValue()` — Get the selected value label for single-select.
+- `void assertPlaceholder(String placeholder)` — Assert the placeholder shown by the value button.
 - `void assertValue(String expected)` — Assert the selected value label equals the expected string.
 
 ### SideNavigationElement  `<vaadin-side-nav>`
@@ -2703,7 +2704,7 @@ Mixin for components supporting `allowedCharPattern` to constrain input.
 
 - `String getAllowedCharPattern()` — Get the current `allowedCharPattern`.
 - `void setAllowedCharPattern(String pattern)` — Set the `allowedCharPattern`.
-- `void assertAllowedCharPattern(String pattern)` — Assert that the `allowedCharPattern` matches the expected value.
+- `void assertAllowedCharPattern(String pattern)` — Assert that the `allowedCharPattern` property matches the expected value, retrying until the timeout.
 
 ### HasAriaLabelElement
 

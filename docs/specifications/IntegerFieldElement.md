@@ -137,16 +137,14 @@ validation, theme, tooltip) are described on
 
 ## Pitfalls
 
-- **`assertMax(null)` and `assertMin(null)` disagree.** `assertMax(null)` asserts
-  that the input's `max` attribute *is* `"undefined"` (what an unbounded integer
-  field renders), while `assertMin(null)` asserts that `min` is *not*
-  `"undefined"`. On an unbounded field `getMax()` therefore reads `"undefined"`
-  and throws `NumberFormatException`. Prefer asserting concrete bounds.
+- **An unset bound reads as `"undefined"` on the input.** The web component
+  writes an unset `min` / `max` to the native input as the string
+  `"undefined"`. `getMin()` / `getMax()` return `null` for it, and
+  `assertMin(null)` / `assertMax(null)` pass for it or for a missing attribute.
 - **`getValueAsInteger()` throws on non-integers;** `assertValue(Integer)` simply
   does not match. Prefer the assertion.
 - The [Number Field pitfalls](NumberFieldElement.md#pitfalls) apply too: no
-  read-only helpers, host-level focus/enablement/`aria-label` locators,
-  `getHasControls()` parsing the empty attribute as `false`, literal `null`.
+  read-only helpers, host-level focus/enablement/`aria-label` locators, literal `null`.
 
 ## See also
 

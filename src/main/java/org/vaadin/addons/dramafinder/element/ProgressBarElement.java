@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ComponentQuery;
@@ -46,13 +48,16 @@ public class ProgressBarElement extends VaadinElement implements HasThemeElement
     }
 
     /**
-     * Assert that the numeric value matches.
+     * Assert that the numeric value matches, retrying until the timeout.
+     *
+     * @param expected the expected value, or {@code null} to assert that the
+     *                 progress bar exposes no {@code aria-valuenow}
      */
     public void assertValue(Double expected) {
         if (expected != null) {
             assertThat(getLocator()).hasAttribute("aria-valuenow", NumberUtils.formatDouble(expected));
         } else {
-            assertThat(getLocator()).not().hasAttribute("aria-valuenow", "undefined");
+            assertThat(getLocator()).not().hasAttribute("aria-valuenow", Pattern.compile(".*"));
         }
     }
 

@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
@@ -23,6 +25,10 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
 public class IntegerFieldElement extends AbstractNumberFieldElement implements Findable<InputFieldQuery<IntegerFieldElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-integer-field";
+
+    // The web component writes an unset min/max to the input as the string "undefined".
+    private static final String UNSET = "undefined";
+    private static final Pattern SET_BOUND = Pattern.compile("^(?!undefined$).*$");
 
     /**
      * Creates a new {@code IntegerFieldElement}.
@@ -73,7 +79,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
      */
     public Integer getMin() {
         String v = getInputLocator().getAttribute("min");
-        return v == null ? null : Integer.valueOf(v);
+        return v == null || UNSET.equals(v) ? null : Integer.valueOf(v);
     }
 
     /**
@@ -87,7 +93,8 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
     }
 
     /**
-     * Assert that the {@code min} attribute matches the expected value.
+     * Assert that the {@code min} attribute matches the expected value, retrying
+     * until the timeout.
      *
      * @param min the expected minimum, or {@code null} to assert that no explicit minimum is set
      */
@@ -95,7 +102,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
         if (min != null) {
             assertThat(getInputLocator()).hasAttribute("min", min + "");
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("min", "undefined");
+            assertThat(getInputLocator()).not().hasAttribute("min", SET_BOUND);
         }
     }
 
@@ -106,7 +113,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
      */
     public Integer getMax() {
         String v = getInputLocator().getAttribute("max");
-        return v == null ? null : Integer.valueOf(v);
+        return v == null || UNSET.equals(v) ? null : Integer.valueOf(v);
     }
 
     /**
@@ -120,7 +127,8 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
     }
 
     /**
-     * Assert that the {@code max} attribute matches the expected value.
+     * Assert that the {@code max} attribute matches the expected value, retrying
+     * until the timeout.
      *
      * @param max the expected maximum, or {@code null} to assert that no explicit maximum is set
      */
@@ -128,7 +136,7 @@ public class IntegerFieldElement extends AbstractNumberFieldElement implements F
         if (max != null) {
             assertThat(getInputLocator()).hasAttribute("max", max + "");
         } else {
-            assertThat(getInputLocator()).hasAttribute("max", "undefined");
+            assertThat(getInputLocator()).not().hasAttribute("max", SET_BOUND);
         }
     }
 

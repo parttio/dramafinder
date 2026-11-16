@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
 import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -25,6 +26,10 @@ import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventua
 public class NumberFieldElement extends AbstractNumberFieldElement implements Findable<InputFieldQuery<NumberFieldElement>> {
 
     public static final String FIELD_TAG_NAME = "vaadin-number-field";
+
+    // The web component writes an unset min/max to the input as the string "undefined".
+    private static final String UNSET = "undefined";
+    private static final Pattern SET_BOUND = Pattern.compile("^(?!undefined$).*$");
 
     /**
      * Creates a new {@code NumberFieldElement}.
@@ -75,7 +80,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public Double getMin() {
         String v = getInputLocator().getAttribute("min");
-        return v == null ? null : Double.valueOf(v);
+        return v == null || UNSET.equals(v) ? null : Double.valueOf(v);
     }
 
     /**
@@ -97,7 +102,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
         if (min != null) {
             assertThat(getInputLocator()).hasAttribute("min", NumberUtils.formatDouble(min));
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("min", "undefined");
+            assertThat(getInputLocator()).not().hasAttribute("min", SET_BOUND);
         }
     }
 
@@ -108,7 +113,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
      */
     public Double getMax() {
         String v = getInputLocator().getAttribute("max");
-        return v == null ? null : Double.valueOf(v);
+        return v == null || UNSET.equals(v) ? null : Double.valueOf(v);
     }
 
     /**
@@ -130,7 +135,7 @@ public class NumberFieldElement extends AbstractNumberFieldElement implements Fi
         if (max != null) {
             assertThat(getInputLocator()).hasAttribute("max", NumberUtils.formatDouble(max));
         } else {
-            assertThat(getInputLocator()).not().hasAttribute("max", "undefined");
+            assertThat(getInputLocator()).not().hasAttribute("max", SET_BOUND);
         }
     }
 
