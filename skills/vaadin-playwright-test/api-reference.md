@@ -979,7 +979,7 @@ PlaywrightElement for `<vaadin-checkbox-group>`.
 **Methods:**
 
 - `List<CheckboxElement> getCheckboxes()` — Get all checkboxes of the group, in DOM order.
-- `CheckboxElement getCheckbox(String label)` — Get a single checkbox of the group by its label.
+- `CheckboxElement getCheckbox(String label)` — Get a single checkbox of the group by its visible label.
 - `int getCheckboxCount()` — Count the checkboxes of the group.
 - `void assertCheckboxCount(int expected)` — Assert that the group contains exactly the expected number of checkboxes.
 - `void selectByLabel(String... labels)` — Select the checkboxes matching the given labels.
@@ -1089,7 +1089,7 @@ PlaywrightElement for `<vaadin-confirm-dialog>`.
 
 ### ContextMenuElement
 
-PlaywrightElement for context menu overlays `<vaadin-context-menu-overlay>`.
+PlaywrightElement for an open `<vaadin-context-menu>`.
 
 **Extends:** VaadinElement  
 **Implements:** HasStyleElement  
@@ -1098,7 +1098,7 @@ PlaywrightElement for context menu overlays `<vaadin-context-menu-overlay>`.
 
 **Constructors:**
 
-- `ContextMenuElement(Page page)` — Create a `ContextMenuElement` from the page overlay.
+- `ContextMenuElement(Page page)` — Create a `ContextMenuElement` for the open context menu on the page.
 - `ContextMenuElement(Locator locator)` — Create a `ContextMenuElement` from an existing locator.
 
 **Static factory methods:**
@@ -2162,7 +2162,7 @@ PlaywrightElement for `<vaadin-side-nav>`.
 
 **Constructors:**
 
-- `SideNavigationElement(Locator locator)`
+- `SideNavigationElement(Locator locator)` — Create a new `SideNavigationElement`.
 
 **Static factory methods:**
 
@@ -2184,7 +2184,7 @@ PlaywrightElement for `<vaadin-side-nav>`.
 - `void assertNotCollapsible()` — Asserts that the side nav is not collapsible.
 - `SideNavigationItemElement getItem(String label)` — Gets a `SideNavigationItemElement` by its label text, at any nesting depth.
 - `void clickItem(String label)` — Clicks an item by its label.
-- `void toggle()` — Toggles the expansion state of the item.
+- `void toggle()` — Collapse or expand the whole side nav by clicking its label.
 
 ### SideNavigationItemElement  `<vaadin-side-nav-item>`
 
@@ -2197,7 +2197,7 @@ PlaywrightElement for `<vaadin-side-nav-item>`.
 
 **Constructors:**
 
-- `SideNavigationItemElement(Locator locator)`
+- `SideNavigationItemElement(Locator locator)` — Create a new `SideNavigationItemElement`.
 
 **Static factory methods:**
 
@@ -2218,7 +2218,7 @@ PlaywrightElement for `<vaadin-side-nav-item>`.
 - `void assertCurrent()` — Asserts that the item is current.
 - `void assertNotCurrent()` — Asserts that the item is not current.
 - `void toggle()` — Toggles the expansion state of the item.
-- `void navigate()`
+- `void navigate()` — Navigate to the item's path by clicking its link.
 
 ### SliderElement  `<vaadin-slider>`
 

@@ -66,9 +66,13 @@ public class CheckboxGroupElement extends VaadinElement
     }
 
     /**
-     * Get a single checkbox of the group by its label.
+     * Get a single checkbox of the group by its visible label.
+     * <p>
+     * The label is matched in full and case-sensitively, through
+     * {@link CheckboxElement#getByLabel(Locator, String)}; two checkboxes with
+     * that label fail with a strict-mode error.
      *
-     * @param label the accessible label of the checkbox (ARIA role {@code checkbox})
+     * @param label the checkbox's full visible label
      * @return the matching {@code CheckboxElement}
      */
     public CheckboxElement getCheckbox(String label) {
