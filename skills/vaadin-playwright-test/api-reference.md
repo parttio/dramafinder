@@ -833,8 +833,8 @@ PlaywrightElement for `<vaadin-breadcrumbs-item>`, a single entry of a `Breadcru
 
 **Static factory methods:**
 
-- `BreadcrumbsItemElement getByText(Page page, String text)` — Get the first `<vaadin-breadcrumbs-item>` with the given text on the page.
-- `BreadcrumbsItemElement getByText(Locator locator, String text)` — Get the first `<vaadin-breadcrumbs-item>` with the given text within a locator scope.
+- `BreadcrumbsItemElement getByText(Page page, String text)` — Get the `<vaadin-breadcrumbs-item>` with the given text on the page.
+- `BreadcrumbsItemElement getByText(Locator locator, String text)` — Get the `<vaadin-breadcrumbs-item>` with the given text within a locator scope.
 - `BreadcrumbsItemElement getById(Page page, String id)` — Get a `BreadcrumbsItemElement` by its `id`, searching the entire page.
 - `BreadcrumbsItemElement getById(Locator locator, String id)` — Get a `BreadcrumbsItemElement` by its `id`, scoped to the given locator.
 - `BreadcrumbsItemElement getByTestId(Page page, String testId)` — Get a `BreadcrumbsItemElement` by its test id, searching the entire page.
@@ -1848,9 +1848,9 @@ PlaywrightElement for `<vaadin-message-list>`.
 - `String getMessageTime(int index)` — Get the time of the message at the given index.
 - `void assertMessageCount(int count)` — Assert that the list contains exactly the expected number of messages.
 - `void assertEmpty()` — Assert that the list contains no messages.
-- `void assertMessageText(int index, String expected)` — Assert that the message at the given index has the expected text.
-- `void assertMessageUserName(int index, String expected)` — Assert that the message at the given index has the expected user name.
-- `void assertMessageTime(int index, String expected)` — Assert that the message at the given index has the expected time.
+- `void assertMessageText(int index, String expected)` — Assert that the message at the given index has the expected text, retrying until the timeout (a message just added may not be rendered yet).
+- `void assertMessageUserName(int index, String expected)` — Assert that the message at the given index has the expected user name, retrying until the timeout.
+- `void assertMessageTime(int index, String expected)` — Assert that the message at the given index has the expected time, retrying until the timeout.
 
 ### MultiSelectComboBoxElement  `<vaadin-multi-select-combo-box>`
 

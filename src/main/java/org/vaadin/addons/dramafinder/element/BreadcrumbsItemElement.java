@@ -182,7 +182,12 @@ public class BreadcrumbsItemElement extends VaadinElement
     // --- Factory methods ---
 
     /**
-     * Get the first {@code <vaadin-breadcrumbs-item>} with the given text on the page.
+     * Get the {@code <vaadin-breadcrumbs-item>} with the given text on the page.
+     * <p>
+     * The text is matched in full and case-sensitively. No {@code .first()} is
+     * applied: two items with that text fail with a Playwright strict-mode error,
+     * so scope the lookup with {@link #getByText(Locator, String)} or use
+     * {@link BreadcrumbsElement#getItem(int)} when a page repeats a label.
      *
      * @param page the Playwright page
      * @param text the exact text of the item
@@ -190,12 +195,16 @@ public class BreadcrumbsItemElement extends VaadinElement
      */
     public static BreadcrumbsItemElement getByText(Page page, String text) {
         return new BreadcrumbsItemElement(page.locator(FIELD_TAG_NAME)
-                .and(page.getByText(text, new Page.GetByTextOptions().setExact(true))).first());
+                .and(page.getByText(text, new Page.GetByTextOptions().setExact(true))));
     }
 
     /**
-     * Get the first {@code <vaadin-breadcrumbs-item>} with the given text within a
+     * Get the {@code <vaadin-breadcrumbs-item>} with the given text within a
      * locator scope.
+     * <p>
+     * The text is matched in full and case-sensitively. No {@code .first()} is
+     * applied: two items with that text inside the scope fail with a Playwright
+     * strict-mode error.
      *
      * @param locator the scope to search within
      * @param text    the exact text of the item
@@ -203,7 +212,7 @@ public class BreadcrumbsItemElement extends VaadinElement
      */
     public static BreadcrumbsItemElement getByText(Locator locator, String text) {
         return new BreadcrumbsItemElement(locator.locator(FIELD_TAG_NAME)
-                .and(locator.getByText(text, new Locator.GetByTextOptions().setExact(true))).first());
+                .and(locator.getByText(text, new Locator.GetByTextOptions().setExact(true))));
     }
 
     // ── Lookup by id or test id ────────────────────────────────────────

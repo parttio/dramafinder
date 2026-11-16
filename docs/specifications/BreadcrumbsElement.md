@@ -90,7 +90,8 @@ BreadcrumbsItemElement itemByTestId = BreadcrumbsItemElement.getByTestId(trail.g
 Item lookup by text (`getItem(String)`, `BreadcrumbsItemElement.getByText`)
 matches the item's full text, so `getItem("Products")` does not match an item
 reading `Products archive`. When no item has the text, the returned element's
-locator matches nothing.
+locator matches nothing; when two items have it, using the element fails with
+a strict-mode error.
 
 ## Reading the trail
 
@@ -252,9 +253,9 @@ trail.assertCssClass("main-breadcrumbs");
   items closest to the root collapse first and the last item never does.
 - A collapsed item is not visible until the overflow is opened: open it before
   clicking such an item.
-- `getItem(String)` and `BreadcrumbsItemElement.getByText` keep `.first()`, so a
-  trail with two items of the same text resolves to the first one rather than
-  failing.
+- `getItem(String)` and `BreadcrumbsItemElement.getByText` match the whole text
+  and apply no `.first()`: a trail with two items of the same text fails with a
+  strict-mode error. Reach one of them with `getItem(int)`.
 
 ## See also
 

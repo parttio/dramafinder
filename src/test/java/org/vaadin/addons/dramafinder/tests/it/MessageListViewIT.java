@@ -40,6 +40,17 @@ public class MessageListViewIT extends SpringPlaywrightIT implements HasTestView
     }
 
     @Test
+    public void assertMessageTextWaitsForTheMessage() {
+        Locator secondList = page.locator(MessageListElement.FIELD_TAG_NAME).nth(1);
+        MessageListElement list = new MessageListElement(secondList);
+        list.assertEmpty();
+        // the message only renders a moment later, as after a submit
+        secondList.evaluate("el => setTimeout(() => el.items = [{text: 'Late message', userName: 'Eve'}], 500)");
+        list.assertMessageText(0, "Late message");
+        list.assertMessageUserName(0, "Eve");
+    }
+
+    @Test
     public void testEmptyList() {
         Locator secondList = page.locator(MessageListElement.FIELD_TAG_NAME).nth(1);
         MessageListElement emptyList = new MessageListElement(secondList);

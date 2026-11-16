@@ -138,6 +138,16 @@ public class BreadcrumbsViewIT extends SpringPlaywrightIT implements HasTestView
     }
 
     @Test
+    public void testRepeatedTextIsNotResolvedToTheFirstItem() {
+        BreadcrumbsElement repeated = BreadcrumbsElement.getByLabel(page, "Repeated breadcrumbs");
+        assertThat(repeated.getItem("Section").getLocator()).hasCount(2);
+        assertThat(BreadcrumbsItemElement.getByText(page, "Section").getLocator()).hasCount(2);
+        assertThat(BreadcrumbsItemElement.getByText(repeated.getLocator(), "Page").getLocator()).hasCount(1);
+        // a position reaches one of them
+        repeated.getItem(1).assertText("Section");
+    }
+
+    @Test
     public void testClickNavigates() {
         assertThat(page).hasURL(getUrl() + getView());
 
