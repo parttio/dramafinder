@@ -1016,7 +1016,7 @@ public class GridElement extends VaadinElement
      * @deprecated the header row count is no longer needed; use {@link #findRow(int)}. Will be
      *             removed in 3.0.
      */
-    @Deprecated(since = "2.0.3", forRemoval = true)
+    @Deprecated(since = "2.1.0", forRemoval = true)
     protected Optional<RowElement> findRow(int rowIndex, int headerRowCount) {
         return findRow(rowIndex);
     }

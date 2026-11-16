@@ -53,7 +53,7 @@ public class ContactViewIT extends SpringPlaywrightIT {
 <dependency>
     <groupId>org.vaadin.addons</groupId>
     <artifactId>dramafinder</artifactId>
-    <version>2.0.2</version>
+    <version>2.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
