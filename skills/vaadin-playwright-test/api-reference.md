@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.1.0-SNAPSHOT — 61 element wrappers.
+> DramaFinder 2.1.1-SNAPSHOT — 61 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -2204,6 +2204,9 @@ PlaywrightElement for `<vaadin-select>`.
 
 - `void selectItem(String item)` — Select an item by its visible label.
 - `String getValue()` — Get the selected value label for single-select.
+- `Locator getAriaLabelLocator()` — The value button, which carries the `aria-label` from Vaadin 25.4 on.
+- `String getAriaLabel()` — Read the accessible name set with `setAriaLabel(..)`: the value button's `aria-label` (Vaadin 25.4+), else the text of the screen-reader-only `sr-label` (up to 25.3).
+- `void assertAriaLabel(String ariaLabel)` — Assert the accessible name set with `setAriaLabel(..)`, read as `getAriaLabel()` does, retrying until it matches.
 - `void assertPlaceholder(String placeholder)` — Assert the placeholder shown by the value button.
 - `void assertValue(String expected)` — Assert the selected value label equals the expected string.
 
@@ -2789,8 +2792,8 @@ Mixin for components backed by a checkbox-like native input, i.e. one whose stat
 - `void assertChecked()` — Assert that the component is checked.
 - `void assertNotChecked()` — Assert that the component is not checked.
 - `void assertChecked(boolean checked)` — Assert the component's checked state.
-- `void check()` — Check the component.
-- `void uncheck()` — Uncheck the component.
+- `void check()` — Check the component by clicking its visible label, or the input when it has none.
+- `void uncheck()` — Uncheck the component by clicking its visible label, or the input when it has none.
 - `void setChecked(boolean checked)` — Check or uncheck the component.
 
 ### HasClearButtonElement

@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.element.shared;
 
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.options.WaitForSelectorState;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -84,16 +85,36 @@ public interface HasCheckedElement extends HasEnabledElement, HasAriaLabelElemen
         }
     }
 
-    /** Check the component. */
+    /**
+     * Check the component by clicking its visible label, or the input when it
+     * has none.
+     */
     default void check() {
-        getInputLocator().check();
+        clickTarget().check();
         waitAfterAction();
     }
 
-    /** Uncheck the component. */
+    /**
+     * Uncheck the component by clicking its visible label, or the input when it
+     * has none.
+     */
     default void uncheck() {
-        getInputLocator().uncheck();
+        clickTarget().uncheck();
         waitAfterAction();
+    }
+
+    /**
+     * What {@link #check()} and {@link #uncheck()} click. From Vaadin 25.4 the
+     * native input stretches under the slotted label, which is painted on top,
+     * so a click aimed at the input lands on the label and Playwright rejects it
+     * as intercepted. Playwright accepts a {@code <label>} for {@code check()}
+     * and reads the state from the control it labels.
+     */
+    private Locator clickTarget() {
+        Locator input = getInputLocator();
+        input.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED));
+        Locator label = getLocator().locator(":scope > label[slot=\"label\"]");
+        return label.isVisible() ? label : input;
     }
 
     /**

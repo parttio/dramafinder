@@ -117,9 +117,10 @@ helper.assertHelperHasText("Internal helper");
 
 ## Accessible name
 
-The select renders its `aria-label` as a screen-reader-only label
-(`slot="sr-label"`); `getAriaLabel()` and `assertAriaLabel(..)` read that.
-With `setAriaLabelledBy(..)` that label is hidden, so assert `null`:
+From Vaadin 25.4 the select puts its `aria-label` on the value button; up to
+25.3 it rendered it as a screen-reader-only label (`slot="sr-label"`).
+`getAriaLabel()` and `assertAriaLabel(..)` read either. With
+`setAriaLabelledBy(..)` there is no ARIA label, so assert `null`:
 
 ```java
 find(page, SelectElement.class).withAccessibleName("Invisible label").single()
