@@ -77,6 +77,41 @@ final class ComboBoxItemLabels {
         }
     }
 
+    /**
+     * Scroll the open overlay to the first item whose label is exactly {@code label}, so the
+     * virtual list renders it and it can be clicked. Pages are loaded in order until the label
+     * is found; nothing is scrolled when no item has it, or when the items change while they are
+     * searched, which leaves the caller's click to fail or succeed on its own.
+     *
+     * @param locator the combo box host, with its overlay open
+     * @param label   the item's full label
+     * @throws IllegalStateException if the items do not load before the timeout
+     */
+    static void scrollTo(Locator locator, String label) {
+        var seen = new ArrayList<>(awaitState(locator, -1, "the combo box items did not load").labels());
+        while (true) {
+            int found = seen.indexOf(label);
+            if (found >= 0) {
+                locator.evaluate(SCROLL_JS, found);
+                return;
+            }
+            int missing = seen.indexOf(null);
+            if (missing < 0) {
+                return;
+            }
+            locator.evaluate(SCROLL_JS, missing);
+            var current = awaitState(locator, missing, "combo box item " + missing + " did not load").labels();
+            if (current.size() != seen.size()) {
+                return;
+            }
+            for (int i = 0; i < current.size(); i++) {
+                if (current.get(i) != null) {
+                    seen.set(i, current.get(i));
+                }
+            }
+        }
+    }
+
     private static List<String> readAll(Locator locator) {
         var seen = new ArrayList<>(awaitState(locator, -1, "the combo box items did not load").labels());
         for (int missing = seen.indexOf(null); missing >= 0; missing = seen.indexOf(null)) {

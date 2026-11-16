@@ -92,7 +92,8 @@ fruits.close();
 ```
 
 Lazy data providers behave identically: the filter and the selection go
-through the server, and every action waits for the round-trip.
+through the server, and every action waits for the round-trip. Selecting or
+deselecting an item that is not rendered yet scrolls the overlay to it first.
 
 ```java
 MultiSelectComboBoxElement lazy = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");

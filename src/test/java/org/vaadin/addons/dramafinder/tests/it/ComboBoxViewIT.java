@@ -261,6 +261,45 @@ public class ComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testLazySelectionOfAnItemNotRenderedYet() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+        // past the rows the overlay renders, and past the first loaded page (issue #70)
+        comboBox.selectItem("Item 30");
+        comboBox.assertValue("Item 30");
+        comboBox.selectItem("Item 499");
+        comboBox.assertValue("Item 499");
+        assertThat(page.locator("#lazy-selected-value")).hasText("Item 499");
+    }
+
+    @Test
+    public void testLazyFilterAndSelectAnItemNotRenderedYet() {
+        ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+        // "Item" matches all 500 items: Item 250 is not rendered until scrolled to
+        comboBox.filterAndSelectItem("Item", "Item 250");
+        comboBox.assertValue("Item 250");
+    }
+
+    @Test
+    public void testSelectingClosesTheOverlay() {
+        // issue #71: after each way of selecting, the overlay is closed
+        ComboBoxElement basic = ComboBoxElement.getByLabel(page, "Sort by");
+        ComboBoxElement lazy = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+        for (ComboBoxElement comboBox : List.of(basic, lazy)) {
+            String first = comboBox == basic ? "Rating: high to low" : "Item 2";
+            String second = comboBox == basic ? "Rating: low to high" : "Item 120";
+            comboBox.selectItem(first);
+            comboBox.assertClosed();
+            comboBox.assertValue(first);
+            comboBox.setValue(second);
+            comboBox.assertClosed();
+            comboBox.assertValue(second);
+            comboBox.filterAndSelectItem(first, first);
+            comboBox.assertClosed();
+            comboBox.assertValue(first);
+        }
+    }
+
+    @Test
     public void testLazyFilterAndSelect() {
         ComboBoxElement comboBox = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
         comboBox.filterAndSelectItem("Item 250", "Item 250");

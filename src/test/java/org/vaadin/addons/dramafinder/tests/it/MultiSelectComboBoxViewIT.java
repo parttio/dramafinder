@@ -210,6 +210,18 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testLazySelectionOfItemsNotRenderedYet() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");
+        // past the rows the overlay renders, and past the first loaded page (issue #70)
+        comboBox.selectItems("Item 30", "Item 480");
+        comboBox.close();
+        comboBox.assertSelectedItems("Item 30", "Item 480");
+        comboBox.deselectItem("Item 480");
+        comboBox.close();
+        comboBox.assertSelectedItems("Item 30");
+    }
+
+    @Test
     public void testLazyFilterAndSelect() {
         MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");
         comboBox.filterAndSelectItem("Item 250", "Item 250");
