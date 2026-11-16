@@ -227,7 +227,80 @@ public final class RouteNavigation {
         }
     }
 
+    // ── Reading the current location ───────────────────────────────────
+
+    /**
+     * Get the path the browser is on, relative to the application root, with no
+     * leading or trailing slash and without the query string, e.g.
+     * {@code "orders/42"}; {@code ""} for the root.
+     * <p>
+     * Reads {@code location.href} in the page, so it already sees a client-side
+     * navigation ({@code RouterLink}, {@code history.pushState}) that
+     * {@link Page#url()} only reports after the next call to the browser. Percent
+     * escapes are decoded. Reads once, without waiting; to wait for a path, use
+     * {@link #assertPath(Page, String, String)}.
+     *
+     * @param page    the Playwright page
+     * @param baseUrl the application's base URL
+     * @return the path, or {@code null} when the browser is outside the base URL
+     *         (another host, or a path above the context path)
+     */
+    public static String currentPath(Page page, String baseUrl) {
+        URI current = URI.create(currentUrl(page));
+        URI base = URI.create(baseUrl);
+        if (!Objects.equals(current.getScheme(), base.getScheme())
+                || !Objects.equals(current.getRawAuthority(), base.getRawAuthority())) {
+            return null;
+        }
+        String root = strip(trimTrailingSlash(base.getPath() == null ? "" : base.getPath()));
+        String path = strip(current.getPath() == null ? "" : current.getPath());
+        if (!root.isEmpty()) {
+            if (!path.equals(root) && !path.startsWith(root + "/")) {
+                return null;
+            }
+            path = path.substring(root.length());
+        }
+        return trimTrailingSlash(strip(path));
+    }
+
+    /**
+     * Whether the browser is on {@code view} right now: the non-asserting form of
+     * {@link #assertAt(Page, String, Class)}, reading the URL the way
+     * {@link #currentPath(Page, String)} does. Reads once, without waiting.
+     *
+     * @param page    the Playwright page
+     * @param baseUrl the application's base URL
+     * @param view    a class annotated with {@code @Route}
+     * @return {@code true} when the path matches the view's route template
+     */
+    public static boolean isAt(Page page, String baseUrl, Class<?> view) {
+        return urlPattern(baseUrl, view).matcher(currentUrl(page)).find();
+    }
+
+    /**
+     * Get the value of a query parameter of the URL the browser is on, decoded;
+     * reads the URL the way {@link #currentPath(Page, String)} does, once,
+     * without waiting.
+     *
+     * @param page the Playwright page
+     * @param name the query parameter name
+     * @return the value ({@code ""} for a parameter without one), or empty when
+     *         the URL has no such parameter
+     */
+    public static Optional<String> queryParameter(Page page, String name) {
+        return Optional.ofNullable(queryParameter(currentUrl(page), name));
+    }
+
     // ── Internals ──────────────────────────────────────────────────────
+
+    // location.href sees a pushState navigation before Playwright's page.url() does
+    private static String currentUrl(Page page) {
+        return (String) page.evaluate("() => location.href");
+    }
+
+    private static String trimTrailingSlash(String path) {
+        return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
+    }
 
     private static final String QUERY_AND_FRAGMENT = "(\\?[^#]*)?(#.*)?$";
 

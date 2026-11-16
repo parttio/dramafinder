@@ -48,7 +48,7 @@ class GenerateApiReference {
     // them — leaving them out is what sent agents to `javap -c` on the jar.
     static final List<String> SETUP_TYPES = List.of("AbstractBasePlaywrightIT", "spring/SpringPlaywrightIT",
             "spring/SpringTestLogin", "spring/TestLoginConfiguration",
-            "HasTestView", "AutoWait", "RouteNavigation", "ClientSideErrors");
+            "HasTestView", "AutoWait", "RouteNavigation", "VaadinClient", "ClientSideErrors");
 
     // Method keys (name/arity) declared by the shared mixins and by VaadinElement.
     // They are what tells a plain mixin implementation apart from an override
@@ -298,9 +298,13 @@ class GenerateApiReference {
         md.append("inside a component) returns the query listed for `X` in the element index, ");
         md.append("filters narrow it, and a terminal returns the element. Only the filters that ");
         md.append("fit the component compile — `withLabel` on a field, `withText` on a button. ");
-        md.append("Every query has `withId`, `withTestId`, `withAttribute`, `withClassName` and ");
+        md.append("Every query has `withId`, `withTestId`, `withAttribute`, `withClassName`, `withTheme` and ");
         md.append("`withAccessibleName` (read on the component or its own input, never a nested one); ");
-        md.append("filters return new queries, and the result stays a lazy Playwright locator.\n\n");
+        md.append("filters return new queries, and the result stays a lazy Playwright locator. ");
+        md.append("Queries search the light DOM: elements inside a shadow root (a Vaadin component's ");
+        md.append("internals) are left out unless `includingShadowDom()` follows `find`. A component ");
+        md.append("without an element class is queried by tag, `find(page, \"my-tag\")`, which returns ");
+        md.append("`GenericElement`s and offers the label, text and placeholder filters.\n\n");
         md.append("```java\n");
         md.append("import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;\n\n");
         md.append("TextFieldElement name = find(page, TextFieldElement.class).withLabel(\"Name\").single();\n");
@@ -309,7 +313,7 @@ class GenerateApiReference {
         md.append("```\n\n");
         md.append("`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the ");
         md.append("**whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` ");
-        md.append("match a case-insensitive substring. Text filters read the component's own ");
+        md.append("match a case-insensitive substring, as does `withPlaceholderContaining`. Text filters read the component's own ");
         md.append("text: slotted children (icons, tooltips) and shadow-rendered content are left out. ");
         md.append("`single()` fails with a strict-mode error ");
         md.append("when several components match; `first()`, `get(int)`, `all()`, `count()` and ");

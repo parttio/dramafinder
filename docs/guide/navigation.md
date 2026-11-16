@@ -74,6 +74,22 @@ assertQueryParameter("note", "a b");   // compared decoded
 assertQueryParameter("tab", null);     // no "tab" parameter
 ```
 
+### Reading where the browser is
+
+To branch on the location rather than assert it, read it. These read once,
+without waiting, from `location.href`, so they already see a client-side
+navigation (`RouterLink`, `history.pushState`) that `page.url()` reports only
+after the next call to the browser:
+
+```java
+String path = currentPath();                     // "nav/user/42/edit": no slashes, no query
+boolean onProfile = isAt(ProfileView.class);     // the non-asserting assertAt
+Optional<String> tab = queryParameter("tab");    // decoded; empty when absent
+```
+
+`currentPath()` is `null` when the browser has left the application (another
+host, or a path above the context path).
+
 ## Without the base class
 
 The same helpers are static methods on `RouteNavigation`, for tests that manage
@@ -86,6 +102,8 @@ String base = "http://localhost:" + port + "/";
 RouteNavigation.navigate(page, base, ProfileView.class);
 RouteNavigation.assertAt(page, base, ProfileView.class);
 RouteNavigation.open(page, base, "orders?status=open");
+String current = RouteNavigation.currentPath(page, base);
+Optional<String> status = RouteNavigation.queryParameter(page, "status");
 String path = RouteNavigation.pathOf(UserEditView.class, new RouteParameters("userId", "42"));
 ```
 

@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder;
 
+import java.util.Optional;
+
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
@@ -164,6 +166,40 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
      */
     protected void assertQueryParameter(String name, String value) {
         RouteNavigation.assertQueryParameter(page, name, value);
+    }
+
+    /**
+     * Get the path the browser is on under {@link #getUrl()}, without leading
+     * or trailing slash or query string; reads once, without waiting. See
+     * {@link RouteNavigation#currentPath(Page, String)}.
+     *
+     * @return the path, or {@code null} when the browser is outside the
+     *         application
+     */
+    protected String currentPath() {
+        return RouteNavigation.currentPath(page, getUrl());
+    }
+
+    /**
+     * Whether the browser is on {@code view} right now, without waiting; the
+     * non-asserting form of {@link #assertAt(Class)}.
+     *
+     * @param view a class annotated with {@code @Route}
+     * @return {@code true} when the path matches the view's route
+     */
+    protected boolean isAt(Class<?> view) {
+        return RouteNavigation.isAt(page, getUrl(), view);
+    }
+
+    /**
+     * Get the decoded value of a query parameter of the current URL, without
+     * waiting.
+     *
+     * @param name the query parameter name
+     * @return the value, or empty when the URL has no such parameter
+     */
+    protected Optional<String> queryParameter(String name) {
+        return RouteNavigation.queryParameter(page, name);
     }
 
     /**
