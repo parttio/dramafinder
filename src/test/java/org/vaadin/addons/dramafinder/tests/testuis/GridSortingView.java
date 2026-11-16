@@ -42,6 +42,7 @@ public class GridSortingView extends Main {
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
         var firstName = grid.addColumn(GridPerson::firstName).setHeader("First Name").setSortable(true);
         var lastName = grid.addColumn(GridPerson::lastName).setHeader("Last Name").setSortable(true);
+        lastName.setId("last-name-column");
         ListDataProvider<GridPerson> dataProvider = new ListDataProvider<>(GridBasicView.generatePersons(20));
         grid.setItems(dataProvider);
 

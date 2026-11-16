@@ -136,6 +136,18 @@ is first unless the columns were reordered). To stay independent of the selectio
 mode, look a column up by header text (`findCell(row, "Email")`) or by id
 (`getColumnIndexById`) instead of hard-coding its index.
 
+To convert between the two, `getColumns()` lists the visible columns in display
+order with their id and whether each is the selection column, read in one
+script; `isSelectionColumn(int)` checks one index:
+
+```java
+List<GridElement.ColumnInfo> columns = grid.getColumns();
+// [ColumnInfo[index=0, id=null, selectionColumn=true], ColumnInfo[index=1, id=first-name, ...], ...]
+int flowIndex = 1;
+int index = columns.stream().filter(c -> !c.selectionColumn()).toList().get(flowIndex).index();
+grid.isSelectionColumn(0);   // true in a multi-select grid
+```
+
 A column with no header text cannot be found with `findHeaderCellByText`; give it
 an id in Flow (`Column.setId("email")`, which lands on the `<vaadin-grid-column>`)
 and look it up by that id. `Column.setKey(..)` stays on the server and is not
@@ -219,6 +231,16 @@ Locator header = grid.findHeaderCell(2).orElseThrow().getCellContentLocator();
 TextFieldElement filter = find(header, TextFieldElement.class)
         .withPlaceholder("Filter email...").single();
 filter.setValue("test");
+```
+
+`getHeaderContentLocator(int)` is one locator for the content of the column's
+header cells in **every** shown header row (a group header above, a filter row
+below), so a lookup does not need to know which row holds the component. It
+matches nothing when the column has no shown header cell;
+`getFooterContentLocator(int)` is the footer counterpart.
+
+```java
+TextFieldElement filter = TextFieldElement.getById(grid.getHeaderContentLocator(2), "last-filter");
 ```
 
 ### Several header rows

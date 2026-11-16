@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -174,6 +175,37 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
         filter.setValue("Last1");
         // Last1 and Last10 to Last19
         grid.assertRowCount(11);
+    }
+
+    @Test
+    public void testHeaderContentLocatorCoversEveryHeaderRow() {
+        GridElement grid = GridElement.getById(page, "filter-grid");
+        // "Name" group, "Last Name" and the filter row
+        assertThat(grid.getHeaderContentLocator(2)).hasCount(3);
+        TextFieldElement filter = TextFieldElement.getById(grid.getHeaderContentLocator(2), "last-filter");
+        filter.setValue("Last1");
+        grid.assertRowCount(11);
+        // the selection column has its select-all checkbox only
+        assertThat(grid.getHeaderContentLocator(0).locator("vaadin-text-field")).hasCount(0);
+        // no footer: a locator that matches nothing
+        assertThat(grid.getFooterContentLocator(1)).hasCount(0);
+        assertThrows(IllegalArgumentException.class, () -> grid.getHeaderContentLocator(9));
+    }
+
+    @Test
+    public void testColumnsListTheSelectionColumn() {
+        GridElement grid = GridElement.getById(page, "filter-grid");
+        var columns = grid.getColumns();
+        assertEquals(List.of(new GridElement.ColumnInfo(0, null, true),
+                new GridElement.ColumnInfo(1, null, false),
+                new GridElement.ColumnInfo(2, "last-name-column", false)), columns);
+        assertTrue(grid.isSelectionColumn(0));
+        assertFalse(grid.isSelectionColumn(2));
+        assertThrows(IllegalArgumentException.class, () -> grid.isSelectionColumn(3));
+        // Flow's index 1 (no selection column) is this class's index 2
+        assertEquals(2, columns.stream().filter(c -> !c.selectionColumn()).toList().get(1).index());
+
+        assertFalse(GridElement.getById(page, "sortable-grid").getColumns().get(0).selectionColumn());
     }
 
     @Test
