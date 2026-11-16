@@ -74,4 +74,11 @@ public class GridFooterViewIT extends SpringPlaywrightIT {
         grid.assertFooterPresent("Emails");
         grid.assertFooterNotPresent("Does not exist");
     }
+
+    @Test
+    public void testFooterContentLocator() {
+        GridElement grid = GridElement.getById(page, "footer-grid");
+        assertThat(grid.getFooterContentLocator(0)).hasCount(1);
+        assertThat(grid.getFooterContentLocator(0)).hasText(java.util.regex.Pattern.compile("^Total: \\d+$"));
+    }
 }

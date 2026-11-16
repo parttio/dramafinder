@@ -22,6 +22,14 @@ public class AccordionViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testGetFactories() {
+        AccordionElement first = AccordionElement.get(page);
+        first.assertCssClass("custom-css");
+        AccordionElement scoped = AccordionElement.get(page.locator("main"));
+        scoped.assertPanelCount(4);
+    }
+
+    @Test
     public void testAccordion() {
         AccordionElement accordion = new AccordionElement(page.locator(".custom-css"));
         accordion.assertPanelCount(4);

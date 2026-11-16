@@ -7,7 +7,7 @@ validation and enabled state.
 
 | | |
 |---|---|
-| Web component | `<vaadin-radio-group>` (items: `<vaadin-radio-button>`) |
+| Web component | `<vaadin-radio-group>` (items: `<vaadin-radio-button>`, wrapped by `RadioButtonElement`) |
 | Flow component | `com.vaadin.flow.component.radiobutton.RadioButtonGroup` |
 | Wrapper | `org.vaadin.addons.dramafinder.element.RadioButtonGroupElement` |
 | Typed query | `find(page, RadioButtonGroupElement.class)` → `FieldQuery` |
@@ -58,8 +58,8 @@ group.setValue("Option 3");        // same as selectByLabel("Option 3")
 group.assertValue("Option 3");
 ```
 
-The radio button is matched by its **whole** accessible name (ARIA role
-`radio`), case-sensitively: `selectByLabel("Option 1")` never picks
+The radio button is matched by its **whole** visible label,
+case-sensitively: `selectByLabel("Option 1")` never picks
 `Option 10`, and two radios sharing a label inside the group fail with a
 Playwright strict-mode error rather than resolving to the first one in the DOM.
 
@@ -89,7 +89,7 @@ group.assertSelectedLabel("Option 2");  // the label text of the checked radio
 ```
 
 - `assertValue(label)` asserts that exactly one radio button is checked and that
-  it is the one whose accessible name is `label`. `null` or `""` asserts that no
+  it is the one whose visible label is `label`. `null` or `""` asserts that no
   radio button is checked.
 - `assertSelectedLabel(label)` compares the text of the checked radio's `label`
   slot (whitespace collapsed) with `label`, exactly. `null` asserts that nothing
@@ -109,22 +109,24 @@ label, not the item key held in `value`.
 
 ## Individual radio buttons
 
-`getRadioButtonByLabel(String)` returns the `<vaadin-radio-button>` wrapper for
-one item. Its class, `RadioButtonElement`, is **package-private**: it is meant
-for internal use by the group, its factory is package-private too, and the
-checked-state methods it inherits from `HasCheckedElement` cannot be called on
-the `RadioButtonElement` type from a test. Drive radio buttons through the
-group. When a test really needs one radio, hold it as the public
-`HasCheckedElement` mixin:
+`getRadioButtonByLabel(String)` returns the `RadioButtonElement` for one item,
+the wrapper of `<vaadin-radio-button>`. It has the checked-state, label,
+helper, focus and enabled-state API of the other check controls:
 
 ```java
 RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup");
-group.selectByLabel("Option 1");
-
-HasCheckedElement option1 = group.getRadioButtonByLabel("Option 1");
-option1.assertChecked();
-option1.assertEnabled();
+RadioButtonElement option2 = group.getRadioButtonByLabel("Option 2");
+option2.assertNotChecked();
+option2.check();
+option2.assertChecked();
+group.assertValue("Option 2");
 ```
+
+`RadioButtonElement` also has the usual factories (`getByLabel`,
+`getByLabelContaining`, `getById`, `getByTestId`, each with a `Page` and a
+`Locator` overload) and a typed query, `find(page, RadioButtonElement.class)`
+→ `FieldQuery`. Flow has no standalone radio button, so scope these to the
+group: `RadioButtonElement.getByLabel(group.getLocator(), "Option 3")`.
 
 ## Enabled and disabled
 
@@ -169,8 +171,6 @@ group.assertValid();
   the item string.
 - Item labels match exactly and case-sensitively; a partial label reaches
   nothing.
-- `RadioButtonElement` is package-private. Prefer group-level methods; if you
-  need one radio, assign `getRadioButtonByLabel(...)` to `HasCheckedElement`.
 - The group has no theme, CSS-class or tooltip helpers; use `getLocator()` with
   Playwright's `assertThat` if you need them.
 

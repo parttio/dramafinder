@@ -78,17 +78,18 @@ public class BreadcrumbsElement extends VaadinElement
     }
 
     /**
-     * Get the item showing the given text. The text is matched in full, so
-     * {@code "Products"} does not match an item reading {@code "Products archive"}.
+     * Get the item showing the given text. The text is matched in full and
+     * case-sensitively, so {@code "Products"} does not match an item reading
+     * {@code "Products archive"}. No {@code .first()} is applied: two items with
+     * that text fail with a Playwright strict-mode error.
      *
      * @param text the exact text of the item
-     * @return the first matching item; its locator matches nothing when no item
-     *         has that text
+     * @return the matching item; its locator matches nothing when no item has
+     *         that text
      */
     public BreadcrumbsItemElement getItem(String text) {
         return new BreadcrumbsItemElement(getItemsLocator()
-                .and(getLocator().getByText(text, new Locator.GetByTextOptions().setExact(true)))
-                .first());
+                .and(getLocator().getByText(text, new Locator.GetByTextOptions().setExact(true))));
     }
 
     /**

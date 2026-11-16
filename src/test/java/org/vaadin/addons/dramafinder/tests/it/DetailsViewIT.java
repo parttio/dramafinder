@@ -22,6 +22,13 @@ public class DetailsViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testGetBySummaryTextScopedToALocator() {
+        DetailsElement details = DetailsElement.getBySummaryText(page.locator("main"), "Basic Details");
+        details.assertClosed();
+        assertThat(DetailsElement.getBySummaryText(page.locator("main"), "Basic").getLocator()).hasCount(0);
+    }
+
+    @Test
     public void testBasicDetails() {
         DetailsElement details = DetailsElement.getBySummaryText(page, "Basic Details");
         details.assertClosed();

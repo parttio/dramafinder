@@ -81,6 +81,8 @@ assertEquals("Enter text here", select.getPlaceholder());
 
 On a select, `assertPlaceholder(text)` checks that the value button is in its
 placeholder state and shows `text`, so it fails once an item is selected.
+`assertPlaceholder(null)` asserts that the select has no placeholder at all,
+whether an item is selected or not.
 
 ## Label, helper, prefix and tooltip
 

@@ -10,7 +10,7 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
  * PlaywrightElement for Vaadin Tree Grid.
  * <p>
  * Extends {@link GridElement} with tree-specific APIs for expanding and collapsing
- * rows, querying hierarchy levels, and performing bulk expand/collapse by level.
+ * rows and querying their hierarchy level, expanded and leaf state.
  * <p>
  * TreeGrid renders using the same {@code vaadin-grid} web component as Grid.
  * The hierarchy is expressed through {@code vaadin-grid-tree-toggle} elements

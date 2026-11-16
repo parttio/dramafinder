@@ -23,6 +23,17 @@ public class BreadcrumbsView extends Main {
     public BreadcrumbsView() {
         add(new H2("Trail"), createTrail());
         add(new H2("Narrow trail"), createNarrowTrail());
+        add(new H2("Repeated label"), createRepeatedTrail());
+    }
+
+    /** A trail where two items read the same text. */
+    private Breadcrumbs createRepeatedTrail() {
+        Breadcrumbs breadcrumbs = new Breadcrumbs(Breadcrumbs.Mode.MANUAL);
+        breadcrumbs.setAriaLabel("Repeated breadcrumbs");
+        breadcrumbs.add(new BreadcrumbsItem("Section", "card"),
+                new BreadcrumbsItem("Section", "card"),
+                new BreadcrumbsItem("Page"));
+        return breadcrumbs;
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import java.util.Optional;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.PlaywrightAssertions;
@@ -7,6 +9,7 @@ import com.vaadin.flow.router.RouteParameters;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.vaadin.addons.dramafinder.RouteNavigation;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.ArticleView;
@@ -17,6 +20,9 @@ import org.vaadin.addons.dramafinder.tests.testuis.navigation.TopLevelView;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.UserEditView;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -92,5 +98,37 @@ public class RouteNavigationIT extends SpringPlaywrightIT {
         assertAt(ProfileView.class);
         assertQueryParameter("tab", "2");
         assertQueryParameter("note", "a b");
+    }
+
+    @Test
+    public void readsTheCurrentLocation() {
+        navigate(UserEditView.class, new RouteParameters("userId", "42"));
+        assertEquals("nav/user/42/edit", currentPath());
+        assertTrue(isAt(UserEditView.class));
+        assertFalse(isAt(ProfileView.class));
+        assertEquals(Optional.empty(), queryParameter("tab"));
+
+        navigate(ProfileView.class);
+        ButtonElement.getByText(page, "Open tab 2").click();
+        assertEquals(Optional.of("2"), queryParameter("tab"));
+        assertEquals(Optional.of("a b"), queryParameter("note"));
+        assertEquals("nav/profile", currentPath());
+    }
+
+    @Test
+    public void readsAPushStateNavigationAtOnce() {
+        navigate(GreetingView.class);
+        // no browser call in between: page.url() may not have seen it yet
+        page.evaluate("url => history.pushState({}, '', url)", getUrl() + "top-level/?q=caf%C3%A9");
+        assertEquals("top-level", currentPath());
+        assertTrue(isAt(TopLevelView.class));
+        assertEquals(Optional.of("café"), queryParameter("q"));
+    }
+
+    @Test
+    public void thePathIsNullOutsideTheApplication() {
+        navigate(GreetingView.class);
+        assertNull(RouteNavigation.currentPath(page, getUrl() + "other-context/"));
+        assertEquals("", RouteNavigation.currentPath(page, getUrl() + "nav/greeting"));
     }
 }

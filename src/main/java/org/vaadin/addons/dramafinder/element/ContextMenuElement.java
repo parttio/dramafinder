@@ -12,11 +12,13 @@ import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 /**
- * PlaywrightElement for context menu overlays {@code <vaadin-context-menu-overlay>}.
+ * PlaywrightElement for an open {@code <vaadin-context-menu>}.
  * <p>
  * Provides helpers to open a menu via a context-click on the target, inspect
- * the overlay list box, and pick menu items by their accessible label using
- * the {@code menu} role.
+ * its list box, open submenus, and pick menu items by their accessible label
+ * using the {@code menu} role. The locator points at the
+ * {@code vaadin-context-menu} host (with {@code [opened]}), not at an overlay
+ * element.
  */
 public class ContextMenuElement extends VaadinElement implements HasStyleElement {
 
@@ -27,8 +29,13 @@ public class ContextMenuElement extends VaadinElement implements HasStyleElement
     private static final double OPEN_TIMEOUT_MS = 2000;
 
     /**
-     * Create a {@code ContextMenuElement} from the page overlay.
-     * Get the first opened context menu
+     * Create a {@code ContextMenuElement} for the open context menu on the page.
+     * <p>
+     * Matches every {@code vaadin-context-menu[opened]} with no {@code .first()}:
+     * while a submenu is open it matches too, and using the element fails with a
+     * strict-mode error. Reach a submenu through {@link #openSubMenu(String)}.
+     *
+     * @param page the Playwright page
      */
     public ContextMenuElement(Page page) {
         super(page.locator(FIELD_TAG_NAME + "[opened]"));

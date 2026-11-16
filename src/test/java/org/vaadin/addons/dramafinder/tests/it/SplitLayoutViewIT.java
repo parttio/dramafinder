@@ -19,6 +19,13 @@ public class SplitLayoutViewIT extends SpringPlaywrightIT implements HasTestView
     }
 
     @Test
+    public void testGetScopedToALocator() {
+        SplitLayoutElement split = SplitLayoutElement.get(page.locator("main"));
+        split.assertHorizontal();
+        assertThat(split.getPrimaryLocator().getByText("Primary 1")).isVisible();
+    }
+
+    @Test
     public void testDefaultHorizontal() {
         SplitLayoutElement split = SplitLayoutElement.get(page);
         assertThat(split.getLocator()).isVisible();

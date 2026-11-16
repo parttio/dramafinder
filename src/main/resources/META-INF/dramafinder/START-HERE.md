@@ -98,7 +98,10 @@ also constructible from a `Locator`: `new TextFieldElement(someLocator)`. For on
 grammar on every element, use the typed query builder
 (`find(page, TextFieldElement.class).withLabel("Name").single()`, see "Typed queries"
 in the reference): it only offers the filters that fit the component, and
-`element.find(X.class)` searches inside a dialog or layout.
+`element.find(X.class)` searches inside a dialog or layout. Queries search the light
+DOM, leaving out the internals Vaadin components render in their shadow roots
+(`.includingShadowDom()` opts out). A component without a wrapper is found by tag,
+`find(page, "my-component").withText("Save").single()`, as a `GenericElement`.
 
 **A grid cell has two locators.** `getTableCellLocator()` is the `<td>`; the rendered
 content lives in a `<vaadin-grid-cell-content>` elsewhere in the DOM, reachable via

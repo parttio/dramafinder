@@ -7,6 +7,7 @@ import org.vaadin.addons.dramafinder.element.IntegerFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,6 +72,9 @@ public class IntegerFieldViewIT extends SpringPlaywrightIT {
         IntegerFieldElement integerField = IntegerFieldElement.getByLabel(page, "With Controls");
         integerField.assertVisible();
         integerField.assertHasControls(true);
+        assertTrue(integerField.getHasControls());
+        assertFalse(IntegerFieldElement.getByLabel(page, "Quantity").getHasControls());
+        IntegerFieldElement.getByLabel(page, "Quantity").assertHasControls(false);
 
         // Assuming the field is empty initially
         integerField.assertValue("");

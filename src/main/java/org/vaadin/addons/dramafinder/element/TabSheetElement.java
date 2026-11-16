@@ -29,9 +29,24 @@ public class TabSheetElement extends VaadinElement implements Findable<Component
         this.tabsElement = new TabsElement(locator.locator(":scope > " + TabsElement.FIELD_TAG_NAME));
     }
 
-    /** Get the first tabsheet instance on the page. */
+    /**
+     * Get the first {@code <vaadin-tabsheet>} on the page.
+     *
+     * @param page the Playwright page
+     * @return the first {@code TabSheetElement}
+     */
     public static TabSheetElement get(Page page) {
         return new TabSheetElement(page.locator(FIELD_TAG_NAME).first());
+    }
+
+    /**
+     * Get the first {@code <vaadin-tabsheet>} within a locator scope.
+     *
+     * @param locator the scope to search within
+     * @return the first {@code TabSheetElement} inside the scope
+     */
+    public static TabSheetElement get(Locator locator) {
+        return new TabSheetElement(locator.locator(FIELD_TAG_NAME).first());
     }
 
     /**

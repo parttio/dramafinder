@@ -10,6 +10,7 @@ import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-message-list>}.
@@ -134,21 +135,21 @@ public class MessageListElement extends VaadinElement implements HasStyleElement
     }
 
     /**
-     * Assert that the message at the given index has the expected text.
+     * Assert that the message at the given index has the expected text,
+     * retrying until the timeout (a message just added may not be rendered yet).
      *
      * @param index    zero-based index
      * @param expected expected message text
      */
     public void assertMessageText(int index, String expected) {
-        String actual = getMessageText(index);
-        if (!actual.equals(expected)) {
-            throw new AssertionError(
-                    "Expected message text: \"" + expected + "\" but was: \"" + actual + "\"");
-        }
+        Locator message = getMessage(index);
+        assertEventually(getLocator().page(), "Message " + index + " text",
+                () -> message.count() == 0 ? null : getMessageText(index), expected);
     }
 
     /**
-     * Assert that the message at the given index has the expected user name.
+     * Assert that the message at the given index has the expected user name,
+     * retrying until the timeout.
      *
      * @param index    zero-based index
      * @param expected expected user name
@@ -158,7 +159,8 @@ public class MessageListElement extends VaadinElement implements HasStyleElement
     }
 
     /**
-     * Assert that the message at the given index has the expected time.
+     * Assert that the message at the given index has the expected time,
+     * retrying until the timeout.
      *
      * @param index    zero-based index
      * @param expected expected time text

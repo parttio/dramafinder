@@ -21,6 +21,7 @@ import org.vaadin.addons.dramafinder.element.shared.HasTooltipElement;
 import org.vaadin.addons.dramafinder.element.shared.HasValidationPropertiesElement;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
 /**
  * PlaywrightElement for {@code <vaadin-select>}.
@@ -103,10 +104,26 @@ public class SelectElement extends VaadinElement
         return getInputLocator();
     }
 
+    /**
+     * Assert the placeholder shown by the value button.
+     * <p>
+     * {@code vaadin-select} does not reflect {@code placeholder} on its host: the
+     * value button shows it while nothing is selected. A non-null placeholder
+     * asserts that the button currently shows it; {@code null} asserts that the
+     * select has no placeholder at all (its {@code placeholder} property is unset
+     * or empty), selected item or not.
+     *
+     * @param placeholder the expected placeholder, or {@code null} for none
+     */
     @Override
     public void assertPlaceholder(String placeholder) {
-        assertThat(getInputLocator()).hasAttribute("placeholder", "");
-        assertThat(getInputLocator()).hasText(placeholder);
+        if (placeholder != null) {
+            assertThat(getInputLocator()).hasAttribute("placeholder", "");
+            assertThat(getInputLocator()).hasText(placeholder);
+        } else {
+            assertEventually(getLocator().page(), "Select placeholder", this::getPlaceholder,
+                    actual -> actual == null || actual.isEmpty(), "none");
+        }
     }
 
     /**

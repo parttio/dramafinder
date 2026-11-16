@@ -25,7 +25,8 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Checkbox` | `CheckboxElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()`, `assertIndeterminate()` |
 | `Switch` (experimental, Vaadin 25.3) | `SwitchElement` | `getByLabel(page, label)`, `check()`, `uncheck()`, `setChecked(boolean)`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `CheckboxGroup` | `CheckboxGroupElement` | `getByLabel(page, label)`, `getCheckboxes()`, `getCheckbox(label)`, `selectByLabel()`, `deselectByLabel()`, `deselectAll()`, `getSelectedValues()`, `assertSelected()` |
-| `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `assertValue()`, `getItemLabels()`, `getSelectedLabel()`, `assertSelectedLabel()` |
+| `RadioButtonGroup` | `RadioButtonGroupElement` | `getByLabel(page, label)`, `selectByLabel()`, `selectByValue()`, `getRadioButtonByLabel(label)`, `assertValue()`, `getItemLabels()`, `getSelectedLabel()`, `assertSelectedLabel()` |
+| `RadioButton` (item of a `RadioButtonGroup`) | `RadioButtonElement` | `group.getRadioButtonByLabel(label)`, `getByLabel(locator, label)`, `check()`, `isChecked()`, `assertChecked()`, `assertNotChecked()` |
 | `ComboBox` | `ComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `filterAndSelectItem()`, `assertValue()`, `clear()` (clear button or empty input), `open()`, `assertItemCount()`, `getItemLabels()` (all items, lazy pages loaded), `getSelectedItemLabel()` |
 | `MultiSelectComboBox` | `MultiSelectComboBoxElement` | `getByLabel(page, label)`, `selectItem()`, `selectItems()`, `deselectItem()`, `clear()` (deselects all), `assertSelectedItems()`, `assertSelectedCount()`, `getSelectedItems()`, `getItemLabels()` (all items, lazy pages loaded) |
 | `Select` | `SelectElement` | `getByLabel(page, label)`, `selectItem()`, `assertValue()` |
@@ -45,7 +46,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Tabs` | `TabsElement` | `get(page)`, `getById(page, id)`, `getTab(label)` (own text; `aria-label` for an icon-only tab), `getTab(index)`, `getTabs()`, `getTabCount()`, `getTabLabels()`, `selectTab(label)`, `selectTab(index)` (fails at once on a disabled tab), `getSelectedTab()`, `getSelectedIndex()`, `assertSelectedTab()`, `assertTabCount()`, `assertTabLabels(..)`, `getOrientation()`, `assertOrientation()` |
 | `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `getLabel()`, `assertSelected()`, `assertNotSelected()`, `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
 | `TabSheet` | `TabSheetElement` | `get(page)`, `getTabsElement()`, `getTab(label)`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `assertSelectedTab(label)`, `assertTabsCount()`, `getTabLabels()`, `assertTabLabels(..)`, `getContentLocator()` |
-| `Accordion` | `AccordionElement` | `new AccordionElement(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
+| `Accordion` | `AccordionElement` | `get(page)`, `get(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `toggle()`, `assertOpened()`, `assertClosed()`, `getSummaryLocator()`, `getContentLocator()` (open or closed), `assertContentVisible()`, `assertContentNotVisible()` |
 | `MenuBar` | `MenuBarElement` | `find(page, MenuBarElement.class).withAccessibleName(name)` or `new MenuBarElement(page)`, `getMenuItemElement(name)` (text, or `aria-label` for icon-only items), `getItemLabels()`, `openSubMenu(name)`, `close()` (waits until the sub-menus are gone) |
@@ -71,6 +72,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
 | `Breadcrumbs` | `BreadcrumbsElement` | `get(page)`, `find(page, BreadcrumbsElement.class).withAccessibleName(name)`, `getItems()`, `getItem(text)`, `getCurrentItem()`, `assertItemTexts()`, `assertItemCount()`, `hasOverflow()`, `openOverflow()`, `getOverflowItems()` |
 | `BreadcrumbsItem` | `BreadcrumbsItemElement` | `getByText(page, text)`, `getText()`, `getPath()`, `isLink()`, `click()`, `isCurrent()`, `assertCurrent()`, `assertHasPrefix()`, `assertDisabled()` |
+| any other component (add-on, layout, custom tag, HTML element) | `GenericElement` | `VaadinElement.of(locator)`, `find(page, "my-tag").withText(..)` / `.withLabel(..)` / `.withPlaceholder(..)`, `getTagName()`, `getText()`, `getProperty()`, `getInlineStyle()`, `getComputedStyle()`, `assertCssClass()`, `assertTheme()` |
 
 The abstract bases `AbstractNumberFieldElement` (of `IntegerFieldElement` and
 `NumberFieldElement`) and `AbstractLoginElement` (of `LoginFormElement` and
@@ -102,8 +104,8 @@ NotificationElement toast = NotificationElement.getByText(page, "Saved");
 DialogElement dialog = DialogElement.getByHeaderText(page, "Edit person");
 ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Unsaved changes");
 
-// A few elements have no static factory at all (AccordionElement,
-// ProgressBarElement, ...) — construct them
+// A few elements have no name-keyed factory (ProgressBarElement, ...) —
+// use getById / getByTestId, or construct them
 // from a Locator, which is always available on every element:
 // (also useful for elements inside dialogs, grid cells, etc.)
 TextFieldElement field = new TextFieldElement(dialog.getLocator().locator("vaadin-text-field"));
@@ -132,5 +134,8 @@ element.assertIsNotFocused();
 element.focus();
 element.click();
 element.getText();
+element.getTagName();                      // "vaadin-button"
+element.getInlineStyle("background-color"); // HasStyleElement: Component.getStyle() values
+element.getComputedStyle("display");
 element.getLocator(); // raw Playwright Locator for custom assertions
 ```

@@ -439,6 +439,17 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error
 - A subclass inherits its parent's binding (Java forbids two
   parameterizations of one interface): `find(page, TreeGridElement.class)`
   returns `TreeGridElement` instances typed as `GridElement`.
+- Candidates are searched in the **light DOM** (Playwright's `css:light`
+  engine, issue #276): a Vaadin component's shadow-root internals are never
+  candidates, so a query counts what the server-side component tree holds.
+  `includingShadowDom()` (right after `find`, or after CSS-only filters) is the
+  opt-out for an application's own shadow roots. Keep the prefix out of
+  descriptions and keep `CssSelector.canExtend` accepting it.
+- A component with no element class is queried by tag,
+  `find(page, "my-tag")` → `TagQuery<GenericElement>` (label, text and
+  placeholder filters), or wrapped with `VaadinElement.of(locator)`.
+  `GenericElement` has no tag, factories or `Findable` binding, and is listed as
+  an exception in `IdFactoriesTest` and `ElementQueriesTest`.
 
 ### Best Practices
 

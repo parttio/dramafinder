@@ -362,6 +362,59 @@ public class GridElement extends VaadinElement
     }
 
     /**
+     * Get the visible columns in display order, the order a column index counts
+     * (see the class description), read in one script.
+     * <p>
+     * Use it to convert between this class's column indexes, which count a
+     * multi-select grid's selection column, and Flow's {@code Grid.getColumns()},
+     * which does not: the {@code n}-th Flow column is
+     * {@code getColumns().stream().filter(c -> !c.selectionColumn()).toList().get(n)}.
+     *
+     * @return the visible columns, leftmost first
+     */
+    @SuppressWarnings("unchecked")
+    public List<ColumnInfo> getColumns() {
+        var columns = (List<List<Object>>) locator.evaluate("g => " + VISIBLE_COLUMNS_JS
+                + ".map(c => [c.id || null, c.localName.endsWith('selection-column')])");
+        var result = new ArrayList<ColumnInfo>(columns.size());
+        for (int i = 0; i < columns.size(); i++) {
+            result.add(new ColumnInfo(i, (String) columns.get(i).get(0),
+                    Boolean.TRUE.equals(columns.get(i).get(1))));
+        }
+        return List.copyOf(result);
+    }
+
+    /**
+     * Whether the visible column at {@code columnIndex} is the selection
+     * (checkbox) column of a multi-select grid.
+     *
+     * @param columnIndex 0-based visible column index, in display order
+     * @return {@code true} for the selection column
+     * @throws IllegalArgumentException if no visible column has that index
+     */
+    public boolean isSelectionColumn(int columnIndex) {
+        Object selection = locator.evaluate("(g, i) => { const c = " + VISIBLE_COLUMNS_JS + "[i];"
+                + " return c ? c.localName.endsWith('selection-column') : null; }", columnIndex);
+        if (selection == null) {
+            throw new IllegalArgumentException("No visible column at index " + columnIndex
+                    + ": the grid has " + getColumnCount() + " visible columns");
+        }
+        return Boolean.TRUE.equals(selection);
+    }
+
+    /**
+     * A visible grid column, as {@link #getColumns()} lists it.
+     *
+     * @param index           the 0-based column index this class uses, in display
+     *                        order, counting the selection column
+     * @param id              the column id set with Flow's {@code Column.setId(..)},
+     *                        or {@code null} when it has none
+     * @param selectionColumn whether it is a multi-select grid's selection column
+     */
+    public record ColumnInfo(int index, String id, boolean selectionColumn) {
+    }
+
+    /**
      * Whether the grid has {@code allRowsVisible} enabled.
      *
      * @return {@code true} if all rows are visible (no vertical scroll)
@@ -534,6 +587,78 @@ public class GridElement extends VaadinElement
             cells.add(new HeaderCellElement(th, columnIndex));
         }
         return cells;
+    }
+
+    /**
+     * Get one locator for the content of a column's header cells in every shown
+     * header row: the column's own cell and those of the column groups around it,
+     * e.g. a group header above and a filter field below. Use it to search inside
+     * "the column's header", for instance
+     * {@code grid.getHeaderContentLocator(1).locator("vaadin-text-field")}.
+     * <p>
+     * The cells are those {@link #getHeaderCells(int)} returns, read in one
+     * script when this is called; the locator matches nothing when the column has
+     * no shown header cell.
+     *
+     * @param columnIndex 0-based visible column index, in display order (see the class description)
+     * @return a locator for the {@code vaadin-grid-cell-content} of every header cell of the column
+     * @throws IllegalArgumentException if the column index is negative or no visible column has it
+     */
+    public Locator getHeaderContentLocator(int columnIndex) {
+        return sectionContentLocator(columnIndex, "thead", "_headerCell");
+    }
+
+    /**
+     * Get one locator for the content of a column's footer cells in every shown
+     * footer row; the footer counterpart of {@link #getHeaderContentLocator(int)}.
+     *
+     * @param columnIndex 0-based visible column index, in display order (see the class description)
+     * @return a locator for the {@code vaadin-grid-cell-content} of every footer cell of the
+     *         column; it matches nothing when the column has no shown footer cell
+     * @throws IllegalArgumentException if the column index is negative or no visible column has it
+     */
+    public Locator getFooterContentLocator(int columnIndex) {
+        return sectionContentLocator(columnIndex, "tfoot", "_footerCell");
+    }
+
+    @SuppressWarnings("unchecked")
+    private Locator sectionContentLocator(int columnIndex, String section, String cellProperty) {
+        if (columnIndex < 0) {
+            throw new IllegalArgumentException("Column index must be non-negative");
+        }
+        // Slot names of the column's cell and each enclosing group's cell in shown rows of the section
+        var slots = (List<String>) locator.evaluate("""
+                (g, [index, section, cellProperty]) => {
+                    const column = %s[index];
+                    if (!column) return null;
+                    const rows = [...g.shadowRoot.querySelectorAll(section + ' tr')];
+                    const slots = [];
+                    for (let c = column; c && c.localName.startsWith('vaadin-grid-column'); c = c.parentElement) {
+                        const cell = c[cellProperty];
+                        if (!cell || !rows.includes(cell.parentElement) || cell.parentElement.hidden) continue;
+                        const slot = cell.querySelector('slot');
+                        if (slot && slot.name) slots.push(slot.name);
+                    }
+                    return slots;
+                }
+                """.formatted(VISIBLE_COLUMNS_JS), List.of(columnIndex, section, cellProperty));
+        if (slots == null) {
+            throw new IllegalArgumentException("No visible column at index " + columnIndex
+                    + ": the grid has " + getColumnCount() + " visible columns");
+        }
+        if (slots.isEmpty()) {
+            // A slot attribute that is both present and absent: matches nothing
+            return locator.locator(":scope > vaadin-grid-cell-content[slot]:not([slot])");
+        }
+        var selector = new StringBuilder(":scope > vaadin-grid-cell-content:is(");
+        for (int i = 0; i < slots.size(); i++) {
+            selector.append(i == 0 ? "" : ", ").append("[slot=\"").append(cssEscape(slots.get(i))).append("\"]");
+        }
+        return locator.locator(selector.append(")").toString());
+    }
+
+    private static String cssEscape(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     /**

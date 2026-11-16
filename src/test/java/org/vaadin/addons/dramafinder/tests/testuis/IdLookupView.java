@@ -94,6 +94,7 @@ public class IdLookupView extends Main {
         checkboxGroup.setItems("A");
         RadioButtonGroup<String> radioGroup = new RadioButtonGroup<>("Radio group");
         radioGroup.setItems("A");
+        radioGroup.getChildren().findFirst().ifPresent(radio -> mark(radio, "RadioButtonElement"));
         ListBox<String> listBox = new ListBox<>();
         listBox.setItems("A");
         Select<String> select = new Select<>();

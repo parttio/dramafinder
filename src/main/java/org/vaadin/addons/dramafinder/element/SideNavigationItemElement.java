@@ -16,6 +16,10 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 /**
  * PlaywrightElement for {@code <vaadin-side-nav-item>}.
+ * <p>
+ * One entry of a side nav: navigates by clicking its link, expands or
+ * collapses its children, and asserts the current, expanded and disabled
+ * states. Its label is its own text, without the labels of nested items.
  */
 @PlaywrightElement(SideNavigationItemElement.FIELD_TAG_NAME)
 public class SideNavigationItemElement extends VaadinElement implements HasDisabledAttributeElement, HasPrefixElement, HasSuffixElement, HasLabelElement,
@@ -23,6 +27,11 @@ public class SideNavigationItemElement extends VaadinElement implements HasDisab
 
     public static final String FIELD_TAG_NAME = "vaadin-side-nav-item";
 
+    /**
+     * Create a new {@code SideNavigationItemElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-side-nav-item>} element
+     */
     public SideNavigationItemElement(Locator locator) {
         super(locator);
     }
@@ -77,6 +86,9 @@ public class SideNavigationItemElement extends VaadinElement implements HasDisab
         return getLocator();
     }
 
+    /**
+     * Navigate to the item's path by clicking its link.
+     */
     public void navigate() {
         getLocator().getByRole(AriaRole.LINK).first().click();
         waitAfterAction();

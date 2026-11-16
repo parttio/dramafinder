@@ -48,6 +48,29 @@ String text = card.getText(); // text content of the component root
 `click()` clicks the centre of the component host. Many elements offer a more
 precise action (`selectTab`, `check`, `RowElement.click()`); prefer those.
 
+`getTagName()` returns the element's tag in lower case, as the DOM's `localName`
+reports it: `"vaadin-button"`, `"input"`.
+
+## Components without an element class: `GenericElement`
+
+`VaadinElement.of(locator)` wraps any element — an add-on, a layout, a custom
+component, a plain `div` — in a `GenericElement`. It has the `VaadinElement` API
+plus CSS class, inline and computed style, and theme helpers:
+
+```java
+GenericElement box = VaadinElement.of(page.locator("#summary"));
+box.getTagName();                        // "div"
+box.getInlineStyle("background-color");  // what Component.getStyle() set; null when unset
+box.getComputedStyle("display");         // what the browser applies
+box.assertCssClass("box");
+box.assertTheme("compact");
+```
+
+To find such components, query by tag: `find(page, "x-card").withLabel("Card label")`
+(see [Finding components](../guide/finding-components.md#components-without-an-element-class)).
+The light-DOM lookups below return `GenericElement`s too. Prefer the
+component's own element class when there is one.
+
 ## Visibility
 
 ```java

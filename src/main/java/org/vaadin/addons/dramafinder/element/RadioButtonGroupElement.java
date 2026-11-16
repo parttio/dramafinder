@@ -54,7 +54,14 @@ public class RadioButtonGroupElement extends VaadinElement
     }
 
     /**
-     * Get a specific radio by its label within the group.
+     * Get a radio button of this group by its visible label.
+     * <p>
+     * The label must match in full and case-sensitively; two radio buttons with
+     * that label fail with a Playwright strict-mode error rather than resolving to
+     * the first one in the DOM.
+     *
+     * @param label the radio button's full visible label
+     * @return the matching radio button
      */
     public RadioButtonElement getRadioButtonByLabel(String label) {
         return RadioButtonElement.getByLabel(getLocator(), label);

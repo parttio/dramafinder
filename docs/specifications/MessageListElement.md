@@ -73,6 +73,9 @@ list.assertMessageUserName(1, "Bob");
 list.assertMessageTime(0, expectedTime);   // the text the message shows in its time part
 ```
 
+The three assertions retry until the timeout, so they also wait for a message
+that is still being rendered.
+
 The getters return the same values when they are needed:
 
 ```java
@@ -128,8 +131,7 @@ input.addSubmitListener(e -> {
 // Test
 MessageInputElement.get(page).typeAndSubmit("Hello there");
 MessageListElement list = MessageListElement.get(page);
-list.assertMessageCount(4);                  // retries until the new message arrives
-list.assertMessageText(3, "Hello there");
+list.assertMessageText(3, "Hello there");    // retries until the new message arrives
 list.assertMessageUserName(3, "Me");
 ```
 
@@ -142,11 +144,6 @@ list.assertTheme(null);                // no theme attribute
 
 ## Pitfalls
 
-- **`assertMessageText` does not retry.** It reads the text once and fails at
-  once on a mismatch (`assertMessageUserName` and `assertMessageTime` do retry).
-  After an action that adds or changes messages, first wait with
-  `assertMessageCount(...)`, or assert with
-  `assertThat(list.getMessage(i)).containsText(...)`.
 - **`getMessageByUserName` takes the first match** of the exact author name.
 - **Time strings depend on the browser locale and time zone.**
 

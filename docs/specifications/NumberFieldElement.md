@@ -200,13 +200,11 @@ same mixins but does not extend it (no step buttons, no min/max/step).
   `assertIsFocused()` or `assertAriaLabel(...)` does not behave as expected, assert
   on `getInputLocator()` with Playwright (`isDisabled()`, `isFocused()`,
   `hasAttribute("aria-label", ...)`).
-- **`getHasControls()` and the empty attribute.** `step-buttons-visible` is a
-  boolean attribute with an empty value, which `getHasControls()` parses as
-  `false`. Use `assertHasControls(true)`, which checks the attribute's presence.
-- **`null` bounds.** `assertMin(null)`, `assertMax(null)` and `assertStep(null)`
-  check against the web component's "unset" marker values (`undefined` for
-  min/max, `any` for step) rather than a missing attribute; prefer asserting
-  concrete bounds.
+- **`null` bounds.** The web component writes an unset `min` / `max` to the
+  native input as the string `"undefined"`: `getMin()` / `getMax()` return
+  `null` for it, and `assertMin(null)` / `assertMax(null)` pass for it or for a
+  missing attribute and fail on any real bound. `assertStep(null)` only checks
+  that `step` is not `"any"`; prefer asserting a concrete step.
 - **Literal `null`.** `setValue(null)` / `assertValue(null)` do not compile
   (ambiguous overloads): write `(Double) null` or call `clear()`.
 - **Out-of-range values are kept.** Typing `11.5` into a field with `max = 10`

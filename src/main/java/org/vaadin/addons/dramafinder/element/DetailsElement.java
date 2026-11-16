@@ -101,14 +101,28 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
      * @return the matching {@code DetailsElement}
      */
     public static DetailsElement getBySummaryText(Page page, String summary) {
-        return new DetailsElement(
-                page.locator(FIELD_TAG_NAME).filter(
-                        new Locator.FilterOptions().setHas(
-                                page.locator(":scope > vaadin-details-summary").and(page.getByRole(AriaRole.BUTTON,
-                                        new Page.GetByRoleOptions().setName(summary).setExact(true)))
-                        )
-                )
-        );
+        return new DetailsElement(page.locator(FIELD_TAG_NAME).filter(hasSummary(page, summary)));
+    }
+
+    /**
+     * Get a details component by its summary text, scoped to the given locator.
+     * <p>
+     * See {@link #getBySummaryText(Page, String)}; only details inside the scope
+     * are considered.
+     *
+     * @param locator the locator whose subtree is searched
+     * @param summary the full summary text
+     * @return the matching {@code DetailsElement}
+     */
+    public static DetailsElement getBySummaryText(Locator locator, String summary) {
+        return new DetailsElement(locator.locator(FIELD_TAG_NAME).filter(hasSummary(locator.page(), summary)));
+    }
+
+    // A details whose own summary's accessible name is exactly summary.
+    private static Locator.FilterOptions hasSummary(Page page, String summary) {
+        return new Locator.FilterOptions().setHas(
+                page.locator(":scope > vaadin-details-summary").and(page.getByRole(AriaRole.BUTTON,
+                        new Page.GetByRoleOptions().setName(summary).setExact(true))));
     }
 
     /** Assert that the content is visible. */

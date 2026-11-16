@@ -21,6 +21,7 @@ DetailsElement byId = DetailsElement.getById(page, "contact-details");
 DetailsElement byTestId = DetailsElement.getByTestId(page, "contact-details");
 
 // Scoped
+DetailsElement advanced = DetailsElement.getBySummaryText(dialog.getLocator(), "Advanced");
 DetailsElement inForm = DetailsElement.getById(form.getLocator(), "contact-details");
 DetailsElement inDialog = dialog.find(DetailsElement.class).withId("advanced").single();
 

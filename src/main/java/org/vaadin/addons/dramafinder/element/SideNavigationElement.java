@@ -13,6 +13,9 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 /**
  * PlaywrightElement for {@code <vaadin-side-nav>}.
+ * <p>
+ * Finds items by their own label, and reads or toggles the collapsed state of
+ * a collapsible side nav. Items are {@link SideNavigationItemElement}s.
  */
 @PlaywrightElement(SideNavigationElement.FIELD_TAG_NAME)
 public class SideNavigationElement extends VaadinElement implements HasLabelElement,
@@ -20,6 +23,11 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
 
     public static final String FIELD_TAG_NAME = "vaadin-side-nav";
 
+    /**
+     * Create a new {@code SideNavigationElement}.
+     *
+     * @param locator the locator for the {@code <vaadin-side-nav>} element
+     */
     public SideNavigationElement(Locator locator) {
         super(locator);
     }
@@ -158,7 +166,10 @@ public class SideNavigationElement extends VaadinElement implements HasLabelElem
     }
 
     /**
-     * Toggles the expansion state of the item.
+     * Collapse or expand the whole side nav by clicking its label.
+     * <p>
+     * Only a collapsible side nav ({@code SideNav.setCollapsible(true)}) reacts.
+     * To expand or collapse one item, use {@link SideNavigationItemElement#toggle()}.
      */
     public void toggle() {
         getLocator().locator("[slot='label']").first().click();

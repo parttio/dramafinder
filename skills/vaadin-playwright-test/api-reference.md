@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.0.3-SNAPSHOT — 59 element wrappers.
+> DramaFinder 2.0.3-SNAPSHOT — 61 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -70,6 +70,9 @@ Base class for Playwright integration tests of a Vaadin view.
 - `protected void assertAt(Class<?> view)` — Assert, retrying until the timeout, that the browser is on `view`, e.g. after a login redirect or a navigation guard.
 - `protected void assertPath(String path)` — Assert, retrying until the timeout, that the browser's path under `getUrl()` is exactly `path`, whatever the query string.
 - `protected void assertQueryParameter(String name, String value)` — Assert, retrying until the timeout, that the URL holds the query parameter `name` with `value`, or no such parameter when `value` is `null`.
+- `protected String currentPath()` — Get the path the browser is on under `getUrl()`, without leading or trailing slash or query string; reads once, without waiting.
+- `protected boolean isAt(Class<?> view)` — Whether the browser is on `view` right now, without waiting; the non-asserting form of `assertAt(Class)`.
+- `protected Optional<String> queryParameter(String name)` — Get the decoded value of a query parameter of the current URL, without waiting.
 - `Page agentPage()` — Returns the test's `page`, so a failing test is captured in the state it failed in.
 - `protected Browser getBrowser()`
 - `protected Playwright getPlaywright()`
@@ -146,6 +149,17 @@ Navigates by Vaadin route class and asserts which view the browser is on.
 - `void assertAt(Page page, String baseUrl, Class<?> view)` — Assert, retrying until the timeout, that the browser is on `view`: its path matches the view's route template, any parameter value accepted, whatever the query string.
 - `void assertPath(Page page, String baseUrl, String path)` — Assert, retrying until the timeout, that the browser's path is exactly `path`, whatever the query string.
 - `void assertQueryParameter(Page page, String name, String value)` — Assert, retrying until the timeout, that the URL's query string holds `name` with `value` (compared decoded), or no `name` at all when `value` is `null`.
+- `String currentPath(Page page, String baseUrl)` — Get the path the browser is on, relative to the application root, with no leading or trailing slash and without the query string, e.g. `"orders/42"`; `""` for the root.
+- `boolean isAt(Page page, String baseUrl, Class<?> view)` — Whether the browser is on `view` right now: the non-asserting form of `assertAt(Page, String, Class)`, reading the URL the way `currentPath(Page, String)` does.
+- `Optional<String> queryParameter(Page page, String name)` — Get the value of a query parameter of the URL the browser is on, decoded; reads the URL the way `currentPath(Page, String)` does, once, without waiting.
+
+### VaadinClient
+
+Reads the state of the Vaadin Flow client running in a page.
+
+**Static methods:**
+
+- `Optional<Integer> uiId(Page page)` — Get the id of the Vaadin `UI` the page shows, the value of `UI.getUIId()` on the server, e.g. to let a test-only endpoint find the matching `UI` (fetch it with `page.request()`, which shares the browser context's session cookie).
 
 ### ClientSideErrors
 
@@ -168,7 +182,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 | Web-component tag | Element wrapper | Static factory methods | `find` query |
 |---|---|---|---|
-| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | + id, test id | `ComponentQuery` |
+| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` + id, test id | `ComponentQuery` |
 | `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` + id, test id | `ComponentQuery` |
@@ -186,7 +200,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `DateTimePickerQuery` |
-| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Locator, String)`, `getBySummaryText(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-dialog[opened]>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
@@ -206,16 +220,17 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-password-field>` | [PasswordFieldElement](#passwordfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-popover>` | [PopoverElement](#popoverelement) | `getByLabel(Page, String)`, `getByLabelContaining(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-progress-bar>` | [ProgressBarElement](#progressbarelement) | + id, test id | `ComponentQuery` |
+| `<vaadin-radio-button>` | [RadioButtonElement](#radiobuttonelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-radio-group>` | [RadioButtonGroupElement](#radiobuttongroupelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-select>` | [SelectElement](#selectelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `SelectQuery` |
 | `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `SideNavItemQuery` |
 | `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
-| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` + id, test id | `TextQuery` |
 | `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
-| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
@@ -225,12 +240,13 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | — | [AbstractLoginElement](#abstractloginelement) | *constructor only* | — |
 | — | [AbstractNumberFieldElement](#abstractnumberfieldelement) | *constructor only* | — |
 | — | [ContextMenuElement](#contextmenuelement) | *constructor only* | — |
+| — | [GenericElement](#genericelement) | *constructor only* | — |
 | — | [MenuItemElement](#menuitemelement) | `getByLabel(Locator, String)` | `TextQuery` |
 | — | [TreeGridElement](#treegridelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 
 ## Typed queries
 
-An alternative to the static factories with one grammar for every element: `ElementQueries.find(page, X.class)` (or `element.find(X.class)` to search inside a component) returns the query listed for `X` in the element index, filters narrow it, and a terminal returns the element. Only the filters that fit the component compile — `withLabel` on a field, `withText` on a button. Every query has `withId`, `withTestId`, `withAttribute`, `withClassName` and `withAccessibleName` (read on the component or its own input, never a nested one); filters return new queries, and the result stays a lazy Playwright locator.
+An alternative to the static factories with one grammar for every element: `ElementQueries.find(page, X.class)` (or `element.find(X.class)` to search inside a component) returns the query listed for `X` in the element index, filters narrow it, and a terminal returns the element. Only the filters that fit the component compile — `withLabel` on a field, `withText` on a button. Every query has `withId`, `withTestId`, `withAttribute`, `withClassName`, `withTheme` and `withAccessibleName` (read on the component or its own input, never a nested one); filters return new queries, and the result stays a lazy Playwright locator. Queries search the light DOM: elements inside a shadow root (a Vaadin component's internals) are left out unless `includingShadowDom()` follows `find`. A component without an element class is queried by tag, `find(page, "my-tag")`, which returns `GenericElement`s and offers the label, text and placeholder filters.
 
 ```java
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
@@ -240,7 +256,7 @@ DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delet
 dialog.find(ButtonElement.class).withText("Delete").single().click();
 ```
 
-`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the **whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` match a case-insensitive substring. Text filters read the component's own text: slotted children (icons, tooltips) and shadow-rendered content are left out. `single()` fails with a strict-mode error when several components match; `first()`, `get(int)`, `all()`, `count()` and `exists()` do not.
+`withLabel` / `withText` / `withAccessibleName` / `withPlaceholder` match the **whole** value, case-sensitively; `withLabelContaining` / `withTextContaining` match a case-insensitive substring, as does `withPlaceholderContaining`. Text filters read the component's own text: slotted children (icons, tooltips) and shadow-rendered content are left out. `single()` fails with a strict-mode error when several components match; `first()`, `get(int)`, `all()`, `count()` and `exists()` do not.
 
 ### AccessibleNameFilters
 
@@ -293,6 +309,7 @@ Query for `vaadin-date-time-picker`: adds the label filters, and a placeholder f
 **Methods:**
 
 - `DateTimePickerQuery<T> withPlaceholder(String placeholder)` — Keep pickers whose date placeholder is exactly `placeholder` (case-sensitive).
+- `DateTimePickerQuery<T> withPlaceholderContaining(String text)` — Keep pickers whose date placeholder contains `text`, matched case-insensitively as a substring; read where `withPlaceholder(String)` reads it.
 
 ### ElementQueries
 
@@ -302,6 +319,8 @@ Entry point of the typed query builder: `find(page, TextFieldElement.class).with
 
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Page page, Class<T> type)` — Start a query for every `type` component on the page.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Locator scope, Class<T> type)` — Start a query for every `type` component inside `scope`.
+- `TagQuery<GenericElement> find(Page page, String tag)` — Start a query for every component with the tag `tag` on the page, for components that have no element class: an add-on, a custom component, a layout or a plain HTML element.
+- `TagQuery<GenericElement> find(Locator scope, String tag)` — Start a query for every component with the tag `tag` inside `scope`; see `find(Page, String)`.
 
 ### ElementQuery
 
@@ -311,11 +330,13 @@ Base class of the typed queries returned by find.
 
 **Methods:**
 
+- `Q includingShadowDom()` — Also consider components inside shadow roots.
 - `Q withId(String id)` — Keep components whose `id` is `id`.
 - `Q withTestId(String testId)` — Keep components whose test id is `testId`.
 - `Q withAttribute(String name)` — Keep components that carry the attribute `name`, whatever its value.
 - `Q withAttribute(String name, String value)` — Keep components whose attribute `name` is exactly `value`.
 - `Q withClassName(String className)` — Keep components that have `className` among their CSS classes.
+- `Q withTheme(String variant)` — Keep components that have the theme variant `variant`, i.e. whose space-separated `theme` attribute holds it as a whole word.
 - `T single()` — The element matched by this query, which must match exactly one component.
 - `T first()` — The first matching element in DOM order, without checking for others.
 - `T get(int index)` — The matching element at `index` in DOM order.
@@ -372,6 +393,7 @@ Filter for components with a `placeholder` attribute on their host, such as `vaa
 **Methods:**
 
 - `Q withPlaceholder(String placeholder)` — Keep components whose `placeholder` is exactly `placeholder` (case-sensitive).
+- `Q withPlaceholderContaining(String text)` — Keep components whose `placeholder` contains `text`, matched case-insensitively as a substring.
 
 ### Refinable
 
@@ -396,6 +418,7 @@ Query for `vaadin-select`: adds the label filters, and a placeholder filter that
 **Methods:**
 
 - `SelectQuery<T> withPlaceholder(String placeholder)` — Keep selects showing exactly `placeholder` (case-sensitive, whitespace-normalized).
+- `SelectQuery<T> withPlaceholderContaining(String text)` — Keep selects showing a placeholder that contains `text`, matched case-insensitively as a substring; like `withPlaceholder(String)`, only while nothing is selected.
 
 ### SideNavItemQuery
 
@@ -412,6 +435,17 @@ Query for `vaadin-side-nav-item`: the label filters read the item's own text, wi
 
 - `SideNavItemQuery<T> withLabel(String label)` — Keep items whose own label text is exactly `label` (case-sensitive, whitespace-normalized); a parent item does not match its children's labels.
 - `SideNavItemQuery<T> withLabelContaining(String text)` — Keep items whose own label text contains `text`, ignoring the case of ASCII letters.
+
+### TagQuery
+
+Query for components found by tag rather than by element class, returned by `ElementQueries.find(com.microsoft.playwright.Page, String)`: a component with no element class of its own may have a label, text or a placeholder, so all of those filters are offered, next to the ones every query has.
+
+**Extends:** ElementQuery  
+**Implements:** LabelFilters, TextFilters, PlaceholderFilters  
+
+**Constructors:**
+
+- `TagQuery(Class<T> type, Locator candidates)` — Create a query over the given candidates; called by find.
 
 ### TextFilters
 
@@ -459,7 +493,7 @@ Query for `vaadin-tooltip`: the text filters read the tooltip text, which lives 
 
 ## Elements
 
-[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ConfirmDialogElement](#confirmdialogelement) · [ContextMenuElement](#contextmenuelement) · [CustomFieldElement](#customfieldelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [FormLayoutElement](#formlayoutelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
+[AbstractLoginElement](#abstractloginelement) · [AbstractNumberFieldElement](#abstractnumberfieldelement) · [AccordionElement](#accordionelement) · [AccordionPanelElement](#accordionpanelelement) · [AppLayoutElement](#applayoutelement) · [AvatarElement](#avatarelement) · [AvatarGroupElement](#avatargroupelement) · [BadgeElement](#badgeelement) · [BigDecimalFieldElement](#bigdecimalfieldelement) · [BreadcrumbsElement](#breadcrumbselement) · [BreadcrumbsItemElement](#breadcrumbsitemelement) · [ButtonElement](#buttonelement) · [CardElement](#cardelement) · [CheckboxElement](#checkboxelement) · [CheckboxGroupElement](#checkboxgroupelement) · [ComboBoxElement](#comboboxelement) · [ConfirmDialogElement](#confirmdialogelement) · [ContextMenuElement](#contextmenuelement) · [CustomFieldElement](#customfieldelement) · [DatePickerElement](#datepickerelement) · [DateTimePickerElement](#datetimepickerelement) · [DetailsElement](#detailselement) · [DialogElement](#dialogelement) · [EmailFieldElement](#emailfieldelement) · [FormLayoutElement](#formlayoutelement) · [GenericElement](#genericelement) · [GridElement](#gridelement) · [IntegerFieldElement](#integerfieldelement) · [ListBoxElement](#listboxelement) · [LoginFormElement](#loginformelement) · [LoginOverlayElement](#loginoverlayelement) · [MarkdownElement](#markdownelement) · [MenuBarElement](#menubarelement) · [MenuElement](#menuelement) · [MenuItemElement](#menuitemelement) · [MessageInputElement](#messageinputelement) · [MessageListElement](#messagelistelement) · [MultiSelectComboBoxElement](#multiselectcomboboxelement) · [NotificationElement](#notificationelement) · [NumberFieldElement](#numberfieldelement) · [PasswordFieldElement](#passwordfieldelement) · [PopoverElement](#popoverelement) · [ProgressBarElement](#progressbarelement) · [RadioButtonElement](#radiobuttonelement) · [RadioButtonGroupElement](#radiobuttongroupelement) · [SelectElement](#selectelement) · [SideNavigationElement](#sidenavigationelement) · [SideNavigationItemElement](#sidenavigationitemelement) · [SliderElement](#sliderelement) · [SplitLayoutElement](#splitlayoutelement) · [SwitchElement](#switchelement) · [TabElement](#tabelement) · [TabSheetElement](#tabsheetelement) · [TabsElement](#tabselement) · [TextAreaElement](#textareaelement) · [TextFieldElement](#textfieldelement) · [TimePickerElement](#timepickerelement) · [TooltipElement](#tooltipelement) · [TreeGridElement](#treegridelement) · [UploadElement](#uploadelement) · [VirtualListElement](#virtuallistelement)
 
 ### AbstractLoginElement
 
@@ -529,6 +563,8 @@ PlaywrightElement for `<vaadin-accordion>`.
 
 **Static factory methods:**
 
+- `AccordionElement get(Page page)` — Get the first `<vaadin-accordion>` on the page.
+- `AccordionElement get(Locator locator)` — Get the first `<vaadin-accordion>` within a locator scope.
 - `AccordionElement getById(Page page, String id)` — Get an `AccordionElement` by its `id`, searching the entire page.
 - `AccordionElement getById(Locator locator, String id)` — Get an `AccordionElement` by its `id`, scoped to the given locator.
 - `AccordionElement getByTestId(Page page, String testId)` — Get an `AccordionElement` by its test id, searching the entire page.
@@ -832,8 +868,8 @@ PlaywrightElement for `<vaadin-breadcrumbs-item>`, a single entry of a `Breadcru
 
 **Static factory methods:**
 
-- `BreadcrumbsItemElement getByText(Page page, String text)` — Get the first `<vaadin-breadcrumbs-item>` with the given text on the page.
-- `BreadcrumbsItemElement getByText(Locator locator, String text)` — Get the first `<vaadin-breadcrumbs-item>` with the given text within a locator scope.
+- `BreadcrumbsItemElement getByText(Page page, String text)` — Get the `<vaadin-breadcrumbs-item>` with the given text on the page.
+- `BreadcrumbsItemElement getByText(Locator locator, String text)` — Get the `<vaadin-breadcrumbs-item>` with the given text within a locator scope.
 - `BreadcrumbsItemElement getById(Page page, String id)` — Get a `BreadcrumbsItemElement` by its `id`, searching the entire page.
 - `BreadcrumbsItemElement getById(Locator locator, String id)` — Get a `BreadcrumbsItemElement` by its `id`, scoped to the given locator.
 - `BreadcrumbsItemElement getByTestId(Page page, String testId)` — Get a `BreadcrumbsItemElement` by its test id, searching the entire page.
@@ -978,7 +1014,7 @@ PlaywrightElement for `<vaadin-checkbox-group>`.
 **Methods:**
 
 - `List<CheckboxElement> getCheckboxes()` — Get all checkboxes of the group, in DOM order.
-- `CheckboxElement getCheckbox(String label)` — Get a single checkbox of the group by its label.
+- `CheckboxElement getCheckbox(String label)` — Get a single checkbox of the group by its visible label.
 - `int getCheckboxCount()` — Count the checkboxes of the group.
 - `void assertCheckboxCount(int expected)` — Assert that the group contains exactly the expected number of checkboxes.
 - `void selectByLabel(String... labels)` — Select the checkboxes matching the given labels.
@@ -1088,7 +1124,7 @@ PlaywrightElement for `<vaadin-confirm-dialog>`.
 
 ### ContextMenuElement
 
-PlaywrightElement for context menu overlays `<vaadin-context-menu-overlay>`.
+PlaywrightElement for an open `<vaadin-context-menu>`.
 
 **Extends:** VaadinElement  
 **Implements:** HasStyleElement  
@@ -1097,7 +1133,7 @@ PlaywrightElement for context menu overlays `<vaadin-context-menu-overlay>`.
 
 **Constructors:**
 
-- `ContextMenuElement(Page page)` — Create a `ContextMenuElement` from the page overlay.
+- `ContextMenuElement(Page page)` — Create a `ContextMenuElement` for the open context menu on the page.
 - `ContextMenuElement(Locator locator)` — Create a `ContextMenuElement` from an existing locator.
 
 **Static factory methods:**
@@ -1242,6 +1278,7 @@ PlaywrightElement for `<vaadin-details>`.
 **Static factory methods:**
 
 - `DetailsElement getBySummaryText(Page page, String summary)` — Get a details component by its summary text.
+- `DetailsElement getBySummaryText(Locator locator, String summary)` — Get a details component by its summary text, scoped to the given locator.
 - `DetailsElement getById(Page page, String id)` — Get a `DetailsElement` by its `id`, searching the entire page.
 - `DetailsElement getById(Locator locator, String id)` — Get a `DetailsElement` by its `id`, scoped to the given locator.
 - `DetailsElement getByTestId(Page page, String testId)` — Get a `DetailsElement` by its test id, searching the entire page.
@@ -1358,6 +1395,17 @@ PlaywrightElement for `<vaadin-form-layout>`.
 - `void assertLabelPosition(String expected)` — Assert where the layout places the labels of its form items.
 - `void assertFieldCount(int expected)` — Assert that the layout positions the given number of fields.
 
+### GenericElement
+
+Element for a component of any tag that has no element class of its own: an add-on, a custom component, a layout or a plain HTML element.
+
+**Extends:** VaadinElement  
+**Implements:** HasStyleElement, HasThemeElement  
+
+**Constructors:**
+
+- `GenericElement(Locator locator)` — Create a new `GenericElement`.
+
 ### GridElement  `<vaadin-grid>`
 
 PlaywrightElement for `<vaadin-grid>`.
@@ -1387,6 +1435,8 @@ PlaywrightElement for `<vaadin-grid>`.
 - `int getColumnCount()` — Get the number of visible (non-hidden) columns.
 - `OptionalInt findColumnIndexById(String id)` — Find the index of the visible column with the given id, the one set with `Column.setId(..)` in Flow.
 - `int getColumnIndexById(String id)` — Get the index of the visible column with the given id, for a column that must exist.
+- `List<ColumnInfo> getColumns()` — Get the visible columns in display order, the order a column index counts (see the class description), read in one script.
+- `boolean isSelectionColumn(int columnIndex)` — Whether the visible column at `columnIndex` is the selection (checkbox) column of a multi-select grid.
 - `boolean isAllRowsVisible()` — Whether the grid has `allRowsVisible` enabled.
 - `boolean isMultiSort()` — Whether the grid has multi-sort enabled.
 - `boolean isColumnReorderingAllowed()` — Whether column reordering is allowed.
@@ -1395,6 +1445,8 @@ PlaywrightElement for `<vaadin-grid>`.
 - `Optional<HeaderCellElement> findHeaderCellByText(String text)` — Find a header cell by its text content.
 - `Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text)` — Find a header cell by header row index and text content.
 - `List<HeaderCellElement> getHeaderCells(int columnIndex)` — Get the header cells of a column in every header row, top row first: the cell of the column itself and those of the column groups around it.
+- `Locator getHeaderContentLocator(int columnIndex)` — Get one locator for the content of a column's header cells in every shown header row: the column's own cell and those of the column groups around it, e.g. a group header above and a filter field below.
+- `Locator getFooterContentLocator(int columnIndex)` — Get one locator for the content of a column's footer cells in every shown footer row; the footer counterpart of `getHeaderContentLocator(int)`.
 - `List<String> getHeaderCellContents()` — Get the text content of all visible header cells, one per visible column in display order, read from the first header row.
 - `Optional<FooterCellElement> findFooterCell(int columnIndex)` — Find a footer cell by column index.
 - `Optional<FooterCellElement> findFooterCell(int footerRowIndex, int columnIndex)` — Find a footer cell by footer row index and column index.
@@ -1457,6 +1509,11 @@ PlaywrightElement for `<vaadin-grid>`.
 - `void assertSelectAllIndeterminate()` — Assert that the select-all checkbox is indeterminate.
 - `void assertDetailsOpen(int rowIndex)` — Assert that the details panel of the row at the given index is open.
 - `void assertDetailsClosed(int rowIndex)` — Assert that the details panel of the row at the given index is closed.
+
+#### GridElement.ColumnInfo
+
+A visible grid column, as `getColumns()` lists it.
+
 
 #### GridElement.CellElement
 
@@ -1551,10 +1608,10 @@ PlaywrightElement for `<vaadin-integer-field>`.
 - `void assertStep(Integer step)` — Assert that the `step` attribute matches the expected value.
 - `Integer getMin()` — Get the current `min` value.
 - `void setMin(int min)` — Set the `min` value.
-- `void assertMin(Integer min)` — Assert that the `min` attribute matches the expected value.
+- `void assertMin(Integer min)` — Assert that the `min` attribute matches the expected value, retrying until the timeout.
 - `Integer getMax()` — Get the current `max` value.
 - `void setMax(int max)` — Set the `max` value.
-- `void assertMax(Integer max)` — Assert that the `max` attribute matches the expected value.
+- `void assertMax(Integer max)` — Assert that the `max` attribute matches the expected value, retrying until the timeout.
 - `void setValue(Integer value)` — Set the value as a number, typed in its plain decimal form.
 - `Integer getValueAsInteger()` — Get the current value as a number.
 - `void assertValue(Integer expected)` — Assert the value as a number.
@@ -1847,9 +1904,9 @@ PlaywrightElement for `<vaadin-message-list>`.
 - `String getMessageTime(int index)` — Get the time of the message at the given index.
 - `void assertMessageCount(int count)` — Assert that the list contains exactly the expected number of messages.
 - `void assertEmpty()` — Assert that the list contains no messages.
-- `void assertMessageText(int index, String expected)` — Assert that the message at the given index has the expected text.
-- `void assertMessageUserName(int index, String expected)` — Assert that the message at the given index has the expected user name.
-- `void assertMessageTime(int index, String expected)` — Assert that the message at the given index has the expected time.
+- `void assertMessageText(int index, String expected)` — Assert that the message at the given index has the expected text, retrying until the timeout (a message just added may not be rendered yet).
+- `void assertMessageUserName(int index, String expected)` — Assert that the message at the given index has the expected user name, retrying until the timeout.
+- `void assertMessageTime(int index, String expected)` — Assert that the message at the given index has the expected time, retrying until the timeout.
 
 ### MultiSelectComboBoxElement  `<vaadin-multi-select-combo-box>`
 
@@ -2048,7 +2105,7 @@ PlaywrightElement for `<vaadin-progress-bar>`.
 
 - `double getValue()` — Current numeric value parsed from `aria-valuenow`.
 - `void setValue(double min)` — Set the progress bar `value`.
-- `void assertValue(Double expected)` — Assert that the numeric value matches.
+- `void assertValue(Double expected)` — Assert that the numeric value matches, retrying until the timeout.
 - `Double getMin()` — Get the `min` value.
 - `void setMin(double min)` — Set the `min` value.
 - `void assertMin(double min)` — Assert that `min` matches the expected value.
@@ -2059,6 +2116,30 @@ PlaywrightElement for `<vaadin-progress-bar>`.
 - `void assertIndeterminate()` — Assert indeterminate state.
 - `void assertNotIndeterminate()` — Assert not indeterminate.
 - `void setIndeterminate(boolean indeterminate)` — Set the indeterminate state.
+
+### RadioButtonElement  `<vaadin-radio-button>`
+
+PlaywrightElement for `<vaadin-radio-button>`.
+
+**Extends:** VaadinElement  
+**Implements:** FocusableElement, HasAriaLabelElement, HasCheckedElement, HasEnabledElement, HasHelperElement, HasStyleElement, HasLabelElement, HasValidationPropertiesElement, Findable  
+
+**Constants:** `String FIELD_TAG_NAME = "vaadin-radio-button"`
+
+**Constructors:**
+
+- `RadioButtonElement(Locator locator)` — Create a new `RadioButtonElement`.
+
+**Static factory methods:**
+
+- `RadioButtonElement getByLabel(Page page, String label)` — Get the `RadioButtonElement` whose visible label is exactly `label`, searching the entire page.
+- `RadioButtonElement getByLabelContaining(Page page, String text)` — Get the `RadioButtonElement` whose visible label contains `text`, searching the entire page.
+- `RadioButtonElement getByLabel(Locator locator, String label)` — Get the `RadioButtonElement` whose visible label is exactly `label`, scoped to the given locator.
+- `RadioButtonElement getByLabelContaining(Locator locator, String text)` — Get the `RadioButtonElement` whose visible label contains `text`, scoped to the given locator.
+- `RadioButtonElement getById(Page page, String id)` — Get a `RadioButtonElement` by its `id`, searching the entire page.
+- `RadioButtonElement getById(Locator locator, String id)` — Get a `RadioButtonElement` by its `id`, scoped to the given locator.
+- `RadioButtonElement getByTestId(Page page, String testId)` — Get a `RadioButtonElement` by its test id, searching the entire page.
+- `RadioButtonElement getByTestId(Locator locator, String testId)` — Get a `RadioButtonElement` by its test id, scoped to the given locator.
 
 ### RadioButtonGroupElement  `<vaadin-radio-group>`
 
@@ -2088,7 +2169,7 @@ PlaywrightElement for `<vaadin-radio-group>`.
 
 - `void selectByLabel(String label)` — Select a radio by its label text.
 - `void selectByValue(String value)` — Select a radio by its value.
-- `RadioButtonElement getRadioButtonByLabel(String label)` — Get a specific radio by its label within the group.
+- `RadioButtonElement getRadioButtonByLabel(String label)` — Get a radio button of this group by its visible label.
 - `void setValue(String value)` — Set the selected value by label.
 - `void assertValue(String value)` — Assert the selected value by label.
 - `List<String> getItemLabels()` — Get the labels of all radio buttons in the group, in order: the text the user sees, which for Flow is the item label, not the item key held in `value`.
@@ -2123,6 +2204,7 @@ PlaywrightElement for `<vaadin-select>`.
 
 - `void selectItem(String item)` — Select an item by its visible label.
 - `String getValue()` — Get the selected value label for single-select.
+- `void assertPlaceholder(String placeholder)` — Assert the placeholder shown by the value button.
 - `void assertValue(String expected)` — Assert the selected value label equals the expected string.
 
 ### SideNavigationElement  `<vaadin-side-nav>`
@@ -2136,7 +2218,7 @@ PlaywrightElement for `<vaadin-side-nav>`.
 
 **Constructors:**
 
-- `SideNavigationElement(Locator locator)`
+- `SideNavigationElement(Locator locator)` — Create a new `SideNavigationElement`.
 
 **Static factory methods:**
 
@@ -2158,7 +2240,7 @@ PlaywrightElement for `<vaadin-side-nav>`.
 - `void assertNotCollapsible()` — Asserts that the side nav is not collapsible.
 - `SideNavigationItemElement getItem(String label)` — Gets a `SideNavigationItemElement` by its label text, at any nesting depth.
 - `void clickItem(String label)` — Clicks an item by its label.
-- `void toggle()` — Toggles the expansion state of the item.
+- `void toggle()` — Collapse or expand the whole side nav by clicking its label.
 
 ### SideNavigationItemElement  `<vaadin-side-nav-item>`
 
@@ -2171,7 +2253,7 @@ PlaywrightElement for `<vaadin-side-nav-item>`.
 
 **Constructors:**
 
-- `SideNavigationItemElement(Locator locator)`
+- `SideNavigationItemElement(Locator locator)` — Create a new `SideNavigationItemElement`.
 
 **Static factory methods:**
 
@@ -2192,7 +2274,7 @@ PlaywrightElement for `<vaadin-side-nav-item>`.
 - `void assertCurrent()` — Asserts that the item is current.
 - `void assertNotCurrent()` — Asserts that the item is not current.
 - `void toggle()` — Toggles the expansion state of the item.
-- `void navigate()`
+- `void navigate()` — Navigate to the item's path by clicking its link.
 
 ### SliderElement  `<vaadin-slider>`
 
@@ -2254,7 +2336,8 @@ PlaywrightElement for `vaadin-split-layout`.
 
 **Static factory methods:**
 
-- `SplitLayoutElement get(Page page)` — Get the first split layout on the page.
+- `SplitLayoutElement get(Page page)` — Get the first `<vaadin-split-layout>` on the page.
+- `SplitLayoutElement get(Locator locator)` — Get the first `<vaadin-split-layout>` within a locator scope.
 - `SplitLayoutElement getById(Page page, String id)` — Get a `SplitLayoutElement` by its `id`, searching the entire page.
 - `SplitLayoutElement getById(Locator locator, String id)` — Get a `SplitLayoutElement` by its `id`, scoped to the given locator.
 - `SplitLayoutElement getByTestId(Page page, String testId)` — Get a `SplitLayoutElement` by its test id, searching the entire page.
@@ -2338,7 +2421,8 @@ PlaywrightElement for `<vaadin-tabsheet>`.
 
 **Static factory methods:**
 
-- `TabSheetElement get(Page page)` — Get the first tabsheet instance on the page.
+- `TabSheetElement get(Page page)` — Get the first `<vaadin-tabsheet>` on the page.
+- `TabSheetElement get(Locator locator)` — Get the first `<vaadin-tabsheet>` within a locator scope.
 - `TabSheetElement getById(Page page, String id)` — Get a `TabSheetElement` by its `id`, searching the entire page.
 - `TabSheetElement getById(Locator locator, String id)` — Get a `TabSheetElement` by its `id`, scoped to the given locator.
 - `TabSheetElement getByTestId(Page page, String testId)` — Get a `TabSheetElement` by its test id, searching the entire page.
@@ -2678,7 +2762,7 @@ Mixin for components supporting `allowedCharPattern` to constrain input.
 
 - `String getAllowedCharPattern()` — Get the current `allowedCharPattern`.
 - `void setAllowedCharPattern(String pattern)` — Set the `allowedCharPattern`.
-- `void assertAllowedCharPattern(String pattern)` — Assert that the `allowedCharPattern` matches the expected value.
+- `void assertAllowedCharPattern(String pattern)` — Assert that the `allowedCharPattern` property matches the expected value, retrying until the timeout.
 
 ### HasAriaLabelElement
 
@@ -2831,13 +2915,15 @@ Mixin for components that expose a read-only state through the reflected `readon
 
 ### HasStyleElement
 
-Mixin for components exposing styling via CSS classes.
+Mixin for components exposing styling: CSS classes, and the inline and computed value of a style property.
 
 **Extends:** HasLocatorElement  
 
 **Methods:**
 
 - `String getCssClass()` — Get the raw `class` attribute value.
+- `String getInlineStyle(String cssProperty)` — Get a property of the component's inline style, the `style` attribute that Flow's `Component.getStyle()` writes.
+- `String getComputedStyle(String cssProperty)` — Get the computed value of a style property: what the browser applies after every stylesheet, theme and inline style, as `getComputedStyle` reports it.
 - `void assertCssClass(String... classnames)` — Assert the component has exactly the provided class names, or no classes when null.
 
 ### HasSuffixElement
@@ -2921,9 +3007,14 @@ Base class for typed Playwright wrappers around Vaadin components.
 
 - `VaadinElement(Locator locator)` — Create a new VaadinElement wrapper.
 
+**Static methods:**
+
+- `GenericElement of(Locator locator)` — Wrap any element in a `GenericElement`, for a component that has no element class of its own (an add-on, a layout, a plain `div`).
+
 **Methods:**
 
 - `void click()` — Click the component root, then wait for the server round-trip it triggers (see `org.vaadin.addons.dramafinder.AutoWait`).
+- `String getTagName()` — Get the element's tag name, in lower case as the DOM's `localName` reports it, e.g. `vaadin-button` or `input`.
 - `String getText()` — Get the textual content of the component root.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for `type` components inside this component, e.g. `dialog.find(ButtonElement.class).withText("Delete").single()`.
 - `List<VaadinElement> getLightDomChildren(String tag)` — Get this component's light-DOM children with the given tag.

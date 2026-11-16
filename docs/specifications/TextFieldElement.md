@@ -142,6 +142,8 @@ String placeholder = field.getPlaceholder();   // when the text is needed
 
 field.setPlaceholder("Type here");             // client-side only, see Pitfalls
 field.assertPlaceholder("Type here");
+
+TextFieldElement.getByLabel(page, "Name").assertPlaceholder(null);  // no placeholder
 ```
 
 ## Label, helper, prefix and suffix

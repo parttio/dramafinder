@@ -16,10 +16,12 @@ whether a panel is disabled.
 
 ## Finding the component
 
-An accordion has no label of its own. Find it by id, test id, class name, or by
-wrapping a locator:
+An accordion has no label of its own. Find it by position, id, test id, class
+name, or by wrapping a locator:
 
 ```java
+AccordionElement first = AccordionElement.get(page);                    // first on the page
+AccordionElement inDialog = AccordionElement.get(dialog.getLocator());  // first inside a container
 AccordionElement accordion = AccordionElement.getById(page, "faq");
 AccordionElement byTestId = AccordionElement.getByTestId(page, "faq");
 AccordionElement scoped = AccordionElement.getById(dialog.getLocator(), "faq");
@@ -62,7 +64,7 @@ accordion.add("Panel 3", new Span("Content 3"));
 
 ```java
 // Test
-AccordionElement accordion = new AccordionElement(page.locator(".custom-css"));
+AccordionElement accordion = AccordionElement.get(page);
 accordion.assertPanelCount(3);
 
 accordion.assertPanelOpened("Panel 1");   // Flow opens the first panel by default

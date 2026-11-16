@@ -23,10 +23,12 @@ class IdFactoriesTest {
      * Wrappers whose tag is not the element Flow puts the id on: the notification
      * card (Flow sets it on {@code vaadin-notification}), the tooltip (no Flow
      * component), menu overlays, and the menu-bar button (Flow sets it on the
-     * {@code vaadin-menu-bar-item} inside it).
+     * {@code vaadin-menu-bar-item} inside it). {@code GenericElement} has no tag
+     * of its own: {@code find(page, tag).withId(..)} covers it.
      */
     private static final Set<String> NO_ID = Set.of(
-            "NotificationElement", "TooltipElement", "MenuElement", "MenuItemElement", "ContextMenuElement");
+            "NotificationElement", "TooltipElement", "MenuElement", "MenuItemElement", "ContextMenuElement",
+            "GenericElement");
 
     @Test
     void everyPublicElementHasIdAndTestIdFactories() throws Exception {
