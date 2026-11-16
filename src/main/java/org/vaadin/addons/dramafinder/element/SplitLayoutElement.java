@@ -32,10 +32,23 @@ public class SplitLayoutElement extends VaadinElement implements HasStyleElement
     }
 
     /**
-     * Get the first split layout on the page.
+     * Get the first {@code <vaadin-split-layout>} on the page.
+     *
+     * @param page the Playwright page
+     * @return the first {@code SplitLayoutElement}
      */
     public static SplitLayoutElement get(Page page) {
         return new SplitLayoutElement(page.locator(FIELD_TAG_NAME).first());
+    }
+
+    /**
+     * Get the first {@code <vaadin-split-layout>} within a locator scope.
+     *
+     * @param locator the scope to search within
+     * @return the first {@code SplitLayoutElement} inside the scope
+     */
+    public static SplitLayoutElement get(Locator locator) {
+        return new SplitLayoutElement(locator.locator(FIELD_TAG_NAME).first());
     }
 
     /**

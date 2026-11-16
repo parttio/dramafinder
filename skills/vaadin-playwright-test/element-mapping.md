@@ -46,7 +46,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Tabs` | `TabsElement` | `get(page)`, `getById(page, id)`, `getTab(label)` (own text; `aria-label` for an icon-only tab), `getTab(index)`, `getTabs()`, `getTabCount()`, `getTabLabels()`, `selectTab(label)`, `selectTab(index)` (fails at once on a disabled tab), `getSelectedTab()`, `getSelectedIndex()`, `assertSelectedTab()`, `assertTabCount()`, `assertTabLabels(..)`, `getOrientation()`, `assertOrientation()` |
 | `Tab` | `TabElement` | `getTabByText(tabsLocator, text)`, `getSelectedTab(tabsLocator)`, `select()`, `getLabel()`, `assertSelected()`, `assertNotSelected()`, `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
 | `TabSheet` | `TabSheetElement` | `get(page)`, `getTabsElement()`, `getTab(label)`, `selectTab(label)`, `selectTab(index)`, `getSelectedTab()`, `assertSelectedTab(label)`, `assertTabsCount()`, `getTabLabels()`, `assertTabLabels(..)`, `getContentLocator()` |
-| `Accordion` | `AccordionElement` | `new AccordionElement(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
+| `Accordion` | `AccordionElement` | `get(page)`, `get(locator)`, `openPanel(summary)`, `closePanel(summary)`, `assertPanelOpened()`, `assertPanelClosed()` |
 | `AccordionPanel` | `AccordionPanelElement` | `getAccordionPanelBySummary(locator, summary)`, `assertOpened()`, `assertClosed()` |
 | `Details` | `DetailsElement` | `getBySummaryText(page, summary)`, `setOpen(boolean)`, `toggle()`, `assertOpened()`, `assertClosed()`, `getSummaryLocator()`, `getContentLocator()` (open or closed), `assertContentVisible()`, `assertContentNotVisible()` |
 | `MenuBar` | `MenuBarElement` | `find(page, MenuBarElement.class).withAccessibleName(name)` or `new MenuBarElement(page)`, `getMenuItemElement(name)` (text, or `aria-label` for icon-only items), `getItemLabels()`, `openSubMenu(name)`, `close()` (waits until the sub-menus are gone) |
@@ -103,8 +103,8 @@ NotificationElement toast = NotificationElement.getByText(page, "Saved");
 DialogElement dialog = DialogElement.getByHeaderText(page, "Edit person");
 ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Unsaved changes");
 
-// A few elements have no static factory at all (AccordionElement,
-// ProgressBarElement, ...) — construct them
+// A few elements have no name-keyed factory (ProgressBarElement, ...) —
+// use getById / getByTestId, or construct them
 // from a Locator, which is always available on every element:
 // (also useful for elements inside dialogs, grid cells, etc.)
 TextFieldElement field = new TextFieldElement(dialog.getLocator().locator("vaadin-text-field"));

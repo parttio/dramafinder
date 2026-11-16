@@ -17,6 +17,7 @@ are delegated to the embedded [`TabsElement`](TabsElement.md).
 
 ```java
 TabSheetElement sheet = TabSheetElement.get(page);                 // first on the page
+TabSheetElement inDialog = TabSheetElement.get(dialog.getLocator()); // first inside a container
 TabSheetElement byId = TabSheetElement.getById(page, "disabled-tabsheet");
 TabSheetElement byTestId = TabSheetElement.getByTestId(page, "settings-sheet");
 TabSheetElement scoped = TabSheetElement.getById(dialog.getLocator(), "settings-sheet");
@@ -149,7 +150,9 @@ outer.assertSelectedTab("Outer 1");
 - `TabSheetElement` has no theme, class-name or enabled helpers of its own; use
   `getTabsElement()` for the strip, or Playwright assertions on `getLocator()`.
 - `TabSheetElement.get(page)` takes the first sheet in DOM order — with nested
-  sheets that is the outer one. Use ids for anything but a single sheet.
+  sheets that is the outer one. `get(outer.getLocator())` searches below the
+  outer sheet, so it returns the nested one. Use ids for anything but a single
+  sheet.
 
 ## See also
 

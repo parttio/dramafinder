@@ -23,6 +23,7 @@ SplitLayoutElement editor = SplitLayoutElement.getById(page, "editor-split");
 SplitLayoutElement byTestId = SplitLayoutElement.getByTestId(page, "editor-split");
 
 // Scoped to a container
+SplitLayoutElement firstInDialog = SplitLayoutElement.get(dialog.getLocator());
 SplitLayoutElement inDialog = SplitLayoutElement.getById(dialog.getLocator(), "preview-split");
 ```
 

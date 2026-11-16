@@ -31,6 +31,26 @@ public class AccordionElement extends VaadinElement implements HasStyleElement,
     }
 
     /**
+     * Get the first {@code <vaadin-accordion>} on the page.
+     *
+     * @param page the Playwright page
+     * @return the first {@code AccordionElement}
+     */
+    public static AccordionElement get(Page page) {
+        return new AccordionElement(page.locator(FIELD_TAG_NAME).first());
+    }
+
+    /**
+     * Get the first {@code <vaadin-accordion>} within a locator scope.
+     *
+     * @param locator the scope to search within
+     * @return the first {@code AccordionElement} inside the scope
+     */
+    public static AccordionElement get(Locator locator) {
+        return new AccordionElement(locator.locator(FIELD_TAG_NAME).first());
+    }
+
+    /**
      * Assert the number of panels present in the accordion.
      */
     public void assertPanelCount(int count) {

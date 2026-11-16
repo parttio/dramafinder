@@ -70,6 +70,14 @@ public class TabSheetViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void testGetScopedToALocator() {
+        TabSheetElement outer = TabSheetElement.getById(page, "outer-tabsheet");
+        // the scope's descendants only: the tab sheet nested in the outer one
+        TabSheetElement inner = TabSheetElement.get(outer.getLocator());
+        inner.assertTabLabels("Inner 1", "Inner 2");
+    }
+
+    @Test
     public void testNestedTabSheetContent() {
         TabSheetElement outer = TabSheetElement.getById(page, "outer-tabsheet");
         outer.assertTabsCount(2);

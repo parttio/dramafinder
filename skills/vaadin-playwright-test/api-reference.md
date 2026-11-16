@@ -168,7 +168,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 
 | Web-component tag | Element wrapper | Static factory methods | `find` query |
 |---|---|---|---|
-| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | + id, test id | `ComponentQuery` |
+| `<vaadin-accordion>` | [AccordionElement](#accordionelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-accordion-panel>` | [AccordionPanelElement](#accordionpanelelement) | `getAccordionPanelBySummary(Locator, String)`, `getOpenedAccordionPanel(Locator)` + id, test id | `ComponentQuery` |
 | `<vaadin-app-layout>` | [AppLayoutElement](#applayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-avatar>` | [AvatarElement](#avatarelement) | `get(Locator)`, `get(Page)`, `getByName(Locator, String)`, `getByName(Page, String)` + id, test id | `ComponentQuery` |
@@ -186,7 +186,7 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-custom-field>` | [CustomFieldElement](#customfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-date-picker>` | [DatePickerElement](#datepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-date-time-picker>` | [DateTimePickerElement](#datetimepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `DateTimePickerQuery` |
-| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Page, String)` + id, test id | `ComponentQuery` |
+| `<vaadin-details>` | [DetailsElement](#detailselement) | `getBySummaryText(Locator, String)`, `getBySummaryText(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-dialog[opened]>` | [DialogElement](#dialogelement) | `getByHeaderText(Page, String)` + id, test id | `ComponentQuery` |
 | `<vaadin-email-field>` | [EmailFieldElement](#emailfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-form-layout>` | [FormLayoutElement](#formlayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
@@ -212,11 +212,11 @@ Wrapped web-component tag, its wrapper class, and the wrapper's actual static fa
 | `<vaadin-side-nav>` | [SideNavigationElement](#sidenavigationelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-side-nav-item>` | [SideNavigationItemElement](#sidenavigationitemelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `SideNavItemQuery` |
 | `<vaadin-slider>` | [SliderElement](#sliderelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
-| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-split-layout>` | [SplitLayoutElement](#splitlayoutelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-switch>` | [SwitchElement](#switchelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `FieldQuery` |
 | `<vaadin-tab>` | [TabElement](#tabelement) | `getSelectedTab(Locator)`, `getTabByText(Locator, String)` + id, test id | `TextQuery` |
 | `<vaadin-tabs>` | [TabsElement](#tabselement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
-| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Page)` + id, test id | `ComponentQuery` |
+| `<vaadin-tabsheet>` | [TabSheetElement](#tabsheetelement) | `get(Locator)`, `get(Page)` + id, test id | `ComponentQuery` |
 | `<vaadin-text-area>` | [TextAreaElement](#textareaelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-text-field>` | [TextFieldElement](#textfieldelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
 | `<vaadin-time-picker>` | [TimePickerElement](#timepickerelement) | `getByLabel(Locator, String)`, `getByLabel(Page, String)`, `getByLabelContaining(Locator, String)`, `getByLabelContaining(Page, String)` + id, test id | `InputFieldQuery` |
@@ -530,6 +530,8 @@ PlaywrightElement for `<vaadin-accordion>`.
 
 **Static factory methods:**
 
+- `AccordionElement get(Page page)` — Get the first `<vaadin-accordion>` on the page.
+- `AccordionElement get(Locator locator)` — Get the first `<vaadin-accordion>` within a locator scope.
 - `AccordionElement getById(Page page, String id)` — Get an `AccordionElement` by its `id`, searching the entire page.
 - `AccordionElement getById(Locator locator, String id)` — Get an `AccordionElement` by its `id`, scoped to the given locator.
 - `AccordionElement getByTestId(Page page, String testId)` — Get an `AccordionElement` by its test id, searching the entire page.
@@ -1243,6 +1245,7 @@ PlaywrightElement for `<vaadin-details>`.
 **Static factory methods:**
 
 - `DetailsElement getBySummaryText(Page page, String summary)` — Get a details component by its summary text.
+- `DetailsElement getBySummaryText(Locator locator, String summary)` — Get a details component by its summary text, scoped to the given locator.
 - `DetailsElement getById(Page page, String id)` — Get a `DetailsElement` by its `id`, searching the entire page.
 - `DetailsElement getById(Locator locator, String id)` — Get a `DetailsElement` by its `id`, scoped to the given locator.
 - `DetailsElement getByTestId(Page page, String testId)` — Get a `DetailsElement` by its test id, searching the entire page.
@@ -2280,7 +2283,8 @@ PlaywrightElement for `vaadin-split-layout`.
 
 **Static factory methods:**
 
-- `SplitLayoutElement get(Page page)` — Get the first split layout on the page.
+- `SplitLayoutElement get(Page page)` — Get the first `<vaadin-split-layout>` on the page.
+- `SplitLayoutElement get(Locator locator)` — Get the first `<vaadin-split-layout>` within a locator scope.
 - `SplitLayoutElement getById(Page page, String id)` — Get a `SplitLayoutElement` by its `id`, searching the entire page.
 - `SplitLayoutElement getById(Locator locator, String id)` — Get a `SplitLayoutElement` by its `id`, scoped to the given locator.
 - `SplitLayoutElement getByTestId(Page page, String testId)` — Get a `SplitLayoutElement` by its test id, searching the entire page.
@@ -2364,7 +2368,8 @@ PlaywrightElement for `<vaadin-tabsheet>`.
 
 **Static factory methods:**
 
-- `TabSheetElement get(Page page)` — Get the first tabsheet instance on the page.
+- `TabSheetElement get(Page page)` — Get the first `<vaadin-tabsheet>` on the page.
+- `TabSheetElement get(Locator locator)` — Get the first `<vaadin-tabsheet>` within a locator scope.
 - `TabSheetElement getById(Page page, String id)` — Get a `TabSheetElement` by its `id`, searching the entire page.
 - `TabSheetElement getById(Locator locator, String id)` — Get a `TabSheetElement` by its `id`, scoped to the given locator.
 - `TabSheetElement getByTestId(Page page, String testId)` — Get a `TabSheetElement` by its test id, searching the entire page.
