@@ -75,23 +75,50 @@ public class SelectElement extends VaadinElement
         return getInputLocator().innerText();
     }
 
+    /**
+     * The value button, which carries the {@code aria-label} from Vaadin 25.4 on.
+     * Up to 25.3 the select renders its accessible name as a screen-reader-only
+     * label ({@code slot="sr-label"}) instead; {@link #getAriaLabel()} and
+     * {@link #assertAriaLabel(String)} read either.
+     *
+     * @return the value button locator
+     */
     @Override
     public Locator getAriaLabelLocator() {
-        return getLocator().locator("label[slot=\"sr-label\"]").first();
+        return getInputLocator();
     }
 
+    /**
+     * Read the accessible name set with {@code setAriaLabel(..)}: the value
+     * button's {@code aria-label} (Vaadin 25.4+), else the text of the
+     * screen-reader-only {@code sr-label} (up to 25.3).
+     *
+     * @return the ARIA label, or {@code null} when none is set
+     */
     @Override
     public String getAriaLabel() {
-        return getAriaLabelLocator().textContent();
+        String ariaLabel = getAriaLabelLocator().getAttribute("aria-label");
+        if (ariaLabel != null) {
+            return ariaLabel;
+        }
+        Locator srLabel = getLocator().locator(":scope > label[slot=\"sr-label\"]");
+        if (srLabel.count() == 0) {
+            return null;
+        }
+        String text = srLabel.first().textContent();
+        return text == null || text.isEmpty() ? null : text;
     }
 
+    /**
+     * Assert the accessible name set with {@code setAriaLabel(..)}, read as
+     * {@link #getAriaLabel()} does, retrying until it matches.
+     *
+     * @param ariaLabel expected label, or {@code null} to assert none is set
+     *                  (e.g. with {@code setAriaLabelledBy(..)})
+     */
     @Override
     public void assertAriaLabel(String ariaLabel) {
-        if (ariaLabel != null) {
-            assertThat(getAriaLabelLocator()).hasText(ariaLabel);
-        } else {
-            assertThat(getAriaLabelLocator()).isHidden();
-        }
+        assertEventually(getLocator().page(), "Select aria-label", this::getAriaLabel, ariaLabel);
     }
 
     @Override
