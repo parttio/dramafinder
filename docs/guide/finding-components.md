@@ -245,9 +245,23 @@ List<GenericElement> chips = find(dialog.getLocator(), "my-chip").withTheme("sma
 GenericElement box = VaadinElement.of(page.locator("#summary"));   // wrap any locator
 ```
 
+`find(page, VaadinElement.ANY_TAG)` (`"*"`) searches every light-DOM element,
+whatever its tag, for a lookup that only knows an id, a test id, a class, a theme
+or an attribute:
+
+```java
+GenericElement billing = find(page, VaadinElement.ANY_TAG).withTestId("billing").single();
+```
+
+Tag names are case-insensitive and may contain `.`, `_` and `-`, as in
+`getLightDomChildren(..)`.
+
 A `GenericElement` has the `VaadinElement` API (`getText`, `getTagName`,
 `getProperty`, `click`, visibility) plus CSS class, inline and computed style
-(`getInlineStyle`, `getComputedStyle`) and theme helpers.
+(`getInlineStyle`, `getComputedStyle`), theme helpers, `focus()` / `blur()`
+on the host, and `isEnabled()` / `assertEnabled()` / `assertDisabled()` read
+from the host's `disabled` attribute, which Flow sets on any component disabled
+with `setEnabled(false)`.
 
 ## Which lookup to use
 

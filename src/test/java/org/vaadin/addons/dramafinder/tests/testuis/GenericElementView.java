@@ -15,7 +15,8 @@ import com.vaadin.flow.router.Route;
 
 /**
  * Components without an element class, theme variants, placeholders and an
- * application-owned shadow root, for the generic element and the tag queries.
+ * application-owned shadow root, for the generic element and the tag queries,
+ * and plain {@code div}s to focus, enable and disable.
  */
 @PageTitle("Generic Element Demo")
 @Route(value = "generic-element", layout = MainLayout.class)
@@ -45,6 +46,26 @@ public class GenericElementView extends Main {
         host.setId("shadow-host");
         host.getElement().attachShadow().appendChild(new Button("In shadow").getElement());
         add(host);
+
+        // Enabled state and focus of a component without an element class
+        Div panel = new Div(new Span("Panel"));
+        panel.setId("panel");
+        panel.getElement().setAttribute("tabindex", "0");
+        Button togglePanel = new Button("Toggle panel", e -> panel.setEnabled(!panel.isEnabled()));
+        Div disabledPanel = new Div(new Span("Disabled panel"));
+        disabledPanel.setId("disabled-panel");
+        disabledPanel.setEnabled(false);
+        add(panel, togglePanel, disabledPanel);
+
+        // Components of different tags found by test id alone, and a tag with a dot
+        Span billing = new Span("Billing");
+        billing.getElement().setAttribute("data-testid", "billing");
+        Element note = new Element("x.note");
+        note.setText("Dotted tag");
+        Div testIds = new Div(billing);
+        testIds.setId("test-ids");
+        testIds.getElement().appendChild(note);
+        add(testIds);
 
         Span uiId = new Span();
         uiId.setId("ui-id");

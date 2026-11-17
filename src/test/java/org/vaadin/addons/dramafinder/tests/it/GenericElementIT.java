@@ -7,10 +7,13 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.GenericElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
+import org.vaadin.addons.dramafinder.element.shared.FocusableElement;
+import org.vaadin.addons.dramafinder.element.shared.HasDisabledAttributeElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,7 +23,8 @@ import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 /**
  * A generic element for any tag (#269, #270, #271), queries by tag (#273),
  * {@code withTheme} (#274), {@code withPlaceholderContaining} (#275) and the
- * light-DOM default of the queries (#276).
+ * light-DOM default of the queries (#276), focus and enabled state (#296),
+ * and queries for any tag (#295).
  */
 public class GenericElementIT extends SpringPlaywrightIT {
 
@@ -59,6 +63,45 @@ public class GenericElementIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void genericElementFocusesTheHost() {
+        GenericElement panel = VaadinElement.of(page.locator("#panel"));
+        panel.assertIsNotFocused();
+        panel.focus();
+        panel.assertIsFocused();
+        assertEquals("0", panel.getTabIndex());
+        panel.blur();
+        panel.assertIsNotFocused();
+    }
+
+    @Test
+    public void genericElementReadsEnabledStateFromTheDisabledAttribute() {
+        GenericElement panel = find(page, "div").withId("panel").single();
+        assertTrue(panel.isEnabled());
+        panel.assertEnabled();
+
+        ButtonElement.getByText(page, "Toggle panel").click();
+        panel.assertDisabled();
+        assertFalse(panel.isEnabled());
+
+        ButtonElement.getByText(page, "Toggle panel").click();
+        panel.assertEnabled();
+
+        GenericElement disabled = VaadinElement.of(page.locator("#disabled-panel"));
+        assertFalse(disabled.isEnabled());
+        disabled.assertDisabled();
+    }
+
+    @Test
+    public void lightDomLookupsReturnFocusableElementsWithEnabledState() {
+        VaadinElement child = VaadinElement.of(page.locator("#disabled-panel").locator("xpath=..")).getLightDomChildren("div").stream()
+                .filter(element -> "disabled-panel".equals(element.getLocator().getAttribute("id")))
+                .findFirst().orElseThrow();
+        assertInstanceOf(FocusableElement.class, child);
+        assertInstanceOf(HasDisabledAttributeElement.class, child);
+        ((HasDisabledAttributeElement) child).assertDisabled();
+    }
+
+    @Test
     public void findByTagOffersLabelTextAndPlaceholderFilters() {
         assertThat(find(page, "x-card").getLocator()).hasCount(2);
         assertThat(find(page, "X-CARD").withLabel("Card label").getLocator()).hasCount(1);
@@ -73,6 +116,31 @@ public class GenericElementIT extends SpringPlaywrightIT {
         assertThat(find(page.locator("main"), "x-card").getLocator()).hasCount(2);
         assertThat(find(page, "vaadin-button").withText("Plain").getLocator()).hasCount(1);
         assertThrows(IllegalArgumentException.class, () -> find(page, "not a tag"));
+    }
+
+    @Test
+    public void findAnyTagSearchesEveryLightDomElement() {
+        GenericElement billing = find(page, VaadinElement.ANY_TAG).withTestId("billing").single();
+        assertEquals("span", billing.getTagName());
+        assertEquals("div", find(page, VaadinElement.ANY_TAG).withId("styled").single().getTagName());
+        assertThat(find(page, VaadinElement.ANY_TAG).withClassName("box").getLocator()).hasCount(1);
+        assertThat(find(page, VaadinElement.ANY_TAG).withTheme("compact").getLocator()).hasCount(1);
+        assertThat(find(page, VaadinElement.ANY_TAG).withAttribute("data-testid", "billing").getLocator())
+                .hasCount(1);
+
+        // the scope itself is not a candidate, only its light-DOM subtree
+        assertThat(find(page.locator("#test-ids"), VaadinElement.ANY_TAG).getLocator()).hasCount(2);
+
+        // an application's shadow root needs the opt-out, as for a tag
+        assertThat(find(page.locator("#shadow-host"), VaadinElement.ANY_TAG).getLocator()).hasCount(0);
+        assertThat(find(page.locator("#shadow-host"), VaadinElement.ANY_TAG).includingShadowDom()
+                .withText("In shadow").getLocator()).hasCount(1);
+    }
+
+    @Test
+    public void findByTagAcceptsTheTagNamesOfTheLightDomLookups() {
+        assertThat(find(page, "x.note").getLocator()).hasText("Dotted tag");
+        assertEquals(1, VaadinElement.of(page.locator("#test-ids")).getLightDomChildren("x.note").size());
     }
 
     @Test

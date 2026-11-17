@@ -7,14 +7,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.GenericElement;
 import org.vaadin.addons.dramafinder.element.PlaywrightElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
+import org.vaadin.addons.dramafinder.element.utils.TagNames;
 
 /**
  * Entry point of the typed query builder:
@@ -45,8 +44,6 @@ public final class ElementQueries {
 
     // Playwright's CSS engine without shadow-root piercing: candidates are light-DOM elements.
     static final String LIGHT_DOM = "css:light=";
-
-    private static final Pattern TAG_NAME = Pattern.compile("[A-Za-z][A-Za-z0-9_-]*");
 
     private ElementQueries() {
     }
@@ -95,15 +92,22 @@ public final class ElementQueries {
      * every query has, and returns {@link GenericElement}s. Like
      * {@link #find(Page, Class)}, it searches the light DOM. Prefer the
      * element-class overload when the component has one.
+     * <p>
+     * {@link VaadinElement#ANY_TAG} ({@code "*"}) searches every element,
+     * whatever its tag, e.g. {@code find(page, ANY_TAG).withTestId("billing")}.
+     * It accepts the same tag names as
+     * {@link VaadinElement#getLightDomChildren(String)}.
      *
      * @param page the Playwright page
-     * @param tag  the tag name, e.g. {@code my-component} (case-insensitive)
+     * @param tag  the tag name, e.g. {@code my-component} (case-insensitive),
+     *             or {@link VaadinElement#ANY_TAG} ({@code "*"}) for any element
      * @return a query over every element with that tag on the page
      * @throws IllegalArgumentException if {@code tag} is not a valid tag name
      */
     public static TagQuery<GenericElement> find(Page page, String tag) {
-        String name = tagName(tag);
-        return tagQuery(new ElementQuery.CssSelector(page::locator, LIGHT_DOM + name, name));
+        String name = TagNames.normalize(tag);
+        return tagQuery(new ElementQuery.CssSelector(page::locator, LIGHT_DOM + TagNames.toCss(name),
+                describe(name)));
     }
 
     /**
@@ -112,15 +116,16 @@ public final class ElementQueries {
      *
      * @param scope the locator whose light-DOM subtree is searched (the scope
      *              itself is not a candidate)
-     * @param tag   the tag name, e.g. {@code my-component} (case-insensitive)
+     * @param tag   the tag name, e.g. {@code my-component} (case-insensitive),
+     *              or {@link VaadinElement#ANY_TAG} ({@code "*"}) for any element
      * @return a query over every element with that tag inside the scope
      * @throws IllegalArgumentException if {@code tag} is not a valid tag name
      */
     public static TagQuery<GenericElement> find(Locator scope, String tag) {
-        String name = tagName(tag);
+        String name = TagNames.normalize(tag);
         String scopeDescription = scope.description();
-        return tagQuery(new ElementQuery.CssSelector(scope::locator, LIGHT_DOM + name,
-                scopeDescription == null ? name : name + " inside " + scopeDescription));
+        return tagQuery(new ElementQuery.CssSelector(scope::locator, LIGHT_DOM + TagNames.toCss(name),
+                scopeDescription == null ? describe(name) : describe(name) + " inside " + scopeDescription));
     }
 
     private static TagQuery<GenericElement> tagQuery(ElementQuery.CssSelector candidates) {
@@ -129,11 +134,8 @@ public final class ElementQueries {
         return query;
     }
 
-    private static String tagName(String tag) {
-        if (tag == null || !TAG_NAME.matcher(tag).matches()) {
-            throw new IllegalArgumentException("Not a tag name: '" + tag + "'");
-        }
-        return tag.toLowerCase(Locale.ROOT);
+    private static String describe(String tag) {
+        return TagNames.ANY_TAG.equals(tag) ? "any element" : tag;
     }
 
     @SuppressWarnings("unchecked")
