@@ -72,7 +72,7 @@ Also scan `src/main/java` for any `*Element.java` files not listed here (custom 
 | `Badge` | `BadgeElement` | `get(page)`, `getByText(page, text)`, `getText()`, `assertText()`, `getNumber()`, `assertNumber()`, `assertHasIcon()`, `assertHasThemeVariant()` |
 | `Breadcrumbs` | `BreadcrumbsElement` | `get(page)`, `find(page, BreadcrumbsElement.class).withAccessibleName(name)`, `getItems()`, `getItem(text)`, `getCurrentItem()`, `assertItemTexts()`, `assertItemCount()`, `hasOverflow()`, `openOverflow()`, `getOverflowItems()` |
 | `BreadcrumbsItem` | `BreadcrumbsItemElement` | `getByText(page, text)`, `getText()`, `getPath()`, `isLink()`, `click()`, `isCurrent()`, `assertCurrent()`, `assertHasPrefix()`, `assertDisabled()` |
-| any other component (add-on, layout, custom tag, HTML element) | `GenericElement` | `VaadinElement.of(locator)`, `find(page, "my-tag").withText(..)` / `.withLabel(..)` / `.withPlaceholder(..)`, `getTagName()`, `getText()`, `getProperty()`, `getInlineStyle()`, `getComputedStyle()`, `assertCssClass()`, `assertTheme()`, `focus()`, `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
+| any other component (add-on, layout, custom tag, HTML element) | `GenericElement` | `VaadinElement.of(locator)`, `find(page, "my-tag").withText(..)` / `.withLabel(..)` / `.withPlaceholder(..)`, `find(page, VaadinElement.ANY_TAG).withTestId(..)` (any tag), `getTagName()`, `getText()`, `getProperty()`, `getInlineStyle()`, `getComputedStyle()`, `assertCssClass()`, `assertTheme()`, `focus()`, `isEnabled()`, `assertEnabled()`, `assertDisabled()` |
 
 The abstract bases `AbstractNumberFieldElement` (of `IntegerFieldElement` and
 `NumberFieldElement`) and `AbstractLoginElement` (of `LoginFormElement` and

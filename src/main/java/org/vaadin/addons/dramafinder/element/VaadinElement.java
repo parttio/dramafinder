@@ -2,16 +2,15 @@ package org.vaadin.addons.dramafinder.element;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.ElementQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasLocatorElement;
+import org.vaadin.addons.dramafinder.element.utils.TagNames;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
@@ -26,8 +25,6 @@ public abstract class VaadinElement implements HasLocatorElement {
 
     /** The tag argument of the light-DOM lookups that matches any element. */
     public static final String ANY_TAG = "*";
-
-    private static final Pattern TAG_NAME = Pattern.compile("[A-Za-z][A-Za-z0-9._-]*");
 
     protected final Locator locator;
 
@@ -151,25 +148,12 @@ public abstract class VaadinElement implements HasLocatorElement {
 
     private List<VaadinElement> lightDom(String axis, String tag) {
         // XPath does not pierce shadow roots, unlike Playwright's CSS engine
-        Locator matches = locator.locator("xpath=" + axis + xpathNameTest(tag));
+        Locator matches = locator.locator("xpath=" + axis + TagNames.normalize(tag));
         List<VaadinElement> elements = new ArrayList<>();
         for (Locator match : matches.all()) {
             elements.add(new GenericElement(match));
         }
         return elements;
-    }
-
-    private static String xpathNameTest(String tag) {
-        if (tag == null) {
-            throw new IllegalArgumentException("tag must not be null; use \"*\" for any element");
-        }
-        if (ANY_TAG.equals(tag)) {
-            return ANY_TAG;
-        }
-        if (!TAG_NAME.matcher(tag).matches()) {
-            throw new IllegalArgumentException("Not a tag name: '" + tag + "'");
-        }
-        return tag.toLowerCase(Locale.ROOT);
     }
 
     /**

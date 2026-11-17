@@ -57,6 +57,16 @@ public class GenericElementView extends Main {
         disabledPanel.setEnabled(false);
         add(panel, togglePanel, disabledPanel);
 
+        // Components of different tags found by test id alone, and a tag with a dot
+        Span billing = new Span("Billing");
+        billing.getElement().setAttribute("data-testid", "billing");
+        Element note = new Element("x.note");
+        note.setText("Dotted tag");
+        Div testIds = new Div(billing);
+        testIds.setId("test-ids");
+        testIds.getElement().appendChild(note);
+        add(testIds);
+
         Span uiId = new Span();
         uiId.setId("ui-id");
         uiId.addAttachListener(e -> uiId.setText(String.valueOf(e.getUI().getUIId())));

@@ -137,6 +137,35 @@ class ElementQueriesTest {
     }
 
     @Test
+    void anyTagCompilesCssFiltersOntoTheUniversalSelector() {
+        Page page = mock(Page.class);
+        Map<String, Locator> locators = selfDescribingLocators(page);
+
+        var query = ElementQueries.find(page, VaadinElement.ANY_TAG)
+                .withId("billing").withClassName("x").withAttribute("role").withTheme("small");
+
+        assertSame(locators.get("css:light=*[id=\"billing\"][class~=\"x\"][role][theme~=\"small\"]"),
+                query.getLocator());
+        verify(query.getLocator()).describe("any element with id \"billing\" with class \"x\""
+                + " with attribute role with theme \"small\"");
+        Locator piercing = query.includingShadowDom().getLocator();
+        assertSame(locators.get("*[id=\"billing\"][class~=\"x\"][role][theme~=\"small\"]"), piercing);
+    }
+
+    @Test
+    void tagNamesMatchTheLightDomLookups() {
+        Page page = mock(Page.class);
+        Map<String, Locator> locators = selfDescribingLocators(page);
+
+        // CSS would read the dot as a class selector, so it is escaped
+        Locator dotted = ElementQueries.find(page, "X.Note").getLocator();
+        assertSame(locators.get("css:light=x\\.note"), dotted);
+        assertThrows(IllegalArgumentException.class, () -> ElementQueries.find(page, "not a tag"));
+        assertThrows(IllegalArgumentException.class, () -> ElementQueries.find(page, "**"));
+        assertThrows(IllegalArgumentException.class, () -> ElementQueries.find(page, (String) null));
+    }
+
+    @Test
     void includingShadowDomAfterANonCssFilterIsRejected() {
         Page page = mock(Page.class);
         selfDescribingLocators(page);
