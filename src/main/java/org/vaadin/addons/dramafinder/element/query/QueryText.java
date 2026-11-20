@@ -13,6 +13,15 @@ final class QueryText {
     /** The component's own label: a direct child, so nested fields' labels do not count. */
     static final String OWN_LABEL = ":scope > [slot='label']";
 
+    /** A form item's own label, the caption of the field it wraps. */
+    private static final String FORM_ITEM_OWN_LABEL = "vaadin-form-item > [slot='label']";
+
+    /** From a form item: the field it wraps, its one direct child without a slot. */
+    private static final String FORM_ITEM_FIELD = "xpath=./*[not(@slot)]";
+
+    /** Any non-whitespace text: a label element that actually shows a label. */
+    private static final Pattern NOT_BLANK = Pattern.compile("\\S");
+
     /**
      * From a labelled element: the element itself and, when it is a field's own
      * focusable element — the input, textarea or select value button slotted
@@ -83,6 +92,25 @@ final class QueryText {
         return "xpath=self::*[(not(*[@slot][normalize-space()]) and contains(" + lower + ", " + value + "))"
                 + " or text()[contains(" + lower + ", " + value + ")]"
                 + " or *[not(@slot)][contains(" + lower + ", " + value + ")]]";
+    }
+
+    /**
+     * Narrow {@code candidates} to components labelled {@code text}: by their
+     * own {@code slot="label"} child or, for a component whose own label is
+     * empty, by the label of the {@code vaadin-form-item} wrapping it.
+     *
+     * @param labelText the text filter a label has to pass
+     */
+    static Locator labelled(Locator candidates, Locator.FilterOptions labelText) {
+        Page page = candidates.page();
+        Locator ownLabel = candidates.filter(new Locator.FilterOptions()
+                .setHas(page.locator(OWN_LABEL).filter(labelText)));
+        Locator formItemField = page.locator(FORM_ITEM_OWN_LABEL).filter(labelText)
+                .locator("xpath=..").locator(FORM_ITEM_FIELD);
+        Locator itemLabel = candidates.and(formItemField).filter(new Locator.FilterOptions()
+                .setHasNot(page.locator(OWN_LABEL)
+                        .filter(new Locator.FilterOptions().setHasText(NOT_BLANK))));
+        return ownLabel.or(itemLabel);
     }
 
     /**

@@ -159,6 +159,20 @@ public class TooltipElement extends VaadinElement implements HasThemeElement, Ha
     }
 
     /**
+     * Get the tooltip's accessible name, which is its text — what
+     * {@code withAccessibleName} matches on a tooltip query. Read without
+     * waiting, whether the tooltip is open or closed.
+     *
+     * @return the whitespace-normalized text, or {@code null} when the tooltip
+     *         has none
+     */
+    @Override
+    public String getAccessibleName() {
+        String text = getText();
+        return text == null || text.isBlank() ? null : text.strip().replaceAll("\\s+", " ");
+    }
+
+    /**
      * Assert the tooltip text.
      *
      * @param text the expected text, or {@code null} to assert the tooltip

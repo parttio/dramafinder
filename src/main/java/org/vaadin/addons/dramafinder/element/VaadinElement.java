@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.AccessibleNames;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.ElementQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
@@ -72,12 +73,77 @@ public abstract class VaadinElement implements HasLocatorElement {
     }
 
     /**
-     * Get the textual content of the component root.
+     * Get the text of the component, as the browser renders it into the DOM.
+     * <p>
+     * This is the {@code textContent} of the component's light DOM — every
+     * descendant text node, slotted ones included (a prefix, a card's title) —
+     * except the text of a {@code vaadin-tooltip} at any depth: a tooltip
+     * set with {@code setTooltipText(..)} is a child of the component it
+     * describes, but it is not part of that component's text. So a button
+     * {@code new Button("Save")} with a tooltip reads {@code "Save"}, the text
+     * {@code withText("Save")} finds it by. Read the tooltip with
+     * {@code HasTooltipElement.getTooltipText()}.
+     * <p>
+     * The text is returned as is: whitespace is not normalized, and text the
+     * component renders in its shadow DOM is not included. Unlike a
+     * browserless test, where Flow's {@code Element.getText()} reads only the
+     * component's own text nodes, this reads what reached the browser, so the
+     * text of child components counts too: {@code new Div(new Span("Hello"))}
+     * reads {@code "Hello"} here and {@code ""} there.
      *
-     * @return the text content, or {@code null} if none
+     * @return the text, or an empty string when the component has none
      */
     public String getText() {
-        return locator.textContent();
+        return (String) locator.evaluate(TEXT_WITHOUT_TOOLTIPS_JS);
+    }
+
+    /** {@code textContent} of the element, leaving out every {@code vaadin-tooltip} subtree. */
+    private static final String TEXT_WITHOUT_TOOLTIPS_JS = """
+            el => {
+                const walker = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+                    acceptNode: node => node.nodeType === Node.TEXT_NODE ? NodeFilter.FILTER_ACCEPT
+                        : node.localName === 'vaadin-tooltip' ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_SKIP
+                });
+                let text = '';
+                while (walker.nextNode()) {
+                    text += walker.currentNode.data;
+                }
+                return text;
+            }""";
+
+    /**
+     * Get the component's accessible name, as
+     * {@link org.vaadin.addons.dramafinder.element.query.AccessibleNameFilters#withAccessibleName(String)
+     * withAccessibleName} matches it.
+     * <p>
+     * By default the name comes from {@code aria-labelledby}, {@code aria-label}
+     * or a native {@code <label>}, read on the host and then on the field's own
+     * input — so a field's label, its {@code accessibleName} and its
+     * {@code accessibleNameRef} all count. A placeholder does not. Components
+     * named by their content (buttons, tabs, ...) fall back to their own text.
+     * Unlike {@code getAriaLabel()}, this is not limited to the
+     * {@code aria-label} attribute. Read without waiting.
+     *
+     * @return the whitespace-normalized name, or {@code null} when the
+     *         component has none
+     */
+    public String getAccessibleName() {
+        return AccessibleNames.labelled(locator);
+    }
+
+    /**
+     * Assert the component's accessible name as read by
+     * {@link #getAccessibleName()}, retrying until it matches or the timeout
+     * expires. The comparison is exact and case-sensitive, with whitespace
+     * normalized as {@code withAccessibleName} normalizes it; the failure
+     * message shows the last name read.
+     *
+     * @param name the expected full name, or {@code null} to assert that the
+     *             component has no accessible name
+     */
+    public void assertAccessibleName(String name) {
+        String expected = name == null ? null : name.strip().replaceAll("\\s+", " ");
+        AssertionWaits.assertEventually(locator.page(), "Accessible name", this::getAccessibleName, expected);
     }
 
     @Override

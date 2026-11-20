@@ -55,6 +55,7 @@ components, which in 1.x they did not.
 | Symptom | Cause | Fix |
 |---|---|---|
 | Timeout, `element(s) not found` from a `getByLabel` | The field is named by an `aria-label` or a placeholder, not a visible label | Use the replacement from the table above |
+| Timeout, `element(s) not found` from a `getByLabel` on 2.0–2.2 | The field has no label of its own and sits in a `FormLayout` form item (`addFormItem(field, "Name")`) | Upgrade past 2.2: since #303 the form item's label counts as the field's label |
 | Timeout, `element(s) not found` | The label passed is only part of the real label, or differs in case | Pass the whole label as the view renders it, or use the `…Containing` variant |
 | `strict mode violation: … resolved to N elements` | Several components share the label, and 1.x silently picked the first | Scope the lookup to a container (`getByLabel(Locator, String)`), give the component an id, or use the query builder (`find(...).withLabel(...).withId(...)`) |
 

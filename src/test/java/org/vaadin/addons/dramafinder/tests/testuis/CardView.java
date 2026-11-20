@@ -14,7 +14,7 @@ import com.vaadin.flow.router.Route;
 public class CardView extends Main {
 
     public CardView() {
-        add(createDestinationCard(), createActionCard());
+        add(createDestinationCard(), createActionCard(), createHelpCard());
     }
 
     private Card createDestinationCard() {
@@ -61,6 +61,16 @@ public class CardView extends Main {
         Button resetButton = new Button("Reset", event -> status.setText("Awaiting action"));
         card.addToFooter(bookButton, resetButton);
 
+        return card;
+    }
+
+    private Card createHelpCard() {
+        Card card = new Card();
+        card.setTitle(new Div("Help Card"));
+        card.add(new Span("Read the guide"));
+        Button help = new Button("Help");
+        help.setTooltipText("Opens the user guide");
+        card.add(help);
         return card;
     }
 }

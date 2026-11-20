@@ -14,6 +14,7 @@ import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
@@ -35,7 +36,9 @@ import com.vaadin.flow.router.Route;
  * For every element with a visible label, three instances of its component:
  * one with the label {@code "label <Name>"}, one named only by the aria-label
  * {@code "aria <Name>"}, and — where the component has one — one with only the
- * placeholder {@code "placeholder <Name>"}. The kind comes first so that no
+ * placeholder {@code "placeholder <Name>"}, and — except for the side-nav
+ * components — one with no label of its own, in a form item labelled
+ * {@code "form item <Name>"}. The kind comes first so that no
  * element's text contains another's ({@code "TimePicker"} is inside
  * {@code "DateTimePicker"}). Containers also hold children whose
  * label is {@code "<Name> item"} or {@code "<Name> inner"}, which must not name
@@ -103,7 +106,37 @@ public class LabelLookupView extends Main {
                 placeholder.setId(name + "-placeholder");
                 place(placeholder);
             }
+
+            if (!name.startsWith("SideNavigation")) {
+                Component inItem = factory.get();
+                inItem.setId(name + "-form-item");
+                FormLayout form = new FormLayout();
+                form.addFormItem(inItem, "form item " + name);
+                add(form);
+            }
         });
+        add(formItemPrecedence());
+    }
+
+    /**
+     * Fields whose form item's label must not name them: one with a label of
+     * its own, and ones nested in a component the form item wraps.
+     */
+    private static FormLayout formItemPrecedence() {
+        FormLayout form = new FormLayout();
+        TextField ownLabel = new TextField("own label");
+        ownLabel.setId("own-label-in-item");
+        form.addFormItem(ownLabel, "item caption");
+
+        InnerField custom = new InnerField("");
+        custom.setId("custom-in-item");
+        form.addFormItem(custom, "custom caption");
+
+        CheckboxGroup<String> group = new CheckboxGroup<>();
+        group.setItems("group option");
+        group.setId("group-in-item");
+        form.addFormItem(group, "group caption");
+        return form;
     }
 
     /** Adds the component, inside a side nav when it is a side-nav item. */
@@ -131,9 +164,15 @@ public class LabelLookupView extends Main {
 
     /** A custom field holding a text field labelled "CustomField inner". */
     public static class InnerField extends CustomField<String> {
-        private final TextField inner = new TextField("CustomField inner");
+        private final TextField inner;
 
         public InnerField() {
+            this("CustomField inner");
+        }
+
+        /** A custom field holding a text field with the given label; empty for none. */
+        public InnerField(String innerLabel) {
+            inner = new TextField(innerLabel);
             add(inner);
         }
 

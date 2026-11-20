@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import org.vaadin.addons.dramafinder.element.query.AccessibleNames;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.query.TextQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
@@ -279,5 +280,18 @@ public class BadgeElement extends VaadinElement implements HasThemeElement, HasS
      */
     public static BadgeElement getByTestId(Locator locator, String testId) {
         return new BadgeElement(IdLocator.byTestId(locator, FIELD_TAG_NAME, testId));
+    }
+
+    /**
+     * Get the badge's accessible name: its {@code aria-label} or
+     * {@code aria-labelledby} text when either attribute is set, otherwise its
+     * own text, without slotted children such as an icon or a tooltip — what
+     * {@code withAccessibleName} matches. Read without waiting.
+     *
+     * @return the whitespace-normalized name, or {@code null} when it has none
+     */
+    @Override
+    public String getAccessibleName() {
+        return AccessibleNames.labelledOrOwnText(getLocator());
     }
 }
