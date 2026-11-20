@@ -118,6 +118,19 @@ GridElement.get(page).assertRowCount(3);
 classes do the same for the view of each test. See
 [Navigation](navigation.md).
 
+When an action's listener navigates on the server (`ui.navigate(..)`), Flow
+updates the address bar only after it has handled the response. The action's
+wait covers that too — in React mode, Vaadin's default — so a one-shot read of
+the location right after it sees the new view's path:
+
+```java
+ButtonElement.getByText(page, "Open profile").click();   // ui.navigate(ProfileView.class)
+assertEquals("http://localhost:8080/profile", page.url());
+```
+
+It waits at most two seconds for the address bar, so a navigation that a
+`BeforeLeaveEvent` postponed does not hold up every action.
+
 ## No sleeps
 
 If a test only passes with a `Thread.sleep`, something client-side is still

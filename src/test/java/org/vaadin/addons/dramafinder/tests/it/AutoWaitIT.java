@@ -12,6 +12,7 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Each action below reaches a server listener that sleeps before updating
@@ -21,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AutoWaitIT extends SpringPlaywrightIT {
+
+    private static final int NAVIGATION_DELAY_MS = 500;
 
     @Override
     public String getView() {
@@ -84,5 +87,48 @@ public class AutoWaitIT extends SpringPlaywrightIT {
             button.waitForVaadinIdle();
         });
         assertEquals("clicked", result());
+    }
+
+    @Test
+    public void clickWaitsForAServerSideNavigationToUpdateTheUrl() {
+        slowDownClientSideNavigation();
+        ButtonElement.getByText(page, "Navigate button").click();
+        assertTrue(page.url().endsWith("/nav/greeting"), page.url());
+    }
+
+    @Test
+    public void explicitWaitWaitsForAServerSideNavigationToUpdateTheUrl() {
+        slowDownClientSideNavigation();
+        ButtonElement button = ButtonElement.getByText(page, "Navigate button");
+        AutoWait.withoutWaiting(button::click);
+        AutoWait.waitForVaadinIdle(page);
+        assertTrue(page.url().endsWith("/nav/greeting"), page.url());
+    }
+
+    /**
+     * Flow hands a server-side navigation to React Router behind
+     * {@code setTimeout(0)} calls and changes the address bar only once React
+     * Router has run it (issue #304). Holding every zero-delay timer except the
+     * Flow client's own for {@link #NAVIGATION_DELAY_MS} after the
+     * {@code vaadin-navigate} event keeps the client going idle as usual but
+     * turns the few-millisecond gap, in which the URL is still the old one,
+     * into one no wait can win by chance.
+     */
+    private void slowDownClientSideNavigation() {
+        page.addInitScript("""
+                (() => {
+                  const setTimeout = window.setTimeout;
+                  let holdUntil = 0;
+                  window.addEventListener('vaadin-navigate', () => holdUntil = Date.now() + %d);
+                  window.setTimeout = (handler, timeout, ...args) => {
+                    const held = holdUntil - Date.now();
+                    const flowClient = new Error().stack.includes('/FlowClient-');
+                    return setTimeout(handler,
+                        !timeout && held > 0 && !flowClient ? held : timeout, ...args);
+                  };
+                })();
+                """.formatted(NAVIGATION_DELAY_MS));
+        page.reload();
+        AutoWait.waitForVaadinIdle(page);
     }
 }
