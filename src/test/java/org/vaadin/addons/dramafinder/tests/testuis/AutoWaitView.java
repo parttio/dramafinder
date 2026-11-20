@@ -8,6 +8,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.vaadin.addons.dramafinder.tests.testuis.navigation.GreetingView;
 
 /**
  * Every listener here sleeps on the server before updating {@code #result}, so
@@ -36,7 +37,12 @@ public class AutoWaitView extends Main {
         combo.setItems("Apple", "Banana");
         combo.addValueChangeListener(e -> slowly(() -> result.setText("combo: " + e.getValue())));
 
-        add(button, field, checkbox, combo, result);
+        // Server-side navigation: Flow updates the address bar only after it
+        // has handled the response (issue #304)
+        Button navigate = new Button("Navigate button",
+                e -> e.getSource().getUI().ifPresent(ui -> ui.navigate(GreetingView.class)));
+
+        add(button, field, checkbox, combo, navigate, result);
     }
 
     private static void slowly(Runnable update) {

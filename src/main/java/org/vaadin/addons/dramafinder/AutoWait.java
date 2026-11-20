@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.TimeoutError;
 
 /**
  * Waits for the Vaadin server round-trip that an element action triggers.
@@ -30,6 +31,22 @@ public final class AutoWait {
 
     /** System property that turns automatic waiting off for the whole run when {@code false}. */
     public static final String PROPERTY = "dramafinder.autoWait";
+
+    /**
+     * True while Flow is handing a navigation to React Router: Flow sets
+     * {@code window.Vaadin.Flow.navigation} when a server-side
+     * {@code ui.navigate(..)} reaches the browser and deletes it once the
+     * address bar shows the new location. Flow internal, not an API.
+     */
+    private static final String NAVIGATION_SETTLED_SCRIPT =
+            "() => !(window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.navigation)";
+
+    /**
+     * How long to wait for a pending navigation before giving up, so a
+     * navigation that never completes (one a {@code BeforeLeaveEvent}
+     * postponed) does not stall every action.
+     */
+    private static final double NAVIGATION_TIMEOUT_MS = 2000;
 
     private static final ThreadLocal<Integer> SUSPENDED = ThreadLocal.withInitial(() -> 0);
 
@@ -98,20 +115,33 @@ public final class AutoWait {
      * Block until Vaadin Flow has no client-server exchange in flight,
      * regardless of {@link #isEnabled()}.
      * <p>
-     * When the action navigated and the page's script context was replaced
-     * while waiting, the wait starts again on the new page.
+     * When the server navigated with {@code ui.navigate(..)}, it also waits,
+     * up to two seconds, for the address bar to show the new location, which
+     * Flow (in React mode, Vaadin's default) updates only after it has handled
+     * the response. When the action navigated and the page's script context
+     * was replaced while waiting, the wait starts again on the new page.
      *
      * @param page the page to wait on
      */
     public static void waitForVaadinIdle(Page page) {
         try {
-            page.waitForFunction(AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT);
+            waitForIdleAndNavigation(page);
         } catch (PlaywrightException e) {
             if (!isNavigation(e)) {
                 throw e;
             }
             page.waitForLoadState();
-            page.waitForFunction(AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT);
+            waitForIdleAndNavigation(page);
+        }
+    }
+
+    private static void waitForIdleAndNavigation(Page page) {
+        page.waitForFunction(AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT);
+        try {
+            page.waitForFunction(NAVIGATION_SETTLED_SCRIPT, null,
+                    new Page.WaitForFunctionOptions().setTimeout(NAVIGATION_TIMEOUT_MS));
+        } catch (TimeoutError e) {
+            // A navigation that does not complete, e.g. a postponed one
         }
     }
 
