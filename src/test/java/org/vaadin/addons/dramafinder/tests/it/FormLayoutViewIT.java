@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.HasTestView;
 import org.vaadin.addons.dramafinder.element.FormLayoutElement;
+import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -42,6 +43,18 @@ public class FormLayoutViewIT extends SpringPlaywrightIT implements HasTestView 
         layout.assertFieldCount(3);
         assertThat(layout.getFormItems()).hasCount(3);
         assertThat(layout.getField(0)).hasText("First name");
+    }
+
+    @Test
+    public void testFieldByItemLabel() {
+        FormLayoutElement layout = FormLayoutElement.getById(page, "form-item-form");
+        TextFieldElement lastName = new TextFieldElement(layout.getFieldByItemLabel("Last name"));
+        lastName.setValue("Doe");
+        assertThat(layout.getField(1).locator(TextFieldElement.FIELD_TAG_NAME)).hasJSProperty("value", "Doe");
+
+        // whole label only, and only in this layout ("First name" is also in narrow-form)
+        assertThat(layout.getFieldByItemLabel("name")).hasCount(0);
+        assertThat(layout.getFieldByItemLabel("First name")).hasCount(1);
     }
 
     @Test

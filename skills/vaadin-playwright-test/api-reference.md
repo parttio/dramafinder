@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.2.0-SNAPSHOT — 61 element wrappers.
+> DramaFinder 2.2.1-SNAPSHOT — 61 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -382,7 +382,7 @@ Filters for components that render a visible label in their `slot="label"` child
 **Methods:**
 
 - `Q withLabel(String label)` — Keep components whose visible label is exactly `label`.
-- `Q withLabelContaining(String text)` — Keep components whose visible label contains `text`, matched case-insensitively as a substring.
+- `Q withLabelContaining(String text)` — Keep components whose visible label contains `text`, matched case-insensitively as a substring; like `withLabel(String)`, a component without a label of its own is read by its form item's label.
 
 ### PlaceholderFilters
 
@@ -1389,6 +1389,7 @@ PlaywrightElement for `<vaadin-form-layout>`.
 - `Locator getField(int index)` — Get a field by its zero-based position in the layout.
 - `int getFieldCount()` — Get the number of fields the layout positions.
 - `Locator getFormItems()` — Locator matching every `<vaadin-form-item>` of this layout, in DOM order.
+- `Locator getFieldByItemLabel(String label)` — Get the field of the `<vaadin-form-item>` whose label is exactly `label` (case-sensitive, whitespace-normalized; no `.first()`, so two items with that label fail in strict mode).
 - `int getColumnCount()` — Get the number of columns the layout renders at its current width.
 - `String getLabelPosition()` — Get where the layout places the labels of its form items at its current width.
 - `void assertColumnCount(int expected)` — Assert that the layout renders the given number of columns.
