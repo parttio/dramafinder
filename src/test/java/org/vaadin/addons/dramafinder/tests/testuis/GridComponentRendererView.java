@@ -5,6 +5,7 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
@@ -27,8 +28,27 @@ public class GridComponentRendererView extends Main {
         createAppElementGrid("app-element-grid", person -> new Span(person.firstName()));
         createAppElementGrid("app-element-link-grid", person -> coverCell(new Anchor("#", person.firstName())));
         createShadowRootGrid();
+        createCardClickGrid();
         clickOutput.setId("click-output");
         add(clickOutput);
+    }
+
+    // Each cell an app's element whose inner div acts on a click, as Bakery's storefront order
+    // card opens its order; the grid takes no selection, the cell's padding stays free
+    private void createCardClickGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("card-click-grid");
+        grid.setHeight("300px");
+        grid.setSelectionMode(Grid.SelectionMode.NONE);
+        grid.addColumn(new ComponentRenderer<>(person -> {
+            Div wrapper = new Div(person.firstName());
+            wrapper.addClickListener(e -> clickOutput.setText("Card clicked: " + person.firstName()));
+            PersonCard card = new PersonCard(wrapper);
+            card.getElement().getStyle().set("display", "block");
+            return card;
+        })).setHeader("Person");
+        grid.setItems(GridBasicView.generatePersons(10));
+        add(new H2("Card Click Grid"), grid);
     }
 
     // A grid in an app element's shadow root, as a Lit template's

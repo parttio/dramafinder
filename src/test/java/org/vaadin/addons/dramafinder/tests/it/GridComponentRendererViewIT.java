@@ -93,6 +93,13 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testClickRowClicksTheCentre() {
+        GridElement grid = GridElement.getById(page, "card-click-grid");
+        grid.findRow(1).orElseThrow().click();
+        assertThat(page.locator("#click-output")).hasText("Card clicked: First2");
+    }
+
+    @Test
     public void testClickRowFailsWhenAnAppElementHoldsALinkOverTheCell() {
         GridElement grid = GridElement.getById(page, "app-element-link-grid");
         assertThrows(IllegalStateException.class, () -> grid.findRow(0).orElseThrow().click());
