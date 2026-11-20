@@ -167,6 +167,10 @@ find(page, ButtonElement.class).withLabel("Save"); // compile error: buttons hav
 | `withAccessibleName`, `withAccessibleNameContaining` | every element |
 | `withId`, `withTestId`, `withClassName`, `withAttribute`, `withTheme` | every element |
 
+Every element reads back the name `withAccessibleName` matches with
+`getAccessibleName()`, and asserts it with `assertAccessibleName(..)` (see
+[VaadinElement](../specifications/VaadinElement.md#accessible-name)).
+
 Filters combine, and each returns a new query:
 
 ```java

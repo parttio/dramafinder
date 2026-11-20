@@ -3,6 +3,7 @@ package org.vaadin.addons.dramafinder.element;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.AccessibleNames;
 import org.vaadin.addons.dramafinder.element.query.ButtonQuery;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.Findable;
@@ -213,5 +214,18 @@ public class ButtonElement extends VaadinElement
      */
     public static ButtonElement getByTestId(Locator locator, String testId) {
         return new ButtonElement(IdLocator.byTestId(locator, FIELD_TAG_NAME, testId));
+    }
+
+    /**
+     * Get the button's accessible name: its {@code aria-label} or
+     * {@code aria-labelledby} text when either attribute is set, otherwise its
+     * own text, without slotted children such as an icon or a tooltip — what
+     * {@code withAccessibleName} matches. Read without waiting.
+     *
+     * @return the whitespace-normalized name, or {@code null} when it has none
+     */
+    @Override
+    public String getAccessibleName() {
+        return AccessibleNames.labelledOrOwnText(getLocator());
     }
 }

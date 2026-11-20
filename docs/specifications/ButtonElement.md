@@ -107,6 +107,9 @@ dialog.find(ButtonElement.class).withText("Delete").single().click();
 
 `withText` reads only the button's own text; `withAccessibleName` reads the
 `aria-label` (or `aria-labelledby`) first, so it also finds icon-only buttons.
+`getAccessibleName()` / `assertAccessibleName(..)` read that same name back —
+`"Save"` without the text of an open tooltip, `"Close"` for the icon-only button
+(see [VaadinElement](VaadinElement.md#accessible-name)).
 `find(page, ButtonElement.class).withLabel(...)` does not compile: a button has
 no label.
 

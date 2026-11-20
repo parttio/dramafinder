@@ -55,6 +55,9 @@ find(page, TooltipElement.class).withTextContaining("saves");     // substring
 find(page, TooltipElement.class).withAccessibleName("Saves the current draft"); // same as withText
 ```
 
+`getAccessibleName()` returns the same text, whitespace-normalized, or `null`
+for an empty tooltip.
+
 There is no `getById` / `getByTestId`: Flow gives the tooltip no id of its own.
 
 ## The mixin and the element
