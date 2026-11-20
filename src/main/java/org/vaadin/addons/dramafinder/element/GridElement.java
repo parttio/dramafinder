@@ -93,6 +93,33 @@ public class GridElement extends VaadinElement
             }
             """.formatted(VISIBLE_COLUMNS_JS);
 
+    // Per visible column, in display order: its caption cell, i.e. the first cell with non-blank
+    // text going from the column's own header cell up through those of its enclosing groups,
+    // skipping hidden header rows. Each entry is [text, header row index, th index], with the
+    // column's own shown cell (or [-1, -1]) when no cell has text, or ["scroll", row, th] for a
+    // cell whose content is not rendered yet.
+    private static final String CAPTION_CELLS_JS = """
+            g => {
+                const rows = [...g.shadowRoot.querySelectorAll('thead tr')];
+                const position = cell => [rows.indexOf(cell.parentElement),
+                        [...cell.parentElement.querySelectorAll(':scope > th')].indexOf(cell)];
+                return %s.map(column => {
+                    let own = null;
+                    for (let c = column; c && c.localName.startsWith('vaadin-grid-column'); c = c.parentElement) {
+                        const cell = c._headerCell;
+                        if (!cell || !rows.includes(cell.parentElement) || cell.parentElement.hidden) continue;
+                        const slot = cell.querySelector('slot');
+                        const content = slot && g.querySelector(
+                                ':scope > vaadin-grid-cell-content[slot="' + CSS.escape(slot.name) + '"]');
+                        if (!content) return ['scroll', ...position(cell)];
+                        own = own || cell;
+                        if (content.innerText.trim()) return [content.innerText, ...position(cell)];
+                    }
+                    return own ? ['', ...position(own)] : ['', -1, -1];
+                });
+            }
+            """.formatted(VISIBLE_COLUMNS_JS);
+
     // Shared by the cell scripts: the light-DOM content assigned to body cell `td` of grid `g`,
     // whether `el` lies fully inside the grid's visible body area and the browser viewport, and a spot of cell content `c`
     // where a click reaches the grid rather than interactive content rendered in the cell (the
@@ -462,22 +489,39 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Find a header cell by column index.
-     * Uses first header row.
+     * Find the caption cell of a column: its own header cell or, when that is blank, the nearest
+     * enclosing column group's cell that has text (see {@link #getColumnCaptions()}). This is the
+     * cell holding the column's sorter, also on a grid with a header group row above the captions.
+     * A column with no header text gets its own header cell.
      *
      * @param columnIndex 0-based visible column index
-     * @return optional header cell element. Empty if no header cell exists at the given column index.
+     * @return optional header cell element. Empty if no visible column has the given index or the
+     *         column has no shown header cell.
      */
     public Optional<HeaderCellElement> findHeaderCell(int columnIndex) {
-        return findHeaderCell(0, columnIndex);
+        if (columnIndex < 0) {
+            throw new IllegalArgumentException("Column index must be non-negative");
+        }
+        var captions = readCaptionCells();
+        if (columnIndex >= captions.size() || captions.get(columnIndex).row() < 0) {
+            return Optional.empty();
+        }
+        var caption = captions.get(columnIndex);
+        var headerCell = headerCellLocator(caption.row(), caption.th());
+        headerCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+        return Optional.of(new HeaderCellElement(headerCell, columnIndex));
     }
 
     /**
-     * Find a header cell by header row index and column index.
+     * Find a column's header cell in a given header row: the column's own cell or that of the
+     * column group around it, resolved through the column, so a cell joined over several columns
+     * is found for each column it spans and the columns after it keep their own cells.
      *
      * @param headerRowIndex 0-based header row index. Use 0 for the first header row, 1 for the second, etc.
      * @param columnIndex    0-based visible column index.
-     * @return optional header cell element. Empty if no header cell exists at the given header row and column index.
+     * @return optional header cell element, reporting {@code columnIndex} as its column index. Empty
+     *         if no visible column has the given index, the row does not exist or is hidden, or the
+     *         column has no cell in it.
      */
     public Optional<HeaderCellElement> findHeaderCell(int headerRowIndex, int columnIndex) {
         if (columnIndex < 0) {
@@ -485,57 +529,88 @@ public class GridElement extends VaadinElement
         } else if (headerRowIndex < 0) {
             throw new IllegalArgumentException("Header row index must be non-negative");
         }
-
-        var lastHeaderRow = locator.locator("thead tr").nth(headerRowIndex);
-        if (lastHeaderRow.count() == 0) {
+        var positions = headerCellPositions(columnIndex);
+        if (positions == null) {
             return Optional.empty();
         }
-
-        var headerCell = lastHeaderRow.locator("th").nth(columnIndex);
-        if (headerCell.count() > 0) {
-            headerCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
-            return Optional.of(new HeaderCellElement(headerCell, columnIndex));
+        for (var position : positions) {
+            if (position.get(0).intValue() == headerRowIndex) {
+                var headerCell = headerCellLocator(headerRowIndex, position.get(1).intValue());
+                headerCell.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+                return Optional.of(new HeaderCellElement(headerCell, columnIndex));
+            }
         }
-
         return Optional.empty();
     }
 
     /**
-     * Find a header cell by its text content.
-     * Uses first header row.
+     * Find the column whose caption matches the given text (see {@link #getColumnCaptions()}),
+     * also on a grid with a header group row above the captions, and return its caption cell.
+     * The text of a column group alone does not match; use {@link #findHeaderCellByText(int, String)}
+     * with the group's row for that.
      *
-     * @param text the header text to find
-     * @return optional header cell element. Empty if no header cell with the given text is found.
+     * @param text the caption to find
+     * @return optional header cell element, reporting the column's index. Empty if no column has
+     *         the given caption.
      */
     public Optional<HeaderCellElement> findHeaderCellByText(String text) {
-        return findHeaderCellByText(0, text);
-    }
-
-    /**
-     * Find a header cell by header row index and text content.
-     *
-     * @param headerRowIndex 0-based header row index. Use 0 for the first header row, 1 for the second, etc.
-     * @param text           the header text to find
-     * @return optional header cell element. Empty if no header cell with the given text is found in the given header row.
-     */
-    public Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text) {
         if (text == null || text.isEmpty()) {
             throw new IllegalArgumentException("Text must not be null or empty");
         }
-        var lastHeaderRow = locator.locator("thead tr").nth(headerRowIndex);
-        if (lastHeaderRow.count() == 0) {
-            return Optional.empty();
+        var captions = readCaptionCells();
+        for (int i = 0; i < captions.size(); i++) {
+            var caption = captions.get(i);
+            if (caption.row() < 0) {
+                continue;
+            }
+            var cell = new HeaderCellElement(headerCellLocator(caption.row(), caption.th()), i);
+            if (matchesHeaderCell(cell, text)) {
+                cell.getTableCellLocator().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+                return Optional.of(cell);
+            }
         }
+        return Optional.empty();
+    }
 
-        var allHeaderCells = lastHeaderRow.locator("th").all();
-        for (int i = 0; i < allHeaderCells.size(); i++) {
-            var cell = new HeaderCellElement(allHeaderCells.get(i), i);
-            cell.getTableCellLocator().scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+    /**
+     * Find a header cell by header row index and text content. The cell reports the index of the
+     * column it belongs to; a cell joined over several columns reports the first one it spans.
+     *
+     * @param headerRowIndex 0-based header row index. Use 0 for the first header row, 1 for the second, etc.
+     * @param text           the header text to find
+     * @return optional header cell element. Empty if no header cell with the given text is found
+     *         in the given header row, or the row does not exist or is hidden.
+     */
+    @SuppressWarnings("unchecked")
+    public Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text) {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("Text must not be null or empty");
+        } else if (headerRowIndex < 0) {
+            throw new IllegalArgumentException("Header row index must be non-negative");
+        }
+        // [index of the th within the row, first visible column it belongs to] for each th of the row
+        var cells = (List<List<Number>>) locator.evaluate("""
+                (g, rowIndex) => {
+                    const row = g.shadowRoot.querySelectorAll('thead tr')[rowIndex];
+                    if (!row || row.hidden) return [];
+                    const ths = [...row.querySelectorAll(':scope > th')];
+                    const columnOf = new Map();
+                    %s.forEach((column, index) => {
+                        for (let c = column; c && c.localName.startsWith('vaadin-grid-column'); c = c.parentElement) {
+                            if (c._headerCell && !columnOf.has(c._headerCell)) columnOf.set(c._headerCell, index);
+                        }
+                    });
+                    return ths.filter(th => columnOf.has(th)).map(th => [ths.indexOf(th), columnOf.get(th)]);
+                }
+                """.formatted(VISIBLE_COLUMNS_JS), headerRowIndex);
+        for (var position : cells) {
+            var th = headerCellLocator(headerRowIndex, position.get(0).intValue());
+            th.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            var cell = new HeaderCellElement(th, position.get(1).intValue());
             if (matchesHeaderCell(cell, text)) {
                 return Optional.of(cell);
             }
         }
-
         return Optional.empty();
     }
 
@@ -552,13 +627,31 @@ public class GridElement extends VaadinElement
      *         their cells are empty; empty if the column has no shown header cell
      * @throws IllegalArgumentException if the column index is negative or no visible column has it
      */
-    @SuppressWarnings("unchecked")
     public List<HeaderCellElement> getHeaderCells(int columnIndex) {
         if (columnIndex < 0) {
             throw new IllegalArgumentException("Column index must be non-negative");
         }
-        // [header row index, index of the th within its row] of the column's cell and each enclosing group's cell
-        var positions = (List<List<Number>>) locator.evaluate("""
+        var positions = headerCellPositions(columnIndex);
+        if (positions == null) {
+            throw new IllegalArgumentException("No visible column at index " + columnIndex
+                    + ": the grid has " + getColumnCount() + " visible columns");
+        }
+        var cells = new ArrayList<HeaderCellElement>(positions.size());
+        for (var position : positions) {
+            var th = headerCellLocator(position.get(0).intValue(), position.get(1).intValue());
+            th.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
+            cells.add(new HeaderCellElement(th, columnIndex));
+        }
+        return cells;
+    }
+
+    /**
+     * [header row index, index of the th within its row] of the column's cell and each enclosing
+     * group's cell in shown header rows, top row first; null when no visible column has the index.
+     */
+    @SuppressWarnings("unchecked")
+    private List<List<Number>> headerCellPositions(int columnIndex) {
+        return (List<List<Number>>) locator.evaluate("""
                 (g, index) => {
                     const column = %s[index];
                     if (!column) return null;
@@ -575,18 +668,6 @@ public class GridElement extends VaadinElement
                     return positions.sort((a, b) => a[0] - b[0]);
                 }
                 """.formatted(VISIBLE_COLUMNS_JS), columnIndex);
-        if (positions == null) {
-            throw new IllegalArgumentException("No visible column at index " + columnIndex
-                    + ": the grid has " + getColumnCount() + " visible columns");
-        }
-        var cells = new ArrayList<HeaderCellElement>(positions.size());
-        for (var position : positions) {
-            var th = locator.locator("thead tr").nth(position.get(0).intValue())
-                    .locator("th").nth(position.get(1).intValue());
-            th.scrollIntoViewIfNeeded(); // Scroll into view, to make sure its rendered
-            cells.add(new HeaderCellElement(th, columnIndex));
-        }
-        return cells;
     }
 
     /**
@@ -666,13 +747,64 @@ public class GridElement extends VaadinElement
      * order, read from the first header row. A cell joined over several columns (a column group
      * header) is repeated for each column it spans; a column with no cell in that row gets an
      * empty string. The texts are read in one script; a column is scrolled into view only if its
-     * cell content is not rendered.
+     * cell content is not rendered. On a grid with a header group row above the captions this
+     * returns the group texts; use {@link #getColumnCaptions()} for each column's caption.
      *
      * @return list of header cell text contents
      * @throws IllegalStateException if the grid has no header row
      */
     public List<String> getHeaderCellContents() {
         return readFirstRowCellTexts("thead", "_headerCell");
+    }
+
+    /**
+     * Get the caption of every visible column in display order: the text of the column's own
+     * header cell or, when that is blank, of the nearest enclosing column group's cell that has
+     * text. Unlike {@link #getHeaderCellContents()}, this reads past a header group row above
+     * the captions and a blank row below them (e.g. one holding filter fields), so a grouped grid
+     * reports {@code [Id, First Name, Last Name]} rather than the group texts. A column with no
+     * header text at all, such as the selection column, gets an empty string. The captions are
+     * read in one script; a column is scrolled into view only if its header content is not
+     * rendered.
+     *
+     * @return the caption of each visible column, never {@code null}
+     */
+    public List<String> getColumnCaptions() {
+        return readCaptionCells().stream().map(CaptionCell::text).toList();
+    }
+
+    /** A column's caption and where its cell is: {@code row} and {@code th} are -1 when it has no shown header cell. */
+    private record CaptionCell(String text, int row, int th) {
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<CaptionCell> readCaptionCells() {
+        var values = (List<List<Object>>) locator.evaluate(CAPTION_CELLS_JS);
+        boolean scrolled = false;
+        for (var value : values) {
+            if ("scroll".equals(value.get(0))) {
+                headerCellLocator(((Number) value.get(1)).intValue(), ((Number) value.get(2)).intValue())
+                        .scrollIntoViewIfNeeded();
+                scrolled = true;
+            }
+        }
+        if (scrolled) {
+            values = (List<List<Object>>) locator.evaluate(CAPTION_CELLS_JS);
+        }
+        var cells = new ArrayList<CaptionCell>(values.size());
+        for (int i = 0; i < values.size(); i++) {
+            var value = values.get(i);
+            if ("scroll".equals(value.get(0))) {
+                throw new IllegalStateException("The header cell of column " + i + " is not rendered");
+            }
+            cells.add(new CaptionCell((String) value.get(0), ((Number) value.get(1)).intValue(),
+                    ((Number) value.get(2)).intValue()));
+        }
+        return cells;
+    }
+
+    private Locator headerCellLocator(int row, int th) {
+        return locator.locator("thead tr").nth(row).locator(":scope > th").nth(th);
     }
 
     /**
@@ -1607,7 +1739,8 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Assert that the header cell at the given column has the given text content.
+     * Assert that the caption cell of the given column (see {@link #findHeaderCell(int)}) has the
+     * given text content.
      *
      * @param column   column index, starting from 0.
      * @param expected the expected header cell text content
@@ -1621,23 +1754,23 @@ public class GridElement extends VaadinElement
     }
 
     /**
-     * Assert that a column with the given header text exists.
+     * Assert that a column with the given caption exists (see {@link #getColumnCaptions()}).
      *
-     * @param headerText the header text to look for
+     * @param headerText the caption to look for
      */
     public void assertColumnPresent(String headerText) {
-        assertEventually(locator.page(), "Grid header texts", this::getHeaderCellContents,
+        assertEventually(locator.page(), "Grid column captions", this::getColumnCaptions,
                 contents -> findHeaderCellByText(headerText).isPresent(),
                 "a header cell with text \"" + headerText + "\"");
     }
 
     /**
-     * Assert that no column with the given header text exists.
+     * Assert that no column with the given caption exists (see {@link #getColumnCaptions()}).
      *
-     * @param headerText the header text to look for
+     * @param headerText the caption to look for
      */
     public void assertColumnNotPresent(String headerText) {
-        assertEventually(locator.page(), "Grid header texts", this::getHeaderCellContents,
+        assertEventually(locator.page(), "Grid column captions", this::getColumnCaptions,
                 contents -> findHeaderCellByText(headerText).isEmpty(),
                 "no header cell with text \"" + headerText + "\"");
     }
