@@ -12,6 +12,8 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -72,6 +74,36 @@ public class GridComponentRendererViewIT extends SpringPlaywrightIT {
                 cell.get().getCellContentLocator().locator("vaadin-button"));
         button.assertVisible();
         assertEquals("Click First2", button.getText());
+    }
+
+    // ── App Elements ──────────────────────────────────────────────────
+
+    @Test
+    public void testClickRowCoveredByAnAppElement() {
+        GridElement grid = GridElement.getById(page, "app-element-grid");
+        grid.findRow(0).orElseThrow().click();
+        assertTrue(grid.findRow(0).orElseThrow().isSelected());
+    }
+
+    @Test
+    public void testClickRowOfAGridInAShadowRoot() {
+        GridElement grid = GridElement.getById(page, "shadow-root-grid");
+        grid.findRow(0).orElseThrow().click();
+        assertTrue(grid.findRow(0).orElseThrow().isSelected());
+    }
+
+    @Test
+    public void testClickRowClicksTheCentre() {
+        GridElement grid = GridElement.getById(page, "card-click-grid");
+        grid.findRow(1).orElseThrow().click();
+        assertThat(page.locator("#click-output")).hasText("Card clicked: First2");
+    }
+
+    @Test
+    public void testClickRowFailsWhenAnAppElementHoldsALinkOverTheCell() {
+        GridElement grid = GridElement.getById(page, "app-element-link-grid");
+        assertThrows(IllegalStateException.class, () -> grid.findRow(0).orElseThrow().click());
+        assertFalse(grid.findRow(0).orElseThrow().isSelected());
     }
 
     // ── Component Header ──────────────────────────────────────────────

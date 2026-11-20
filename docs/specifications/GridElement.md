@@ -374,10 +374,13 @@ assertThat(page.locator("#item-double-clicked")).hasText("Double-clicked: First3
 ```
 
 They click the first data cell, skipping the selection column, at a spot free of
-interactive content (usually the padding), so a button or link rendered in the
-cell is not triggered; when interactive content covers a cell entirely they move
-on to the next one, and throw an `IllegalStateException` when no cell has a free
-spot.
+interactive content: its centre when free, as a user clicks, else the free spot
+nearest it, out to the padding. So a card rendered in the cell gets the click,
+as it does from a user, while a button or link in the cell is not triggered;
+when interactive content covers a cell entirely they move on to the next one,
+and throw an `IllegalStateException` when no cell has a free spot. What counts
+as interactive is described under
+[How a row gets selected](#how-a-row-gets-selected).
 
 ## Searching across rows
 
@@ -471,19 +474,31 @@ Getters for the same state: `getSelectedItemCount()`, `isSelectAllChecked()`,
 `select` and `deselect` click the row like a user would. In a multi-select grid
 they click the selection checkbox. Otherwise they click the first cell that has a
 spot where the click reaches the grid rather than a component rendered in the
-cell, usually the cell padding: the grid ignores clicks on links, buttons and
-other focusable content, so clicking the centre of a cell holding a link would
-follow the link instead of selecting the row. A cell holding a link or a button
-therefore still selects the row through its padding. Only when interactive content
-covers every cell, padding included (for example a component with negative
-margins, or a theme without cell padding), do they throw an
-`IllegalStateException`; override the protected
+cell: its centre when free, else the free spot nearest it, out to the padding.
+The grid ignores clicks on links, buttons and other focusable content, so
+clicking a link in a cell would follow the link instead of selecting the row. A
+cell holding a link or a button therefore still selects the row through a spot
+beside it, its padding at worst.
+
+Interactive content is a link, button, field, label, or anything focusable or
+editable, plus every `vaadin-*` component (a click on a text field's input
+container focuses the field) and every custom element whose shadow root is
+closed. An app's own element with an open shadow root, a Lit template's or a
+card component's, is not interactive as a whole: the click is followed into its
+shadow root, and the spot is judged by what it lands on there. A card that fills
+its cell, padding included, is therefore clicked; a link inside it is still
+avoided. The spot is also found inside a grid that itself sits in a template's
+shadow root.
+
+Only when interactive content covers every cell, padding included (for example
+a component with negative margins, or a theme without cell padding), do they
+throw an `IllegalStateException`; override the protected
 `clickRowForSelection(RowElement)` or `clickCellForSelection(CellElement)` to
 select such a row another way.
 
 ```java
-// A grid whose first column renders a RouterLink: select() clicks the padding,
-// so the row is selected and the page does not navigate
+// A grid whose first column renders a RouterLink: select() clicks beside the
+// link, so the row is selected and the page does not navigate
 GridElement grid = GridElement.getById(page, "router-link-grid");
 grid.select(0);
 grid.assertRowSelected(0);

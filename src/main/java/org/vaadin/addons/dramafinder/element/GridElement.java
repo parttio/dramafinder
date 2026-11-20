@@ -122,8 +122,8 @@ public class GridElement extends VaadinElement
 
     // Shared by the cell scripts: the light-DOM content assigned to body cell `td` of grid `g`,
     // whether `el` lies fully inside the grid's visible body area and the browser viewport, and a spot of cell content `c`
-    // where a click reaches the grid rather than interactive content rendered in the cell (the
-    // middle of the left padding, the top left corner, then the centre), or null.
+    // where a click reaches the grid rather than interactive content rendered in the cell (its
+    // centre if free, as a user clicks, else the free spot nearest it, the padding last), or null.
     private static final String CELL_HELPERS_JS = """
             const contentOf = (g, td) => {
                 const slot = td.querySelector('slot');
@@ -139,19 +139,36 @@ public class GridElement extends VaadinElement
                 return r.left >= Math.max(t.left, 0) - 1 && r.right <= Math.min(t.right, innerWidth) + 1
                         && r.top >= Math.max(top, 0) - 1 && r.bottom <= Math.min(bottom, innerHeight) + 1;
             };
+            // An app's own element, a Lit template's say, whose open shadow root a click may be judged
+            // by; a Vaadin component's shadow root is its own, any of it may take the click
+            const appShadow = e => e.shadowRoot && !e.localName.startsWith('vaadin-') ? e.shadowRoot : null;
             const freePoint = c => {
                 const r = c.getBoundingClientRect();
-                if (!r.width || !r.height) return null;
-                const padding = parseFloat(getComputedStyle(c).paddingLeft) || 0;
-                const points = [[Math.max(1, padding / 2), r.height / 2], [1, 1], [r.width / 2, r.height / 2]];
+                const w = r.width, h = r.height;
+                if (!w || !h) return null;
+                const s = getComputedStyle(c);
+                const pad = side => Math.max(1, (parseFloat(s['padding' + side]) || 0) / 2);
+                // The centre first, as a user clicks, then spots out to the padding and the edges,
+                // nearest the centre first
+                const xs = [w / 2, w / 4, 3 * w / 4, pad('Left'), w - pad('Right'), 1, w - 1];
+                const ys = [h / 2, h / 4, 3 * h / 4, pad('Top'), h - pad('Bottom'), 1, h - 1];
+                const off = ([x, y]) => ((x - w / 2) / w) ** 2 + ((y - h / 2) / h) ** 2;
+                const points = xs.flatMap(x => ys.map(y => [x, y])).sort((a, b) => off(a) - off(b));
                 const interactive = 'a[href], button, input, select, textarea, label, [tabindex], [contenteditable]';
                 for (const [x, y] of points) {
-                    const hit = document.elementFromPoint(r.left + x, r.top + y);
+                    // From the cell's own root: document's would answer the host of a shadow root
+                    // the grid is in, as a template's
+                    let hit = c.getRootNode().elementFromPoint(r.left + x, r.top + y);
                     if (!hit || !c.contains(hit)) continue;
+                    // What the click lands on inside an app's element, through its nested ones
+                    for (let inner; appShadow(hit); hit = inner) {
+                        inner = appShadow(hit).elementFromPoint(r.left + x, r.top + y);
+                        if (!inner || inner === hit) break;
+                    }
                     let safe = true;
-                    for (let e = hit; e !== c; e = e.parentElement) {
-                        // Custom elements may be interactive inside their shadow root
-                        if (e.matches(interactive) || e.localName.includes('-')) {
+                    for (let e = hit; e !== c; e = e.parentElement ?? e.getRootNode().host) {
+                        // Other custom elements may be interactive inside their shadow root
+                        if (!e || e.matches(interactive) || (e.localName.includes('-') && !appShadow(e))) {
                             safe = false;
                             break;
                         }
@@ -1309,9 +1326,9 @@ public class GridElement extends VaadinElement
      * Toggle the selection of a row by clicking it like a user would.
      * Clicks the selection checkbox of the first cell when there is one. Otherwise clicks the first
      * cell that has a spot where a click reaches the grid rather than a component rendered in the
-     * cell, usually its padding, so a cell holding a link or a button still selects the row: the grid
-     * ignores clicks on links, buttons and other focusable content, which would only trigger that
-     * component.
+     * cell, its centre if free, else the free spot nearest it, so a cell holding a link or a button
+     * still selects the row: the grid ignores clicks on links, buttons and other focusable content,
+     * which would only trigger that component.
      * You can override this method to choose the cell to click yourself.
      *
      * @param row row to select or deselect
@@ -1331,7 +1348,7 @@ public class GridElement extends VaadinElement
     /**
      * Click the given cell to toggle the selection of its row.
      * Clicks the selection checkbox when the cell holds one, otherwise a spot of the cell that is
-     * not covered by interactive content, typically its padding.
+     * not covered by interactive content: its centre if free, else the free spot nearest it.
      * You can override this method to implement custom selection logic for given cell.
      *
      * @param cell the body cell to click
@@ -2363,10 +2380,11 @@ public class GridElement extends VaadinElement
         /**
          * Click this row like a user would, firing the grid's item click.
          * Clicks the first data cell, skipping the selection column, at a spot free of interactive
-         * content (typically its padding), so a button or link rendered in the cell is not
-         * triggered; falls back to the next data cell when interactive content covers a cell
-         * entirely. As for a user, the click also toggles the row's selection in a single-select
-         * grid.
+         * content: its centre if free, as a user clicks, else the free spot nearest it, so a button
+         * or link rendered in the cell is not triggered; falls back to the next data cell when
+         * interactive content covers a cell entirely. As for a user, the click also toggles the
+         * row's selection in a single-select grid, and reaches what the cell's content does on a
+         * click, a card opening its item say.
          *
          * @throws IllegalStateException if interactive content covers every data cell of the row
          */
