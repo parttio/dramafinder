@@ -99,8 +99,10 @@ The name is read the way the filter matches it:
   `aria-label`, else a native `<label>`. These are read on the host, and then on
   the field's own `input`, `textarea` or `value` child. So a field's label, its
   `accessibleName` and its `accessibleNameRef` all count. A nested component's
-  name never does. A `vaadin-select` with no label is named by its placeholder,
-  because the component itself labels its value button with it.
+  name never does, and neither does a placeholder: from Vaadin 25.4 a
+  `vaadin-select` with no label has no name. (On 25.3 the select labelled its
+  value button with its placeholder or selected item, so that text was part of
+  its name.)
 - **Buttons, tabs, badges, menu items, breadcrumb items and notifications**
   read `aria-label` / `aria-labelledby` when either is set, and otherwise their
   own text. The text of slotted children such as an icon or a tooltip is not

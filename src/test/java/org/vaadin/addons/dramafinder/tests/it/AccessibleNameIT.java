@@ -16,6 +16,7 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
@@ -59,8 +60,13 @@ public class AccessibleNameIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void select_withoutLabel_isNamedByItsPlaceholder() {
-        assertEquals("Choose size", SelectElement.getById(page, "placeholder-select").getAccessibleName());
+    public void select_withoutLabel_hasNoName() {
+        SelectElement select = SelectElement.getById(page, "placeholder-select");
+        if (selectIsNamedByItsValue()) {
+            assertEquals("Choose size", select.getAccessibleName());
+        } else {
+            assertNull(select.getAccessibleName());
+        }
     }
 
     @Test
@@ -117,7 +123,9 @@ public class AccessibleNameIT extends SpringPlaywrightIT {
         assertFoundByItsName(TextFieldElement.class, TextFieldElement.getById(page, "aria-label-field"));
         assertFoundByItsName(TextFieldElement.class, TextFieldElement.getById(page, "labelledby-field"));
         assertFoundByItsName(CheckboxElement.class, CheckboxElement.getById(page, "terms"));
-        assertFoundByItsName(SelectElement.class, SelectElement.getById(page, "placeholder-select"));
+        if (selectIsNamedByItsValue()) {
+            assertFoundByItsName(SelectElement.class, SelectElement.getById(page, "placeholder-select"));
+        }
         assertFoundByItsName(ButtonElement.class, ButtonElement.getById(page, "close-button"));
         assertFoundByItsName(TabElement.class, TabElement.getById(page, "home-tab"));
         ButtonElement save = ButtonElement.getById(page, "save-button");
@@ -129,8 +137,23 @@ public class AccessibleNameIT extends SpringPlaywrightIT {
     private static <T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> void assertFoundByItsName(
             Class<T> type, T element) {
         String name = element.getAccessibleName();
+        assertNotNull(name, "no accessible name to look the component up by");
         Q byName = find(element.getLocator().page(), type).withAccessibleName(name);
         assertThat(byName.getLocator()).hasCount(1);
         assertThat(byName.getLocator().and(element.getLocator())).hasCount(1);
+    }
+
+    /**
+     * Whether the loaded {@code vaadin-select} still labels its value button
+     * with the placeholder or selected item. Vaadin 25.4 dropped that
+     * (vaadin/web-components#13176): the name is the label only. Remove this
+     * branch once 25.3 is no longer supported.
+     */
+    private boolean selectIsNamedByItsValue() {
+        String version = (String) page.evaluate("() => customElements.get('vaadin-select').version");
+        String[] parts = version.split("\\.");
+        int major = Integer.parseInt(parts[0]);
+        int minor = Integer.parseInt(parts[1]);
+        return major < 25 || (major == 25 && minor < 4);
     }
 }
