@@ -382,7 +382,7 @@ Filters for components that render a visible label in their `slot="label"` child
 **Methods:**
 
 - `Q withLabel(String label)` — Keep components whose visible label is exactly `label`.
-- `Q withLabelContaining(String text)` — Keep components whose visible label contains `text`, matched case-insensitively as a substring.
+- `Q withLabelContaining(String text)` — Keep components whose visible label contains `text`, matched case-insensitively as a substring; like `withLabel(String)`, a component without a label of its own is read by its form item's label.
 
 ### PlaceholderFilters
 
@@ -1389,6 +1389,7 @@ PlaywrightElement for `<vaadin-form-layout>`.
 - `Locator getField(int index)` — Get a field by its zero-based position in the layout.
 - `int getFieldCount()` — Get the number of fields the layout positions.
 - `Locator getFormItems()` — Locator matching every `<vaadin-form-item>` of this layout, in DOM order.
+- `Locator getFieldByItemLabel(String label)` — Get the field of the `<vaadin-form-item>` whose label is exactly `label` (case-sensitive, whitespace-normalized; no `.first()`, so two items with that label fail in strict mode).
 - `int getColumnCount()` — Get the number of columns the layout renders at its current width.
 - `String getLabelPosition()` — Get where the layout places the labels of its form items at its current width.
 - `void assertColumnCount(int expected)` — Assert that the layout renders the given number of columns.

@@ -34,6 +34,18 @@ layout locator is a convenient scope:
 TextFieldElement email = TextFieldElement.getByLabel(layout.getLocator(), "Email");
 ```
 
+A field added with a form item (`layout.addFormItem(new TextField(), "Email")`)
+has no label of its own; `getByLabel` and `withLabel` find it by the form item's
+label all the same. A field that has its own label is found by that one only, and
+a field nested inside the wrapped component (the text field of a custom field) is
+not named by the form item. `getFieldByItemLabel` returns the field of the item
+with that exact label, whatever its type:
+
+```java
+TextFieldElement email = TextFieldElement.getByLabel(layout.getLocator(), "Email");
+TextFieldElement same = new TextFieldElement(layout.getFieldByItemLabel("Email"));
+```
+
 ## Two layout modes, one API
 
 `FormLayout` lays out in one of two modes, and `getColumnCount()` /

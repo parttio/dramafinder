@@ -24,5 +24,8 @@ label only, so the two lookups disagreed, and a test reads more truthfully when
 
 - Components without a visible label (Breadcrumbs, ListBox, MenuBar, Menu, MenuItem,
   Popover, Button) have no `getByLabel`; their 1.x factories are deprecated until 3.0.
+- A component with no label of its own takes the label of the `vaadin-form-item`
+  that wraps it (#303): that caption is what a user reads next to the field, so it
+  is a visible label, not an accessible name.
 - `LabelLookupParityTest` keeps `getByLabel` and `withLabel` on exactly the same
   elements, and `getByLabel` delegates to `withLabel`.
