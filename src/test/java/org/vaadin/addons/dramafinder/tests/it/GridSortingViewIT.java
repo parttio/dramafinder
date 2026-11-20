@@ -239,4 +239,75 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
         GridElement grid = GridElement.getById(page, "sortable-grid");
         assertThrows(IllegalArgumentException.class, () -> grid.getHeaderCells(3));
     }
+
+    // ── Header group row above the captions (issue #299) ───────────────
+
+    @Test
+    public void testColumnCaptionsUnderGroupRow() {
+        GridElement grid = GridElement.getById(page, "grouped-grid");
+        assertEquals(List.of("Id", "First Name", "Last Name", "Email", "City"), grid.getColumnCaptions());
+    }
+
+    @Test
+    public void testColumnCaptionsSkipFilterRowAndSelectionColumn() {
+        GridElement grid = GridElement.getById(page, "filter-grid");
+        // The selection column has no caption; the filter row below the captions is blank
+        assertEquals(List.of("", "First Name", "Last Name"), grid.getColumnCaptions());
+    }
+
+    @Test
+    public void testFindHeaderCellAfterJoinedCell() {
+        GridElement grid = GridElement.getById(page, "grouped-grid");
+        // Without a row: the column's caption cell
+        assertEquals("City", grid.findHeaderCell(4).orElseThrow().getText());
+        assertEquals("Last Name", grid.findHeaderCell(2).orElseThrow().getText());
+        // The group row has four cells for five columns
+        var nameGroup = grid.findHeaderCell(0, 2).orElseThrow();
+        assertEquals("Name", nameGroup.getText());
+        assertEquals(2, nameGroup.getColumnIndex());
+        assertEquals("", grid.findHeaderCell(0, 4).orElseThrow().getText());
+        assertEquals("Email", grid.findHeaderCell(1, 3).orElseThrow().getText());
+        assertTrue(grid.findHeaderCell(2, 3).isEmpty());
+        assertTrue(grid.findHeaderCell(5).isEmpty());
+    }
+
+    @Test
+    public void testSortColumnAfterJoinedCell() {
+        GridElement grid = GridElement.getById(page, "grouped-grid");
+        var city = grid.findHeaderCell(4).orElseThrow();
+        city.sort(SortDirection.DESCENDING);
+        city.assertSortDirection(SortDirection.DESCENDING);
+        assertEquals("City9", grid.findCell(0, 4).orElseThrow().getText());
+    }
+
+    @Test
+    public void testAssertHeaderCellReadsCaptions() {
+        GridElement grid = GridElement.getById(page, "grouped-grid");
+        grid.assertHeaderCell(1, "First Name");
+        grid.assertHeaderCell(4, "City");
+    }
+
+    @Test
+    public void testFindHeaderCellByTextReportsColumnIndex() {
+        GridElement grid = GridElement.getById(page, "grouped-grid");
+        // Without a row: matched against the captions
+        assertEquals(4, grid.findHeaderCellByText("City").orElseThrow().getColumnIndex());
+        assertTrue(grid.findHeaderCellByText("Name").isEmpty());
+        // In the group row: the first column the joined cell spans
+        assertEquals(1, grid.findHeaderCellByText(0, "Name").orElseThrow().getColumnIndex());
+        assertEquals(3, grid.findHeaderCellByText(1, "Email").orElseThrow().getColumnIndex());
+        assertTrue(grid.findHeaderCellByText(0, "Email").isEmpty());
+    }
+
+    @Test
+    public void testLookupsByCaptionUnderGroupRow() {
+        GridElement grid = GridElement.getById(page, "grouped-grid");
+        assertEquals("City1", grid.findCell(0, "City").orElseThrow().getText());
+        assertEquals("Last1", grid.findRow(0).orElseThrow().getCell("Last Name").getText());
+        grid.assertCellContent(0, "Email", "person1@example.com");
+        grid.assertColumnPresent("City");
+        grid.assertColumnNotPresent("Name");
+        var failure = assertThrows(AssertionError.class, () -> grid.assertColumnPresent("Country"));
+        assertTrue(failure.getMessage().contains("City"), failure.getMessage());
+    }
 }

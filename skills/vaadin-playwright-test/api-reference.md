@@ -1456,14 +1456,15 @@ PlaywrightElement for `<vaadin-grid>`.
 - `boolean isAllRowsVisible()` — Whether the grid has `allRowsVisible` enabled.
 - `boolean isMultiSort()` — Whether the grid has multi-sort enabled.
 - `boolean isColumnReorderingAllowed()` — Whether column reordering is allowed.
-- `Optional<HeaderCellElement> findHeaderCell(int columnIndex)` — Find a header cell by column index.
-- `Optional<HeaderCellElement> findHeaderCell(int headerRowIndex, int columnIndex)` — Find a header cell by header row index and column index.
-- `Optional<HeaderCellElement> findHeaderCellByText(String text)` — Find a header cell by its text content.
+- `Optional<HeaderCellElement> findHeaderCell(int columnIndex)` — Find the caption cell of a column: its own header cell or, when that is blank, the nearest enclosing column group's cell that has text (see `getColumnCaptions()`).
+- `Optional<HeaderCellElement> findHeaderCell(int headerRowIndex, int columnIndex)` — Find a column's header cell in a given header row: the column's own cell or that of the column group around it, resolved through the column, so a cell joined over several columns is found for each column it spans and the columns after it keep their own cells.
+- `Optional<HeaderCellElement> findHeaderCellByText(String text)` — Find the column whose caption matches the given text (see `getColumnCaptions()`), also on a grid with a header group row above the captions, and return its caption cell.
 - `Optional<HeaderCellElement> findHeaderCellByText(int headerRowIndex, String text)` — Find a header cell by header row index and text content.
 - `List<HeaderCellElement> getHeaderCells(int columnIndex)` — Get the header cells of a column in every header row, top row first: the cell of the column itself and those of the column groups around it.
 - `Locator getHeaderContentLocator(int columnIndex)` — Get one locator for the content of a column's header cells in every shown header row: the column's own cell and those of the column groups around it, e.g. a group header above and a filter field below.
 - `Locator getFooterContentLocator(int columnIndex)` — Get one locator for the content of a column's footer cells in every shown footer row; the footer counterpart of `getHeaderContentLocator(int)`.
 - `List<String> getHeaderCellContents()` — Get the text content of all visible header cells, one per visible column in display order, read from the first header row.
+- `List<String> getColumnCaptions()` — Get the caption of every visible column in display order: the text of the column's own header cell or, when that is blank, of the nearest enclosing column group's cell that has text.
 - `Optional<FooterCellElement> findFooterCell(int columnIndex)` — Find a footer cell by column index.
 - `Optional<FooterCellElement> findFooterCell(int footerRowIndex, int columnIndex)` — Find a footer cell by footer row index and column index.
 - `Optional<FooterCellElement> findFooterCellByText(String text)` — Find a footer cell by its text content.
@@ -1503,9 +1504,9 @@ PlaywrightElement for `<vaadin-grid>`.
 - `void assertCellPresent(int row, int column)` — Assert that a cell exists at the given row and column.
 - `void assertCellNotPresent(int row, int column)` — Assert that no cell exists at the given row and column.
 - `void assertHeaderCellContents(String... expected)` — Assert that the visible header cells have exactly the given text contents, in order.
-- `void assertHeaderCell(int column, String expected)` — Assert that the header cell at the given column has the given text content.
-- `void assertColumnPresent(String headerText)` — Assert that a column with the given header text exists.
-- `void assertColumnNotPresent(String headerText)` — Assert that no column with the given header text exists.
+- `void assertHeaderCell(int column, String expected)` — Assert that the caption cell of the given column (see `findHeaderCell(int)`) has the given text content.
+- `void assertColumnPresent(String headerText)` — Assert that a column with the given caption exists (see `getColumnCaptions()`).
+- `void assertColumnNotPresent(String headerText)` — Assert that no column with the given caption exists (see `getColumnCaptions()`).
 - `void assertFooterCellContents(String... expected)` — Assert that the visible footer cells have exactly the given text contents, in order.
 - `void assertFooterCell(int column, String expected)` — Assert that the footer cell at the given column has the given text content.
 - `void assertFooterPresent(String footerText)` — Assert that a footer cell with the given text exists.

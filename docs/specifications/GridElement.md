@@ -189,17 +189,26 @@ grid.assertColumnPresent("Email");
 grid.assertColumnNotPresent("Phone");
 ```
 
-A failed `assertColumnPresent` lists the headers the grid does have, e.g.
+A failed `assertColumnPresent` lists the column captions the grid does have, e.g.
 `[First Name, Last Name, Email]`.
+
+A column's **caption** is the text of its own header cell or, when that is
+blank, of the nearest column group cell above it that has text. On a grid with a
+header group row above the captions (`prependHeaderRow().join(...)`) or a filter
+row below them, the caption is still the `setHeader` text, while the first header
+row holds the group. The lookups without a row index (`findHeaderCell(int)`,
+`findHeaderCellByText(String)`, `findCell(row, caption)`, `assertHeaderCell`,
+`assertColumnPresent`) work on captions; pass a row index to reach another row.
 
 All `findHeaderCell*` methods return `Optional<HeaderCellElement>`:
 
 | Method | Description |
 |--------|-------------|
-| `findHeaderCell(int columnIndex)` | Header cell by column index in the first header row |
-| `findHeaderCell(int headerRowIndex, int columnIndex)` | Header cell by header row index and column index |
-| `findHeaderCellByText(String text)` | Header cell by text content in the first header row |
-| `findHeaderCellByText(int headerRowIndex, String text)` | Header cell by header row index and text content |
+| `findHeaderCell(int columnIndex)` | The column's caption cell, the one holding its sorter |
+| `findHeaderCell(int headerRowIndex, int columnIndex)` | The column's (or its group's) cell in the given header row, resolved through the column |
+| `findHeaderCellByText(String text)` | The caption cell of the column with that caption |
+| `findHeaderCellByText(int headerRowIndex, String text)` | Header cell by header row index and text content; reports the first column a joined cell spans |
+| `getColumnCaptions()` | `List<String>`: each visible column's caption, read in one script; `""` for a column without header text |
 | `getHeaderCellContents()` | `List<String>`: text of each visible column's cell in the first header row, read in one script; a joined group cell repeats for each column it spans |
 | `getHeaderCells(int columnIndex)` | `List<HeaderCellElement>`: the column's header cells in every header row, top row first |
 
@@ -210,6 +219,18 @@ match differently.
 ```java
 var header = grid.findHeaderCellByText("Last Name").orElseThrow();
 int column = header.getColumnIndex();   // 1
+```
+
+With a group row joining "First Name" and "Last Name" under "Name":
+
+```java
+grid.prependHeaderRow().join(firstName, lastName).setText("Name");
+```
+```java
+grid.getColumnCaptions();                 // [First Name, Last Name, Email]
+grid.getHeaderCellContents();             // [Name, Name, ""]: the first header row
+grid.findHeaderCell(2).orElseThrow().sort(SortDirection.ASCENDING);  // sorts Email
+grid.findHeaderCellByText(0, "Name").orElseThrow().getColumnIndex(); // 0
 ```
 
 ### Components in a header

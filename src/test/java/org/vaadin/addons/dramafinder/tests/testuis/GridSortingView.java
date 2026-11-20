@@ -19,6 +19,7 @@ public class GridSortingView extends Main {
     public GridSortingView() {
         createSortableGrid();
         createFilterGrid();
+        createGroupedGrid();
     }
 
     private void createSortableGrid() {
@@ -53,6 +54,22 @@ public class GridSortingView extends Main {
                 text -> dataProvider.setFilter(p -> p.lastName().contains(text))));
         grid.prependHeaderRow().join(List.of(firstName, lastName).toArray(Grid.Column[]::new)).setText("Name");
         add(new H2("Filter Grid"), grid);
+    }
+
+    // Five sortable columns under a header row that joins the two middle ones into "Name":
+    // the group row has four cells, so its cell positions are not column indexes
+    private void createGroupedGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("grouped-grid");
+        grid.setHeight("300px");
+        grid.addColumn(p -> p.firstName().substring(5)).setHeader("Id").setSortable(true);
+        var firstName = grid.addColumn(GridPerson::firstName).setHeader("First Name").setSortable(true);
+        var lastName = grid.addColumn(GridPerson::lastName).setHeader("Last Name").setSortable(true);
+        grid.addColumn(GridPerson::email).setHeader("Email").setSortable(true);
+        grid.addColumn(p -> "City" + p.lastName().substring(4)).setHeader("City").setSortable(true);
+        grid.setItems(GridBasicView.generatePersons(20));
+        grid.prependHeaderRow().join(firstName, lastName).setText("Name");
+        add(new H2("Grouped Grid"), grid);
     }
 
     private static TextField createFilter(String id, String ariaLabel, java.util.function.Consumer<String> filter) {
