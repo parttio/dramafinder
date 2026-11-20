@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.2.0-SNAPSHOT — 61 element wrappers.
+> DramaFinder 2.2.1-SNAPSHOT — 61 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -3018,7 +3018,7 @@ Base class for typed Playwright wrappers around Vaadin components.
 
 - `void click()` — Click the component root, then wait for the server round-trip it triggers (see `org.vaadin.addons.dramafinder.AutoWait`).
 - `String getTagName()` — Get the element's tag name, in lower case as the DOM's `localName` reports it, e.g. `vaadin-button` or `input`.
-- `String getText()` — Get the textual content of the component root.
+- `String getText()` — Get the text of the component, as the browser renders it into the DOM.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for `type` components inside this component, e.g. `dialog.find(ButtonElement.class).withText("Delete").single()`.
 - `List<VaadinElement> getLightDomChildren(String tag)` — Get this component's light-DOM children with the given tag.
 - `List<VaadinElement> getLightDomDescendants(String tag)` — Get this component's light-DOM descendants with the given tag.
