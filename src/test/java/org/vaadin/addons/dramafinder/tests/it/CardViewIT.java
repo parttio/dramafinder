@@ -9,6 +9,7 @@ import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CardElement;
 import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -63,5 +64,13 @@ public class CardViewIT extends SpringPlaywrightIT implements HasTestView {
         );
         footerBookButton.click();
         assertThat(page.locator("#card-action-status")).hasText("Booked");
+    }
+
+    @Test
+    public void getText_leavesOutTheTooltipsOfNestedComponents() {
+        CardElement card = CardElement.getByTitle(page, "Help Card");
+
+        // the title slot and the button's text stay; the button's tooltip does not
+        assertEquals("Help CardRead the guideHelp", card.getText());
     }
 }

@@ -16,6 +16,11 @@ CheckboxElement terms = CheckboxElement.getByLabel(page, "I accept the terms");
 RadioButtonGroupElement plan = RadioButtonGroupElement.getByLabel(page, "Plan");
 ```
 
+A field added to a `FormLayout` with an item label
+(`formLayout.addFormItem(new TextField(), "Name")`) has no label of its own; it is
+found by the form item's label, the caption shown next to it. A field that does
+have its own label is found by that one only.
+
 The match is **exact**: the whole label, case-sensitively. A partial label finds
 nothing, and two components with the same label raise a Playwright strict-mode
 error instead of silently picking the first one:

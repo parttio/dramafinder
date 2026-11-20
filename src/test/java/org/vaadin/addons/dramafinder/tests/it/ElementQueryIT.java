@@ -193,6 +193,12 @@ public class ElementQueryIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void getText_matchesTheTextItWasFoundBy() {
+        // the tooltip slotted into the button is not part of getText() either
+        assertEquals("Save", find(page, ButtonElement.class).withText("Save").single().getText());
+    }
+
+    @Test
     public void menuItems_byTextAndName() {
         assertEquals(1, find(page, MenuItemElement.class).withText("File").count());
         assertEquals(1, find(page, MenuItemElement.class).withAccessibleName("Edit").count());

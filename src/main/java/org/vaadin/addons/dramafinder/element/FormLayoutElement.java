@@ -9,6 +9,7 @@ import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasStyleElement;
 import org.vaadin.addons.dramafinder.element.shared.HasThemeElement;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
+import org.vaadin.addons.dramafinder.element.utils.ItemLocator;
 
 import static org.vaadin.addons.dramafinder.element.AssertionWaits.assertEventually;
 
@@ -164,6 +165,29 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
      */
     public Locator getFormItems() {
         return getLocator().locator(FORM_ITEM_TAG_NAME);
+    }
+
+    /**
+     * Get the field of the {@code <vaadin-form-item>} whose label is exactly
+     * {@code label} (case-sensitive, whitespace-normalized; no {@code .first()},
+     * so two items with that label fail in strict mode).
+     * <p>
+     * The locator resolves to the field itself, not to the form item, so it can
+     * be wrapped in the field's element, e.g.
+     * {@code new TextFieldElement(layout.getFieldByItemLabel("Name"))}. The
+     * field's own lookups find it by that label too:
+     * {@code TextFieldElement.getByLabel(layout.getLocator(), "Name")}.
+     *
+     * @param label the form item's full label
+     * @return a locator for the field the matching form item wraps; empty when
+     *         no form item of this layout has that label
+     */
+    public Locator getFieldByItemLabel(String label) {
+        Page page = getLocator().page();
+        return getFormItems()
+                .filter(new Locator.FilterOptions().setHas(page.locator(":scope > [slot='label']")
+                        .and(ItemLocator.exactText(page, label))))
+                .locator("xpath=./*[not(@slot)]");
     }
 
     // ── Layout ─────────────────────────────────────────────────────────
