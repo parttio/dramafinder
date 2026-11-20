@@ -391,7 +391,7 @@ Filters for components that render a visible label in their `slot="label"` child
 **Methods:**
 
 - `Q withLabel(String label)` — Keep components whose visible label is exactly `label`.
-- `Q withLabelContaining(String text)` — Keep components whose visible label contains `text`, matched case-insensitively as a substring.
+- `Q withLabelContaining(String text)` — Keep components whose visible label contains `text`, matched case-insensitively as a substring; like `withLabel(String)`, a component without a label of its own is read by its form item's label.
 
 ### PlaceholderFilters
 
@@ -1404,6 +1404,7 @@ PlaywrightElement for `<vaadin-form-layout>`.
 - `Locator getField(int index)` — Get a field by its zero-based position in the layout.
 - `int getFieldCount()` — Get the number of fields the layout positions.
 - `Locator getFormItems()` — Locator matching every `<vaadin-form-item>` of this layout, in DOM order.
+- `Locator getFieldByItemLabel(String label)` — Get the field of the `<vaadin-form-item>` whose label is exactly `label` (case-sensitive, whitespace-normalized; no `.first()`, so two items with that label fail in strict mode).
 - `int getColumnCount()` — Get the number of columns the layout renders at its current width.
 - `String getLabelPosition()` — Get where the layout places the labels of its form items at its current width.
 - `void assertColumnCount(int expected)` — Assert that the layout renders the given number of columns.
@@ -3037,7 +3038,7 @@ Base class for typed Playwright wrappers around Vaadin components.
 
 - `void click()` — Click the component root, then wait for the server round-trip it triggers (see `org.vaadin.addons.dramafinder.AutoWait`).
 - `String getTagName()` — Get the element's tag name, in lower case as the DOM's `localName` reports it, e.g. `vaadin-button` or `input`.
-- `String getText()` — Get the textual content of the component root.
+- `String getText()` — Get the text of the component, as the browser renders it into the DOM.
 - `String getAccessibleName()` — Get the component's accessible name, as withAccessibleName matches it.
 - `void assertAccessibleName(String name)` — Assert the component's accessible name as read by `getAccessibleName()`, retrying until it matches or the timeout expires.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for `type` components inside this component, e.g. `dialog.find(ButtonElement.class).withText("Delete").single()`.

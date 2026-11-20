@@ -7,6 +7,7 @@ import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
+import org.vaadin.addons.dramafinder.element.CheckboxElement;
 import org.vaadin.addons.dramafinder.element.CheckboxGroupElement;
 import org.vaadin.addons.dramafinder.element.CustomFieldElement;
 import org.vaadin.addons.dramafinder.element.RadioButtonGroupElement;
@@ -53,6 +54,19 @@ public class LabelLookupIT extends SpringPlaywrightIT {
             assertResolvesTo(factory(type, "getByLabelContaining", Locator.class, body, part), name + "-label");
             assertResolvesTo(query(type, "withLabelContaining", part), name + "-label");
 
+            // a field with no label of its own is labelled by the form item holding it
+            if (page.locator("#" + name + "-form-item").count() > 0) {
+                String itemLabel = "form item " + name;
+                assertResolvesTo(factory(type, "getByLabel", Page.class, page, itemLabel), name + "-form-item");
+                assertResolvesTo(factory(type, "getByLabel", Locator.class, body, itemLabel), name + "-form-item");
+                assertResolvesTo(query(type, "withLabel", itemLabel), name + "-form-item");
+                String itemPart = partOf(itemLabel);
+                assertThat(query(type, "withLabel", itemPart)).hasCount(0);
+                assertResolvesTo(factory(type, "getByLabelContaining", Page.class, page, itemPart),
+                        name + "-form-item");
+                assertResolvesTo(query(type, "withLabelContaining", itemPart), name + "-form-item");
+            }
+
             // an aria-label is the accessible name, not a label
             if (page.locator("#" + name + "-aria").count() > 0) {
                 assertThat(factory(type, "getByLabel", Page.class, page, aria)).hasCount(0);
@@ -75,10 +89,25 @@ public class LabelLookupIT extends SpringPlaywrightIT {
     @Test
     public void aContainerIsNotNamedByTheLabelOfWhatItHolds() {
         assertThat(CustomFieldElement.getByLabel(page, "CustomField inner").getLocator()).hasCount(0);
-        assertThat(TextFieldElement.getByLabel(page, "CustomField inner").getLocator()).hasCount(1);
+        assertThat(TextFieldElement.getByLabel(page.locator("#CustomField-label"), "CustomField inner").getLocator())
+                .hasCount(1);
         assertThat(CheckboxGroupElement.getByLabel(page, "CheckboxGroup item").getLocator()).hasCount(0);
         assertThat(RadioButtonGroupElement.getByLabel(page, "RadioButtonGroup item").getLocator()).hasCount(0);
         assertThat(CustomFieldElement.getByLabelContaining(page, "inner").getLocator()).hasCount(0);
+    }
+
+    @Test
+    public void aFormItemLabelsOnlyTheUnlabelledFieldItWraps() {
+        // the field's own label wins
+        assertThat(TextFieldElement.getByLabel(page, "item caption").getLocator()).hasCount(0);
+        assertThat(TextFieldElement.getByLabelContaining(page, "item caption").getLocator()).hasCount(0);
+        assertResolvesTo(TextFieldElement.getByLabel(page, "own label").getLocator(), "own-label-in-item");
+
+        // the wrapped container takes the label, not the fields inside it
+        assertResolvesTo(CustomFieldElement.getByLabel(page, "custom caption").getLocator(), "custom-in-item");
+        assertThat(TextFieldElement.getByLabel(page, "custom caption").getLocator()).hasCount(0);
+        assertResolvesTo(CheckboxGroupElement.getByLabel(page, "group caption").getLocator(), "group-in-item");
+        assertThat(CheckboxElement.getByLabel(page, "group caption").getLocator()).hasCount(0);
     }
 
     /** Lower-cased and missing its last letter: matches only through a substring match. */

@@ -43,8 +43,30 @@ ButtonElement save = ButtonElement.getByText(page, "Save");
 save.click();                 // clicks the host, then waits for the server round-trip
 
 CardElement card = CardElement.getByTitle(page, "Revenue");
-String text = card.getText(); // text content of the component root
+String text = card.getText(); // text of the card and its children, tooltips left out
 ```
+
+`getText()` reads the component's light-DOM text, the way `textContent` does —
+slotted children (a card's title, a button's prefix) and child components
+included — but leaves out the text of every `vaadin-tooltip` inside it. A
+tooltip set with `setTooltipText(..)` is a child element of the component it
+describes, yet it is not part of that component's text, so a button created as
+`new Button("Save")` with a tooltip reads `"Save"`: the same text
+`find(page, ButtonElement.class).withText("Save")` found it by. Read the tooltip
+itself with `getTooltipText()`.
+
+The text is returned as the DOM holds it: whitespace is not normalized, and
+text a component renders in its shadow DOM is not part of it.
+
+This differs from browserless (server-side) tests, where a component's
+`getText()` is Flow's `Element.getText()`: the text of its own text nodes only.
+There, `new Div(new Span("Hello"))` reads `""`, because the text belongs to the
+child span; in the browser, `getText()` reads what was rendered, children
+included, and that div reads `"Hello"`. A button with a tooltip reads `"Save"`
+in both. Some elements
+read a narrower text and say so in their own Javadoc, e.g.
+`BadgeElement.getText()` (own text only) and `GridElement.CellElement.getText()`
+(the cell's rendered `innerText`).
 
 `click()` clicks the centre of the component host. Many elements offer a more
 precise action (`selectTab`, `check`, `RowElement.click()`); prefer those.

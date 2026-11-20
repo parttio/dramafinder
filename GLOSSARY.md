@@ -7,7 +7,9 @@ it and asserts its state.
 
 **Label**:
 The visible text a component shows as its caption, in its own label slot. A
-component without one has no label, whatever names it for assistive technology.
+component without one takes the label of the `vaadin-form-item` wrapping it
+(`formLayout.addFormItem(field, "Name")`), the caption shown next to it;
+otherwise it has no label, whatever names it for assistive technology.
 _Avoid_: name, caption, title (for this concept)
 
 **Accessible name**:

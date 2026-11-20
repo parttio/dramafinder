@@ -33,11 +33,32 @@ import org.vaadin.addons.dramafinder.agent.AgentReporting;
 @ExtendWith(AgentReporting.class)
 public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentReportProvider {
 
+    // How long WAIT_FOR_VAADIN_SCRIPT waits for Flow to register its UI's client
+    // once Flow has started in a page (issue #305).
+    private static final int FLOW_UI_STARTUP_TIMEOUT_MS = 3000;
+
+    /**
+     * A {@code page.waitForFunction} script that is true once Vaadin Flow has no
+     * client-server exchange in flight. In a page where Flow has started but
+     * not yet registered its UI's client (only the {@code TypeScript} client
+     * exists, before {@code flowInit} has run), it first waits for that client,
+     * for at most 3 seconds counted from the first wait in that page: a page
+     * that runs Flow but shows no Flow UI (a Hilla view) never registers one,
+     * and pays that once per page load. A page without Flow is idle at once.
+     */
     public static final String WAIT_FOR_VAADIN_SCRIPT =
             // @formatter:off
             "() => {"
             + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
             + "  var clients = window.Vaadin.Flow.clients;"
+            + "  if (!Object.keys(clients).some(function (id) { return id !== 'TypeScript'; })) {"
+            + "    if (window.__dramafinderFlowStartSeenAt === undefined) {"
+            + "      window.__dramafinderFlowStartSeenAt = performance.now();"
+            + "    }"
+            + "    if (performance.now() - window.__dramafinderFlowStartSeenAt < " + FLOW_UI_STARTUP_TIMEOUT_MS + ") {"
+            + "      return false;"
+            + "    }"
+            + "  }"
             + "  for (var client in clients) {"
             + "    if (clients[client].isActive()) {"
             + "      return false;"

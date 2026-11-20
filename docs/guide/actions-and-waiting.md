@@ -118,6 +118,14 @@ GridElement.get(page).assertRowCount(3);
 classes do the same for the view of each test. See
 [Navigation](navigation.md).
 
+The same holds when an action loads a new page (a login form posting to Spring
+Security, a link out of the view, `Page.setLocation` on the server): after the
+load, the wait first lets Flow start the view's UI — Flow registers that UI's
+client only after the page's `load` event — and then waits for it to go idle,
+so the next read sees the new view rather than an empty page. A page without
+Flow is idle at once; a page that runs Flow but shows no Flow UI (a Hilla view)
+waits at most 3 seconds for it, once per page load.
+
 ## No sleeps
 
 If a test only passes with a `Thread.sleep`, something client-side is still
