@@ -139,6 +139,9 @@ public class GridElement extends VaadinElement
                 return r.left >= Math.max(t.left, 0) - 1 && r.right <= Math.min(t.right, innerWidth) + 1
                         && r.top >= Math.max(top, 0) - 1 && r.bottom <= Math.min(bottom, innerHeight) + 1;
             };
+            // An app's own element, a Lit template's say, whose open shadow root a click may be judged
+            // by; a Vaadin component's shadow root is its own, any of it may take the click
+            const appShadow = e => e.shadowRoot && !e.localName.startsWith('vaadin-') ? e.shadowRoot : null;
             const freePoint = c => {
                 const r = c.getBoundingClientRect();
                 if (!r.width || !r.height) return null;
@@ -146,12 +149,19 @@ public class GridElement extends VaadinElement
                 const points = [[Math.max(1, padding / 2), r.height / 2], [1, 1], [r.width / 2, r.height / 2]];
                 const interactive = 'a[href], button, input, select, textarea, label, [tabindex], [contenteditable]';
                 for (const [x, y] of points) {
-                    const hit = document.elementFromPoint(r.left + x, r.top + y);
+                    // From the cell's own root: document's would answer the host of a shadow root
+                    // the grid is in, as a template's
+                    let hit = c.getRootNode().elementFromPoint(r.left + x, r.top + y);
                     if (!hit || !c.contains(hit)) continue;
+                    // What the click lands on inside an app's element, through its nested ones
+                    for (let inner; appShadow(hit); hit = inner) {
+                        inner = appShadow(hit).elementFromPoint(r.left + x, r.top + y);
+                        if (!inner || inner === hit) break;
+                    }
                     let safe = true;
-                    for (let e = hit; e !== c; e = e.parentElement) {
-                        // Custom elements may be interactive inside their shadow root
-                        if (e.matches(interactive) || e.localName.includes('-')) {
+                    for (let e = hit; e !== c; e = e.parentElement ?? e.getRootNode().host) {
+                        // Other custom elements may be interactive inside their shadow root
+                        if (!e || e.matches(interactive) || (e.localName.includes('-') && !appShadow(e))) {
                             safe = false;
                             break;
                         }
