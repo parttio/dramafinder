@@ -5,6 +5,7 @@ import java.util.List;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import org.vaadin.addons.dramafinder.element.query.AccessibleNames;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.query.TextQuery;
 import org.vaadin.addons.dramafinder.element.shared.HasAriaLabelElement;
@@ -115,5 +116,18 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
     @SuppressWarnings("unchecked")
     static List<String> labelsOf(Locator items) {
         return (List<String>) items.evaluateAll(LABELS_SCRIPT);
+    }
+
+    /**
+     * Get the menu item's accessible name: its {@code aria-label} or
+     * {@code aria-labelledby} text when either attribute is set, otherwise its
+     * own text, without slotted children such as an icon or a tooltip — what
+     * {@code withAccessibleName} matches. Read without waiting.
+     *
+     * @return the whitespace-normalized name, or {@code null} when it has none
+     */
+    @Override
+    public String getAccessibleName() {
+        return AccessibleNames.labelledOrOwnText(getLocator());
     }
 }

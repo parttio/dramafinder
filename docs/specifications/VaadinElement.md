@@ -1,8 +1,9 @@
 # VaadinElement (base class)
 
 `VaadinElement` is the base class of every DramaFinder element. Whatever the
-component, these methods are always available: clicking, reading text,
-visibility, DOM properties, the underlying locator and scoped queries.
+component, these methods are always available: clicking, reading text and the
+accessible name, visibility, DOM properties, the underlying locator and scoped
+queries.
 
 | | |
 |---|---|
@@ -72,6 +73,45 @@ precise action (`selectTab`, `check`, `RowElement.click()`); prefer those.
 
 `getTagName()` returns the element's tag in lower case, as the DOM's `localName`
 reports it: `"vaadin-button"`, `"input"`.
+
+## Accessible name
+
+`getAccessibleName()` reads the name that
+[`withAccessibleName(..)`](../guide/finding-components.md#the-typed-query-builder)
+matches, so a test can assert it or print it in a failure message.
+`assertAccessibleName(..)` retries until it matches:
+
+```java
+TextFieldElement search = TextFieldElement.getById(page, "search");
+search.getAccessibleName();             // "Search", from setAriaLabel("Search")
+search.assertAccessibleName("Search");  // exact, case-sensitive, whitespace-normalized
+
+ButtonElement close = ButtonElement.getById(page, "close");
+close.assertAccessibleName("Close");    // icon-only button named by aria-label
+
+TextFieldElement street = TextFieldElement.getById(page, "street");
+street.assertAccessibleName(null);      // a placeholder is not a name
+```
+
+The name is read the way the filter matches it:
+
+- **By default** from `aria-labelledby` (the referenced texts), else a non-blank
+  `aria-label`, else a native `<label>`. These are read on the host, and then on
+  the field's own `input`, `textarea` or `value` child. So a field's label, its
+  `accessibleName` and its `accessibleNameRef` all count. A nested component's
+  name never does. A `vaadin-select` with no label is named by its placeholder,
+  because the component itself labels its value button with it.
+- **Buttons, tabs, badges, menu items, breadcrumb items and notifications**
+  read `aria-label` / `aria-labelledby` when either is set, and otherwise their
+  own text. The text of slotted children such as an icon or a tooltip is not
+  part of it.
+- **Tooltips** are named by their text.
+
+When `aria-labelledby` points to several elements, their texts are joined with a
+space, as a screen reader announces them. `withAccessibleName` matches each one
+on its own, so look up such a component with `withAccessibleNameContaining`.
+`getAriaLabel()` (`HasAriaLabelElement`) still reads only the `aria-label`
+attribute.
 
 ## Components without an element class: `GenericElement`
 

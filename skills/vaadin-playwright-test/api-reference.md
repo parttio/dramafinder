@@ -269,6 +269,15 @@ Filter by accessible name, available on every query.
 - `Q withAccessibleName(String name)` — Keep components whose accessible name is exactly `name` (case-sensitive, whitespace-normalized).
 - `Q withAccessibleNameContaining(String text)` — Keep components whose accessible name — as read by `withAccessibleName(String)` — contains `text`, matched case-insensitively as a substring.
 
+### AccessibleNames
+
+Reads a component's accessible name the way the withAccessibleName filters match it; behind `VaadinElement.getAccessibleName()`.
+
+**Static methods:**
+
+- `String labelled(Locator component)` — Read the accessible name of a component named by its label: the name given by `aria-labelledby`, `aria-label` or a native `<label>` on the host, or else on its own input (the `input`, `textarea` or `value` slotted directly into it).
+- `String labelledOrOwnText(Locator component)` — Read the accessible name of a component named by its content, such as a button or a tab: the name given by `aria-labelledby` or `aria-label` on the host when either attribute is set, otherwise the component's own text — its light-DOM text without the children assigned to a named slot, so neither an icon nor a slotted tooltip is part of it.
+
 ### ButtonQuery
 
 Query for `vaadin-button`: adds text filters, and reads the accessible name from the button's text when no `aria-label` or `aria-labelledby` is set.
@@ -782,6 +791,7 @@ PlaywrightElement for `<vaadin-badge>`.
 - `void assertNumber(Integer number)` — Assert the badge's number.
 - `void assertHasIcon()` — Assert that the badge has content in its `icon` slot.
 - `void assertHasNoIcon()` — Assert that the badge has no content in its `icon` slot.
+- `String getAccessibleName()` — Get the badge's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### BigDecimalFieldElement  `<vaadin-big-decimal-field>`
 
@@ -891,6 +901,7 @@ PlaywrightElement for `<vaadin-breadcrumbs-item>`, a single entry of a `Breadcru
 - `boolean hasPrefix()` — Whether the item has content in its prefix slot.
 - `void assertHasPrefix()` — Assert that the item has content in its prefix slot.
 - `void assertHasNoPrefix()` — Assert that the item has no content in its prefix slot.
+- `String getAccessibleName()` — Get the breadcrumb item's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### ButtonElement  `<vaadin-button>`
 
@@ -919,6 +930,10 @@ PlaywrightElement for `<vaadin-button>`.
 - `ButtonElement getById(Locator locator, String id)` — Get a `ButtonElement` by its `id`, scoped to the given locator.
 - `ButtonElement getByTestId(Page page, String testId)` — Get a `ButtonElement` by its test id, searching the entire page.
 - `ButtonElement getByTestId(Locator locator, String testId)` — Get a `ButtonElement` by its test id, scoped to the given locator.
+
+**Methods:**
+
+- `String getAccessibleName()` — Get the button's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### CardElement  `<vaadin-card>`
 
@@ -1829,6 +1844,7 @@ PlaywrightElement for a menu bar item: a top-level `<vaadin-menu-bar-button>` or
 
 - `void assertExpanded()` — Assert that the menu item is expanded (shows submenu).
 - `void assertCollapsed()` — Assert that the menu item is collapsed.
+- `String getAccessibleName()` — Get the menu item's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### MessageInputElement  `<vaadin-message-input>`
 
@@ -1989,6 +2005,7 @@ PlaywrightElement for notification cards `<vaadin-notification-card>`.
 - `void assertClosed()` — Assert that the notification is closed.
 - `Locator getContentLocator()` — Locator for the notification content.
 - `void assertContent(String content)` — Assert that the notification contains the given text.
+- `String getAccessibleName()` — Get the notification's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### NumberFieldElement  `<vaadin-number-field>`
 
@@ -2409,6 +2426,7 @@ PlaywrightElement for tabs `<vaadin-tab>`.
 - `String getLabel()` — Get the tab label: the tab's own text, with whitespace collapsed and trimmed.
 - `void assertSelected()` — Assert that the tab is selected.
 - `void assertNotSelected()` — Assert that the tab is not selected.
+- `String getAccessibleName()` — Get the tab's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### TabSheetElement  `<vaadin-tabsheet>`
 
@@ -2602,6 +2620,7 @@ PlaywrightElement for `<vaadin-tooltip>`.
 - `Locator getContentLocator()` — Locator for the element carrying the tooltip content, i.e. the `role="tooltip"` node.
 - `Locator getOverlayLocator()` — Locator for the `<vaadin-tooltip-overlay>` the tooltip renders in its shadow DOM.
 - `String getText()` — Get the tooltip text.
+- `String getAccessibleName()` — Get the tooltip's accessible name, which is its text — what `withAccessibleName` matches on a tooltip query.
 - `void assertText(String text)` — Assert the tooltip text.
 - `boolean isOpened()` — Whether the tooltip is open.
 - `void assertOpened()` — Assert that the tooltip is open.
@@ -3020,6 +3039,8 @@ Base class for typed Playwright wrappers around Vaadin components.
 - `void click()` — Click the component root, then wait for the server round-trip it triggers (see `org.vaadin.addons.dramafinder.AutoWait`).
 - `String getTagName()` — Get the element's tag name, in lower case as the DOM's `localName` reports it, e.g. `vaadin-button` or `input`.
 - `String getText()` — Get the text of the component, as the browser renders it into the DOM.
+- `String getAccessibleName()` — Get the component's accessible name, as withAccessibleName matches it.
+- `void assertAccessibleName(String name)` — Assert the component's accessible name as read by `getAccessibleName()`, retrying until it matches or the timeout expires.
 - `<T extends VaadinElement & Findable<Q>, Q extends ElementQuery<? super T, Q>> Q find(Class<T> type)` — Start a typed query for `type` components inside this component, e.g. `dialog.find(ButtonElement.class).withText("Delete").single()`.
 - `List<VaadinElement> getLightDomChildren(String tag)` — Get this component's light-DOM children with the given tag.
 - `List<VaadinElement> getLightDomDescendants(String tag)` — Get this component's light-DOM descendants with the given tag.

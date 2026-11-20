@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.microsoft.playwright.Locator;
+import org.vaadin.addons.dramafinder.element.query.AccessibleNames;
 import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.ElementQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
@@ -109,6 +110,41 @@ public abstract class VaadinElement implements HasLocatorElement {
                 }
                 return text;
             }""";
+
+    /**
+     * Get the component's accessible name, as
+     * {@link org.vaadin.addons.dramafinder.element.query.AccessibleNameFilters#withAccessibleName(String)
+     * withAccessibleName} matches it.
+     * <p>
+     * By default the name comes from {@code aria-labelledby}, {@code aria-label}
+     * or a native {@code <label>}, read on the host and then on the field's own
+     * input — so a field's label, its {@code accessibleName} and its
+     * {@code accessibleNameRef} all count. A placeholder does not. Components
+     * named by their content (buttons, tabs, ...) fall back to their own text.
+     * Unlike {@code getAriaLabel()}, this is not limited to the
+     * {@code aria-label} attribute. Read without waiting.
+     *
+     * @return the whitespace-normalized name, or {@code null} when the
+     *         component has none
+     */
+    public String getAccessibleName() {
+        return AccessibleNames.labelled(locator);
+    }
+
+    /**
+     * Assert the component's accessible name as read by
+     * {@link #getAccessibleName()}, retrying until it matches or the timeout
+     * expires. The comparison is exact and case-sensitive, with whitespace
+     * normalized as {@code withAccessibleName} normalizes it; the failure
+     * message shows the last name read.
+     *
+     * @param name the expected full name, or {@code null} to assert that the
+     *             component has no accessible name
+     */
+    public void assertAccessibleName(String name) {
+        String expected = name == null ? null : name.strip().replaceAll("\\s+", " ");
+        AssertionWaits.assertEventually(locator.page(), "Accessible name", this::getAccessibleName, expected);
+    }
 
     @Override
     /** {@inheritDoc} */
