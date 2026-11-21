@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -33,20 +34,58 @@ public final class AutoWait {
     public static final String PROPERTY = "dramafinder.autoWait";
 
     /**
-     * True while Flow is handing a navigation to React Router: Flow sets
-     * {@code window.Vaadin.Flow.navigation} when a server-side
-     * {@code ui.navigate(..)} reaches the browser and deletes it once the
-     * address bar shows the new location. Flow internal, not an API.
-     */
-    private static final String NAVIGATION_SETTLED_SCRIPT =
-            "() => !(window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.navigation)";
-
-    /**
      * How long to wait for a pending navigation before giving up, so a
      * navigation that never completes (one a {@code BeforeLeaveEvent}
      * postponed) does not stall every action.
      */
-    private static final double NAVIGATION_TIMEOUT_MS = 2000;
+    private static final int NAVIGATION_TIMEOUT_MS = 2000;
+
+    /**
+     * How long to wait for Flow to go idle before failing. The script runs in
+     * the page, where Playwright's default timeout does not apply.
+     */
+    private static final int IDLE_TIMEOUT_MS = 30_000;
+
+    /**
+     * Resolves once Flow is idle and no navigation is pending, in one browser
+     * call. {@code window.Vaadin.Flow.navigation} is true while Flow hands a
+     * server-side {@code ui.navigate(..)} to React Router; Flow deletes it once
+     * the address bar shows the new location (Flow internal, not an API). A
+     * navigation pending for {@code navigationTimeout} ms is given up on. A
+     * settled state is checked again one task later, so a navigation that
+     * starts right after the client goes idle is not missed. Resolves to
+     * {@code false} after {@code timeout} ms.
+     */
+    private static final String SETTLE_SCRIPT =
+            // @formatter:off
+            "async ([timeout, navigationTimeout]) => {"
+            + "const idle = " + AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT + ";"
+            + "const start = performance.now();"
+            + "let navigationSeenAt;"
+            + "const navigationSettled = () => {"
+            + "  if (!(window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.navigation)) {"
+            + "    navigationSeenAt = undefined;"
+            + "    return true;"
+            + "  }"
+            + "  if (navigationSeenAt === undefined) {"
+            + "    navigationSeenAt = performance.now();"
+            + "  }"
+            + "  return performance.now() - navigationSeenAt >= navigationTimeout;"
+            + "};"
+            + "const settled = () => navigationSettled() && idle();"
+            + "const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));"
+            + "while (performance.now() - start < timeout) {"
+            + "  if (settled()) {"
+            + "    await sleep(0);"
+            + "    if (settled()) {"
+            + "      return true;"
+            + "    }"
+            + "  }"
+            + "  await sleep(5);"
+            + "}"
+            + "return false;"
+            + "}";
+    // @formatter:on
 
     private static final ThreadLocal<Integer> SUSPENDED = ThreadLocal.withInitial(() -> 0);
 
@@ -120,8 +159,13 @@ public final class AutoWait {
      * Flow (in React mode, Vaadin's default) updates only after it has handled
      * the response. When the action navigated and the page's script context
      * was replaced while waiting, the wait starts again on the new page.
+     * <p>
+     * The wait is one browser call when nothing is pending. It runs in the
+     * page, so Playwright's default timeout does not apply: it has its own
+     * limit of 30 seconds.
      *
      * @param page the page to wait on
+     * @throws TimeoutError when Flow is still busy after 30 seconds
      */
     public static void waitForVaadinIdle(Page page) {
         try {
@@ -136,12 +180,9 @@ public final class AutoWait {
     }
 
     private static void waitForIdleAndNavigation(Page page) {
-        page.waitForFunction(AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT);
-        try {
-            page.waitForFunction(NAVIGATION_SETTLED_SCRIPT, null,
-                    new Page.WaitForFunctionOptions().setTimeout(NAVIGATION_TIMEOUT_MS));
-        } catch (TimeoutError e) {
-            // A navigation that does not complete, e.g. a postponed one
+        Object settled = page.evaluate(SETTLE_SCRIPT, List.of(IDLE_TIMEOUT_MS, NAVIGATION_TIMEOUT_MS));
+        if (!Boolean.TRUE.equals(settled)) {
+            throw new TimeoutError("Vaadin Flow did not become idle within " + IDLE_TIMEOUT_MS + " ms");
         }
     }
 

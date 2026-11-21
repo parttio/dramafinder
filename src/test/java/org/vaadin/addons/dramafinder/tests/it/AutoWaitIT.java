@@ -1,5 +1,11 @@
 package org.vaadin.addons.dramafinder.tests.it;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -90,6 +96,13 @@ public class AutoWaitIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void waitingWhenNothingIsPendingTakesOneBrowserCall() {
+        List<String> calls = new ArrayList<>();
+        AutoWait.waitForVaadinIdle(recordingCalls(page, calls));
+        assertEquals(1, calls.size(), calls.toString());
+    }
+
+    @Test
     public void clickWaitsForAServerSideNavigationToUpdateTheUrl() {
         slowDownClientSideNavigation();
         ButtonElement.getByText(page, "Navigate button").click();
@@ -103,6 +116,64 @@ public class AutoWaitIT extends SpringPlaywrightIT {
         AutoWait.withoutWaiting(button::click);
         AutoWait.waitForVaadinIdle(page);
         assertTrue(page.url().endsWith("/nav/greeting"), page.url());
+    }
+
+    @Test
+    public void clickWaitsForANavigationThatStartsJustAfterTheClientGoesIdle() {
+        startServerSideNavigationsWhenTheClientGoesIdle();
+        ButtonElement.getByText(page, "Navigate button").click();
+        assertTrue(page.url().endsWith("/nav/greeting"), page.url());
+    }
+
+    /**
+     * Flow 25.3 starts handing a server-side navigation to React Router, and
+     * sets {@code window.Vaadin.Flow.navigation}, while its client is still
+     * busy with the response, so the client never looks idle before the
+     * navigation is pending. This holds the {@code vaadin-navigate} event back
+     * until a check first sees every client idle, then dispatches it in the
+     * next task: the one-task gap in which the client is idle and no
+     * navigation is pending yet, where a single check would stop waiting.
+     */
+    private void startServerSideNavigationsWhenTheClientGoesIdle() {
+        page.addInitScript("""
+                (() => {
+                  const dispatchEvent = window.dispatchEvent.bind(window);
+                  window.dispatchEvent = event => {
+                    if (event.type !== 'vaadin-navigate' || event.late) {
+                      return dispatchEvent(event);
+                    }
+                    const late = new CustomEvent(event.type, { detail: event.detail });
+                    late.late = true;
+                    const clients = Object.values(window.Vaadin.Flow.clients);
+                    const isActive = clients.map(client => client.isActive.bind(client));
+                    let held = true;
+                    clients.forEach((client, i) => client.isActive = () => {
+                      const active = isActive[i]();
+                      if (held && !isActive.some(check => check())) {
+                        held = false;
+                        setTimeout(() => dispatchEvent(late));
+                      }
+                      return active;
+                    });
+                    return true;
+                  };
+                })();
+                """);
+        page.reload();
+        AutoWait.waitForVaadinIdle(page);
+    }
+
+    /** The real page, recording the name of every method called on it. */
+    private static Page recordingCalls(Page page, List<String> calls) {
+        return (Page) Proxy.newProxyInstance(Page.class.getClassLoader(), new Class<?>[] {Page.class},
+                (proxy, method, args) -> {
+                    calls.add(method.getName());
+                    try {
+                        return method.invoke(page, args);
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
+                });
     }
 
     /**
