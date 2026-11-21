@@ -35,6 +35,10 @@ ButtonElement.getByText(page, "Delete").click();
 ConfirmDialogElement.get(page).assertOpen();  // retries while the overlay opens
 ```
 
+The wait is one call to the browser. If Flow is still busy after 30 seconds,
+it fails with a Playwright `TimeoutError`; the wait runs inside the page, so
+`page.setDefaultTimeout(..)` does not change that limit.
+
 ## Observing an in-flight request
 
 Sometimes the state *during* the request is the point of the test: a loading
