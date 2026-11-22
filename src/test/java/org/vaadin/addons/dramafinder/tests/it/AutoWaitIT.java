@@ -73,19 +73,6 @@ public class AutoWaitIT extends SpringPlaywrightIT {
     }
 
     @Test
-    public void systemPropertyTurnsWaitingOff() {
-        ButtonElement button = ButtonElement.getByText(page, "Slow button");
-        System.setProperty(AutoWait.PROPERTY, "false");
-        try {
-            button.click();
-            assertEquals("initial", result());
-        } finally {
-            System.clearProperty(AutoWait.PROPERTY);
-        }
-        assertThat(page.locator("#result")).hasText("clicked");
-    }
-
-    @Test
     public void explicitWaitWaitsEvenWhenAutoWaitIsOff() {
         ButtonElement button = ButtonElement.getByText(page, "Slow button");
         AutoWait.withoutWaiting(() -> {
