@@ -1,14 +1,25 @@
 package org.vaadin.addons.dramafinder.element.query;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
+import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -81,10 +92,57 @@ class FilterCompilationTest {
         };
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StringWriter out = new StringWriter();
-        boolean ok = compiler.getTask(out, null, null,
-                List.of("-proc:none", "-d", System.getProperty("java.io.tmpdir") + "/dramafinder-snippet",
-                        "-classpath", System.getProperty("java.class.path")),
-                null, List.of(file)).call();
-        return ok ? "" : out.toString();
+        Path classes = createTempDirectory();
+        try {
+            // -Xlint:path: javac silently skips a classpath entry it cannot
+            // find, which otherwise surfaces only as "package does not exist"
+            boolean ok = compiler.getTask(out, null, null,
+                    List.of("-proc:none", "-Xlint:path", "-d", classes.toString(),
+                            "-classpath", classPath()),
+                    null, List.of(file)).call();
+            return ok ? "" : out.toString();
+        } finally {
+            deleteRecursively(classes);
+        }
+    }
+
+    /**
+     * The test classpath, plus the locations the snippet's imports were
+     * actually loaded from: {@code java.class.path} alone has been seen to
+     * miss Playwright on a parallel CI build, which then failed every snippet
+     * with "package com.microsoft.playwright does not exist".
+     */
+    private static String classPath() {
+        Set<String> entries = new LinkedHashSet<>();
+        for (Class<?> type : List.of(Page.class, ElementQueries.class)) {
+            try {
+                entries.add(Path.of(type.getProtectionDomain().getCodeSource().getLocation().toURI()).toString());
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        for (String entry : System.getProperty("java.class.path").split(File.pathSeparator)) {
+            if (!entry.isEmpty()) {
+                entries.add(entry);
+            }
+        }
+        return String.join(File.pathSeparator, entries);
+    }
+
+    /** A directory of its own, so concurrent builds never share class output. */
+    private static Path createTempDirectory() {
+        try {
+            return Files.createTempDirectory("dramafinder-snippet");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static void deleteRecursively(Path dir) {
+        try (Stream<Path> paths = Files.walk(dir)) {
+            paths.sorted(Comparator.reverseOrder()).forEach(path -> path.toFile().delete());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
