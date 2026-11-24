@@ -1,8 +1,10 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
 import com.vaadin.flow.component.button.Button;
+
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
@@ -42,7 +44,16 @@ public class AutoWaitView extends Main {
         Button navigate = new Button("Navigate button",
                 e -> e.getSource().getUI().ifPresent(ui -> ui.navigate(GreetingView.class)));
 
-        add(button, field, checkbox, combo, navigate, result);
+        // Full page load to another Flow view: Flow is idle on the old page
+        // before the browser starts loading the new one (issue #320)
+        Button reload = new Button("Reload to greeting",
+                e -> e.getSource().getUI().ifPresent(ui -> ui.getPage().setLocation("nav/greeting")));
+
+        // Plain link to a page without Flow, loaded by the browser
+        Anchor plainLink = new Anchor("plain-page.html", "Plain link");
+        plainLink.setRouterIgnore(true);
+
+        add(button, field, checkbox, combo, navigate, reload, plainLink, result);
     }
 
     private static void slowly(Runnable update) {
