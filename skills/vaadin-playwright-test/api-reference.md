@@ -1658,6 +1658,11 @@ PlaywrightElement for `<vaadin-list-box>`.
 **Methods:**
 
 - `void selectItem(String item)` — Select the item based on its text.
+- `void deselectItem(String item)` — Deselect the item based on its text.
+- `void toggleItem(String item)` — Click the item based on its text, as a user does: in multiple mode this toggles its selection; in single mode it selects the item.
+- `boolean isSelected(String item)` — Whether the item is selected, read from its `selected` attribute without waiting.
+- `void assertItemSelected(String item)` — Assert that the item is selected, retrying until the timeout.
+- `void assertItemNotSelected(String item)` — Assert that the item is not selected, retrying until the timeout.
 - `String getSingleSelectedValue()` — Get the selected value for single-select list boxes.
 - `List<String> getSelectedValue()` — Get all selected values for multi-select list boxes.
 - `void assertSelectedValue(String... expected)` — Assert that the selected values match the expected labels.

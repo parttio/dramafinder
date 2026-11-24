@@ -1,6 +1,7 @@
 package org.vaadin.addons.dramafinder.element;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -42,14 +43,72 @@ public class ListBoxElement extends VaadinElement
     }
 
     /**
-     * Select the item based on its text.
-     * In multiple mode, toggles selection state when already selected.
+     * Select the item based on its text. Does nothing when the item is already
+     * selected, so in multiple mode it never toggles a selected item off;
+     * otherwise clicks it.
      *
-     * @param item visible label of the item
+     * @param item visible label of the item, matched exactly
      */
     public void selectItem(String item) {
+        if (!isSelected(item)) {
+            toggleItem(item);
+        }
+    }
+
+    /**
+     * Deselect the item based on its text. Does nothing when the item is not
+     * selected; otherwise clicks it, which deselects it in multiple mode. In
+     * single mode a click does not deselect, as for a user, so the item stays
+     * selected.
+     *
+     * @param item visible label of the item, matched exactly
+     */
+    public void deselectItem(String item) {
+        if (isSelected(item)) {
+            toggleItem(item);
+        }
+    }
+
+    /**
+     * Click the item based on its text, as a user does: in multiple mode this
+     * toggles its selection; in single mode it selects the item. Use
+     * {@link #selectItem(String)} or {@link #deselectItem(String)} to reach a
+     * given state whatever the current one.
+     *
+     * @param item visible label of the item, matched exactly
+     */
+    public void toggleItem(String item) {
         getItem(item).click();
         waitAfterAction();
+    }
+
+    /**
+     * Whether the item is selected, read from its {@code selected} attribute
+     * without waiting.
+     *
+     * @param item visible label of the item, matched exactly
+     * @return {@code true} when the item is selected
+     */
+    public boolean isSelected(String item) {
+        return getItem(item).getAttribute("selected") != null;
+    }
+
+    /**
+     * Assert that the item is selected, retrying until the timeout.
+     *
+     * @param item visible label of the item, matched exactly
+     */
+    public void assertItemSelected(String item) {
+        assertThat(getItem(item)).hasAttribute("selected", "");
+    }
+
+    /**
+     * Assert that the item is not selected, retrying until the timeout.
+     *
+     * @param item visible label of the item, matched exactly
+     */
+    public void assertItemNotSelected(String item) {
+        assertThat(getItem(item)).not().hasAttribute("selected", Pattern.compile(".*"));
     }
 
     /**
