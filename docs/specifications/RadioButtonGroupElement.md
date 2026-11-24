@@ -26,13 +26,13 @@ group.setTestId("plan");
 
 ```java
 // Test
-RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup");
-RadioButtonGroupElement partial = RadioButtonGroupElement.getByLabelContaining(page, "basic");
+RadioButtonGroupElement group = find(page, RadioButtonGroupElement.class).withLabel("Basic RadioButtonGroup").single();
+RadioButtonGroupElement partial = find(page, RadioButtonGroupElement.class).withLabelContaining("basic").single();
 RadioButtonGroupElement byId = RadioButtonGroupElement.getById(page, "basic-radio");
 RadioButtonGroupElement byTestId = RadioButtonGroupElement.getByTestId(page, "plan");
 
 // Scoped, and the typed query
-RadioButtonGroupElement scoped = RadioButtonGroupElement.getByLabel(page.locator("main"), "Basic RadioButtonGroup");
+RadioButtonGroupElement scoped = find(page.locator("main"), RadioButtonGroupElement.class).withLabel("Basic RadioButtonGroup").single();
 RadioButtonGroupElement viaQuery = find(page, RadioButtonGroupElement.class)
         .withLabel("Basic RadioButtonGroup").single();
 ```
@@ -48,7 +48,7 @@ waits for the server round-trip; `setValue(String)` does the same (its argument
 is a **label**, despite the name).
 
 ```java
-RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup");
+RadioButtonGroupElement group = find(page, RadioButtonGroupElement.class).withLabel("Basic RadioButtonGroup").single();
 group.assertValue(null);           // nothing selected yet
 
 group.selectByLabel("Option 2");
@@ -83,7 +83,7 @@ group.setValue("Option 2");
 
 ```java
 // Test
-RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Pre-selected Value");
+RadioButtonGroupElement group = find(page, RadioButtonGroupElement.class).withLabel("Pre-selected Value").single();
 group.assertValue("Option 2");          // exactly one radio checked, and it is "Option 2"
 group.assertSelectedLabel("Option 2");  // the label text of the checked radio
 ```
@@ -114,7 +114,7 @@ the wrapper of `<vaadin-radio-button>`. It has the checked-state, label,
 helper, focus and enabled-state API of the other check controls:
 
 ```java
-RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup");
+RadioButtonGroupElement group = find(page, RadioButtonGroupElement.class).withLabel("Basic RadioButtonGroup").single();
 RadioButtonElement option2 = group.getRadioButtonByLabel("Option 2");
 option2.assertNotChecked();
 option2.check();
@@ -126,7 +126,7 @@ group.assertValue("Option 2");
 `getByLabelContaining`, `getById`, `getByTestId`, each with a `Page` and a
 `Locator` overload) and a typed query, `find(page, RadioButtonElement.class)`
 → `FieldQuery`. Flow has no standalone radio button, so scope these to the
-group: `RadioButtonElement.getByLabel(group.getLocator(), "Option 3")`.
+group: `group.find(RadioButtonElement.class).withLabel("Option 3").single()`.
 
 ## Enabled and disabled
 
@@ -138,8 +138,8 @@ group.setEnabled(false);
 
 ```java
 // Test
-RadioButtonGroupElement.getByLabel(page, "Disabled RadioButtonGroup").assertDisabled();
-RadioButtonGroupElement.getByLabel(page, "Basic RadioButtonGroup").assertEnabled();
+find(page, RadioButtonGroupElement.class).withLabel("Disabled RadioButtonGroup").single().assertDisabled();
+find(page, RadioButtonGroupElement.class).withLabel("Basic RadioButtonGroup").single().assertEnabled();
 ```
 
 ## Label, helper and validation
@@ -154,7 +154,7 @@ group.setHelperText("This is a helper text");
 
 ```java
 // Test
-RadioButtonGroupElement group = RadioButtonGroupElement.getByLabel(page, "Helper Text");
+RadioButtonGroupElement group = find(page, RadioButtonGroupElement.class).withLabel("Helper Text").single();
 group.assertLabel("Helper Text");
 group.assertHelperHasText("This is a helper text");
 

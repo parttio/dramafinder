@@ -83,7 +83,7 @@ Find fields inside the content through that locator:
 
 ```java
 details.setOpen(true);
-TextFieldElement phone = TextFieldElement.getByLabel(details.getContentLocator(), "Phone");
+TextFieldElement phone = find(details.getContentLocator(), TextFieldElement.class).withLabel("Phone").single();
 ```
 
 ### Components in the summary

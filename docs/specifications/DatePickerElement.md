@@ -17,11 +17,11 @@ theme and the other field states.
 
 ```java
 // By the visible label (exact, case-sensitive) or part of it
-DatePickerElement appointment = DatePickerElement.getByLabel(page, "Appointment date");
-DatePickerElement vacation = DatePickerElement.getByLabelContaining(page, "vacation");
+DatePickerElement appointment = find(page, DatePickerElement.class).withLabel("Appointment date").single();
+DatePickerElement vacation = find(page, DatePickerElement.class).withLabelContaining("vacation").single();
 
 // Scoped to a container
-DatePickerElement inForm = DatePickerElement.getByLabel(page.locator("#container"), "Birthday");
+DatePickerElement inForm = find(page.locator("#container"), DatePickerElement.class).withLabel("Birthday").single();
 
 // Fallbacks for a picker without a visible label
 DatePickerElement byId = DatePickerElement.getById(page, "birthday");
@@ -32,8 +32,8 @@ DatePickerElement byPlaceholder = find(page, DatePickerElement.class).withPlaceh
 DatePickerElement unlabelled = find(page, DatePickerElement.class).withAccessibleName("Invisible label").single();
 ```
 
-`getByLabel` matches the whole visible label and never an `aria-label` or a
-placeholder; `getByLabelContaining` matches a case-insensitive substring.
+`withLabel` matches the whole visible label and never an `aria-label` or a
+placeholder; `withLabelContaining` matches a case-insensitive substring.
 Neither applies `.first()`.
 
 ## Setting and reading the value
@@ -57,7 +57,7 @@ datePicker.setHelperText("Enter the appointment date");
 
 ```java
 // Test
-DatePickerElement appointment = DatePickerElement.getByLabel(page, "Appointment date");
+DatePickerElement appointment = find(page, DatePickerElement.class).withLabel("Appointment date").single();
 appointment.setValue(LocalDate.of(2025, 9, 20));
 appointment.assertValue(LocalDate.of(2025, 9, 20));   // the value property
 appointment.assertValue("20/09/2025");                // the input text
@@ -83,7 +83,7 @@ datePicker.setI18n(new DatePicker.DatePickerI18n().setBadInputErrorMessage("Bad 
 
 ```java
 // Test
-DatePickerElement date = DatePickerElement.getByLabel(page, "Typed date");
+DatePickerElement date = find(page, DatePickerElement.class).withLabel("Typed date").single();
 date.setValue("20/09/2025");
 date.assertValue(LocalDate.of(2025, 9, 20));
 date.assertValid();
@@ -128,7 +128,7 @@ datePicker.setI18n(new DatePicker.DatePickerI18n()
 
 ```java
 // Test
-DatePickerElement vacation = DatePickerElement.getByLabel(page, "Vacation date");
+DatePickerElement vacation = find(page, DatePickerElement.class).withLabel("Vacation date").single();
 LocalDate today = LocalDate.now();
 vacation.assertValue(today.plusDays(7));
 
@@ -155,13 +155,13 @@ datePicker.addThemeVariants(DatePickerVariant.LUMO_SMALL);
 
 ```java
 // Test
-DatePickerElement appointment = DatePickerElement.getByLabel(page, "Appointment date");
+DatePickerElement appointment = find(page, DatePickerElement.class).withLabel("Appointment date").single();
 appointment.assertLabel("Appointment date");
 appointment.assertHelperHasText("Enter the appointment date");
 appointment.assertTooltipHasText("Tooltip for datepicker");
 appointment.assertTheme("small");
 
-DatePickerElement vacation = DatePickerElement.getByLabel(page, "Vacation date");
+DatePickerElement vacation = find(page, DatePickerElement.class).withLabel("Vacation date").single();
 vacation.focus();                    // focuses the input
 vacation.assertIsFocused();
 appointment.assertIsNotFocused();
@@ -180,7 +180,7 @@ find(page, DatePickerElement.class).withAccessibleName("Invisible label").single
 find(page, DatePickerElement.class).withAccessibleName("Labelled by").single()
         .assertAriaLabel(null);
 
-DatePickerElement toggled = DatePickerElement.getByLabel(page, "Enabled/Disabled Field");
+DatePickerElement toggled = find(page, DatePickerElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
 ButtonElement.getByText(page, "Enable/Disable").click();
 toggled.assertEnabled();

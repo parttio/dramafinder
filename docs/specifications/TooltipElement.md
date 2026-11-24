@@ -66,7 +66,7 @@ Every element implementing `HasTooltipElement` (buttons, text fields, …) expos
 its tooltip:
 
 ```java
-TextFieldElement field = TextFieldElement.getByLabel(page, "Dynamic");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Dynamic").single();
 field.assertTooltipHasText("Initial tooltip");
 String text = field.getTooltipText();          // read once
 Locator content = field.getTooltipLocator();   // the role="tooltip" node
@@ -94,7 +94,7 @@ The text follows server-side updates; `assertText(...)` retries:
 
 ```java
 // View: Button("Update tooltip", e -> dynamicTooltip.setText("Updated tooltip"))
-TooltipElement tooltip = TextFieldElement.getByLabel(page, "Dynamic").getTooltip();
+TooltipElement tooltip = find(page, TextFieldElement.class).withLabel("Dynamic").single().getTooltip();
 tooltip.assertText("Initial tooltip");
 ButtonElement.getByText(page, "Update tooltip").click();
 tooltip.assertText("Updated tooltip");
@@ -202,7 +202,7 @@ the `<vaadin-tooltip>` element, the `HasThemeElement` and `HasStyleElement`
 assertions read them:
 
 ```java
-TooltipElement tooltip = TextFieldElement.getByLabel(page, "Styled").getTooltip();
+TooltipElement tooltip = find(page, TextFieldElement.class).withLabel("Styled").single().getTooltip();
 tooltip.assertTheme("custom-tooltip-theme");
 tooltip.assertHasThemeVariant("custom-tooltip-theme");
 tooltip.assertCssClass("custom-tooltip");

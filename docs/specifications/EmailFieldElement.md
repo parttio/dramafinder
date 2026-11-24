@@ -17,9 +17,9 @@ email fields.
 ## Finding the component
 
 ```java
-EmailFieldElement email = EmailFieldElement.getByLabel(page, "Email");          // whole label
-EmailFieldElement validated = EmailFieldElement.getByLabelContaining(page, "validated");
-EmailFieldElement scoped = EmailFieldElement.getByLabel(page.locator("#container"), "My Label");
+EmailFieldElement email = find(page, EmailFieldElement.class).withLabel("Email").single();          // whole label
+EmailFieldElement validated = find(page, EmailFieldElement.class).withLabelContaining("validated").single();
+EmailFieldElement scoped = find(page.locator("#container"), EmailFieldElement.class).withLabel("My Label").single();
 EmailFieldElement byId = EmailFieldElement.getById(page, "contact-email");
 EmailFieldElement byTestId = EmailFieldElement.getByTestId(page, "contact-email");
 
@@ -28,9 +28,9 @@ EmailFieldElement byPlaceholder = find(page, EmailFieldElement.class).withPlaceh
 EmailFieldElement byName = find(page, EmailFieldElement.class).withAccessibleName("Work email").single();
 ```
 
-`getByLabel` matches the whole visible label, case-sensitively;
-`getByLabelContaining` a case-insensitive substring. The factories only consider
-`<vaadin-email-field>`: `TextFieldElement.getByLabel(page, "Email")` does not find
+`withLabel` matches the whole visible label, case-sensitively;
+`withLabelContaining` a case-insensitive substring. The lookups only consider
+`<vaadin-email-field>`: `find(page, TextFieldElement.class).withLabel("Email").single()` does not find
 an email field.
 
 ## Find, set and assert
@@ -46,7 +46,7 @@ email.setPrefixComponent(new Span("@"));
 
 ```java
 // Test
-EmailFieldElement email = EmailFieldElement.getByLabel(page, "Email");
+EmailFieldElement email = find(page, EmailFieldElement.class).withLabel("Email").single();
 email.assertPlaceholder("your@email.com");
 email.assertPrefixHasText("@");
 email.assertTooltipHasText("Tooltip for email field");
@@ -75,7 +75,7 @@ email.setErrorMessage("Please enter a valid email address");
 
 ```java
 // Test
-EmailFieldElement email = EmailFieldElement.getByLabel(page, "Validated Email");
+EmailFieldElement email = find(page, EmailFieldElement.class).withLabel("Validated Email").single();
 email.assertHelperHasText("This field is required.");
 
 email.setValue("not-an-email");

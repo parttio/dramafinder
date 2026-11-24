@@ -31,7 +31,7 @@ To work with the fields themselves, find them with their own elements — the
 layout locator is a convenient scope:
 
 ```java
-TextFieldElement email = TextFieldElement.getByLabel(layout.getLocator(), "Email");
+TextFieldElement email = layout.find(TextFieldElement.class).withLabel("Email").single();
 ```
 
 A field added with a form item (`layout.addFormItem(new TextField(), "Email")`)
@@ -42,7 +42,7 @@ not named by the form item. `getFieldByItemLabel` returns the field of the item
 with that exact label, whatever its type:
 
 ```java
-TextFieldElement email = TextFieldElement.getByLabel(layout.getLocator(), "Email");
+TextFieldElement email = layout.find(TextFieldElement.class).withLabel("Email").single();
 TextFieldElement same = new TextFieldElement(layout.getFieldByItemLabel("Email"));
 ```
 

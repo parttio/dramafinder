@@ -79,6 +79,8 @@ public class ContactView extends VerticalLayout {
     import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
     import org.vaadin.addons.dramafinder.element.*;
 
+    import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
     public class ContactViewIT extends SpringPlaywrightIT {
 
         @Override
@@ -88,7 +90,7 @@ public class ContactView extends VerticalLayout {
 
         @Test
         public void sendShowsAThankYouNotification() {
-            TextFieldElement.getByLabel(page, "Name").setValue("Ada");
+            find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
             ButtonElement.getByText(page, "Send").click();
             NotificationElement.getByText(page, "Thanks Ada").assertOpen();
         }
@@ -107,6 +109,9 @@ public class ContactView extends VerticalLayout {
 
     ```java
     import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
+    import org.vaadin.addons.dramafinder.element.*;
+
+    import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
     public class ContactViewIT extends AbstractBasePlaywrightIT {
 
@@ -122,7 +127,7 @@ public class ContactView extends VerticalLayout {
 
         @Test
         public void sendShowsAThankYouNotification() {
-            TextFieldElement.getByLabel(page, "Name").setValue("Ada");
+            find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
             ButtonElement.getByText(page, "Send").click();
             NotificationElement.getByText(page, "Thanks Ada").assertOpen();
         }
@@ -170,7 +175,7 @@ public class ContactView extends VerticalLayout {
 
         @Test
         void sendShowsAThankYouNotification() {
-            TextFieldElement.getByLabel(page, "Name").setValue("Ada");
+            find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
             ButtonElement.getByText(page, "Send").click();
             NotificationElement.getByText(page, "Thanks Ada").assertOpen();
         }

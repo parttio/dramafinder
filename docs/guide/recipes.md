@@ -23,11 +23,11 @@ Button save = new Button("Save", e -> {
 ```java
 @Test
 void savesAValidPerson() {
-    TextFieldElement.getByLabel(page, "Name").setValue("Ada Lovelace");
-    EmailFieldElement.getByLabel(page, "Email").setValue("ada@example.com");
-    ComboBoxElement.getByLabel(page, "Country").selectItem("United Kingdom");
-    DatePickerElement.getByLabel(page, "Birthday").setValue(LocalDate.of(1815, 12, 10));
-    CheckboxElement.getByLabel(page, "Subscribe to the newsletter").check();
+    find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada Lovelace");
+    find(page, EmailFieldElement.class).withLabel("Email").single().setValue("ada@example.com");
+    find(page, ComboBoxElement.class).withLabel("Country").single().selectItem("United Kingdom");
+    find(page, DatePickerElement.class).withLabel("Birthday").single().setValue(LocalDate.of(1815, 12, 10));
+    find(page, CheckboxElement.class).withLabel("Subscribe to the newsletter").single().check();
 
     ButtonElement.getByText(page, "Save").click();
 
@@ -36,7 +36,7 @@ void savesAValidPerson() {
 
 @Test
 void rejectsAnInvalidEmail() {
-    EmailFieldElement email = EmailFieldElement.getByLabel(page, "Email");
+    EmailFieldElement email = find(page, EmailFieldElement.class).withLabel("Email").single();
     email.setValue("not-an-email");
     ButtonElement.getByText(page, "Save").click();
 
@@ -60,7 +60,7 @@ void filterNarrowsTheGrid() {
     GridElement grid = GridElement.get(page);
     grid.assertRowCount(100);
 
-    TextFieldElement.getByLabel(page, "Filter").setValue("ada");
+    find(page, TextFieldElement.class).withLabel("Filter").single().setValue("ada");
 
     grid.assertRowCount(1);
     grid.assertCellContent(0, "Name", "Ada Lovelace");
@@ -109,7 +109,7 @@ void editsTheSelectedPerson() {
 
     DialogElement dialog = DialogElement.getByHeaderText(page, "Edit person");
     dialog.assertOpen();
-    TextFieldElement name = TextFieldElement.getByLabel(dialog.getLocator(), "Name");
+    TextFieldElement name = dialog.find(TextFieldElement.class).withLabel("Name").single();
     name.setValue("Ada King");
     ButtonElement.getByText(dialog.getLocator(), "Save").click();
 
@@ -184,7 +184,7 @@ void buttonInACell() {
 ```java
 @Test
 void sideNavOpensTheOrdersView() {
-    SideNavigationElement nav = SideNavigationElement.getByLabel(page, "Main menu");
+    SideNavigationElement nav = find(page, SideNavigationElement.class).withLabel("Main menu").single();
     nav.clickItem("Orders");
 
     assertAt(OrdersView.class);
@@ -200,7 +200,7 @@ void paymentTabShowsTheCardFields() {
     TabSheetElement sheet = TabSheetElement.get(page);
     sheet.selectTab("Payment");
 
-    TextFieldElement.getByLabel(sheet.getContentLocator(), "Card number").assertVisible();
+    find(sheet.getContentLocator(), TextFieldElement.class).withLabel("Card number").single().assertVisible();
 }
 ```
 

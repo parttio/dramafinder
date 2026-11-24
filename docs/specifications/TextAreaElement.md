@@ -18,9 +18,9 @@ the input: every value, focus and constraint operation targets the native
 ## Finding the component
 
 ```java
-TextAreaElement area = TextAreaElement.getByLabel(page, "TextArea");
-TextAreaElement validated = TextAreaElement.getByLabelContaining(page, "validated");
-TextAreaElement scoped = TextAreaElement.getByLabel(page.locator("#container"), "My Label");
+TextAreaElement area = find(page, TextAreaElement.class).withLabel("TextArea").single();
+TextAreaElement validated = find(page, TextAreaElement.class).withLabelContaining("validated").single();
+TextAreaElement scoped = find(page.locator("#container"), TextAreaElement.class).withLabel("My Label").single();
 TextAreaElement byId = TextAreaElement.getById(page, "comments");
 TextAreaElement byTestId = TextAreaElement.getByTestId(page, "comments");
 
@@ -29,9 +29,9 @@ TextAreaElement byPlaceholder = find(page, TextAreaElement.class).withPlaceholde
 TextAreaElement byName = find(page, TextAreaElement.class).withAccessibleName("Invisible label").single();
 ```
 
-`getByLabel` matches the whole visible label, case-sensitively;
-`getByLabelContaining` a case-insensitive substring. Only `<vaadin-text-area>`
-elements are considered: `TextFieldElement.getByLabel` does not find a text area.
+`withLabel` matches the whole visible label, case-sensitively;
+`withLabelContaining` a case-insensitive substring. Only `<vaadin-text-area>`
+elements are considered: `find(page, TextFieldElement.class)` does not find a text area.
 
 ## Find, set and assert
 
@@ -45,7 +45,7 @@ area.setI18n(new TextArea.TextAreaI18n().setRequiredErrorMessage("Field is requi
 
 ```java
 // Test
-TextAreaElement area = TextAreaElement.getByLabel(page, "TextArea");
+TextAreaElement area = find(page, TextAreaElement.class).withLabel("TextArea").single();
 area.assertHelperHasText("Helper text");
 area.assertValue("");
 
@@ -63,7 +63,7 @@ area.assertErrorMessage("Field is required");
 `setValue` fills the `<textarea>`, so line breaks are typed as part of the value:
 
 ```java
-TextAreaElement area = TextAreaElement.getByLabel(page, "TextArea");
+TextAreaElement area = find(page, TextAreaElement.class).withLabel("TextArea").single();
 area.setValue("First line\nSecond line");
 area.assertValue("First line\nSecond line");
 ```
@@ -84,7 +84,7 @@ public Locator getInputLocator() {
 Use it for Playwright assertions the wrapper does not offer:
 
 ```java
-TextAreaElement validated = TextAreaElement.getByLabel(page, "Validated TextArea");
+TextAreaElement validated = find(page, TextAreaElement.class).withLabel("Validated TextArea").single();
 assertThat(validated.getInputLocator()).hasAttribute("maxlength", "7");
 ```
 
@@ -104,7 +104,7 @@ validated.setMaxLength(7);
 
 ```java
 // Test
-TextAreaElement validated = TextAreaElement.getByLabel(page, "Validated TextArea");
+TextAreaElement validated = find(page, TextAreaElement.class).withLabel("Validated TextArea").single();
 validated.assertMinLength(6);
 validated.assertMaxLength(7);
 validated.assertPattern("\\d{7}");

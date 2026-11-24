@@ -20,11 +20,11 @@ For a combo box that keeps several values, see
 
 ```java
 // By the visible label (exact, case-sensitive) or part of it
-ComboBoxElement sortBy = ComboBoxElement.getByLabel(page, "Sort by");
-ComboBoxElement filterable = ComboBoxElement.getByLabelContaining(page, "filterable");
+ComboBoxElement sortBy = find(page, ComboBoxElement.class).withLabel("Sort by").single();
+ComboBoxElement filterable = find(page, ComboBoxElement.class).withLabelContaining("filterable").single();
 
 // Scoped to a container
-ComboBoxElement inForm = ComboBoxElement.getByLabel(page.locator("#container"), "Country");
+ComboBoxElement inForm = find(page.locator("#container"), ComboBoxElement.class).withLabel("Country").single();
 
 // Fallbacks for a combo box without a visible label
 ComboBoxElement byId = ComboBoxElement.getById(page, "country");
@@ -36,11 +36,11 @@ ComboBoxElement byPlaceholder = find(page, ComboBoxElement.class).withPlaceholde
 ComboBoxElement unlabelled = find(page, ComboBoxElement.class).withAccessibleName("Invisible label").single();
 ```
 
-`getByLabel` matches the whole label of the component's own `label` slot. An
-`aria-label` or a placeholder is not a label: `getByLabel(page, "Invisible label")`
+`withLabel` matches the whole label of the component's own `label` slot. An
+`aria-label` or a placeholder is not a label: `withLabel("Invisible label")`
 finds nothing, use `withAccessibleName(..)` or `withPlaceholder(..)` instead.
 None of these lookups applies `.first()`, so two combo boxes with the same label
-fail with a strict-mode error; `getByLabelContaining` matches a case-insensitive
+fail with a strict-mode error; `withLabelContaining` matches a case-insensitive
 substring.
 
 ## Selecting an item
@@ -54,7 +54,7 @@ comboBox.setLabel("Sort by");
 
 ```java
 // Test
-ComboBoxElement sortBy = ComboBoxElement.getByLabel(page, "Sort by");
+ComboBoxElement sortBy = find(page, ComboBoxElement.class).withLabel("Sort by").single();
 sortBy.selectItem("Rating: high to low");   // opens the overlay, clicks the item
 sortBy.assertValue("Rating: high to low");
 
@@ -88,7 +88,7 @@ comboBox.setLabel("Filterable ComboBox");
 
 ```java
 // Test
-ComboBoxElement fruit = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
+ComboBoxElement fruit = find(page, ComboBoxElement.class).withLabel("Filterable ComboBox").single();
 
 // Filter and select in one step
 fruit.filterAndSelectItem("Apr", "Apricot");
@@ -141,7 +141,7 @@ comboBox.setItems(
 
 ```java
 // Test
-ComboBoxElement lazy = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+ComboBoxElement lazy = find(page, ComboBoxElement.class).withLabel("Lazy ComboBox").single();
 lazy.filterAndSelectItem("Item 250", "Item 250");
 lazy.assertValue("Item 250");
 lazy.selectItem("Item 499");  // not rendered yet: scrolled to, its page loaded
@@ -161,12 +161,12 @@ other, so you get all items, not only the rendered ones. It leaves the overlay
 as it found it.
 
 ```java
-ComboBoxElement sortBy = ComboBoxElement.getByLabel(page, "Sort by");
+ComboBoxElement sortBy = find(page, ComboBoxElement.class).withLabel("Sort by").single();
 assertEquals(List.of("Most recent first", "Rating: high to low", "Rating: low to high"),
         sortBy.getItemLabels());
 sortBy.assertClosed();       // was closed, so it is closed again
 
-ComboBoxElement lazy = ComboBoxElement.getByLabel(page, "Lazy ComboBox");
+ComboBoxElement lazy = find(page, ComboBoxElement.class).withLabel("Lazy ComboBox").single();
 lazy.setFilter("Item 49");
 assertEquals(11, lazy.getItemLabels().size());
 lazy.assertOpened();         // was open for the filter, so it stays open
@@ -188,7 +188,7 @@ component's `selectedItem`: it ignores a typed filter and returns `null` when no
 item is selected, including when the field shows a custom value.
 
 ```java
-ComboBoxElement sortBy = ComboBoxElement.getByLabel(page, "Sort by");
+ComboBoxElement sortBy = find(page, ComboBoxElement.class).withLabel("Sort by").single();
 assertNull(sortBy.getSelectedItemLabel());
 sortBy.selectItem("Rating: high to low");
 assertEquals("Rating: high to low", sortBy.getSelectedItemLabel());
@@ -210,7 +210,7 @@ comboBox.addCustomValueSetListener(e -> comboBox.setValue(e.getDetail()));
 
 ```java
 // Test
-ComboBoxElement custom = ComboBoxElement.getByLabel(page, "Custom value ComboBox");
+ComboBoxElement custom = find(page, ComboBoxElement.class).withLabel("Custom value ComboBox").single();
 custom.getInputLocator().fill("Custom entry");
 custom.getInputLocator().press("Enter");
 custom.assertValue("Custom entry");
@@ -232,7 +232,7 @@ comboBox.setValue("Banana");
 
 ```java
 // Test
-ComboBoxElement clearable = ComboBoxElement.getByLabel(page, "Clearable ComboBox");
+ComboBoxElement clearable = find(page, ComboBoxElement.class).withLabel("Clearable ComboBox").single();
 clearable.assertClearButtonNotVisible();
 clearable.clear();
 clearable.assertValue("");
@@ -242,7 +242,7 @@ clearable.assertClosed();
 With `setClearButtonVisible(true)` you can also click the button yourself:
 
 ```java
-ComboBoxElement withButton = ComboBoxElement.getByLabel(page, "ComboBox with placeholder and clear button");
+ComboBoxElement withButton = find(page, ComboBoxElement.class).withLabel("ComboBox with placeholder and clear button").single();
 withButton.selectItem("Most recent first");
 withButton.assertClearButtonVisible();
 withButton.clickClearButton();
@@ -255,7 +255,7 @@ Don't clear with `setValue("")`: on a combo box it waits for an item labelled
 ## Opening and closing
 
 ```java
-ComboBoxElement fruit = ComboBoxElement.getByLabel(page, "Filterable ComboBox");
+ComboBoxElement fruit = find(page, ComboBoxElement.class).withLabel("Filterable ComboBox").single();
 fruit.assertClosed();
 fruit.open();                 // sets the opened property
 fruit.assertOpened();
@@ -285,14 +285,14 @@ comboBox.addClassName("custom-combo-box");
 
 ```java
 // Test
-ComboBoxElement sortBy = ComboBoxElement.getByLabel(page, "Sort by");
+ComboBoxElement sortBy = find(page, ComboBoxElement.class).withLabel("Sort by").single();
 sortBy.assertLabel("Sort by");
 sortBy.assertHelperHasText("Helper text");
 sortBy.assertPrefixHasText("Prefix");
 sortBy.assertTooltipHasText("Tooltip for combo box");
 sortBy.assertCssClass("custom-combo-box");
 
-ComboBoxElement withPlaceholder = ComboBoxElement.getByLabel(page, "ComboBox with placeholder and clear button");
+ComboBoxElement withPlaceholder = find(page, ComboBoxElement.class).withLabel("ComboBox with placeholder and clear button").single();
 withPlaceholder.assertPlaceholder("Enter text here");
 ```
 
@@ -301,7 +301,7 @@ withPlaceholder.assertPlaceholder("Enter text here");
 (`setHelperComponent(..)`) is reachable through `getHelperLocator()`:
 
 ```java
-ComboBoxElement outer = ComboBoxElement.getByLabel(page, "ComboBox with helper component");
+ComboBoxElement outer = find(page, ComboBoxElement.class).withLabel("ComboBox with helper component").single();
 ComboBoxElement helper = new ComboBoxElement(outer.getHelperLocator());
 helper.assertHelperHasText("Internal helper");
 ```
@@ -330,7 +330,7 @@ Button validate = new Button("Validate", e -> binder.validate());
 
 ```java
 // Test
-ComboBoxElement required = ComboBoxElement.getByLabel(page, "ComboBox with theme");
+ComboBoxElement required = find(page, ComboBoxElement.class).withLabel("ComboBox with theme").single();
 required.assertValid();
 ButtonElement.getByText(page, "Validate").click();
 required.assertInvalid();
@@ -340,20 +340,20 @@ required.assertErrorMessage("Required field");
 ## Enabled, read-only, focus and allowed characters
 
 ```java
-ComboBoxElement toggled = ComboBoxElement.getByLabel(page, "Enabled/Disabled Field");
+ComboBoxElement toggled = find(page, ComboBoxElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
 ButtonElement.getByText(page, "Enable/Disable").click();
 toggled.assertEnabled();
 
-ComboBoxElement readOnly = ComboBoxElement.getByLabel(page, "Read-only ComboBox");
+ComboBoxElement readOnly = find(page, ComboBoxElement.class).withLabel("Read-only ComboBox").single();
 readOnly.assertReadOnly();
 readOnly.assertValue("Banana");
 
-ComboBoxElement other = ComboBoxElement.getByLabel(page, "ComboBox with helper component");
+ComboBoxElement other = find(page, ComboBoxElement.class).withLabel("ComboBox with helper component").single();
 other.focus();               // focuses the input
 other.assertIsFocused();
 
-ComboBoxElement codes = ComboBoxElement.getByLabel(page, "Allowed char pattern ComboBox");
+ComboBoxElement codes = find(page, ComboBoxElement.class).withLabel("Allowed char pattern ComboBox").single();
 codes.assertAllowedCharPattern("[A-Z]");
 ```
 
@@ -363,7 +363,7 @@ Enablement and focus are read on the inner input, not the host.
 
 ```java
 // View: comboBox.addThemeVariants(ComboBoxVariant.LUMO_SMALL);
-ComboBoxElement.getByLabel(page, "ComboBox with theme").assertTheme("small");
+find(page, ComboBoxElement.class).withLabel("ComboBox with theme").single().assertTheme("small");
 ```
 
 `assertTheme` compares the whole `theme` attribute; use

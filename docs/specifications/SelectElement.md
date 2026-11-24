@@ -17,11 +17,11 @@ theme).
 
 ```java
 // By the visible label (exact, case-sensitive) or part of it
-SelectElement sortBy = SelectElement.getByLabel(page, "Sort by");
-SelectElement themed = SelectElement.getByLabelContaining(page, "with theme");
+SelectElement sortBy = find(page, SelectElement.class).withLabel("Sort by").single();
+SelectElement themed = find(page, SelectElement.class).withLabelContaining("with theme").single();
 
 // Scoped to a container
-SelectElement inForm = SelectElement.getByLabel(page.locator("#container"), "Sort by");
+SelectElement inForm = find(page.locator("#container"), SelectElement.class).withLabel("Sort by").single();
 
 // Fallbacks for a select without a visible label
 SelectElement byId = SelectElement.getById(page, "sort");
@@ -34,8 +34,8 @@ SelectElement unlabelled = find(page, SelectElement.class).withAccessibleName("I
 
 `vaadin-select` does not reflect its placeholder on the host, so
 `SelectQuery.withPlaceholder(..)` reads the text the select shows in its value
-button. An `aria-label` or a placeholder is not a label: `getByLabel` does not
-find them. No lookup applies `.first()`; `getByLabelContaining` matches a
+button. An `aria-label` or a placeholder is not a label: `withLabel` does not
+find them. No lookup applies `.first()`; `withLabelContaining` matches a
 case-insensitive substring.
 
 ## Selecting an item
@@ -49,7 +49,7 @@ select.setLabel("Sort by");
 
 ```java
 // Test
-SelectElement sortBy = SelectElement.getByLabel(page, "Sort by");
+SelectElement sortBy = find(page, SelectElement.class).withLabel("Sort by").single();
 sortBy.assertValue(null);                  // nothing selected yet
 sortBy.selectItem("Rating: high to low");  // opens the drop-down, clicks the item
 sortBy.assertValue("Rating: high to low");
@@ -74,7 +74,7 @@ select.setPlaceholder("Enter text here");
 
 ```java
 // Test
-SelectElement select = SelectElement.getByLabel(page, "Select with placeholder and clear button");
+SelectElement select = find(page, SelectElement.class).withLabel("Select with placeholder and clear button").single();
 select.assertPlaceholder("Enter text here");
 assertEquals("Enter text here", select.getPlaceholder());
 ```
@@ -97,20 +97,20 @@ select.addClassName("custom-text-field");
 
 ```java
 // Test
-SelectElement sortBy = SelectElement.getByLabel(page, "Sort by");
+SelectElement sortBy = find(page, SelectElement.class).withLabel("Sort by").single();
 sortBy.assertLabel("Sort by");
 sortBy.assertHelperHasText("Helper text");
 sortBy.assertPrefixHasText("Prefix");
 sortBy.assertTooltipHasText("Tooltip for select");
 sortBy.assertCssClass("custom-text-field");
 
-SelectElement.getByLabel(page, "Select with helper component").assertPrefixHasText(null); // no prefix
+find(page, SelectElement.class).withLabel("Select with helper component").single().assertPrefixHasText(null); // no prefix
 ```
 
 A helper component is reachable through `getHelperLocator()`:
 
 ```java
-SelectElement outer = SelectElement.getByLabel(page, "Select with helper component");
+SelectElement outer = find(page, SelectElement.class).withLabel("Select with helper component").single();
 SelectElement helper = new SelectElement(outer.getHelperLocator());
 helper.assertHelperHasText("Internal helper");
 ```
@@ -141,7 +141,7 @@ Button validate = new Button("Validate", e -> binder.validate());
 
 ```java
 // Test
-SelectElement required = SelectElement.getByLabel(page, "Select with theme");
+SelectElement required = find(page, SelectElement.class).withLabel("Select with theme").single();
 required.assertValid();
 ButtonElement.getByText(page, "Validate").click();
 required.assertInvalid();
@@ -151,17 +151,17 @@ required.assertErrorMessage("Required field");
 ## Enabled, focus and theme
 
 ```java
-SelectElement toggled = SelectElement.getByLabel(page, "Enabled/Disabled Field");
+SelectElement toggled = find(page, SelectElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
 ButtonElement.getByText(page, "Enable/Disable").click();
 toggled.assertEnabled();
 
-SelectElement other = SelectElement.getByLabel(page, "Select with helper component");
+SelectElement other = find(page, SelectElement.class).withLabel("Select with helper component").single();
 other.focus();
 other.assertIsFocused();
 
 // View: select.addThemeVariants(SelectVariant.LUMO_SMALL);
-SelectElement.getByLabel(page, "Select with theme").assertTheme("small");
+find(page, SelectElement.class).withLabel("Select with theme").single().assertTheme("small");
 ```
 
 Enablement and focus are read on the value button, not the host.

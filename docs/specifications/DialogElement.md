@@ -100,7 +100,7 @@ The element factories take a `Locator` scope as well. Pass `dialog.getLocator()`
 for the whole dialog, or one of its slot locators to narrow it further:
 
 ```java
-TextFieldElement reason = TextFieldElement.getByLabel(dialog.getLocator(), "Reason");
+TextFieldElement reason = dialog.find(TextFieldElement.class).withLabel("Reason").single();
 ButtonElement close = ButtonElement.getByText(dialog.getFooterLocator(), "Close");
 close.click();
 ```

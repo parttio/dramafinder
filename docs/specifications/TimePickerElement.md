@@ -16,11 +16,11 @@ check validation (min/max), helper, theme and the other field states.
 
 ```java
 // By the visible label (exact, case-sensitive) or part of it
-TimePickerElement appointment = TimePickerElement.getByLabel(page, "Appointment time");
-TimePickerElement meeting = TimePickerElement.getByLabelContaining(page, "meeting");
+TimePickerElement appointment = find(page, TimePickerElement.class).withLabel("Appointment time").single();
+TimePickerElement meeting = find(page, TimePickerElement.class).withLabelContaining("meeting").single();
 
 // Scoped to a container
-TimePickerElement inForm = TimePickerElement.getByLabel(page.locator("#container"), "Start");
+TimePickerElement inForm = find(page.locator("#container"), TimePickerElement.class).withLabel("Start").single();
 
 // Fallbacks for a picker without a visible label
 TimePickerElement byId = TimePickerElement.getById(page, "start");
@@ -31,8 +31,8 @@ TimePickerElement unlabelled = find(page, TimePickerElement.class).withAccessibl
 TimePickerElement byPlaceholder = find(page, TimePickerElement.class).withPlaceholder("hh:mm").single();
 ```
 
-`getByLabel` matches the whole visible label and never an `aria-label` or a
-placeholder; `getByLabelContaining` matches a case-insensitive substring.
+`withLabel` matches the whole visible label and never an `aria-label` or a
+placeholder; `withLabelContaining` matches a case-insensitive substring.
 Neither applies `.first()`.
 
 ## Setting and reading the value
@@ -55,7 +55,7 @@ timePicker.setHelperText("Enter the appointment time");
 
 ```java
 // Test
-TimePickerElement appointment = TimePickerElement.getByLabel(page, "Appointment time");
+TimePickerElement appointment = find(page, TimePickerElement.class).withLabel("Appointment time").single();
 appointment.setValue(LocalTime.of(14, 30));
 appointment.assertValue(LocalTime.of(14, 30));
 appointment.assertValue("14:30");
@@ -97,7 +97,7 @@ timePicker.setI18n(new TimePicker.TimePickerI18n()
 
 ```java
 // Test
-TimePickerElement meeting = TimePickerElement.getByLabel(page, "Meeting time");
+TimePickerElement meeting = find(page, TimePickerElement.class).withLabel("Meeting time").single();
 meeting.assertValue(LocalTime.of(10, 30));
 
 meeting.setValue(LocalTime.of(11, 0));
@@ -126,13 +126,13 @@ timePicker.addThemeVariants(TimePickerVariant.LUMO_SMALL);
 
 ```java
 // Test
-TimePickerElement appointment = TimePickerElement.getByLabel(page, "Appointment time");
+TimePickerElement appointment = find(page, TimePickerElement.class).withLabel("Appointment time").single();
 appointment.assertLabel("Appointment time");
 appointment.assertHelperHasText("Enter the appointment time");
 appointment.assertTooltipHasText("Tooltip for component");
 appointment.assertTheme("small");
 
-TimePickerElement meeting = TimePickerElement.getByLabel(page, "Meeting time");
+TimePickerElement meeting = find(page, TimePickerElement.class).withLabel("Meeting time").single();
 meeting.focus();                     // focuses the input
 meeting.assertIsFocused();
 appointment.assertIsNotFocused();
@@ -150,7 +150,7 @@ find(page, TimePickerElement.class).withAccessibleName("Invisible label").single
 find(page, TimePickerElement.class).withAccessibleName("Labelled by").single()
         .assertAriaLabel(null);
 
-TimePickerElement toggled = TimePickerElement.getByLabel(page, "Enabled/Disabled Field");
+TimePickerElement toggled = find(page, TimePickerElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
 ButtonElement.getByText(page, "Enable/Disable").click();
 toggled.assertEnabled();

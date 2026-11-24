@@ -16,9 +16,9 @@ value, `min`, `max` and `step` typed as `Integer`.
 ## Finding the component
 
 ```java
-IntegerFieldElement quantity = IntegerFieldElement.getByLabel(page, "Quantity");   // whole label
-IntegerFieldElement score = IntegerFieldElement.getByLabelContaining(page, "score");
-IntegerFieldElement scoped = IntegerFieldElement.getByLabel(page.locator("#container"), "My Label");
+IntegerFieldElement quantity = find(page, IntegerFieldElement.class).withLabel("Quantity").single();   // whole label
+IntegerFieldElement score = find(page, IntegerFieldElement.class).withLabelContaining("score").single();
+IntegerFieldElement scoped = find(page.locator("#container"), IntegerFieldElement.class).withLabel("My Label").single();
 IntegerFieldElement byId = IntegerFieldElement.getById(page, "quantity");
 IntegerFieldElement byTestId = IntegerFieldElement.getByTestId(page, "quantity");
 
@@ -26,8 +26,8 @@ IntegerFieldElement byTestId = IntegerFieldElement.getByTestId(page, "quantity")
 IntegerFieldElement byName = find(page, IntegerFieldElement.class).withAccessibleName("Items").single();
 ```
 
-`getByLabel` matches the whole visible label, case-sensitively;
-`getByLabelContaining` a case-insensitive substring. Only
+`withLabel` matches the whole visible label, case-sensitively;
+`withLabelContaining` a case-insensitive substring. Only
 `<vaadin-integer-field>` elements are considered.
 
 ## Find, set and assert
@@ -43,7 +43,7 @@ quantity.addValueChangeListener(e -> serverValue.setText("Server value: " + e.ge
 
 ```java
 // Test
-IntegerFieldElement quantity = IntegerFieldElement.getByLabel(page, "Quantity");
+IntegerFieldElement quantity = find(page, IntegerFieldElement.class).withLabel("Quantity").single();
 quantity.assertHelperHasText("Enter the number of items");
 
 quantity.setValue(42);
@@ -68,7 +68,7 @@ whole number (for instance `3000000000`, beyond `Integer.MAX_VALUE`).
 overloads:
 
 ```java
-IntegerFieldElement score = IntegerFieldElement.getByLabel(page, "Score");
+IntegerFieldElement score = find(page, IntegerFieldElement.class).withLabel("Score").single();
 score.setValue((Integer) null);    // same as clear()
 score.assertValue((Integer) null);
 ```
@@ -87,7 +87,7 @@ score.setStep(10);
 
 ```java
 // Test
-IntegerFieldElement score = IntegerFieldElement.getByLabel(page, "Score");
+IntegerFieldElement score = find(page, IntegerFieldElement.class).withLabel("Score").single();
 score.assertMin(0);
 score.assertMax(100);
 score.assertStep(10);
@@ -118,7 +118,7 @@ withControls.setStepButtonsVisible(true);
 
 ```java
 // Test
-IntegerFieldElement field = IntegerFieldElement.getByLabel(page, "With Controls");
+IntegerFieldElement field = find(page, IntegerFieldElement.class).withLabel("With Controls").single();
 field.assertHasControls(true);
 field.assertValue((Integer) null);
 

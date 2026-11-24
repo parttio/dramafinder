@@ -85,7 +85,7 @@ view when the layout is used as a `RouterLayout`.
 Components in an area are found by passing its locator to their factories:
 
 ```java
-SideNavigationElement nav = SideNavigationElement.getByLabel(appLayout.getDrawerLocator(), "My App");
+SideNavigationElement nav = find(appLayout.getDrawerLocator(), SideNavigationElement.class).withLabel("My App").single();
 ButtonElement logout = ButtonElement.getByText(appLayout.getNavbarLocator(), "Log out");
 ```
 

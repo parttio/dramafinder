@@ -70,20 +70,20 @@ Each field's `setValue` behaves like a user filling it in, and the component
 decides what the value becomes:
 
 ```java
-TextFieldElement.getByLabel(page, "Name").setValue("Ada");          // types, fires change
-ComboBoxElement.getByLabel(page, "Country").setValue("Finland");   // filters, picks the item labelled "Finland"
-DatePickerElement.getByLabel(page, "Birthday").setValue("12/10/1815"); // types in the field's locale format
-DatePickerElement.getByLabel(page, "Birthday").setValue(LocalDate.of(1815, 12, 10)); // typed overload
-CheckboxElement.getByLabel(page, "Subscribe").check();
-RadioButtonGroupElement.getByLabel(page, "Plan").selectByLabel("Pro");
-SliderElement.getByLabel(page, "Volume").setValue(40);
+find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");          // types, fires change
+find(page, ComboBoxElement.class).withLabel("Country").single().setValue("Finland");   // filters, picks the item labelled "Finland"
+find(page, DatePickerElement.class).withLabel("Birthday").single().setValue("12/10/1815"); // types in the field's locale format
+find(page, DatePickerElement.class).withLabel("Birthday").single().setValue(LocalDate.of(1815, 12, 10)); // typed overload
+find(page, CheckboxElement.class).withLabel("Subscribe").single().check();
+find(page, RadioButtonGroupElement.class).withLabel("Plan").single().selectByLabel("Pro");
+find(page, SliderElement.class).withLabel("Volume").single().setValue(40);
 ```
 
 Clear a field with `clear()`, not `setValue("")`: a combo box would look for an
 item labelled `""`.
 
 ```java
-ComboBoxElement.getByLabel(page, "Country").clear();
+find(page, ComboBoxElement.class).withLabel("Country").single().clear();
 ```
 
 The component pages document how each field reads and writes its value, e.g.
@@ -110,7 +110,7 @@ For anything not wrapped, use Playwright on the element's locators. Use
 Playwright calls do not wait:
 
 ```java
-TextFieldElement search = TextFieldElement.getByLabel(page, "Search");
+TextFieldElement search = find(page, TextFieldElement.class).withLabel("Search").single();
 search.getInputLocator().press("Enter");
 search.waitForVaadinIdle();
 GridElement.get(page).assertRowCount(3);

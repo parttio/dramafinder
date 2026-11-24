@@ -34,11 +34,17 @@ Always follow [@TESTING.md](TESTING.md) when generating tests. Key rules:
   `AbstractBasePlaywrightIT`, go to another view with `navigate(ProfileView.class)`
   (or `navigate(View.class, parameter)`), not `page.navigate(...)` with a built URL.
   Check where the browser is with `assertAt(View.class)`.
-- **Pass the whole label** — `getByLabel`, `getByText`, `getByHeaderText` and
+- **Find with the typed query builder** — prefer
+  `find(page, TextFieldElement.class).withLabel("Name").single()` (`find` is
+  `ElementQueries.find`, statically imported) over the static
+  `TextFieldElement.getByLabel(page, "Name")` shortcut: the same grammar works on
+  every element, and `dialog.find(TextFieldElement.class)` searches inside a
+  component
+- **Pass the whole label** — `withLabel`, `getByText`, `getByHeaderText` and
   the other label lookups match the full name, case-sensitively, and fail on
-  duplicates. Copy the label exactly from the view; use `getByLabelContaining`
+  duplicates. Copy the label exactly from the view; use `withLabelContaining`
   only when the label is long or generated
-- **A label is the visible label** — `getByLabel` matches the text a component
+- **A label is the visible label** — `withLabel` matches the text a component
   shows as its label, never an `aria-label` or a placeholder. A field named only
   by `setAriaLabel` is found with
   `find(page, TextFieldElement.class).withAccessibleName("Search").single()`, one
@@ -231,6 +237,7 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT; // Spring Boot, 
 // import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT; // no Spring: also override getUrl()
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 public class <ViewName>IT extends SpringPlaywrightIT { // or AbstractBasePlaywrightIT
 
@@ -270,7 +277,7 @@ and calls `SpringTestLogin.signIn(...)` / `signInTestUser(...)`.
 ```java
 @Test
 public void test<ComponentLabel>() {
-    TextFieldElement field = TextFieldElement.getByLabel(page, "My Label");
+    TextFieldElement field = find(page, TextFieldElement.class).withLabel("My Label").single();
     field.assertVisible();
     field.assertLabel("My Label");
     field.assertValue("");
@@ -285,7 +292,7 @@ public void test<ComponentLabel>() {
 
 @Test
 public void testFormSubmitWithInvalidInput() {
-    TextFieldElement nameField = TextFieldElement.getByLabel(page, "Name");
+    TextFieldElement nameField = find(page, TextFieldElement.class).withLabel("Name").single();
     ButtonElement submitBtn = ButtonElement.getByText(page, "Save");
     nameField.setValue("");
     submitBtn.click();
@@ -295,7 +302,7 @@ public void testFormSubmitWithInvalidInput() {
 
 @Test
 public void testFormSubmitWithValidInput() {
-    TextFieldElement nameField = TextFieldElement.getByLabel(page, "Name");
+    TextFieldElement nameField = find(page, TextFieldElement.class).withLabel("Name").single();
     ButtonElement submitBtn = ButtonElement.getByText(page, "Save");
     nameField.setValue("Jane Doe");
     submitBtn.click();

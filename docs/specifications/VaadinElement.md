@@ -164,7 +164,7 @@ Overlay components refine them: a `DialogElement` checks its overlay, a
 Read or set a property of the web component when no dedicated method exists:
 
 ```java
-TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
 Object autoselect = name.getProperty("autoselect");
 
 ProgressBarElement progress = ProgressBarElement.getById(page, "upload-progress");
@@ -197,7 +197,7 @@ It is also the scope for lookups inside the component:
 
 ```java
 DialogElement dialog = DialogElement.getByHeaderText(page, "New contact");
-TextFieldElement.getByLabel(dialog.getLocator(), "Name").setValue("Ada");
+dialog.find(TextFieldElement.class).withLabel("Name").single().setValue("Ada");
 ```
 
 ## Scoped queries
@@ -247,7 +247,7 @@ Every element exposes, through `HasLocatorElement`:
   `AutoWait.withoutWaiting(..)`.
 
 ```java
-TextFieldElement search = TextFieldElement.getByLabel(page, "Search");
+TextFieldElement search = find(page, TextFieldElement.class).withLabel("Search").single();
 search.getInputLocator().press("Enter"); // raw Playwright: does not wait
 search.waitForVaadinIdle();
 ```

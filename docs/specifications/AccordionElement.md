@@ -127,7 +127,7 @@ String summary = panel.getSummaryText(); // raw textContent of the heading
   reach fields inside:
 
 ```java
-TextFieldElement street = TextFieldElement.getByLabel(panel.getContentLocator(), "Street");
+TextFieldElement street = find(panel.getContentLocator(), TextFieldElement.class).withLabel("Street").single();
 ```
 
 ## Disabled panels

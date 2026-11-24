@@ -23,27 +23,27 @@ share most of the mixins but not the length and pattern constraints.
 ## Finding the component
 
 The label is the field's own visible label (`new TextField("Textfield")`).
-`getByLabel` matches the **whole** label, case-sensitively;
-`getByLabelContaining` matches a case-insensitive substring. Neither applies
+`withLabel` matches the **whole** label, case-sensitively;
+`withLabelContaining` matches a case-insensitive substring. Neither applies
 `.first()`: two matching fields fail with a strict-mode error instead of picking
 one silently.
 
 ```java
 // Whole visible label
-TextFieldElement field = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Textfield").single();
 
 // Part of the label, case-insensitive
-TextFieldElement validated = TextFieldElement.getByLabelContaining(page, "validated");
+TextFieldElement validated = find(page, TextFieldElement.class).withLabelContaining("validated").single();
 
 // Scoped to a container: only fields inside #container are considered
-TextFieldElement inside = TextFieldElement.getByLabel(page.locator("#container"), "My Label");
+TextFieldElement inside = find(page.locator("#container"), TextFieldElement.class).withLabel("My Label").single();
 
 // Fallbacks for a field without a user-visible name
 TextFieldElement byId = TextFieldElement.getById(page, "first-name");
 TextFieldElement byTestId = TextFieldElement.getByTestId(page, "first-name"); // Flow: setTestId("first-name")
 ```
 
-An `aria-label` or a placeholder is **not** a label, so `getByLabel` does not find
+An `aria-label` or a placeholder is **not** a label, so `withLabel` does not find
 a field that only has one of those. Use the typed query instead:
 
 ```java
@@ -74,8 +74,8 @@ TextFieldElement inDialog = dialog.find(TextFieldElement.class).withLabel("Name"
 
 `InputFieldQuery` offers `withLabel`, `withLabelContaining`, `withPlaceholder`,
 `withAccessibleName`, `withAccessibleNameContaining`, plus `withId`, `withTestId`,
-`withAttribute` and `withClassName`. `getByLabel(page, label)` is exactly
-`find(page, TextFieldElement.class).withLabel(label)`.
+`withAttribute` and `withClassName`. The `getByLabel(page, label)` shortcut is exactly
+`find(page, TextFieldElement.class).withLabel(label).single()`.
 
 ## Setting and reading the value
 
@@ -93,7 +93,7 @@ name.addValueChangeListener(e -> echo.setText(e.getValue()));
 
 ```java
 // Test
-TextFieldElement name = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Textfield").single();
 name.assertValue("");
 name.setValue("new value");
 name.assertValue("new value");
@@ -122,7 +122,7 @@ field.setClearButtonVisible(true);
 
 ```java
 // Test
-TextFieldElement field = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("TextField with placeholder and clear button").single();
 field.assertClearButtonNotVisible();   // hidden while the field is empty
 field.setValue("some value");
 field.assertClearButtonVisible();
@@ -136,14 +136,14 @@ field.assertValue("");
 ## Placeholder
 
 ```java
-TextFieldElement field = TextFieldElement.getByLabel(page, "TextField with placeholder and clear button");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("TextField with placeholder and clear button").single();
 field.assertPlaceholder("Enter text here");
 String placeholder = field.getPlaceholder();   // when the text is needed
 
 field.setPlaceholder("Type here");             // client-side only, see Pitfalls
 field.assertPlaceholder("Type here");
 
-TextFieldElement.getByLabel(page, "Name").assertPlaceholder(null);  // no placeholder
+find(page, TextFieldElement.class).withLabel("Name").single().assertPlaceholder(null);  // no placeholder
 ```
 
 ## Label, helper, prefix and suffix
@@ -158,7 +158,7 @@ field.setSuffixComponent(new Span("Suffix"));
 
 ```java
 // Test
-TextFieldElement field = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Textfield").single();
 field.assertLabel("Textfield");
 field.assertHelperHasText("Helper text");
 field.assertPrefixHasText("Prefix");
@@ -170,7 +170,7 @@ field.assertSuffixHasText("Suffix");
 `assertSuffixHasText(null)` pass when there is no visible prefix or suffix.
 
 ```java
-TextFieldElement plain = TextFieldElement.getByLabel(page, "TextField with helper component");
+TextFieldElement plain = find(page, TextFieldElement.class).withLabel("TextField with helper component").single();
 plain.assertPrefixHasText(null);
 plain.assertSuffixHasText(null);
 ```
@@ -188,7 +188,7 @@ field.setHelperComponent(helper);
 
 ```java
 // Test
-TextFieldElement field = TextFieldElement.getByLabel(page, "TextField with helper component");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("TextField with helper component").single();
 TextFieldElement helper = new TextFieldElement(field.getHelperLocator());
 helper.assertVisible();
 helper.assertHelperHasText("Internal helper");
@@ -226,7 +226,7 @@ code.setI18n(new TextField.TextFieldI18n()
 ### Asserting the constraints
 
 ```java
-TextFieldElement code = TextFieldElement.getByLabel(page, "Validated Textfield");
+TextFieldElement code = find(page, TextFieldElement.class).withLabel("Validated Textfield").single();
 code.assertMinLength(6);
 code.assertMaxLength(7);
 code.assertPattern("\\d{7}");
@@ -236,7 +236,7 @@ code.assertAllowedCharPattern("[0-8]");
 `null` asserts that the constraint is absent:
 
 ```java
-TextFieldElement free = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement free = find(page, TextFieldElement.class).withLabel("Textfield").single();
 free.assertMinLength(null);
 free.assertMaxLength(null);
 free.assertPattern(null);
@@ -263,7 +263,7 @@ code.assertValid();
 A required field turns invalid once it is emptied:
 
 ```java
-TextFieldElement field = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Textfield").single();
 field.setValue("new value");
 field.assertValid();
 field.setValue("");
@@ -281,7 +281,7 @@ child, for a Playwright assertion such as `isVisible()`.
 server round-trip. Use them to exercise client-side validation; see Pitfalls.
 
 ```java
-TextFieldElement field = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Textfield").single();
 field.setMaxLength(3);
 field.assertMaxLength(3);
 ```
@@ -305,13 +305,13 @@ enable.setId("enable-disable-button");
 
 ```java
 // Test
-TextFieldElement readOnly = TextFieldElement.getByLabel(page, "Read-only Field");
+TextFieldElement readOnly = find(page, TextFieldElement.class).withLabel("Read-only Field").single();
 readOnly.assertReadOnly();
 ButtonElement.getById(page, "toggle-read-only-button").click();
 readOnly.assertNotReadOnly();
 readOnly.assertReadOnly(false);      // boolean form, handy in parameterized tests
 
-TextFieldElement disabled = TextFieldElement.getByLabel(page, "Enabled/Disabled Field");
+TextFieldElement disabled = find(page, TextFieldElement.class).withLabel("Enabled/Disabled Field").single();
 disabled.assertDisabled();
 ButtonElement.getById(page, "enable-disable-button").click();
 disabled.assertEnabled();
@@ -337,8 +337,8 @@ field.focus();
 
 ```java
 // Test
-TextFieldElement field = TextFieldElement.getByLabel(page, "Textfield");
-TextFieldElement other = TextFieldElement.getByLabel(page, "TextField with helper component");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Textfield").single();
+TextFieldElement other = find(page, TextFieldElement.class).withLabel("TextField with helper component").single();
 field.assertIsFocused();
 other.assertIsNotFocused();
 
@@ -376,7 +376,7 @@ field.setTooltipText("Tooltip for textfield");
 
 ```java
 // Test
-TextFieldElement field = TextFieldElement.getByLabel(page, "Textfield");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Textfield").single();
 field.assertTooltipHasText("Tooltip for textfield");
 
 // The full tooltip API: open it, check its position
@@ -400,7 +400,7 @@ small.addClassName("custom-text-field");
 
 ```java
 // Test
-TextFieldElement small = TextFieldElement.getByLabel(page, "TextField with theme");
+TextFieldElement small = find(page, TextFieldElement.class).withLabel("TextField with theme").single();
 small.assertTheme("small");                  // the whole theme attribute
 small.assertHasThemeVariant("small");        // one variant among others
 small.assertHasNoThemeVariant("align-right");
@@ -426,8 +426,8 @@ assertThat(field.getInputLocator()).hasAttribute("maxlength", "7");
 
 ## Pitfalls
 
-- **Exact label match.** `getByLabel(page, "Name")` does not find a field labelled
-  `"Name *"` or `"Full name"`; use `getByLabelContaining`. Placeholders and
+- **Exact label match.** `withLabel("Name")` does not find a field labelled
+  `"Name *"` or `"Full name"`; use `withLabelContaining`. Placeholders and
   `aria-label`s are never labels: use `withPlaceholder` / `withAccessibleName`.
 - **Value on the input, not the host.** `assertValue` checks the native input's
   value. `getValue()` reads the host's `value` property and does not retry.

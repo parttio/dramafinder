@@ -17,9 +17,9 @@ exactly as described there. This page covers what differs.
 ## Finding the component
 
 ```java
-PasswordFieldElement password = PasswordFieldElement.getByLabel(page, "PasswordField");
-PasswordFieldElement validated = PasswordFieldElement.getByLabelContaining(page, "validated");
-PasswordFieldElement scoped = PasswordFieldElement.getByLabel(page.locator("#container"), "My Label");
+PasswordFieldElement password = find(page, PasswordFieldElement.class).withLabel("PasswordField").single();
+PasswordFieldElement validated = find(page, PasswordFieldElement.class).withLabelContaining("validated").single();
+PasswordFieldElement scoped = find(page.locator("#container"), PasswordFieldElement.class).withLabel("My Label").single();
 PasswordFieldElement byId = PasswordFieldElement.getById(page, "new-password");
 PasswordFieldElement byTestId = PasswordFieldElement.getByTestId(page, "new-password");
 
@@ -28,8 +28,8 @@ PasswordFieldElement byPlaceholder = find(page, PasswordFieldElement.class).with
 PasswordFieldElement byName = find(page, PasswordFieldElement.class).withAccessibleName("Invisible label").single();
 ```
 
-`getByLabel` matches the whole visible label, case-sensitively;
-`getByLabelContaining` a case-insensitive substring. Only
+`withLabel` matches the whole visible label, case-sensitively;
+`withLabelContaining` a case-insensitive substring. Only
 `<vaadin-password-field>` elements are considered.
 
 ## Find, set and assert
@@ -45,7 +45,7 @@ password.setI18n(new PasswordField.PasswordFieldI18n()
 
 ```java
 // Test
-PasswordFieldElement password = PasswordFieldElement.getByLabel(page, "PasswordField");
+PasswordFieldElement password = find(page, PasswordFieldElement.class).withLabel("PasswordField").single();
 password.assertHelperHasText("Helper text");
 password.assertValue("");
 
@@ -77,7 +77,7 @@ validated.setI18n(new PasswordField.PasswordFieldI18n()
 
 ```java
 // Test
-PasswordFieldElement validated = PasswordFieldElement.getByLabel(page, "Validated PasswordField");
+PasswordFieldElement validated = find(page, PasswordFieldElement.class).withLabel("Validated PasswordField").single();
 validated.assertMinLength(6);
 validated.assertMaxLength(7);
 validated.assertPattern("\\d{7}");
@@ -98,7 +98,7 @@ has no method for the reveal (eye) button; assert the masking with Playwright on
 the input locator:
 
 ```java
-PasswordFieldElement password = PasswordFieldElement.getByLabel(page, "PasswordField");
+PasswordFieldElement password = find(page, PasswordFieldElement.class).withLabel("PasswordField").single();
 assertThat(password.getInputLocator()).hasAttribute("type", "password");
 ```
 
