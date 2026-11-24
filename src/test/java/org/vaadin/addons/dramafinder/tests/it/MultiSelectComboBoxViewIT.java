@@ -13,7 +13,9 @@ import java.util.stream.IntStream;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -55,6 +57,69 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
         comboBox.deselectItem("Apple");
         comboBox.close();
         comboBox.assertSelectedCount(1);
+    }
+
+    @Test
+    public void testSelectItemKeepsAnAlreadySelectedItemSelected() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        comboBox.selectItem("Apple");
+        comboBox.selectItem("Apple");
+        comboBox.close();
+        comboBox.assertSelectedItems("Apple");
+    }
+
+    @Test
+    public void testDeselectItemLeavesAnUnselectedItemUnselected() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        comboBox.selectItem("Cherry");
+        comboBox.deselectItem("Apple");
+        comboBox.close();
+        comboBox.assertSelectedItems("Cherry");
+    }
+
+    @Test
+    public void testSelectItemsSelectsEveryItemWhateverItsPreviousState() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        comboBox.selectItem("Apple");
+        comboBox.selectItems("Apple", "Cherry");
+        comboBox.close();
+        comboBox.assertSelectedItems("Apple", "Cherry");
+    }
+
+    @Test
+    public void testDeselectItemsDeselectsEveryItemWhateverItsPreviousState() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        comboBox.selectItems("Apple", "Banana");
+        comboBox.deselectItems("Apple", "Cherry");
+        comboBox.close();
+        comboBox.assertSelectedItems("Banana");
+    }
+
+    @Test
+    public void testAssertItemSelectedAndNotSelected() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        comboBox.selectItem("Apple");
+        comboBox.close();
+        comboBox.assertItemSelected("Apple");
+        comboBox.assertItemNotSelected("Cherry");
+
+        page.setDefaultTimeout(1000);
+        AssertionError notSelected = assertThrows(AssertionError.class,
+                () -> comboBox.assertItemSelected("Cherry"));
+        assertTrue(notSelected.getMessage().contains("Cherry"), notSelected.getMessage());
+        assertTrue(notSelected.getMessage().contains("[Apple]"), notSelected.getMessage());
+        assertThrows(AssertionError.class, () -> comboBox.assertItemNotSelected("Apple"));
+    }
+
+    @Test
+    public void testToggleItemFlipsTheSelection() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+        comboBox.toggleItem("Apple");
+        comboBox.close();
+        comboBox.assertSelectedItems("Apple");
+        comboBox.toggleItem("Apple");
+        comboBox.close();
+        comboBox.assertSelectedItems();
     }
 
     @Test
@@ -171,6 +236,15 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testFilterAndSelectKeepsAnAlreadySelectedItemSelected() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
+        comboBox.selectItem("Apricot");
+        comboBox.filterAndSelectItem("Apr", "Apricot");
+        comboBox.close();
+        comboBox.assertSelectedItems("Apricot");
+    }
+
+    @Test
     public void testItemCount() {
         MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
         comboBox.open();
@@ -219,6 +293,17 @@ public class MultiSelectComboBoxViewIT extends SpringPlaywrightIT {
         comboBox.deselectItem("Item 480");
         comboBox.close();
         comboBox.assertSelectedItems("Item 30");
+    }
+
+    @Test
+    public void testIsSelectedReadsTheSelectionWithTheOverlayClosed() {
+        MultiSelectComboBoxElement comboBox = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");
+        comboBox.selectItem("Item 480");
+        comboBox.close();
+        comboBox.assertClosed();
+        assertTrue(comboBox.isSelected("Item 480"));
+        assertFalse(comboBox.isSelected("Item 30"));
+        assertFalse(comboBox.isSelected("Item 48"));
     }
 
     @Test

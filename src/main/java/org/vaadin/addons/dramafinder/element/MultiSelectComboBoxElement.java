@@ -100,26 +100,41 @@ public class MultiSelectComboBoxElement extends VaadinElement
     // ── Selection ──────────────────────────────────────────────────────
 
     /**
-     * Select an item by its visible label.
-     * Opens the overlay, clicks the matching item (toggling its selection); an
-     * item the overlay has not rendered yet is scrolled into view first.
+     * Select an item by its visible label. Does nothing when the item is
+     * already selected; otherwise opens the overlay and clicks the item, an
+     * item the overlay has not rendered yet being scrolled into view first.
      *
      * @param item label of the item to select
      */
     public void selectItem(String item) {
-        open();
-        revealItem(item).click();
-        waitAfterAction();
+        if (!isSelected(item)) {
+            toggleItem(item);
+        }
     }
 
     /**
-     * Deselect an item by its visible label.
-     * Opens the overlay, clicks the matching item (toggling its selection off);
-     * an item the overlay has not rendered yet is scrolled into view first.
+     * Deselect an item by its visible label. Does nothing when the item is not
+     * selected; otherwise opens the overlay and clicks the item, an item the
+     * overlay has not rendered yet being scrolled into view first.
      *
      * @param item label of the item to deselect
      */
     public void deselectItem(String item) {
+        if (isSelected(item)) {
+            toggleItem(item);
+        }
+    }
+
+    /**
+     * Toggle an item by its visible label, as a user click does: a selected
+     * item becomes deselected and an unselected one selected. Opens the
+     * overlay; an item the overlay has not rendered yet is scrolled into view
+     * first. Use {@link #selectItem(String)} or {@link #deselectItem(String)}
+     * to reach a given state whatever the current one.
+     *
+     * @param item label of the item to toggle
+     */
+    public void toggleItem(String item) {
         open();
         revealItem(item).click();
         waitAfterAction();
@@ -148,39 +163,41 @@ public class MultiSelectComboBoxElement extends VaadinElement
     }
 
     /**
-     * Select multiple items in sequence.
+     * Select multiple items in sequence, leaving those already selected
+     * as they are (see {@link #selectItem(String)}).
      *
      * @param items labels of the items to select
      */
     public void selectItems(String... items) {
-        open();
         for (String item : items) {
-            revealItem(item).click();
-            waitAfterAction();
+            selectItem(item);
         }
     }
 
     /**
-     * Deselect multiple items in sequence.
+     * Deselect multiple items in sequence, leaving those not selected as they
+     * are (see {@link #deselectItem(String)}).
      *
      * @param items labels of the items to deselect
      */
     public void deselectItems(String... items) {
-        open();
         for (String item : items) {
-            revealItem(item).click();
-            waitAfterAction();
+            deselectItem(item);
         }
     }
 
     /**
      * Type filter text into the input, then click the matching item, scrolling
      * the overlay to it when the filter leaves more items than it renders.
+     * Does nothing, not even filtering, when the item is already selected.
      *
      * @param filter text to type for filtering
      * @param item   label of the item to select
      */
     public void filterAndSelectItem(String filter, String item) {
+        if (isSelected(item)) {
+            return;
+        }
         setFilter(filter);
         revealItem(item).click();
         waitAfterAction();
@@ -331,6 +348,18 @@ public class MultiSelectComboBoxElement extends VaadinElement
     }
 
     /**
+     * Whether the item labelled {@code item} is selected, read from the
+     * {@code selectedItems} property: the overlay is not opened, so this works
+     * for an item the overlay has not rendered.
+     *
+     * @param item the full label of the item, matched exactly
+     * @return {@code true} when the item is selected
+     */
+    public boolean isSelected(String item) {
+        return getSelectedItems().contains(item);
+    }
+
+    /**
      * Get the count of currently selected items from the
      * {@code selectedItems} property.
      *
@@ -354,6 +383,32 @@ public class MultiSelectComboBoxElement extends VaadinElement
                 this::getSelectedItems,
                 actual -> actual.size() == expectedItems.size() && actual.containsAll(expectedItems),
                 expectedItems + " (in any order)");
+    }
+
+    /**
+     * Assert that the item labelled {@code item} is selected, retrying until
+     * the timeout. Reads the {@code selectedItems} property, so the overlay
+     * does not need to be open.
+     *
+     * @param item the full label of the item, matched exactly
+     */
+    public void assertItemSelected(String item) {
+        assertEventually(getLocator().page(), "Multi-select combo box selected items",
+                this::getSelectedItems, actual -> actual.contains(item),
+                "a selection containing " + item);
+    }
+
+    /**
+     * Assert that the item labelled {@code item} is not selected, retrying
+     * until the timeout. Reads the {@code selectedItems} property, so the
+     * overlay does not need to be open.
+     *
+     * @param item the full label of the item, matched exactly
+     */
+    public void assertItemNotSelected(String item) {
+        assertEventually(getLocator().page(), "Multi-select combo box selected items",
+                this::getSelectedItems, actual -> !actual.contains(item),
+                "a selection without " + item);
     }
 
     /**
