@@ -29,7 +29,7 @@ popover.setTarget(button);
 
 ```java
 // Test
-ButtonElement.getByText(page, "Open Popover").click();
+find(page, ButtonElement.class).withAccessibleName("Open Popover").single().click();
 
 // by accessible name: exact, case-sensitive, no .first()
 PopoverElement popover = find(page, PopoverElement.class)
@@ -58,7 +58,7 @@ By default a popover opens when its target is clicked, and closes when the
 target is clicked again or the user clicks outside it.
 
 ```java
-ButtonElement openPopover = ButtonElement.getByText(page, "Open Popover");
+ButtonElement openPopover = find(page, ButtonElement.class).withAccessibleName("Open Popover").single();
 openPopover.click();
 
 PopoverElement popover = find(page, PopoverElement.class)
@@ -78,12 +78,12 @@ interacts with the rest of the page, so several can be open at once:
 
 ```java
 // View: stayOpen.setCloseOnOutsideClick(false);
-ButtonElement.getByText(page, "Open stay opened Popover").click();
+find(page, ButtonElement.class).withAccessibleName("Open stay opened Popover").single().click();
 PopoverElement stayOpen = find(page, PopoverElement.class)
         .withAccessibleName("Stay opened Popover").single();
 stayOpen.assertOpen();
 
-ButtonElement.getByText(page, "Open component Popover").click();
+find(page, ButtonElement.class).withAccessibleName("Open component Popover").single().click();
 PopoverElement other = find(page, PopoverElement.class)
         .withAccessibleName("Stay component Popover").single();
 other.assertOpen();
@@ -108,14 +108,14 @@ close.addClickListener(e -> popover.close());
 
 ```java
 // Test
-ButtonElement.getByText(page, "Open component Popover").click();
+find(page, ButtonElement.class).withAccessibleName("Open component Popover").single().click();
 PopoverElement popover = find(page, PopoverElement.class)
         .withAccessibleName("Stay component Popover").single();
 
 assertThat(popover.getContentLocator()).hasText("This is a popoverClose component Popover");
 
 popover.find(ButtonElement.class).withText("Close component Popover").single().click();
-// or: ButtonElement.getByText(popover.getContentLocator(), "Close component Popover").click();
+// or: find(popover.getContentLocator(), ButtonElement.class).withAccessibleName("Close component Popover").single().click();
 popover.assertClosed();
 ```
 

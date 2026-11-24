@@ -25,13 +25,13 @@ group.setTestId("toppings");
 
 ```java
 // Test
-CheckboxGroupElement group = CheckboxGroupElement.getByLabel(page, "Basic CheckboxGroup");
-CheckboxGroupElement partial = CheckboxGroupElement.getByLabelContaining(page, "basic");
+CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Basic CheckboxGroup").single();
+CheckboxGroupElement partial = find(page, CheckboxGroupElement.class).withLabelContaining("basic").single();
 CheckboxGroupElement byId = CheckboxGroupElement.getById(page, "basic-group");
 CheckboxGroupElement byTestId = CheckboxGroupElement.getByTestId(page, "toppings");
 
 // Scoped, and the typed query
-CheckboxGroupElement scoped = CheckboxGroupElement.getByLabel(page.locator("main"), "Basic CheckboxGroup");
+CheckboxGroupElement scoped = find(page.locator("main"), CheckboxGroupElement.class).withLabel("Basic CheckboxGroup").single();
 CheckboxGroupElement viaQuery = find(page, CheckboxGroupElement.class).withLabel("Basic CheckboxGroup").single();
 ```
 
@@ -47,7 +47,7 @@ selection method therefore takes the checkbox's **visible label**, and
 `getSelectedValues()` returns labels as well.
 
 ```java
-CheckboxGroupElement group = CheckboxGroupElement.getByLabel(page, "Basic CheckboxGroup");
+CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Basic CheckboxGroup").single();
 group.assertSelected();                       // nothing selected yet
 
 group.selectByLabel("Option 1", "Option 3");
@@ -78,7 +78,7 @@ group.setValue(Set.of("Option 1", "Option 3"));
 
 ```java
 // Test
-CheckboxGroupElement group = CheckboxGroupElement.getByLabel(page, "Pre-selected Value");
+CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Pre-selected Value").single();
 group.assertSelected("Option 1", "Option 3");   // passes
 // group.assertSelected("Option 1");            // fails: "Option 3" is selected too
 ```
@@ -109,7 +109,7 @@ group.setItemEnabledProvider(item -> !"Option 2".equals(item));
 
 ```java
 // Test
-CheckboxGroupElement group = CheckboxGroupElement.getByLabel(page, "Disabled Item");
+CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Disabled Item").single();
 group.getCheckbox("Option 1").assertEnabled();
 group.getCheckbox("Option 2").assertDisabled();
 
@@ -126,7 +126,7 @@ which retries.
 ### How item labels are matched
 
 `getCheckbox(label)`, `selectByLabel`, `deselectByLabel` and `assertSelected`
-look the checkbox up with `CheckboxElement.getByLabel(Locator, String)` scoped
+look the checkbox up with `find(Locator, CheckboxElement.class).withLabel(String).single()` scoped
 to the group: the **whole** visible label, case-sensitively.
 `selectByLabel("Option 1")` therefore leaves an `Option 10` checkbox alone, and
 a partial label reaches nothing. Two checkboxes carrying the same label make the
@@ -142,7 +142,7 @@ group.setEnabled(false);
 
 ```java
 // Test
-CheckboxGroupElement group = CheckboxGroupElement.getByLabel(page, "Disabled CheckboxGroup");
+CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Disabled CheckboxGroup").single();
 group.assertDisabled();
 group.getCheckboxes().forEach(CheckboxElement::assertDisabled);
 ```
@@ -162,27 +162,27 @@ Button validate = new Button("Validate CheckboxGroup",
 
 ```java
 // Test
-CheckboxGroupElement group = CheckboxGroupElement.getByLabel(page, "Required CheckboxGroup");
+CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Required CheckboxGroup").single();
 group.assertValid();
 
-ButtonElement.getByText(page, "Validate CheckboxGroup").click();
+find(page, ButtonElement.class).withAccessibleName("Validate CheckboxGroup").single().click();
 group.assertInvalid();
 group.assertErrorMessage("Selection is required");
 
 group.selectByLabel("Option 1");
-ButtonElement.getByText(page, "Validate CheckboxGroup").click();
+find(page, ButtonElement.class).withAccessibleName("Validate CheckboxGroup").single().click();
 group.assertValid();
 ```
 
 ## Label, helper, tooltip, theme and style
 
 ```java
-CheckboxGroupElement.getByLabel(page, "Basic CheckboxGroup").assertLabel("Basic CheckboxGroup");
-CheckboxGroupElement.getByLabel(page, "Helper Text").assertHelperHasText("This is a helper text");
-CheckboxGroupElement.getByLabel(page, "Tooltip CheckboxGroup").assertTooltipHasText("This is a tooltip");
+find(page, CheckboxGroupElement.class).withLabel("Basic CheckboxGroup").single().assertLabel("Basic CheckboxGroup");
+find(page, CheckboxGroupElement.class).withLabel("Helper Text").single().assertHelperHasText("This is a helper text");
+find(page, CheckboxGroupElement.class).withLabel("Tooltip CheckboxGroup").single().assertTooltipHasText("This is a tooltip");
 
 // View: group.getElement().setAttribute("theme", "vertical"); group.addClassName("styled-group");
-CheckboxGroupElement styled = CheckboxGroupElement.getByLabel(page, "Vertical CheckboxGroup");
+CheckboxGroupElement styled = find(page, CheckboxGroupElement.class).withLabel("Vertical CheckboxGroup").single();
 styled.assertTheme("vertical");
 styled.assertHasThemeVariant("vertical");
 styled.assertCssClass("styled-group");

@@ -64,7 +64,7 @@ Find components inside it through that locator:
 
 ```java
 sheet.selectTab("Tab 2");
-TextFieldElement name = TextFieldElement.getByLabel(sheet.getContentLocator(), "Name");
+TextFieldElement name = find(sheet.getContentLocator(), TextFieldElement.class).withLabel("Name").single();
 ```
 
 ## Tab labels

@@ -79,6 +79,8 @@ public class ContactView extends VerticalLayout {
     import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
     import org.vaadin.addons.dramafinder.element.*;
 
+    import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
     public class ContactViewIT extends SpringPlaywrightIT {
 
         @Override
@@ -88,9 +90,9 @@ public class ContactView extends VerticalLayout {
 
         @Test
         public void sendShowsAThankYouNotification() {
-            TextFieldElement.getByLabel(page, "Name").setValue("Ada");
-            ButtonElement.getByText(page, "Send").click();
-            NotificationElement.getByText(page, "Thanks Ada").assertOpen();
+            find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
+            find(page, ButtonElement.class).withAccessibleName("Send").single().click();
+            find(page, NotificationElement.class).withTextContaining("Thanks Ada").single().assertOpen();
         }
     }
     ```
@@ -107,6 +109,9 @@ public class ContactView extends VerticalLayout {
 
     ```java
     import org.vaadin.addons.dramafinder.AbstractBasePlaywrightIT;
+    import org.vaadin.addons.dramafinder.element.*;
+
+    import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
     public class ContactViewIT extends AbstractBasePlaywrightIT {
 
@@ -122,9 +127,9 @@ public class ContactView extends VerticalLayout {
 
         @Test
         public void sendShowsAThankYouNotification() {
-            TextFieldElement.getByLabel(page, "Name").setValue("Ada");
-            ButtonElement.getByText(page, "Send").click();
-            NotificationElement.getByText(page, "Thanks Ada").assertOpen();
+            find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
+            find(page, ButtonElement.class).withAccessibleName("Send").single().click();
+            find(page, NotificationElement.class).withTextContaining("Thanks Ada").single().assertOpen();
         }
     }
     ```
@@ -170,9 +175,9 @@ public class ContactView extends VerticalLayout {
 
         @Test
         void sendShowsAThankYouNotification() {
-            TextFieldElement.getByLabel(page, "Name").setValue("Ada");
-            ButtonElement.getByText(page, "Send").click();
-            NotificationElement.getByText(page, "Thanks Ada").assertOpen();
+            find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
+            find(page, ButtonElement.class).withAccessibleName("Send").single().click();
+            find(page, NotificationElement.class).withTextContaining("Thanks Ada").single().assertOpen();
         }
     }
     ```
@@ -210,7 +215,7 @@ mvn verify -Dit.test=ContactViewIT
 ```java
 @BeforeEach
 void openTheEditor() {
-    ButtonElement.getByText(page, "New contact").click();
+    find(page, ButtonElement.class).withAccessibleName("New contact").single().click();
 }
 ```
 

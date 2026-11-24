@@ -59,7 +59,7 @@ separator. The assertion retries, so it waits for a value the server updates:
 
 ```java
 // e.g. a view whose "Start import" button advances the bar on the server
-ButtonElement.getByText(page, "Start import").click();
+find(page, ButtonElement.class).withAccessibleName("Start import").single().click();
 bar.assertValue(1.0);   // retries until the bar reaches 1.0
 ```
 

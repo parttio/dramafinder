@@ -49,9 +49,9 @@ phone.addValueChangeListener(e -> value.setText(e.getValue()));
 ## Finding the component
 
 ```java
-CustomFieldElement phone = CustomFieldElement.getByLabel(page, "Phone");                // whole label
-CustomFieldElement office = CustomFieldElement.getByLabelContaining(page, "office");   // "Office phone"
-CustomFieldElement fax = CustomFieldElement.getByLabel(page.locator("main"), "Fax");    // scoped
+CustomFieldElement phone = find(page, CustomFieldElement.class).withLabel("Phone").single();                // whole label
+CustomFieldElement office = find(page, CustomFieldElement.class).withLabelContaining("office").single();   // "Office phone"
+CustomFieldElement fax = find(page.locator("main"), CustomFieldElement.class).withLabel("Fax").single();    // scoped
 CustomFieldElement byId = CustomFieldElement.getById(page, "phone");
 CustomFieldElement byTestId = CustomFieldElement.getByTestId(page, "phone");
 
@@ -60,12 +60,12 @@ CustomFieldElement work = find(page, CustomFieldElement.class).withLabel("Work p
 CustomFieldElement styled = find(page, CustomFieldElement.class).withClassName("work-phone").single();
 ```
 
-`getByLabel` matches the whole label, case-sensitively:
-`getByLabel(page, "Office")` does not find `"Office phone"`.
-`getByLabelContaining` matches a case-insensitive substring. A custom field is
+`withLabel` matches the whole label, case-sensitively:
+`withLabel("Office")` does not find `"Office phone"`.
+`withLabelContaining` matches a case-insensitive substring. A custom field is
 never found by the label of a field it wraps: with an inner text field labelled
-`"CustomField inner"`, `CustomFieldElement.getByLabel(page, "CustomField inner")`
-finds nothing, while `TextFieldElement.getByLabel` finds the inner field.
+`"CustomField inner"`, `find(page, CustomFieldElement.class).withLabel("CustomField inner").single()`
+finds nothing, while `find(page, TextFieldElement.class).withLabel(..)` finds the inner field.
 `FieldQuery` has no placeholder filter.
 
 ## Setting values through the wrapped fields
@@ -78,7 +78,7 @@ fields, and assert the server-side result through whatever the view renders from
 it:
 
 ```java
-CustomFieldElement phone = CustomFieldElement.getByLabel(page, "Phone");
+CustomFieldElement phone = find(page, CustomFieldElement.class).withLabel("Phone").single();
 phone.getField(SelectElement.class, "Country code").selectItem("+358");
 
 TextFieldElement number = phone.getField(TextFieldElement.class, "Number");
@@ -126,7 +126,7 @@ office.setValue("+49 30 1234567");
 
 ```java
 // Test
-CustomFieldElement office = CustomFieldElement.getByLabel(page, "Office phone");
+CustomFieldElement office = find(page, CustomFieldElement.class).withLabel("Office phone").single();
 office.getField(SelectElement.class, 0).assertValue("+49");
 office.getField(TextFieldElement.class, 0).assertValue("30 1234567");
 ```
@@ -137,12 +137,12 @@ office.getField(TextFieldElement.class, 0).assertValue("30 1234567");
 ## Label, helper and required
 
 ```java
-CustomFieldElement phone = CustomFieldElement.getByLabel(page, "Phone");
+CustomFieldElement phone = find(page, CustomFieldElement.class).withLabel("Phone").single();
 phone.assertLabel("Phone");
 phone.assertHelperHasText("Country code and number");
 phone.assertRequired();          // Flow: setRequiredIndicatorVisible(true)
 
-CustomFieldElement mobile = CustomFieldElement.getByLabel(page, "Mobile phone");
+CustomFieldElement mobile = find(page, CustomFieldElement.class).withLabel("Mobile phone").single();
 mobile.assertNotRequired();
 ```
 
@@ -160,9 +160,9 @@ Button validate = new Button("Mark mobile invalid", e -> mobile.setInvalid(true)
 
 ```java
 // Test
-CustomFieldElement mobile = CustomFieldElement.getByLabel(page, "Mobile phone");
+CustomFieldElement mobile = find(page, CustomFieldElement.class).withLabel("Mobile phone").single();
 mobile.assertValid();
-ButtonElement.getByText(page, "Mark mobile invalid").click();
+find(page, ButtonElement.class).withAccessibleName("Mark mobile invalid").single().click();
 mobile.assertInvalid();
 mobile.assertErrorMessage("Enter a valid number");
 ```
@@ -181,14 +181,14 @@ home.setReadOnly(true);
 
 ```java
 // Test
-CustomFieldElement fax = CustomFieldElement.getByLabel(page, "Fax");
+CustomFieldElement fax = find(page, CustomFieldElement.class).withLabel("Fax").single();
 fax.assertDisabled();
 fax.getField(TextFieldElement.class, "Number").assertDisabled();   // Flow disables the wrapped fields too
 
-CustomFieldElement home = CustomFieldElement.getByLabel(page, "Home phone");
+CustomFieldElement home = find(page, CustomFieldElement.class).withLabel("Home phone").single();
 home.assertReadOnly();
 
-CustomFieldElement phone = CustomFieldElement.getByLabel(page, "Phone");
+CustomFieldElement phone = find(page, CustomFieldElement.class).withLabel("Phone").single();
 phone.assertEnabled();
 phone.assertNotReadOnly();
 ```
@@ -214,7 +214,7 @@ work.addClassName("work-phone");
 
 ```java
 // Test
-CustomFieldElement work = CustomFieldElement.getByLabel(page, "Work phone");
+CustomFieldElement work = find(page, CustomFieldElement.class).withLabel("Work phone").single();
 work.assertTooltipHasText("Your direct line");
 work.assertCssClass("work-phone");
 work.assertTheme(null);          // no theme variant applied

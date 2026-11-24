@@ -157,7 +157,7 @@ listBox.assertDisabled();
 listBox.assertItemDisabled("Most recent first");
 listBox.assertItemDisabled("Always disabled");
 
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 
 listBox.assertEnabled();
 listBox.assertItemEnabled("Most recent first");

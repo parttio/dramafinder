@@ -28,8 +28,8 @@ container.setId("avatar-container");
 
 ```java
 // Test
-AvatarElement jane = AvatarElement.getByName(page, "Jane Smith");
-AvatarElement inContainer = AvatarElement.getByName(page.locator("#avatar-container"), "Jane Smith");
+AvatarElement jane = find(page, AvatarElement.class).withAttribute("name", "Jane Smith").single();
+AvatarElement inContainer = find(page.locator("#avatar-container"), AvatarElement.class).withAttribute("name", "Jane Smith").single();
 AvatarElement byId = AvatarElement.getById(page, "avatar-with-name");
 AvatarElement byTestId = AvatarElement.getByTestId(page, "current-user");
 AvatarElement first = AvatarElement.get(page);                                // first avatar on the page

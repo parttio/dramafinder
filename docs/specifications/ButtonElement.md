@@ -29,16 +29,16 @@ save.setTestId("save-btn");
 
 ```java
 // Test
-ButtonElement save = ButtonElement.getByText(page, "Save");          // exact: not "Save draft"
-ButtonElement draft = ButtonElement.getByTextContaining(page, "draft"); // substring, case-insensitive
-ButtonElement close = ButtonElement.getByText(page, "Close");        // the aria-label of an icon button
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();          // exact: not "Save draft"
+ButtonElement draft = find(page, ButtonElement.class).withAccessibleNameContaining("draft").single(); // substring, case-insensitive
+ButtonElement close = find(page, ButtonElement.class).withAccessibleName("Close").single();        // the aria-label of an icon button
 
 ButtonElement byId = ButtonElement.getById(page, "save");
 ButtonElement byTestId = ButtonElement.getByTestId(page, "save-btn");
 
 // Scoped: only buttons inside the dialog footer
 DialogElement dialog = new DialogElement(page);
-ButtonElement cancel = ButtonElement.getByText(dialog.getFooterLocator(), "Cancel");
+ButtonElement cancel = find(dialog.getFooterLocator(), ButtonElement.class).withAccessibleName("Cancel").single();
 ```
 
 What each text lookup matches:
@@ -126,8 +126,8 @@ button.addClickListener(e -> Notification.show("Button clicked!"));
 
 ```java
 // Test
-ButtonElement.getByText(page, "Click me").click();
-NotificationElement.getByText(page, "Button clicked!").assertOpen();
+find(page, ButtonElement.class).withAccessibleName("Click me").single().click();
+find(page, NotificationElement.class).withTextContaining("Button clicked!").single().assertOpen();
 ```
 
 The wait covers the server half only. Client-side rendering after the response
@@ -144,7 +144,7 @@ toggle.addClickListener(e -> toggle.setEnabled(!toggle.isEnabled()));
 
 ```java
 // Test
-ButtonElement toggle = ButtonElement.getByText(page, "Toggle Button");
+ButtonElement toggle = find(page, ButtonElement.class).withAccessibleName("Toggle Button").single();
 toggle.assertEnabled();
 toggle.click();
 toggle.assertDisabled();
@@ -165,9 +165,9 @@ Button toggle = new Button("Toggle Visibility Button",
 
 ```java
 // Test
-ButtonElement target = ButtonElement.getByText(page, "Visibility Target Button");
+ButtonElement target = find(page, ButtonElement.class).withAccessibleName("Visibility Target Button").single();
 target.assertVisible();
-ButtonElement.getByText(page, "Toggle Visibility Button").click();
+find(page, ButtonElement.class).withAccessibleName("Toggle Visibility Button").single().click();
 target.assertHidden(); // or target.assertVisible(false)
 ```
 
@@ -186,7 +186,7 @@ button.addClassName("custom-button");
 
 ```java
 // Test
-ButtonElement button = ButtonElement.getByText(page, "Combined Variants Button");
+ButtonElement button = find(page, ButtonElement.class).withAccessibleName("Combined Variants Button").single();
 button.assertTheme("primary small");          // every variant, any order
 button.assertHasThemeVariant("primary");      // one variant, others ignored
 button.assertHasNoThemeVariant("error");
@@ -209,7 +209,7 @@ button.setSuffixComponent(new Span("Suffix"));
 
 ```java
 // Test
-ButtonElement icon = ButtonElement.getByText(page, "Icon Button");
+ButtonElement icon = find(page, ButtonElement.class).withAccessibleName("Icon Button").single();
 icon.assertAriaLabel("Icon Button");
 icon.assertPrefixHasText("Prefix");
 icon.assertSuffixHasText("Suffix");
@@ -230,9 +230,9 @@ button.focus();
 
 ```java
 // Test
-ButtonElement.getByText(page, "Enabled Button").assertIsFocused();
+find(page, ButtonElement.class).withAccessibleName("Enabled Button").single().assertIsFocused();
 
-ButtonElement next = ButtonElement.getByText(page, "Toggle Button");
+ButtonElement next = find(page, ButtonElement.class).withAccessibleName("Toggle Button").single();
 next.assertIsNotFocused();
 next.focus();
 next.assertIsFocused();
@@ -252,7 +252,7 @@ button.setTooltipText("Tooltip Text");
 
 ```java
 // Test
-ButtonElement button = ButtonElement.getByText(page, "Tooltip Button");
+ButtonElement button = find(page, ButtonElement.class).withAccessibleName("Tooltip Button").single();
 button.assertTooltipHasText("Tooltip Text");
 
 TooltipElement tooltip = button.getTooltip(); // the full tooltip API

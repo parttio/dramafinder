@@ -39,7 +39,7 @@ expected, and a `TreeGridElement` has every `GridElement` method.
 ## Clicking and reading text
 
 ```java
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 save.click();                 // clicks the host, then waits for the server round-trip
 
 CardElement card = CardElement.getByTitle(page, "Revenue");
@@ -148,7 +148,7 @@ component's own element class when there is one.
 // View: details.setVisible(false) until "Show details" is clicked
 DetailsElement details = DetailsElement.getBySummaryText(page, "Advanced");
 details.assertHidden();
-ButtonElement.getByText(page, "Show details").click();
+find(page, ButtonElement.class).withAccessibleName("Show details").single().click();
 details.assertVisible();
 
 details.assertVisible(true);  // boolean variant, handy in parameterised tests
@@ -164,7 +164,7 @@ Overlay components refine them: a `DialogElement` checks its overlay, a
 Read or set a property of the web component when no dedicated method exists:
 
 ```java
-TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
 Object autoselect = name.getProperty("autoselect");
 
 ProgressBarElement progress = ProgressBarElement.getById(page, "upload-progress");
@@ -196,8 +196,8 @@ assertThat(card.getLocator()).hasAttribute("theme", "outlined");
 It is also the scope for lookups inside the component:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "New contact");
-TextFieldElement.getByLabel(dialog.getLocator(), "Name").setValue("Ada");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("New contact").single();
+dialog.find(TextFieldElement.class).withLabel("Name").single().setValue("Ada");
 ```
 
 ## Scoped queries
@@ -206,7 +206,7 @@ TextFieldElement.getByLabel(dialog.getLocator(), "Name").setValue("Ada");
 inside the component:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "Delete account?");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delete account?").single();
 dialog.find(ButtonElement.class).withText("Delete").single().click();
 
 FormLayoutElement form = FormLayoutElement.get(page);
@@ -247,7 +247,7 @@ Every element exposes, through `HasLocatorElement`:
   `AutoWait.withoutWaiting(..)`.
 
 ```java
-TextFieldElement search = TextFieldElement.getByLabel(page, "Search");
+TextFieldElement search = find(page, TextFieldElement.class).withLabel("Search").single();
 search.getInputLocator().press("Enter"); // raw Playwright: does not wait
 search.waitForVaadinIdle();
 ```

@@ -85,8 +85,8 @@ view when the layout is used as a `RouterLayout`.
 Components in an area are found by passing its locator to their factories:
 
 ```java
-SideNavigationElement nav = SideNavigationElement.getByLabel(appLayout.getDrawerLocator(), "My App");
-ButtonElement logout = ButtonElement.getByText(appLayout.getNavbarLocator(), "Log out");
+SideNavigationElement nav = find(appLayout.getDrawerLocator(), SideNavigationElement.class).withLabel("My App").single();
+ButtonElement logout = find(appLayout.getNavbarLocator(), ButtonElement.class).withAccessibleName("Log out").single();
 ```
 
 ## Opening and closing the drawer
@@ -117,7 +117,7 @@ A drawer closed by the server is observed with the same assertion:
 
 ```java
 // View: new Button("Close drawer", e -> layout.setDrawerOpened(false))
-ButtonElement.getByText(page, "Close drawer").click();
+find(page, ButtonElement.class).withAccessibleName("Close drawer").single().click();
 appLayout.assertDrawerClosed();
 ```
 
@@ -218,7 +218,7 @@ full width (`navbar`), or the drawer spans the full height (`drawer`).
 // View: setPrimarySection(AppLayout.Section.DRAWER)
 appLayout.assertPrimarySection(AppLayoutElement.PRIMARY_SECTION_DRAWER);
 
-ButtonElement.getByText(page, "Primary section navbar").click(); // calls setPrimarySection(NAVBAR)
+find(page, ButtonElement.class).withAccessibleName("Primary section navbar").single().click(); // calls setPrimarySection(NAVBAR)
 appLayout.assertPrimarySection(AppLayoutElement.PRIMARY_SECTION_NAVBAR);
 
 String section = appLayout.getPrimarySection();   // "navbar" or "drawer", read once
@@ -228,7 +228,7 @@ String section = appLayout.getPrimarySection();   // "navbar" or "drawer", read 
 
 ```java
 appLayout.assertTheme(null);              // null: no theme attribute
-ButtonElement.getByText(page, "Add theme").click();
+find(page, ButtonElement.class).withAccessibleName("Add theme").single().click();
 appLayout.assertTheme("demo-theme");
 
 appLayout.assertCssClass("custom-app-layout");

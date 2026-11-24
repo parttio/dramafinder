@@ -26,10 +26,10 @@ add(new Button("Open unsaved changes", e -> dialog.open()));
 
 ```java
 // Test
-ButtonElement.getByText(page, "Open unsaved changes").click();
+find(page, ButtonElement.class).withAccessibleName("Open unsaved changes").single().click();
 
 // by header: exact, case-sensitive, no .first()
-ConfirmDialogElement dialog = ConfirmDialogElement.getByHeaderText(page, "Unsaved changes");
+ConfirmDialogElement dialog = find(page, ConfirmDialogElement.class).withAccessibleName("Unsaved changes").single();
 
 // the one open confirm dialog, whatever its header
 ConfirmDialogElement open = ConfirmDialogElement.get(page);
@@ -43,12 +43,12 @@ ConfirmDialogElement byId = ConfirmDialogElement.getById(page, "unsaved-dialog")
 ConfirmDialogElement byTestId = ConfirmDialogElement.getByTestId(page, "unsaved-dialog");
 ```
 
-`getByHeaderText(page, header)` matches that name in full, case-sensitively, and
+`withAccessibleName(header)`, like the `getByHeaderText(page, header)` shortcut, matches that name in full, case-sensitively, and
 is not narrowed with `first()`, so two open dialogs with that header raise a
 strict-mode error. A partial header finds nothing:
 
 ```java
-assertThat(ConfirmDialogElement.getByHeaderText(page, "unsaved").getLocator()).hasCount(0);
+assertThat(find(page, ConfirmDialogElement.class).withAccessibleName("unsaved").single().getLocator()).hasCount(0);
 ```
 
 `get(page)` returns the open confirm dialog when there is only one; with several
@@ -68,8 +68,8 @@ is answered or closed with Escape. So:
   of reusing the old wrapper.
 
 ```java
-ButtonElement.getByText(page, "Open delete").click();
-ConfirmDialogElement dialog = ConfirmDialogElement.getByHeaderText(page, "Delete item");
+find(page, ButtonElement.class).withAccessibleName("Open delete").single().click();
+ConfirmDialogElement dialog = find(page, ConfirmDialogElement.class).withAccessibleName("Delete item").single();
 dialog.assertOpen();
 dialog.assertVisible();
 dialog.assertMessage("Delete Report Q3? This cannot be undone.");
@@ -135,7 +135,7 @@ dialog.addConfirmListener(e -> result.setText("confirm"));
 
 ```java
 // Test
-ConfirmDialogElement dialog = ConfirmDialogElement.getByHeaderText(page, "Unsaved changes");
+ConfirmDialogElement dialog = find(page, ConfirmDialogElement.class).withAccessibleName("Unsaved changes").single();
 dialog.confirm();   // or dialog.reject(); or dialog.cancel();
 assertThat(page.locator("#result")).hasText("confirm");
 dialog.assertClosed();
@@ -191,7 +191,7 @@ stays open:
 
 ```java
 // View: dialog.setCloseOnEsc(false);
-ConfirmDialogElement terms = ConfirmDialogElement.getByHeaderText(page, "Accept terms");
+ConfirmDialogElement terms = find(page, ConfirmDialogElement.class).withAccessibleName("Accept terms").single();
 terms.closeWithEscape();
 terms.assertOpen();
 terms.confirm();

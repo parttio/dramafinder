@@ -83,7 +83,7 @@ Find fields inside the content through that locator:
 
 ```java
 details.setOpen(true);
-TextFieldElement phone = TextFieldElement.getByLabel(details.getContentLocator(), "Phone");
+TextFieldElement phone = find(details.getContentLocator(), TextFieldElement.class).withLabel("Phone").single();
 ```
 
 ### Components in the summary
@@ -102,7 +102,7 @@ Details details = new Details(new HorizontalLayout(new Span("Summary Component")
 ```java
 // Test
 DetailsElement details = DetailsElement.getBySummaryText(page, "Summary Component test");
-ButtonElement button = ButtonElement.getByText(details.getSummaryLocator(), "test");
+ButtonElement button = find(details.getSummaryLocator(), ButtonElement.class).withAccessibleName("test").single();
 
 details.assertClosed();
 button.click();

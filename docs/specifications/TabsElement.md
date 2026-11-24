@@ -159,7 +159,7 @@ tabs.getTab("Profile").assertEnabled();
 assertThrows(IllegalStateException.class, () -> tabs.selectTab("Billing"));
 tabs.assertSelectedTab("Profile");
 
-ButtonElement.getByText(page, "Enable billing").click();
+find(page, ButtonElement.class).withAccessibleName("Enable billing").single().click();
 tabs.getTab("Billing").assertEnabled();
 tabs.selectTab("Billing");
 tabs.assertSelectedTab("Billing");

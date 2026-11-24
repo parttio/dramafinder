@@ -20,7 +20,7 @@ variants.
 
     ```java
     // vaadin-badge component
-    BadgeElement badge = BadgeElement.getByText(page, "Completed");
+    BadgeElement badge = find(page, BadgeElement.class).withText("Completed").single();
 
     // legacy Span theme="badge" — not a BadgeElement
     assertThat(page.locator("span[theme~='badge']")).hasText("Completed");
@@ -39,8 +39,8 @@ draft.setId("badge-contrast");
 
 ```java
 // Test
-BadgeElement draft = BadgeElement.getByText(page, "Draft");
-BadgeElement scoped = BadgeElement.getByText(page.locator("#badge-container"), "Scoped");
+BadgeElement draft = find(page, BadgeElement.class).withText("Draft").single();
+BadgeElement scoped = find(page.locator("#badge-container"), BadgeElement.class).withText("Scoped").single();
 BadgeElement byId = BadgeElement.getById(page, "badge-contrast");
 BadgeElement byTestId = BadgeElement.getByTestId(page, "order-status");
 BadgeElement first = BadgeElement.get(page);                                // first badge on the page
@@ -184,7 +184,7 @@ BadgeElement badge = BadgeElement.getById(page, "badge-dynamic");
 badge.assertText("Initial");
 badge.assertNumber(null);
 
-ButtonElement.getByText(page, "Update badge").click();
+find(page, ButtonElement.class).withAccessibleName("Update badge").single().click();
 badge.assertText("Updated");
 badge.assertNumber(9);
 badge.assertHasThemeVariant("success");

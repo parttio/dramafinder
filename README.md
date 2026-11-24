@@ -13,6 +13,8 @@ that finds the component the way a user does, acts on it like a user, waits for
 the server, and asserts what the user sees:
 
 ```java
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+
 public class ContactViewIT extends SpringPlaywrightIT {
 
     @Override
@@ -22,12 +24,12 @@ public class ContactViewIT extends SpringPlaywrightIT {
 
     @Test
     void savesAContact() {
-        TextFieldElement.getByLabel(page, "Name").setValue("Ada Lovelace");
-        ComboBoxElement.getByLabel(page, "Country").selectItem("United Kingdom");
-        DatePickerElement.getByLabel(page, "Birthday").setValue(LocalDate.of(1815, 12, 10));
-        ButtonElement.getByText(page, "Save").click();
+        find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada Lovelace");
+        find(page, ComboBoxElement.class).withLabel("Country").single().selectItem("United Kingdom");
+        find(page, DatePickerElement.class).withLabel("Birthday").single().setValue(LocalDate.of(1815, 12, 10));
+        find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 
-        NotificationElement.getByText(page, "Contact saved").assertOpen();
+        find(page, NotificationElement.class).withTextContaining("Contact saved").single().assertOpen();
         GridElement.get(page).assertCellContent(0, "Name", "Ada Lovelace");
     }
 }

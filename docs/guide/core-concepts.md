@@ -5,7 +5,7 @@ locators, one per Vaadin web component. A test finds an element, acts on it the
 way a user would, and asserts the state the user would see.
 
 ```java
-TextFieldElement email = TextFieldElement.getByLabel(page, "Email"); // find
+TextFieldElement email = find(page, TextFieldElement.class).withLabel("Email").single(); // find
 email.setValue("ada@example.com");                                   // act
 email.assertValid();                                                 // assert
 ```
@@ -26,9 +26,9 @@ matches nothing only fails when it is used.
 
 ```java
 // Nothing happens in the browser yet
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 
-ButtonElement.getByText(page, "Edit").click();
+find(page, ButtonElement.class).withAccessibleName("Edit").single().click();
 save.click(); // resolved now, after the form switched to edit mode
 ```
 
@@ -50,9 +50,10 @@ wrapper can also be built directly from a locator:
 `new TextFieldElement(someLocator)`.
 
 Factories are **not uniform**: an element has exactly the ones listed in its
-API section. [Finding components](finding-components.md) explains each kind and
-the typed query builder, `find(page, X.class)`, which gives every element the
-same grammar.
+API section. Prefer the typed query builder, `find(page, X.class)`, which gives
+every element the same grammar — `find(page, TextFieldElement.class).withLabel("Name").single()`
+is the same lookup as `TextFieldElement.getByLabel(page, "Name")`.
+[Finding components](finding-components.md) explains each kind.
 
 ## Actions
 
@@ -66,9 +67,9 @@ Each action **waits for the server round-trip it triggers**: when
 reached the browser. See [Actions and waiting](actions-and-waiting.md).
 
 ```java
-ComboBoxElement country = ComboBoxElement.getByLabel(page, "Country");
+ComboBoxElement country = find(page, ComboBoxElement.class).withLabel("Country").single();
 country.selectItem("Finland");          // returns once the server has answered
-TextFieldElement.getByLabel(page, "VAT number").assertVisible(); // shown by the listener
+find(page, TextFieldElement.class).withLabel("VAT number").single().assertVisible(); // shown by the listener
 ```
 
 ## Assertions
@@ -105,7 +106,7 @@ cover:
 ```java
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
 assertThat(name.getInputLocator()).hasAttribute("autocomplete", "off");
 name.getLocator().screenshot(new Locator.ScreenshotOptions().setPath(Paths.get("name.png")));
 ```
@@ -114,7 +115,7 @@ A slot can host other components. Wrap its locator to use them:
 
 ```java
 // View: textField.setHelperComponent(new TextField("Internal helper"))
-TextFieldElement field = TextFieldElement.getByLabel(page, "With helper component");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("With helper component").single();
 TextFieldElement helper = new TextFieldElement(field.getHelperLocator());
 helper.setValue("nested");
 ```
@@ -175,7 +176,7 @@ GridElement grid = GridElement.get(page);
 grid.findRow(0).ifPresent(row -> row.select());   // row element
 grid.findCell(0, "Email").get().assertText("ada@example.com");
 
-DateTimePickerElement meeting = DateTimePickerElement.getByLabel(page, "Meeting");
+DateTimePickerElement meeting = find(page, DateTimePickerElement.class).withLabel("Meeting").single();
 meeting.getDatePicker().setValue(LocalDate.of(2026, 1, 15)); // composed field
 ```
 

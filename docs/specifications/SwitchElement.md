@@ -36,18 +36,18 @@ unlabelled.setAriaLabel("Aria label");
 
 ```java
 // Test
-SwitchElement notifications = SwitchElement.getByLabel(page, "Email notifications");
-SwitchElement partial = SwitchElement.getByLabelContaining(page, "notifications");
+SwitchElement notifications = find(page, SwitchElement.class).withLabel("Email notifications").single();
+SwitchElement partial = find(page, SwitchElement.class).withLabelContaining("notifications").single();
 SwitchElement byId = SwitchElement.getById(page, "notifications");
 SwitchElement byTestId = SwitchElement.getByTestId(page, "notifications-switch");
 
 // Scoped, and the typed query
-SwitchElement scoped = SwitchElement.getByLabel(page.locator("#settings"), "Email notifications");
+SwitchElement scoped = find(page.locator("#settings"), SwitchElement.class).withLabel("Email notifications").single();
 SwitchElement viaQuery = find(page, SwitchElement.class).withLabel("Email notifications").single();
 SwitchElement noLabel = find(page, SwitchElement.class).withAccessibleName("Aria label").single();
 ```
 
-`getByLabel` / `withLabel` match the switch's own visible label in full and
+`withLabel` matches the switch's own visible label in full and
 case-sensitively; the `...Containing` variants match a case-insensitive
 substring. Several matches fail with a strict-mode error. An `aria-label` is
 not a label: use `withAccessibleName(...)` for an unlabelled switch.
@@ -66,7 +66,7 @@ on.setValue(true);
 
 ```java
 // Test
-SwitchElement basic = SwitchElement.getByLabel(page, "Default Switch");
+SwitchElement basic = find(page, SwitchElement.class).withLabel("Default Switch").single();
 basic.assertNotChecked();
 basic.check();
 basic.assertChecked();
@@ -76,7 +76,7 @@ basic.assertNotChecked();
 basic.setChecked(true);         // when the state comes from a parameter
 basic.assertChecked(true);
 
-SwitchElement.getByLabel(page, "Checked by default").assertChecked();
+find(page, SwitchElement.class).withLabel("Checked by default").single().assertChecked();
 ```
 
 `isChecked()` reads the state once, without retrying; use it only when the test
@@ -92,8 +92,8 @@ withHelper.setHelperText("Helper text");
 
 ```java
 // Test
-SwitchElement.getByLabel(page, "Default Switch").assertLabel("Default Switch");
-SwitchElement.getByLabel(page, "Switch with helper").assertHelperHasText("Helper text");
+find(page, SwitchElement.class).withLabel("Default Switch").single().assertLabel("Default Switch");
+find(page, SwitchElement.class).withLabel("Switch with helper").single().assertHelperHasText("Helper text");
 
 SwitchElement unlabelled = find(page, SwitchElement.class).withAccessibleName("Aria label").single();
 unlabelled.assertAriaLabel("Aria label");  // read from the native input
@@ -111,7 +111,7 @@ required.setI18n(new Switch.SwitchI18n().setRequiredErrorMessage("Required Messa
 
 ```java
 // Test
-SwitchElement required = SwitchElement.getByLabel(page, "Required Switch");
+SwitchElement required = find(page, SwitchElement.class).withLabel("Required Switch").single();
 required.assertValid();
 required.check();
 required.uncheck();            // the user turned a required switch off
@@ -133,10 +133,10 @@ basic.focus();
 
 ```java
 // Test
-SwitchElement.getByLabel(page, "Disabled Switch").assertDisabled();
+find(page, SwitchElement.class).withLabel("Disabled Switch").single().assertDisabled();
 
-SwitchElement basic = SwitchElement.getByLabel(page, "Default Switch");
-SwitchElement other = SwitchElement.getByLabel(page, "Checked by default");
+SwitchElement basic = find(page, SwitchElement.class).withLabel("Default Switch").single();
+SwitchElement other = find(page, SwitchElement.class).withLabel("Checked by default").single();
 basic.assertIsFocused();
 other.focus();
 other.assertIsFocused();
@@ -150,7 +150,7 @@ basic.assertCssClass(null);    // null asserts no CSS class
 - Without the `switchComponent` feature flag the application cannot use the Flow
   `Switch`, so there is no `<vaadin-switch>` for the element to find.
 - There is no indeterminate state; use [Checkbox](CheckboxElement.md) for that.
-- `getByLabel` does not match an `aria-label`; use
+- `withLabel` does not match an `aria-label`; use
   `find(page, SwitchElement.class).withAccessibleName(...)`.
 
 ## See also

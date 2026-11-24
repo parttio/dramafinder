@@ -44,9 +44,9 @@ The navigation is found by its visible label (the text passed to
 `new SideNav("My App")`, rendered in the `label` slot):
 
 ```java
-SideNavigationElement nav = SideNavigationElement.getByLabel(page, "My App");
-SideNavigationElement partial = SideNavigationElement.getByLabelContaining(page, "app");
-SideNavigationElement inDrawer = SideNavigationElement.getByLabel(appLayout.getDrawerLocator(), "My App");
+SideNavigationElement nav = find(page, SideNavigationElement.class).withLabel("My App").single();
+SideNavigationElement partial = find(page, SideNavigationElement.class).withLabelContaining("app").single();
+SideNavigationElement inDrawer = find(appLayout.getDrawerLocator(), SideNavigationElement.class).withLabel("My App").single();
 SideNavigationElement byId = SideNavigationElement.getById(page, "default-nav");
 SideNavigationElement byTestId = SideNavigationElement.getByTestId(page, "default-nav");
 
@@ -68,9 +68,9 @@ SideNavigationItemElement dashboard = nav.getItem("Dashboard");
 SideNavigationItemElement users = nav.getItem("Users");      // nested under "Admin"
 
 // Static factories and typed query, page-wide or scoped
-SideNavigationItemElement roles = SideNavigationItemElement.getByLabel(page, "Roles");
-SideNavigationItemElement inNav = SideNavigationItemElement.getByLabel(nav.getLocator(), "Roles");
-SideNavigationItemElement rep = SideNavigationItemElement.getByLabelContaining(nav.getLocator(), "report");
+SideNavigationItemElement roles = find(page, SideNavigationItemElement.class).withLabel("Roles").single();
+SideNavigationItemElement inNav = nav.find(SideNavigationItemElement.class).withLabel("Roles").single();
+SideNavigationItemElement rep = nav.find(SideNavigationItemElement.class).withLabelContaining("report").single();
 SideNavigationItemElement byId = SideNavigationItemElement.getById(page, "reports-item");
 SideNavigationItemElement byTestId = SideNavigationItemElement.getByTestId(nav.getLocator(), "reports-item");
 SideNavigationItemElement admin = nav.find(SideNavigationItemElement.class).withLabel("Admin").single();

@@ -17,9 +17,9 @@ validation, allowed char pattern, theme, focus, enablement and tooltip.
 ## Finding the component
 
 ```java
-BigDecimalFieldElement amount = BigDecimalFieldElement.getByLabel(page, "Amount");   // whole label
-BigDecimalFieldElement partial = BigDecimalFieldElement.getByLabelContaining(page, "amou");
-BigDecimalFieldElement scoped = BigDecimalFieldElement.getByLabel(page.locator("#container"), "My Label");
+BigDecimalFieldElement amount = find(page, BigDecimalFieldElement.class).withLabel("Amount").single();   // whole label
+BigDecimalFieldElement partial = find(page, BigDecimalFieldElement.class).withLabelContaining("amou").single();
+BigDecimalFieldElement scoped = find(page.locator("#container"), BigDecimalFieldElement.class).withLabel("My Label").single();
 BigDecimalFieldElement byId = BigDecimalFieldElement.getById(page, "amount");
 BigDecimalFieldElement byTestId = BigDecimalFieldElement.getByTestId(page, "amount");
 
@@ -28,8 +28,8 @@ BigDecimalFieldElement byPlaceholder = find(page, BigDecimalFieldElement.class).
 BigDecimalFieldElement byName = find(page, BigDecimalFieldElement.class).withAccessibleName("My AriaLabel").single();
 ```
 
-`getByLabel` matches the whole visible label, case-sensitively;
-`getByLabelContaining` a case-insensitive substring. A placeholder or an
+`withLabel` matches the whole visible label, case-sensitively;
+`withLabelContaining` a case-insensitive substring. A placeholder or an
 `aria-label` is not a label.
 
 ## Find, set and assert
@@ -43,7 +43,7 @@ amount.setHelperText("Enter a precise decimal value");
 
 ```java
 // Test
-BigDecimalFieldElement amount = BigDecimalFieldElement.getByLabel(page, "Amount");
+BigDecimalFieldElement amount = find(page, BigDecimalFieldElement.class).withLabel("Amount").single();
 amount.assertHelperHasText("Enter a precise decimal value");
 amount.assertValue("123.456789");
 
@@ -75,7 +75,7 @@ price.setClearButtonVisible(true);
 
 ```java
 // Test
-BigDecimalFieldElement price = BigDecimalFieldElement.getByLabel(page, "Price");
+BigDecimalFieldElement price = find(page, BigDecimalFieldElement.class).withLabel("Price").single();
 price.assertPrefixHasText("€");
 price.setValue("19.90");
 price.assertClearButtonVisible();

@@ -17,11 +17,11 @@ validation (min/max, bad and incomplete input).
 
 ```java
 // By the visible label (exact, case-sensitive) or part of it
-DateTimePickerElement appointment = DateTimePickerElement.getByLabel(page, "Appointment date");
-DateTimePickerElement typed = DateTimePickerElement.getByLabelContaining(page, "typed");
+DateTimePickerElement appointment = find(page, DateTimePickerElement.class).withLabel("Appointment date").single();
+DateTimePickerElement typed = find(page, DateTimePickerElement.class).withLabelContaining("typed").single();
 
 // Scoped to a container
-DateTimePickerElement inForm = DateTimePickerElement.getByLabel(page.locator("#container"), "Meeting");
+DateTimePickerElement inForm = find(page.locator("#container"), DateTimePickerElement.class).withLabel("Meeting").single();
 
 // Fallbacks for a picker without a visible label
 DateTimePickerElement byId = DateTimePickerElement.getById(page, "meeting");
@@ -36,8 +36,8 @@ DateTimePickerElement unlabelled =
 
 The label is the composite's own label, never the label of a nested half.
 `DateTimePickerQuery.withPlaceholder(..)` reads the **date** picker's
-placeholder. `getByLabel` matches the whole label and never an `aria-label` or a
-placeholder; `getByLabelContaining` matches a case-insensitive substring.
+placeholder. `withLabel` matches the whole label and never an `aria-label` or a
+placeholder; `withLabelContaining` matches a case-insensitive substring.
 
 ## A composite of two halves
 
@@ -46,7 +46,7 @@ and a [`TimePickerElement`](TimePickerElement.md), exposed by `getDatePicker()`
 and `getTimePicker()`. Use them for anything the halves offer on their own:
 
 ```java
-DateTimePickerElement typed = DateTimePickerElement.getByLabel(page, "Typed date time");
+DateTimePickerElement typed = find(page, DateTimePickerElement.class).withLabel("Typed date time").single();
 typed.typeText("20/09/2025", "10:00");
 typed.getDatePicker().assertValue(LocalDate.of(2025, 9, 20));
 typed.getTimePicker().assertValue(LocalTime.of(10, 0));
@@ -77,7 +77,7 @@ dateTimePicker.setHelperText("Enter the appointment date and time");
 
 ```java
 // Test
-DateTimePickerElement appointment = DateTimePickerElement.getByLabel(page, "Appointment date");
+DateTimePickerElement appointment = find(page, DateTimePickerElement.class).withLabel("Appointment date").single();
 LocalDateTime meeting = LocalDateTime.of(2025, 9, 20, 10, 0);
 appointment.setValue(meeting);
 appointment.assertValue(meeting);
@@ -116,7 +116,7 @@ dateTimePicker.setI18n(new DateTimePicker.DateTimePickerI18n()
 
 ```java
 // Test
-DateTimePickerElement typed = DateTimePickerElement.getByLabel(page, "Typed date time");
+DateTimePickerElement typed = find(page, DateTimePickerElement.class).withLabel("Typed date time").single();
 
 typed.typeText("15/05/2023", "14:30");
 typed.assertDateValue("15/05/2023");
@@ -136,7 +136,7 @@ typed.assertErrorMessage("Incomplete input.");
 Setting the halves one by one:
 
 ```java
-DateTimePickerElement appointment = DateTimePickerElement.getByLabel(page, "Appointment date");
+DateTimePickerElement appointment = find(page, DateTimePickerElement.class).withLabel("Appointment date").single();
 appointment.setDate("20/09/2025");     // invalid (incomplete) until the time is set
 appointment.setTime("10:00");
 appointment.assertValue(LocalDateTime.of(2025, 9, 20, 10, 0));
@@ -179,7 +179,7 @@ dateTimePicker.setI18n(new DateTimePicker.DateTimePickerI18n()
 
 ```java
 // Test
-DateTimePickerElement vacation = DateTimePickerElement.getByLabel(page, "Vacation date");
+DateTimePickerElement vacation = find(page, DateTimePickerElement.class).withLabel("Vacation date").single();
 LocalDateTime start = LocalDateTime.of(2025, 9, 18, 14, 30);
 vacation.assertValue(start.plusDays(7));
 
@@ -206,13 +206,13 @@ dateTimePicker.addThemeVariants(DateTimePickerVariant.LUMO_SMALL);
 
 ```java
 // Test
-DateTimePickerElement appointment = DateTimePickerElement.getByLabel(page, "Appointment date");
+DateTimePickerElement appointment = find(page, DateTimePickerElement.class).withLabel("Appointment date").single();
 appointment.assertLabel("Appointment date");
 appointment.assertHelperHasText("Enter the appointment date and time");
 appointment.assertTooltipHasText("Tooltip for datetimepicker");
 appointment.assertTheme("small");
 
-DateTimePickerElement vacation = DateTimePickerElement.getByLabel(page, "Vacation date");
+DateTimePickerElement vacation = find(page, DateTimePickerElement.class).withLabel("Vacation date").single();
 vacation.focus();
 vacation.assertIsFocused();
 appointment.assertIsNotFocused();
@@ -225,9 +225,9 @@ appointment.assertIsNotFocused();
 find(page, DateTimePickerElement.class).withAccessibleName("Invisible label").single()
         .assertAriaLabel("Invisible label");   // checked on both halves
 
-DateTimePickerElement toggled = DateTimePickerElement.getByLabel(page, "Enabled/Disabled Field");
+DateTimePickerElement toggled = find(page, DateTimePickerElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();                       // both halves disabled
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();                        // both halves enabled
 ```
 

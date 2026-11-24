@@ -34,13 +34,13 @@ volume.setTestId("volume-slider");
 
 ```java
 // Test
-SliderElement volume = SliderElement.getByLabel(page, "Volume");
-SliderElement partial = SliderElement.getByLabelContaining(page, "vol");
+SliderElement volume = find(page, SliderElement.class).withLabel("Volume").single();
+SliderElement partial = find(page, SliderElement.class).withLabelContaining("vol").single();
 SliderElement byId = SliderElement.getById(page, "volume");
 SliderElement byTestId = SliderElement.getByTestId(page, "volume-slider");
 
 // Scoped, and the typed query
-SliderElement scoped = SliderElement.getByLabel(page.locator("main"), "Volume");
+SliderElement scoped = find(page.locator("main"), SliderElement.class).withLabel("Volume").single();
 SliderElement viaQuery = find(page, SliderElement.class).withLabel("Volume").single();
 ```
 
@@ -67,7 +67,7 @@ slider.setValue(50);
 
 ```java
 // Test
-SliderElement volume = SliderElement.getByLabel(page, "Volume");
+SliderElement volume = find(page, SliderElement.class).withLabel("Volume").single();
 volume.assertLabel("Volume");
 volume.assertHelperHasText("Pick a value between 0 and 100");
 volume.assertValue(50);
@@ -96,7 +96,7 @@ slider.addValueChangeListener(e -> selected.setText("Selected: " + e.getValue())
 
 ```java
 // Test
-SliderElement volume = SliderElement.getByLabel(page, "Volume");
+SliderElement volume = find(page, SliderElement.class).withLabel("Volume").single();
 volume.setValue(75);
 volume.assertValue(75);
 assertThat(page.locator("#volume-value")).hasText("Selected: 75");
@@ -114,7 +114,7 @@ slider.setValue(1.5);
 
 ```java
 // Test
-SliderElement measurement = SliderElement.getByLabel(page, "Measurement");
+SliderElement measurement = find(page, SliderElement.class).withLabel("Measurement").single();
 measurement.assertMin(0.5);
 measurement.assertMax(10);
 measurement.assertStep(0.5);
@@ -130,7 +130,7 @@ flaky in Playwright. Use the keyboard helpers instead — they drive the same
 code path a keyboard user takes, and each key press waits for the server.
 
 ```java
-SliderElement volume = SliderElement.getByLabel(page, "Volume"); // value 50
+SliderElement volume = find(page, SliderElement.class).withLabel("Volume").single(); // value 50
 volume.increment();      // ArrowRight, one step up       -> 51
 volume.increment(4);     // four steps up                 -> 55
 volume.decrement();      // ArrowLeft, one step down      -> 54
@@ -158,12 +158,12 @@ readOnly.setReadOnly(true);
 
 ```java
 // Test
-SliderElement disabled = SliderElement.getByLabel(page, "Disabled slider");
+SliderElement disabled = find(page, SliderElement.class).withLabel("Disabled slider").single();
 disabled.assertDisabled();
 assertThrows(IllegalStateException.class, () -> disabled.setValue(70));
 disabled.assertValue(20);
 
-SliderElement readOnly = SliderElement.getByLabel(page, "Read-only slider");
+SliderElement readOnly = find(page, SliderElement.class).withLabel("Read-only slider").single();
 readOnly.assertReadOnly();
 readOnly.increment();            // keeps focus and key events, but ignores them
 readOnly.assertValue(30);
@@ -191,7 +191,7 @@ slider.addClassName("rating-slider");
 
 ```java
 // Test
-SliderElement styled = SliderElement.getByLabel(page, "Styled slider");
+SliderElement styled = find(page, SliderElement.class).withLabel("Styled slider").single();
 styled.assertTheme("small");
 styled.assertHasThemeVariant("small");
 styled.assertCssClass("rating-slider");

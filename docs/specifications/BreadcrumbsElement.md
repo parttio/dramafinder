@@ -80,8 +80,8 @@ BreadcrumbsItemElement current = trail.getCurrentItem();
 List<BreadcrumbsItemElement> items = trail.getItems();     // in trail order
 
 // Or directly
-BreadcrumbsItemElement byText = BreadcrumbsItemElement.getByText(page, "Movies");
-BreadcrumbsItemElement scoped = BreadcrumbsItemElement.getByText(trail.getLocator(), "Archive");
+BreadcrumbsItemElement byText = find(page, BreadcrumbsItemElement.class).withText("Movies").single();
+BreadcrumbsItemElement scoped = trail.find(BreadcrumbsItemElement.class).withText("Archive").single();
 BreadcrumbsItemElement typed = trail.find(BreadcrumbsItemElement.class).withText("Archive").single();
 BreadcrumbsItemElement itemById = BreadcrumbsItemElement.getById(page, "home-crumb");
 BreadcrumbsItemElement itemByTestId = BreadcrumbsItemElement.getByTestId(trail.getLocator(), "home-crumb");

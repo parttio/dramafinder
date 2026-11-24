@@ -15,9 +15,9 @@ value as a `Double`, asserts `min`, `max` and `step`, and clicks the step button
 ## Finding the component
 
 ```java
-NumberFieldElement weight = NumberFieldElement.getByLabel(page, "Weight");          // whole label
-NumberFieldElement measure = NumberFieldElement.getByLabelContaining(page, "measure");
-NumberFieldElement scoped = NumberFieldElement.getByLabel(page.locator("#container"), "My Label");
+NumberFieldElement weight = find(page, NumberFieldElement.class).withLabel("Weight").single();          // whole label
+NumberFieldElement measure = find(page, NumberFieldElement.class).withLabelContaining("measure").single();
+NumberFieldElement scoped = find(page.locator("#container"), NumberFieldElement.class).withLabel("My Label").single();
 NumberFieldElement byId = NumberFieldElement.getById(page, "weight");
 NumberFieldElement byTestId = NumberFieldElement.getByTestId(page, "weight");
 
@@ -26,8 +26,8 @@ NumberFieldElement byPlaceholder = find(page, NumberFieldElement.class).withPlac
 NumberFieldElement byName = find(page, NumberFieldElement.class).withAccessibleName("Weight in kg").single();
 ```
 
-`getByLabel` matches the whole visible label, case-sensitively;
-`getByLabelContaining` a case-insensitive substring. Only `<vaadin-number-field>`
+`withLabel` matches the whole visible label, case-sensitively;
+`withLabelContaining` a case-insensitive substring. Only `<vaadin-number-field>`
 elements are considered, not integer or big-decimal fields.
 
 ## Setting and reading the value
@@ -46,7 +46,7 @@ weight.addValueChangeListener(e -> serverValue.setText("Server value: " + e.getV
 
 ```java
 // Test
-NumberFieldElement weight = NumberFieldElement.getByLabel(page, "Weight");
+NumberFieldElement weight = find(page, NumberFieldElement.class).withLabel("Weight").single();
 weight.assertHelperHasText("Enter the weight in kg");
 
 // As a number
@@ -75,7 +75,7 @@ weight.assertValue(2.5);
 `String` and `Double` overloads:
 
 ```java
-NumberFieldElement measurement = NumberFieldElement.getByLabel(page, "Measurement");
+NumberFieldElement measurement = find(page, NumberFieldElement.class).withLabel("Measurement").single();
 measurement.setValue((Double) null);   // same as clear()
 measurement.assertValue((Double) null);
 measurement.assertValue("");
@@ -99,7 +99,7 @@ measurement.setStep(0.5);
 
 ```java
 // Test
-NumberFieldElement measurement = NumberFieldElement.getByLabel(page, "Measurement");
+NumberFieldElement measurement = find(page, NumberFieldElement.class).withLabel("Measurement").single();
 measurement.assertMin(0.5);
 measurement.assertMax(10.0);      // the attribute "10" matches 10.0
 measurement.assertStep(0.5);
@@ -133,7 +133,7 @@ withControls.setStep(0.1);
 
 ```java
 // Test
-NumberFieldElement field = NumberFieldElement.getByLabel(page, "With Controls");
+NumberFieldElement field = find(page, NumberFieldElement.class).withLabel("With Controls").single();
 field.assertHasControls(true);
 field.assertValue("");
 
@@ -175,7 +175,7 @@ price.addThemeVariants(TextFieldVariant.LUMO_ALIGN_RIGHT);
 
 ```java
 // Test
-NumberFieldElement price = NumberFieldElement.getByLabel(page, "Price");
+NumberFieldElement price = find(page, NumberFieldElement.class).withLabel("Price").single();
 price.assertPlaceholder("0.00");
 price.assertPrefixHasText("€");
 price.assertHasThemeVariant("align-right");

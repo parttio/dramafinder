@@ -80,7 +80,7 @@ public class AdminViewIT extends SpringPlaywrightIT {
     @Test
     @WithUserDetails("bob")          // loaded from your UserDetailsService
     void auditorSeesReadOnlyList() {
-        ButtonElement.getByText(page, "Delete").assertDisabled();
+        find(page, ButtonElement.class).withAccessibleName("Delete").single().assertDisabled();
     }
 
     @Test
@@ -111,10 +111,10 @@ as they do in production.
 @Test
 @WithMockUser("alice")
 void ownerSeesTheEditButton() {
-    ButtonElement.getByText(page, "Edit").assertVisible();
+    find(page, ButtonElement.class).withAccessibleName("Edit").single().assertVisible();
 
     loginAs("erin", "USER");          // replaces the session and reloads
-    ButtonElement.getByText(page, "Edit").assertHidden();
+    find(page, ButtonElement.class).withAccessibleName("Edit").single().assertHidden();
 }
 ```
 

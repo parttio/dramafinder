@@ -28,7 +28,7 @@ public class MyViewIT extends org.vaadin.addons.dramafinder.spring.SpringPlaywri
 
     @Test
     public void filtersTheGrid() {
-        TextFieldElement.getByLabel(page, "Name").setValue("ada");
+        find(page, TextFieldElement.class).withLabel("Name").single().setValue("ada");
         GridElement.get(page).assertRowCount(1);
     }
 }
@@ -88,17 +88,19 @@ items, checkboxes of a group). Copy lookups from it rather than guessing labels.
 
 ## Four things that are easy to get wrong
 
-**Factory methods are not uniform.** Most fields have `getByLabel(Page, String)`,
-containers have `get(Page)`, and almost every element has `getById` and `getByTestId`
-(fallbacks for a component without a user-visible name; Flow sets the test id with
-`setTestId`). An
-element has exactly the factories the index table lists for it — assuming one that
-isn't listed is the most common way to lose a compile round-trip. Every wrapper is
-also constructible from a `Locator`: `new TextFieldElement(someLocator)`. For one
-grammar on every element, use the typed query builder
-(`find(page, TextFieldElement.class).withLabel("Name").single()`, see "Typed queries"
-in the reference): it only offers the filters that fit the component, and
-`element.find(X.class)` searches inside a dialog or layout. Queries search the light
+**Prefer the typed query builder; factory methods are not uniform.** Find
+components with `find(page, TextFieldElement.class).withLabel("Name").single()`
+(`import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find`,
+see "Typed queries" in the reference): it is the same grammar on every element, it
+only offers the filters that fit the component (a filter that does not apply does
+not compile), and `element.find(X.class)` searches inside a dialog or layout. The
+static factories are shortcuts and are not uniform: most fields have
+`getByLabel(Page, String)`, containers have `get(Page)`, and almost every element has
+`getById` and `getByTestId` (fallbacks for a component without a user-visible name;
+Flow sets the test id with `setTestId`). An element has exactly the factories the
+index table lists for it — assuming one that isn't listed is the most common way to
+lose a compile round-trip. Every wrapper is also constructible from a `Locator`:
+`new TextFieldElement(someLocator)`. Queries search the light
 DOM, leaving out the internals Vaadin components render in their shadow roots
 (`.includingShadowDom()` opts out). A component without a wrapper is found by tag,
 `find(page, "my-component").withText("Save").single()`, as a `GenericElement`.
@@ -110,14 +112,14 @@ itself, not the cell. For text, prefer `CellElement.getText()` / `assertText(Str
 or `GridElement.assertCellContent(row, column, expected)`.
 
 **A label is matched in full.** Every label- or name-keyed lookup —
-`TextFieldElement.getByLabel(page, "Name")`, `ButtonElement.getByText(page, "Save")`,
-`DialogElement.getByHeaderText(page, "Delete?")`, and the item lookups such as
+`find(page, TextFieldElement.class).withLabel("Name").single()`, `find(page, ButtonElement.class).withAccessibleName("Save").single()`,
+`find(page, DialogElement.class).withAccessibleName("Delete?").single()`, and the item lookups such as
 `group.getCheckbox("Cheese")` or `tabs.getTab("Details")` — matches the whole label,
 case-sensitively, and raises a strict-mode error if two components share it. Passing
-part of a label finds nothing: use `getByLabelContaining(page, "Name")` (or
-`ButtonElement.getByTextContaining`) for a case-insensitive partial match, which also
+part of a label finds nothing: use `.withLabelContaining("Name")` (or
+`.withAccessibleNameContaining(..)` on a button) for a case-insensitive partial match, which also
 fails rather than guessing when several components match. A label is the
-**visible** label: `getByLabel` never matches an `aria-label` or a placeholder. A
+**visible** label: `withLabel` never matches an `aria-label` or a placeholder. A
 field with no label of its own inside a form item (`formLayout.addFormItem(field,
 "Name")`) is found by the form item's label. Find
 those with the query builder, `find(page, TextFieldElement.class).withAccessibleName("Search")`

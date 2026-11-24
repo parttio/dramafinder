@@ -19,7 +19,7 @@ Button save = new Button("Save", e -> {
 ```
 
 ```java
-ButtonElement.getByText(page, "Save").click();
+find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 // The listener has run and the response has arrived
 assertThat(page.locator("#status")).hasText("Saved");
 ```
@@ -31,7 +31,7 @@ grid fetching and rendering rows — is client-side, so check it with a
 [retrying assertion](assertions.md):
 
 ```java
-ButtonElement.getByText(page, "Delete").click();
+find(page, ButtonElement.class).withAccessibleName("Delete").single().click();
 ConfirmDialogElement.get(page).assertOpen();  // retries while the overlay opens
 ```
 
@@ -47,7 +47,7 @@ indicator, a disabled button, a progress bar. Run the action without waiting:
 ```java
 import org.vaadin.addons.dramafinder.AutoWait;
 
-ButtonElement export = ButtonElement.getByText(page, "Export");
+ButtonElement export = find(page, ButtonElement.class).withAccessibleName("Export").single();
 AutoWait.withoutWaiting(export::click);
 
 export.assertDisabled();                           // while the server works
@@ -70,20 +70,20 @@ Each field's `setValue` behaves like a user filling it in, and the component
 decides what the value becomes:
 
 ```java
-TextFieldElement.getByLabel(page, "Name").setValue("Ada");          // types, fires change
-ComboBoxElement.getByLabel(page, "Country").setValue("Finland");   // filters, picks the item labelled "Finland"
-DatePickerElement.getByLabel(page, "Birthday").setValue("12/10/1815"); // types in the field's locale format
-DatePickerElement.getByLabel(page, "Birthday").setValue(LocalDate.of(1815, 12, 10)); // typed overload
-CheckboxElement.getByLabel(page, "Subscribe").check();
-RadioButtonGroupElement.getByLabel(page, "Plan").selectByLabel("Pro");
-SliderElement.getByLabel(page, "Volume").setValue(40);
+find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");          // types, fires change
+find(page, ComboBoxElement.class).withLabel("Country").single().setValue("Finland");   // filters, picks the item labelled "Finland"
+find(page, DatePickerElement.class).withLabel("Birthday").single().setValue("12/10/1815"); // types in the field's locale format
+find(page, DatePickerElement.class).withLabel("Birthday").single().setValue(LocalDate.of(1815, 12, 10)); // typed overload
+find(page, CheckboxElement.class).withLabel("Subscribe").single().check();
+find(page, RadioButtonGroupElement.class).withLabel("Plan").single().selectByLabel("Pro");
+find(page, SliderElement.class).withLabel("Volume").single().setValue(40);
 ```
 
 Clear a field with `clear()`, not `setValue("")`: a combo box would look for an
 item labelled `""`.
 
 ```java
-ComboBoxElement.getByLabel(page, "Country").clear();
+find(page, ComboBoxElement.class).withLabel("Country").single().clear();
 ```
 
 The component pages document how each field reads and writes its value, e.g.
@@ -95,7 +95,7 @@ The component pages document how each field reads and writes its value, e.g.
 elements offer a more precise action — prefer it:
 
 ```java
-ButtonElement.getByText(page, "Save").click();
+find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 GridElement.get(page).findRow(3).get().click();          // fires the grid's item click
 GridElement.get(page).findRow(3).get().doubleClick();
 TabsElement.get(page).selectTab("Payment");
@@ -110,7 +110,7 @@ For anything not wrapped, use Playwright on the element's locators. Use
 Playwright calls do not wait:
 
 ```java
-TextFieldElement search = TextFieldElement.getByLabel(page, "Search");
+TextFieldElement search = find(page, TextFieldElement.class).withLabel("Search").single();
 search.getInputLocator().press("Enter");
 search.waitForVaadinIdle();
 GridElement.get(page).assertRowCount(3);
@@ -136,7 +136,7 @@ wait covers that too — in React mode, Vaadin's default — so a one-shot read 
 the location right after it sees the new view's path:
 
 ```java
-ButtonElement.getByText(page, "Open profile").click();   // ui.navigate(ProfileView.class)
+find(page, ButtonElement.class).withAccessibleName("Open profile").single().click();   // ui.navigate(ProfileView.class)
 assertEquals("http://localhost:8080/profile", page.url());
 ```
 
@@ -151,11 +151,11 @@ state you were waiting for:
 
 ```java
 // ❌
-ButtonElement.getByText(page, "Load").click();
+find(page, ButtonElement.class).withAccessibleName("Load").single().click();
 Thread.sleep(2000);
 assertEquals(50, grid.getTotalRowCount());
 
 // ✅
-ButtonElement.getByText(page, "Load").click();
+find(page, ButtonElement.class).withAccessibleName("Load").single().click();
 grid.assertRowCount(50);
 ```

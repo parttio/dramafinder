@@ -20,11 +20,11 @@ what differs.
 
 ```java
 // By the visible label (exact, case-sensitive) or part of it
-MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
-MultiSelectComboBoxElement lazy = MultiSelectComboBoxElement.getByLabelContaining(page, "lazy");
+MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Fruits").single();
+MultiSelectComboBoxElement lazy = find(page, MultiSelectComboBoxElement.class).withLabelContaining("lazy").single();
 
 // Scoped to a container
-MultiSelectComboBoxElement inForm = MultiSelectComboBoxElement.getByLabel(page.locator("#container"), "Fruits");
+MultiSelectComboBoxElement inForm = find(page.locator("#container"), MultiSelectComboBoxElement.class).withLabel("Fruits").single();
 
 // Fallbacks for a field without a visible label
 MultiSelectComboBoxElement byId = MultiSelectComboBoxElement.getById(page, "fruits");
@@ -37,7 +37,7 @@ MultiSelectComboBoxElement unlabelled =
         find(page, MultiSelectComboBoxElement.class).withAccessibleName("Invisible label").single();
 ```
 
-`getByLabel` matches the whole visible label; `getByLabelContaining` a
+`withLabel` matches the whole visible label; `withLabelContaining` a
 case-insensitive substring. Neither applies `.first()`, and an `aria-label` or a
 placeholder is not a label.
 
@@ -52,7 +52,7 @@ comboBox.setLabel("Fruits");
 
 ```java
 // Test
-MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Fruits").single();
 fruits.selectItems("Apple", "Cherry");
 fruits.close();
 fruits.assertSelectedItems("Cherry", "Apple");   // any order
@@ -84,7 +84,7 @@ filter. `filterAndSelectItem(filter, label)` filters, then clicks the item; it
 does nothing, not even filter, when the item is already selected.
 
 ```java
-MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
+MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Filterable MultiSelect").single();
 fruits.filterAndSelectItem("Apr", "Apricot");
 fruits.close();
 fruits.assertSelectedItems("Apricot");
@@ -99,7 +99,7 @@ through the server, and every action waits for the round-trip. Selecting or
 deselecting an item that is not rendered yet scrolls the overlay to it first.
 
 ```java
-MultiSelectComboBoxElement lazy = MultiSelectComboBoxElement.getByLabel(page, "Lazy MultiSelect");
+MultiSelectComboBoxElement lazy = find(page, MultiSelectComboBoxElement.class).withLabel("Lazy MultiSelect").single();
 lazy.filterAndSelectItem("Item 250", "Item 250");
 lazy.close();
 lazy.assertSelectedItems("Item 250");
@@ -115,7 +115,7 @@ lazy.close();
 ## Reading the items and the selection
 
 ```java
-MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Fruits").single();
 assertEquals(List.of("Apple", "Banana", "Cherry", "Date", "Elderberry"), fruits.getItemLabels());
 fruits.assertClosed();       // left as it was
 
@@ -170,7 +170,7 @@ comboBox.setRenderer(new ComponentRenderer<>(item -> {
 
 ```java
 // Test
-MultiSelectComboBoxElement custom = MultiSelectComboBoxElement.getByLabel(page, "Custom renderer");
+MultiSelectComboBoxElement custom = find(page, MultiSelectComboBoxElement.class).withLabel("Custom renderer").single();
 custom.open();
 ButtonElement info = custom.getOverlayItemComponent("Banana", ButtonElement.class);
 info.click();
@@ -198,7 +198,7 @@ comboBox.setValue(Set.of("Banana", "Date"));
 
 ```java
 // Test
-MultiSelectComboBoxElement clearable = MultiSelectComboBoxElement.getByLabel(page, "Clearable MultiSelect");
+MultiSelectComboBoxElement clearable = find(page, MultiSelectComboBoxElement.class).withLabel("Clearable MultiSelect").single();
 clearable.assertSelectedItems("Banana", "Date");
 clearable.clear();
 clearable.assertSelectedCount(0);
@@ -206,7 +206,7 @@ clearable.assertClosed();
 
 // With setClearButtonVisible(true)
 MultiSelectComboBoxElement withButton =
-        MultiSelectComboBoxElement.getByLabel(page, "MultiSelect with placeholder and clear button");
+        find(page, MultiSelectComboBoxElement.class).withLabel("MultiSelect with placeholder and clear button").single();
 withButton.selectItems("Apple", "Banana");
 withButton.close();
 withButton.clickClearButton();
@@ -219,7 +219,7 @@ field mixins only fills the input text and leaves the selection in place.
 ## Opening and closing
 
 ```java
-MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
+MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Filterable MultiSelect").single();
 fruits.open();               // sets the opened property
 fruits.assertOpened();
 fruits.assertItemCount(9);
@@ -234,22 +234,22 @@ the toggle button.
 ## Field state
 
 ```java
-MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Fruits");
+MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Fruits").single();
 fruits.assertLabel("Fruits");
 fruits.assertHelperHasText("Helper text");
 fruits.assertTooltipHasText("Tooltip for multi-select");
 fruits.assertCssClass("custom-multi-select");
 
-MultiSelectComboBoxElement.getByLabel(page, "MultiSelect with placeholder and clear button")
+find(page, MultiSelectComboBoxElement.class).withLabel("MultiSelect with placeholder and clear button").single()
         .assertPlaceholder("Select items");
 
-MultiSelectComboBoxElement readOnly = MultiSelectComboBoxElement.getByLabel(page, "Read-only MultiSelect");
+MultiSelectComboBoxElement readOnly = find(page, MultiSelectComboBoxElement.class).withLabel("Read-only MultiSelect").single();
 readOnly.assertReadOnly();
 readOnly.assertSelectedItems("Apple", "Cherry");
 
-MultiSelectComboBoxElement toggled = MultiSelectComboBoxElement.getByLabel(page, "Enabled/Disabled Field");
+MultiSelectComboBoxElement toggled = find(page, MultiSelectComboBoxElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();
 
 // aria-label on the input; null when the name comes from aria-labelledby
@@ -262,10 +262,10 @@ Validation and theme variants work as on any field:
 ```java
 // View: binder.forField(comboBox).asRequired("Required field").bind("names");
 //       comboBox.addThemeVariants(MultiSelectComboBoxVariant.LUMO_SMALL);
-MultiSelectComboBoxElement required = MultiSelectComboBoxElement.getByLabel(page, "MultiSelect with theme");
+MultiSelectComboBoxElement required = find(page, MultiSelectComboBoxElement.class).withLabel("MultiSelect with theme").single();
 required.assertTheme("small");
 required.assertValid();
-ButtonElement.getByText(page, "Validate").click();
+find(page, ButtonElement.class).withAccessibleName("Validate").single().click();
 required.assertInvalid();
 required.assertErrorMessage("Required field");
 ```

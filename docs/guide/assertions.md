@@ -8,7 +8,7 @@ says what was expected and what the page showed.
 
 ```java
 GridElement grid = GridElement.get(page);
-TextFieldElement.getByLabel(page, "Filter").setValue("ada");
+find(page, TextFieldElement.class).withLabel("Filter").single().setValue("ada");
 
 grid.assertRowCount(1);                    // ✅ polls until the grid shows 1 row
 assertEquals(1, grid.getTotalRowCount());  // ❌ reads once: flaky on a lazy grid
@@ -22,8 +22,8 @@ reads a single snapshot.
 Getters are still useful when you need the value itself, e.g. to reuse it:
 
 ```java
-String orderNumber = TextFieldElement.getByLabel(page, "Order number").getValue();
-NotificationElement.getByText(page, orderNumber).assertOpen();
+String orderNumber = find(page, TextFieldElement.class).withLabel("Order number").single().getValue();
+find(page, NotificationElement.class).withTextContaining(orderNumber).single().assertOpen();
 ```
 
 ## Failure messages
@@ -67,8 +67,8 @@ Every element has `assertVisible()` and `assertHidden()`:
 
 ```java
 // View: vatNumber.setVisible(country.getValue() == Country.FINLAND)
-ComboBoxElement.getByLabel(page, "Country").selectItem("Finland");
-TextFieldElement.getByLabel(page, "VAT number").assertVisible();
+find(page, ComboBoxElement.class).withLabel("Country").single().selectItem("Finland");
+find(page, TextFieldElement.class).withLabel("VAT number").single().assertVisible();
 ```
 
 Some components refine them. `DialogElement.assertHidden()` checks the overlay,
@@ -80,21 +80,21 @@ the DOM.
 Fields assert the value **as the user sees it** in the input:
 
 ```java
-TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
 name.setValue("Ada");
 name.assertValue("Ada");
 
-ComboBoxElement.getByLabel(page, "Country").assertValue("Finland");      // item label
-SelectElement.getByLabel(page, "Size").assertValue("Large");             // item label
-CheckboxGroupElement.getByLabel(page, "Toppings").assertSelected("Cheese", "Ham"); // exactly these
+find(page, ComboBoxElement.class).withLabel("Country").single().assertValue("Finland");      // item label
+find(page, SelectElement.class).withLabel("Size").single().assertValue("Large");             // item label
+find(page, CheckboxGroupElement.class).withLabel("Toppings").single().assertSelected("Cheese", "Ham"); // exactly these
 ```
 
 Typed fields add overloads with Java types:
 
 ```java
-DatePickerElement.getByLabel(page, "Birthday").assertValue(LocalDate.of(1815, 12, 10));
-TimePickerElement.getByLabel(page, "Alarm").assertValue(LocalTime.of(7, 30));
-DateTimePickerElement.getByLabel(page, "Meeting").assertValue(LocalDateTime.of(2026, 1, 15, 9, 0));
+find(page, DatePickerElement.class).withLabel("Birthday").single().assertValue(LocalDate.of(1815, 12, 10));
+find(page, TimePickerElement.class).withLabel("Alarm").single().assertValue(LocalTime.of(7, 30));
+find(page, DateTimePickerElement.class).withLabel("Meeting").single().assertValue(LocalDateTime.of(2026, 1, 15, 9, 0));
 ```
 
 ## Validation
@@ -106,8 +106,8 @@ binder.forField(email).asRequired("Email is required").bind(...);
 ```
 
 ```java
-TextFieldElement email = TextFieldElement.getByLabel(page, "Email");
-ButtonElement.getByText(page, "Save").click();
+TextFieldElement email = find(page, TextFieldElement.class).withLabel("Email").single();
+find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 
 email.assertInvalid();
 email.assertErrorMessage("Email is required");
@@ -119,13 +119,13 @@ email.assertValid();
 Constraints set on the component have their own assertions:
 
 ```java
-TextFieldElement code = TextFieldElement.getByLabel(page, "Code");
+TextFieldElement code = find(page, TextFieldElement.class).withLabel("Code").single();
 code.assertMinLength(6);
 code.assertMaxLength(8);
 code.assertPattern("[A-Z0-9]+");
 code.assertAllowedCharPattern("[A-Z0-9]");
 
-IntegerFieldElement quantity = IntegerFieldElement.getByLabel(page, "Quantity");
+IntegerFieldElement quantity = find(page, IntegerFieldElement.class).withLabel("Quantity").single();
 quantity.assertMin(1);
 quantity.assertMax(99);
 ```
@@ -133,7 +133,7 @@ quantity.assertMax(99);
 ## Label, helper, placeholder, prefix and suffix
 
 ```java
-TextFieldElement price = TextFieldElement.getByLabel(page, "Price");
+TextFieldElement price = find(page, TextFieldElement.class).withLabel("Price").single();
 price.assertLabel("Price");
 price.assertHelperHasText("Including VAT");
 price.assertPlaceholder("0.00");
@@ -145,12 +145,12 @@ price.assertTooltipHasText("Monthly price shown to customers");
 ## Enabled and read-only
 
 ```java
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 save.assertDisabled();
-TextFieldElement.getByLabel(page, "Name").setValue("Ada");
+find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
 save.assertEnabled();
 
-TextFieldElement.getByLabel(page, "Customer number").assertReadOnly();
+find(page, TextFieldElement.class).withLabel("Customer number").single().assertReadOnly();
 ```
 
 ## Theme variants and CSS classes
@@ -161,7 +161,7 @@ Vaadin writes every theme variant into one space-separated `theme` attribute.
 
 ```java
 // View: save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL)
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 save.assertTheme("small primary");          // every variant, any order
 save.assertHasThemeVariant("primary");      // one variant
 save.assertHasNoThemeVariant("error");
@@ -172,7 +172,7 @@ save.assertCssClass("save-button");         // exactly these classes
 ## Focus
 
 ```java
-TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
 name.assertIsFocused();       // e.g. after the dialog opened with setAutofocus(true)
 page.keyboard().press("Tab");
 name.assertIsNotFocused();
@@ -207,7 +207,7 @@ its tooltip, a badge's `assertText` leaves out its number.
 
 ```java
 // new Badge("unread messages", 5)
-BadgeElement badge = BadgeElement.getByText(page, "unread messages");
+BadgeElement badge = find(page, BadgeElement.class).withText("unread messages").single();
 badge.assertText("unread messages");
 badge.assertNumber(5);
 ```
@@ -224,7 +224,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 assertThat(page).hasTitle("Orders | Acme");
 assertThat(page.getByText("No orders yet")).isVisible();
 
-DialogElement dialog = DialogElement.getByHeaderText(page, "Order 42");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Order 42").single();
 assertThat(dialog.getContentLocator()).containsText("Shipped");
 
 var cells = GridElement.get(page).getHeaderCells(0);
@@ -235,7 +235,7 @@ To assert that something is **not** there, use an assertion that retries until
 it disappears, not a one-shot check:
 
 ```java
-NotificationElement.getByText(page, "Saving").assertClosed();
+find(page, NotificationElement.class).withTextContaining("Saving").single().assertClosed();
 GridElement.get(page).assertColumnNotPresent("Internal id");
 assertThat(find(page, ButtonElement.class).withText("Delete").getLocator()).hasCount(0);
 // not: assertFalse(find(page, ButtonElement.class).withText("Delete").exists());
@@ -260,13 +260,13 @@ tests over one long scenario, and name each after the behaviour:
 ```java
 @Test
 void saveIsDisabledUntilTheFormIsValid() {
-    ButtonElement.getByText(page, "Save").assertDisabled();
+    find(page, ButtonElement.class).withAccessibleName("Save").single().assertDisabled();
 }
 
 @Test
 void emailIsRequired() {
-    ButtonElement.getByText(page, "Validate").click();
-    TextFieldElement.getByLabel(page, "Email").assertErrorMessage("Email is required");
+    find(page, ButtonElement.class).withAccessibleName("Validate").single().click();
+    find(page, TextFieldElement.class).withLabel("Email").single().assertErrorMessage("Email is required");
 }
 ```
 

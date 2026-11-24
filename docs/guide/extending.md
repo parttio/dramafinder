@@ -15,6 +15,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.vaadin.addons.dramafinder.element.PlaywrightElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
+import org.vaadin.addons.dramafinder.element.query.ElementQueries;
 import org.vaadin.addons.dramafinder.element.query.FieldQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
 import org.vaadin.addons.dramafinder.element.shared.HasLabelElement;
@@ -22,7 +23,6 @@ import org.vaadin.addons.dramafinder.element.shared.HasReadOnlyElement;
 import org.vaadin.addons.dramafinder.element.utils.IdLocator;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
 
 /** Element for {@code <rating-stars>}: reads and sets the rating by clicking a star. */
 @PlaywrightElement(RatingElement.TAG_NAME)
@@ -37,7 +37,7 @@ public class RatingElement extends VaadinElement
 
     /** The rating whose visible label is exactly {@code label}. */
     public static RatingElement getByLabel(Page page, String label) {
-        return find(page, RatingElement.class).withLabel(label).single();
+        return ElementQueries.find(page, RatingElement.class).withLabel(label).single();
     }
 
     public static RatingElement getById(Page page, String id) {
@@ -62,7 +62,7 @@ public class RatingElement extends VaadinElement
 ```
 
 ```java
-RatingElement rating = RatingElement.getByLabel(page, "Your rating");
+RatingElement rating = find(page, RatingElement.class).withLabel("Your rating").single();
 rating.rate(4);
 rating.assertValue(4);
 rating.assertNotReadOnly();     // from HasReadOnlyElement
@@ -129,7 +129,7 @@ public class CopyFieldElement extends TextFieldElement {
     }
 
     public static CopyFieldElement getByLabel(Page page, String label) {
-        return new CopyFieldElement(TextFieldElement.getByLabel(page, label).getLocator());
+        return new CopyFieldElement(ElementQueries.find(page, TextFieldElement.class).withLabel(label).getLocator());
     }
 
     public void copy() {
@@ -156,11 +156,11 @@ public class AddressFormElement extends VaadinElement {
     }
 
     public TextFieldElement street() {
-        return TextFieldElement.getByLabel(getLocator(), "Street");
+        return find(TextFieldElement.class).withLabel("Street").single();
     }
 
     public ComboBoxElement country() {
-        return ComboBoxElement.getByLabel(getLocator(), "Country");
+        return find(ComboBoxElement.class).withLabel("Country").single();
     }
 
     public void fill(String street, String country) {

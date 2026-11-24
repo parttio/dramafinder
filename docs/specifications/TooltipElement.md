@@ -30,14 +30,14 @@ save.setTooltipText("Saves the current draft");
 ```java
 // Test
 // through the mixin — the usual way
-ButtonElement saveButton = ButtonElement.getByText(page, "Save");
+ButtonElement saveButton = find(page, ButtonElement.class).withAccessibleName("Save").single();
 saveButton.getTooltip().assertText("Saves the current draft");
 
 // scoped to the target component
 TooltipElement tooltip = TooltipElement.get(page.locator("#save-button"));
 
-// by the tooltip's own text, when the target is not the interesting part
-TooltipElement.getByText(page, "Saves the current draft");
+// by the tooltip's whole text, when the target is not the interesting part
+find(page, TooltipElement.class).withText("Saves the current draft").single();
 
 // the first tooltip on the page
 TooltipElement first = TooltipElement.get(page);
@@ -66,7 +66,7 @@ Every element implementing `HasTooltipElement` (buttons, text fields, …) expos
 its tooltip:
 
 ```java
-TextFieldElement field = TextFieldElement.getByLabel(page, "Dynamic");
+TextFieldElement field = find(page, TextFieldElement.class).withLabel("Dynamic").single();
 field.assertTooltipHasText("Initial tooltip");
 String text = field.getTooltipText();          // read once
 Locator content = field.getTooltipLocator();   // the role="tooltip" node
@@ -85,7 +85,7 @@ whether the tooltip is open or not, so text assertions need no interaction:
 
 ```java
 // no hover needed
-TooltipElement tooltip = ButtonElement.getByText(page, "Hover me").getTooltip();
+TooltipElement tooltip = find(page, ButtonElement.class).withAccessibleName("Hover me").single().getTooltip();
 tooltip.assertClosed();
 tooltip.assertText("Tooltip for the hover button");
 ```
@@ -94,9 +94,9 @@ The text follows server-side updates; `assertText(...)` retries:
 
 ```java
 // View: Button("Update tooltip", e -> dynamicTooltip.setText("Updated tooltip"))
-TooltipElement tooltip = TextFieldElement.getByLabel(page, "Dynamic").getTooltip();
+TooltipElement tooltip = find(page, TextFieldElement.class).withLabel("Dynamic").single().getTooltip();
 tooltip.assertText("Initial tooltip");
-ButtonElement.getByText(page, "Update tooltip").click();
+find(page, ButtonElement.class).withAccessibleName("Update tooltip").single().click();
 tooltip.assertText("Updated tooltip");
 ```
 
@@ -106,7 +106,7 @@ visibility rather than on the element being gone:
 
 ```java
 // View: empty.setTooltipText("");
-TooltipElement tooltip = ButtonElement.getByText(page, "No tooltip text").getTooltip();
+TooltipElement tooltip = find(page, ButtonElement.class).withAccessibleName("No tooltip text").single().getTooltip();
 tooltip.assertText(null);
 ```
 
@@ -123,7 +123,7 @@ after scrolling it into view. Vaadin then waits out the tooltip's hover delay,
 with the plain getter:
 
 ```java
-TooltipElement tooltip = ButtonElement.getByText(page, "Hover me").getTooltip();
+TooltipElement tooltip = find(page, ButtonElement.class).withAccessibleName("Hover me").single().getTooltip();
 tooltip.hoverTarget();
 tooltip.assertOpened();          // absorbs the hover delay
 // tooltip.isOpened()            // would read false, too early
@@ -151,9 +151,9 @@ Button toggle = new Button("Toggle manual tooltip",
 // Test
 TooltipElement tooltip = TooltipElement.get(page.locator("#tooltip-manual-button"));
 tooltip.assertClosed();
-ButtonElement.getByText(page, "Toggle manual tooltip").click();
+find(page, ButtonElement.class).withAccessibleName("Toggle manual tooltip").single().click();
 tooltip.assertOpened();
-ButtonElement.getByText(page, "Toggle manual tooltip").click();
+find(page, ButtonElement.class).withAccessibleName("Toggle manual tooltip").single().click();
 tooltip.assertClosed();
 ```
 
@@ -190,7 +190,7 @@ tooltip.assertPosition("bottom");
 
 // View: positioned.setTooltipText("Shown above the button")
 //           .setPosition(Tooltip.TooltipPosition.TOP_START);
-TooltipElement.getByText(page, "Shown above the button").assertPosition("top-start");
+find(page, TooltipElement.class).withText("Shown above the button").single().assertPosition("top-start");
 ```
 
 There is no "absent" case, so `assertPosition(null)` is not supported.
@@ -202,7 +202,7 @@ the `<vaadin-tooltip>` element, the `HasThemeElement` and `HasStyleElement`
 assertions read them:
 
 ```java
-TooltipElement tooltip = TextFieldElement.getByLabel(page, "Styled").getTooltip();
+TooltipElement tooltip = find(page, TextFieldElement.class).withLabel("Styled").single().getTooltip();
 tooltip.assertTheme("custom-tooltip-theme");
 tooltip.assertHasThemeVariant("custom-tooltip-theme");
 tooltip.assertCssClass("custom-tooltip");

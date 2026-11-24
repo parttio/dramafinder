@@ -27,21 +27,21 @@ unlabelled.setAriaLabel("Aria label");
 
 ```java
 // Test
-CheckboxElement terms = CheckboxElement.getByLabel(page, "I accept the terms");   // whole label
-CheckboxElement same = CheckboxElement.getByLabelContaining(page, "accept");     // substring
+CheckboxElement terms = find(page, CheckboxElement.class).withLabel("I accept the terms").single();   // whole label
+CheckboxElement same = find(page, CheckboxElement.class).withLabelContaining("accept").single();     // substring
 CheckboxElement byId = CheckboxElement.getById(page, "terms");
 CheckboxElement byTestId = CheckboxElement.getByTestId(page, "terms-checkbox");
 
 // Scoped to a container
-CheckboxElement inForm = CheckboxElement.getByLabel(page.locator("#form"), "I accept the terms");
+CheckboxElement inForm = find(page.locator("#form"), CheckboxElement.class).withLabel("I accept the terms").single();
 
 // Typed query
 CheckboxElement viaQuery = find(page, CheckboxElement.class).withLabel("I accept the terms").single();
 CheckboxElement noLabel = find(page, CheckboxElement.class).withAccessibleName("Aria label").single();
 ```
 
-`getByLabel` matches the text of the checkbox's own `label` slot in full and
-case-sensitively; `getByLabelContaining` matches a case-insensitive substring.
+`withLabel` matches the text of the checkbox's own `label` slot in full and
+case-sensitively; `withLabelContaining` matches a case-insensitive substring.
 Neither applies `.first()`, so two matches fail with a strict-mode error. An
 `aria-label` is not a label: find an unlabelled checkbox with
 `withAccessibleName(...)`.
@@ -63,7 +63,7 @@ checked.setValue(true);
 
 ```java
 // Test
-CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Default Checkbox");
+CheckboxElement checkbox = find(page, CheckboxElement.class).withLabel("Default Checkbox").single();
 checkbox.assertNotChecked();
 checkbox.check();
 checkbox.assertChecked();
@@ -73,7 +73,7 @@ checkbox.assertNotChecked();
 checkbox.setChecked(true);      // when the state comes from a parameter
 checkbox.assertChecked(true);
 
-CheckboxElement.getByLabel(page, "Checked by default").assertChecked();
+find(page, CheckboxElement.class).withLabel("Checked by default").single().assertChecked();
 ```
 
 `isChecked()` reads the state once without retrying; use it only when the test
@@ -95,7 +95,7 @@ checkbox.setIndeterminate(true);
 
 ```java
 // Test
-CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Indeterminate Checkbox");
+CheckboxElement checkbox = find(page, CheckboxElement.class).withLabel("Indeterminate Checkbox").single();
 checkbox.assertIndeterminate();
 
 checkbox.check();               // a user click clears the indeterminate state
@@ -113,7 +113,7 @@ setup step; it is not something a user can do.
 ## Label, aria-label and helper
 
 ```java
-CheckboxElement checkbox = CheckboxElement.getByLabel(page, "Default Checkbox");
+CheckboxElement checkbox = find(page, CheckboxElement.class).withLabel("Default Checkbox").single();
 checkbox.assertLabel("Default Checkbox");
 
 CheckboxElement unlabelled = find(page, CheckboxElement.class).withAccessibleName("Aria label").single();
@@ -134,7 +134,7 @@ checkbox.setI18n(new Checkbox.CheckboxI18n().setRequiredErrorMessage("Required M
 
 ```java
 // Test
-CheckboxElement required = CheckboxElement.getByLabel(page, "Required Checkbox");
+CheckboxElement required = find(page, CheckboxElement.class).withLabel("Required Checkbox").single();
 required.assertValid();
 required.check();
 required.uncheck();          // the user cleared a required checkbox
@@ -154,8 +154,8 @@ checkbox.setEnabled(false);
 
 ```java
 // Test
-CheckboxElement.getByLabel(page, "Disabled Checkbox").assertDisabled();
-CheckboxElement.getByLabel(page, "Default Checkbox").assertEnabled();
+find(page, CheckboxElement.class).withLabel("Disabled Checkbox").single().assertDisabled();
+find(page, CheckboxElement.class).withLabel("Default Checkbox").single().assertEnabled();
 ```
 
 ## Focus and styling
@@ -163,14 +163,14 @@ CheckboxElement.getByLabel(page, "Default Checkbox").assertEnabled();
 Focus goes to the native input.
 
 ```java
-CheckboxElement first = CheckboxElement.getByLabel(page, "Default Checkbox");
-CheckboxElement second = CheckboxElement.getByLabel(page, "Checked by default");
+CheckboxElement first = find(page, CheckboxElement.class).withLabel("Default Checkbox").single();
+CheckboxElement second = find(page, CheckboxElement.class).withLabel("Checked by default").single();
 first.assertIsFocused();       // the view called checkbox.focus()
 second.focus();
 second.assertIsFocused();
 first.assertIsNotFocused();
 
-CheckboxElement terms = CheckboxElement.getByLabel(page, "I accept the terms");
+CheckboxElement terms = find(page, CheckboxElement.class).withLabel("I accept the terms").single();
 terms.assertCssClass("terms"); // exactly these classes; null asserts none
 ```
 
@@ -181,7 +181,7 @@ terms.assertCssClass("terms"); // exactly these classes; null asserts none
   `getInputLocator()` if you need the input for a raw Playwright assertion.
 - `isChecked(boolean)` changes the state (deprecated, to be removed); it is not a
   query.
-- `getByLabel` does not match an `aria-label`; use
+- `withLabel` does not match an `aria-label`; use
   `find(page, CheckboxElement.class).withAccessibleName(...)`.
 
 ## See also

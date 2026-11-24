@@ -4,16 +4,31 @@ Find a component the way a user finds it: by the label next to it, the text on
 it, or the heading of the dialog it lives in. Fall back to ids and test ids only
 for components without a user-visible name.
 
+The recommended way to find a component is the typed query builder,
+`ElementQueries.find`: start with the element class, add a filter, and finish
+with `single()`. Add the static import once per test class:
+
+```java
+import static org.vaadin.addons.dramafinder.element.query.ElementQueries.find;
+```
+
+The element classes also have static factories such as
+`TextFieldElement.getByLabel(page, "Name")`. They are shortcuts for the same
+queries — `getByLabel(page, label)` is exactly
+`find(page, X.class).withLabel(label).single()` — and keep working, but `find`
+gives every component the same grammar, combines filters and scopes a search,
+so the examples in this documentation use it.
+
 ## By visible label
 
-`getByLabel` matches the **visible label** — the text the component shows in
+`withLabel` matches the **visible label** — the text the component shows in
 its own label slot (`new TextField("Name")`, `setLabel("Name")`):
 
 ```java
-TextFieldElement name = TextFieldElement.getByLabel(page, "Name");
-ComboBoxElement country = ComboBoxElement.getByLabel(page, "Country");
-CheckboxElement terms = CheckboxElement.getByLabel(page, "I accept the terms");
-RadioButtonGroupElement plan = RadioButtonGroupElement.getByLabel(page, "Plan");
+TextFieldElement name = find(page, TextFieldElement.class).withLabel("Name").single();
+ComboBoxElement country = find(page, ComboBoxElement.class).withLabel("Country").single();
+CheckboxElement terms = find(page, CheckboxElement.class).withLabel("I accept the terms").single();
+RadioButtonGroupElement plan = find(page, RadioButtonGroupElement.class).withLabel("Plan").single();
 ```
 
 A field added to a `FormLayout` with an item label
@@ -26,21 +41,21 @@ nothing, and two components with the same label raise a Playwright strict-mode
 error instead of silently picking the first one:
 
 ```java
-TextFieldElement.getByLabel(page, "name");      // no match: case differs
-TextFieldElement.getByLabel(page, "First");     // no match: "First name" is longer
+find(page, TextFieldElement.class).withLabel("name").single();      // no match: case differs
+find(page, TextFieldElement.class).withLabel("First").single();     // no match: "First name" is longer
 ```
 
-Use `getByLabelContaining` for a long or generated label. It matches a
+Use `withLabelContaining` for a long or generated label. It matches a
 case-insensitive substring — and still fails if several components match:
 
 ```java
-TextAreaElement notes = TextAreaElement.getByLabelContaining(page, "additional notes");
+TextAreaElement notes = find(page, TextAreaElement.class).withLabelContaining("additional notes").single();
 ```
 
 !!! note "A label is not an `aria-label` or a placeholder"
 
-    `getByLabel` never matches `setAriaLabel("Search")` or
-    `setPlaceholder("Street")`. Use the typed query below:
+    `withLabel` never matches `setAriaLabel("Search")` or
+    `setPlaceholder("Street")`. Use another filter:
     `find(page, TextFieldElement.class).withAccessibleName("Search")` or
     `.withPlaceholder("Street")`. Components that have no visible label (menu
     bar, list box, popover, breadcrumbs) are found by accessible name the same
@@ -48,35 +63,47 @@ TextAreaElement notes = TextAreaElement.getByLabelContaining(page, "additional n
 
 ## By text
 
-Components identified by what they show use `getByText`:
+Components identified by what they show use a text filter. On a button,
+`withAccessibleName` matches its text, or the `aria-label` of an icon-only
+button, as the `ButtonElement.getByText` shortcut does:
 
 ```java
-ButtonElement save = ButtonElement.getByText(page, "Save");
-ButtonElement close = ButtonElement.getByText(page, "Close"); // also an icon button with aria-label "Close"
-ButtonElement anySave = ButtonElement.getByTextContaining(page, "save"); // "Save draft", "Save"... must be unique
-BreadcrumbsItemElement home = BreadcrumbsItemElement.getByText(page, "Home");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
+ButtonElement close = find(page, ButtonElement.class).withAccessibleName("Close").single(); // also an icon button with aria-label "Close"
+ButtonElement anySave = find(page, ButtonElement.class).withAccessibleNameContaining("save").single(); // "Save draft", "Save"... must be unique
+BreadcrumbsItemElement home = find(page, BreadcrumbsItemElement.class).withText("Home").single();
 ```
 
-Other components have a factory named after their caption:
+A dialog's header is its accessible name, and an avatar's name is an
+attribute, so the same grammar finds them:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "Delete user?");
-ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Discard changes?");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delete user?").single();
+ConfirmDialogElement confirm = find(page, ConfirmDialogElement.class).withAccessibleName("Discard changes?").single();
+AvatarElement avatar = find(page, AvatarElement.class).withAttribute("name", "Ada Lovelace").single();
+```
+
+`DialogElement.getByHeaderText` and `ConfirmDialogElement.getByHeaderText` are
+shortcuts for the first two. A few components are found by a caption that no
+filter covers, so they keep a factory named after it:
+
+```java
 DetailsElement shipping = DetailsElement.getBySummaryText(page, "Shipping address");
 CardElement card = CardElement.getByTitle(page, "Monthly revenue");
-AvatarElement avatar = AvatarElement.getByName(page, "Ada Lovelace");
 UploadElement upload = UploadElement.getByButtonText(page, "Upload invoice");
 ```
 
-A few lookups deliberately match **free-form content** as a case-insensitive
-substring and take the first match: `NotificationElement.getByText`,
-`BadgeElement.getByText`, `TooltipElement.getByText` and
-`VirtualListElement.getItemByText`. Their content is not a label, so a fragment
-is the natural key:
+A notification's content is free-form text, not a label, so a fragment is the
+natural key. `withTextContaining` matches a case-insensitive substring of it:
 
 ```java
-NotificationElement.getByText(page, "saved").assertOpen(); // "Contact saved successfully"
+find(page, NotificationElement.class).withTextContaining("saved").single().assertOpen(); // "Contact saved successfully"
 ```
+
+Use `withText` for the whole text. A few factories also match free-form content
+as a case-insensitive substring, but take the **first** match instead of
+failing on several: `BadgeElement.getByText`, `TooltipElement.getByText` and
+`VirtualListElement.getItemByText`.
 
 ## The only one on the page
 
@@ -113,16 +140,16 @@ user.
 
 ## Inside a container
 
-Every factory has a `Locator` overload, and every element has `getLocator()`,
-so lookups compose:
+Every element has `find(..)`, which searches inside it, and `find` also takes a
+`Locator`, so lookups compose:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "New contact");
-TextFieldElement name = TextFieldElement.getByLabel(dialog.getLocator(), "Name");
-ButtonElement.getByText(dialog.getLocator(), "Save").click();
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("New contact").single();
+TextFieldElement name = dialog.find(TextFieldElement.class).withLabel("Name").single();
+dialog.find(ButtonElement.class).withAccessibleName("Save").single().click();
 
 FormLayoutElement billing = FormLayoutElement.getById(page, "billing");
-TextFieldElement billingStreet = TextFieldElement.getByLabel(billing.getLocator(), "Street");
+TextFieldElement billingStreet = billing.find(TextFieldElement.class).withLabel("Street").single();
 ```
 
 ## Items inside a container
@@ -133,9 +160,9 @@ label.
 
 ```java
 TabsElement.get(page).selectTab("Details");
-SelectElement.getByLabel(page, "Size").selectItem("Large");
-CheckboxGroupElement.getByLabel(page, "Toppings").selectByLabel("Cheese");
-SideNavigationElement.getByLabel(page, "Main menu").clickItem("Orders");
+find(page, SelectElement.class).withLabel("Size").single().selectItem("Large");
+find(page, CheckboxGroupElement.class).withLabel("Toppings").single().selectByLabel("Cheese");
+find(page, SideNavigationElement.class).withLabel("Main menu").single().clickItem("Orders");
 MenuBarElement.getById(page, "actions").openSubMenu("File").getMenuItemElement("Export").click();
 ```
 
@@ -143,7 +170,7 @@ Item lookups match the whole label, case-sensitively, with no first-match
 fallback: `selectByLabel("Option 1")` never picks `"Option 10"`, and a genuine
 duplicate fails with a strict-mode error.
 
-## The typed query builder
+## The typed query builder in detail
 
 `ElementQueries.find` gives every element the same grammar. Start with the
 element class, add filters, finish with a terminal:
@@ -274,13 +301,15 @@ with `setEnabled(false)`.
 
 ## Which lookup to use
 
-1. The factory named after what the user sees: `getByLabel`, `getByText`,
-   `getByHeaderText`...
+1. `find(..)` with a filter on what the user sees:
+   `find(page, TextFieldElement.class).withLabel("Name").single()`,
+   `.withText(..)`, `.withAccessibleName(..)`, `.withPlaceholder(..)`. The
+   static factories (`getByLabel`, `getByText`, `getByHeaderText`...) are
+   shortcuts you can use instead.
 2. An item through its container: `tabs.getTab("Details")`.
-3. `find(..)` for an accessible name, a placeholder, combined filters or a
-   scoped search.
-4. `getById` / `getByTestId` for components with no user-visible name.
-5. A raw Playwright locator wrapped in an element: `new GridElement(page.locator(".orders vaadin-grid"))`.
+3. `withId` / `withTestId` (or `getById` / `getByTestId`) for components with
+   no user-visible name.
+4. A raw Playwright locator wrapped in an element: `new GridElement(page.locator(".orders vaadin-grid"))`.
 
 ## Let the page tell you
 

@@ -10,43 +10,43 @@ signature.
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Text Field](TextFieldElement.md) | `TextFieldElement` | `TextFieldElement.getByLabel(page, "Name")` |
-| [Email Field](EmailFieldElement.md) | `EmailFieldElement` | `EmailFieldElement.getByLabel(page, "Email")` |
-| [Password Field](PasswordFieldElement.md) | `PasswordFieldElement` | `PasswordFieldElement.getByLabel(page, "Password")` |
-| [Text Area](TextAreaElement.md) | `TextAreaElement` | `TextAreaElement.getByLabel(page, "Comment")` |
-| [Number Field](NumberFieldElement.md) | `NumberFieldElement` | `NumberFieldElement.getByLabel(page, "Price")` |
-| [Integer Field](IntegerFieldElement.md) | `IntegerFieldElement` | `IntegerFieldElement.getByLabel(page, "Quantity")` |
-| [Big Decimal Field](BigDecimalFieldElement.md) | `BigDecimalFieldElement` | `BigDecimalFieldElement.getByLabel(page, "Amount")` |
-| [Custom Field](CustomFieldElement.md) | `CustomFieldElement` | `CustomFieldElement.getByLabel(page, "Phone")` |
+| [Text Field](TextFieldElement.md) | `TextFieldElement` | `find(page, TextFieldElement.class).withLabel("Name").single()` |
+| [Email Field](EmailFieldElement.md) | `EmailFieldElement` | `find(page, EmailFieldElement.class).withLabel("Email").single()` |
+| [Password Field](PasswordFieldElement.md) | `PasswordFieldElement` | `find(page, PasswordFieldElement.class).withLabel("Password").single()` |
+| [Text Area](TextAreaElement.md) | `TextAreaElement` | `find(page, TextAreaElement.class).withLabel("Comment").single()` |
+| [Number Field](NumberFieldElement.md) | `NumberFieldElement` | `find(page, NumberFieldElement.class).withLabel("Price").single()` |
+| [Integer Field](IntegerFieldElement.md) | `IntegerFieldElement` | `find(page, IntegerFieldElement.class).withLabel("Quantity").single()` |
+| [Big Decimal Field](BigDecimalFieldElement.md) | `BigDecimalFieldElement` | `find(page, BigDecimalFieldElement.class).withLabel("Amount").single()` |
+| [Custom Field](CustomFieldElement.md) | `CustomFieldElement` | `find(page, CustomFieldElement.class).withLabel("Phone").single()` |
 
 ## Date and time
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Date Picker](DatePickerElement.md) | `DatePickerElement` | `DatePickerElement.getByLabel(page, "Birthday")` |
-| [Time Picker](TimePickerElement.md) | `TimePickerElement` | `TimePickerElement.getByLabel(page, "Alarm")` |
-| [Date Time Picker](DateTimePickerElement.md) | `DateTimePickerElement` | `DateTimePickerElement.getByLabel(page, "Meeting")` |
+| [Date Picker](DatePickerElement.md) | `DatePickerElement` | `find(page, DatePickerElement.class).withLabel("Birthday").single()` |
+| [Time Picker](TimePickerElement.md) | `TimePickerElement` | `find(page, TimePickerElement.class).withLabel("Alarm").single()` |
+| [Date Time Picker](DateTimePickerElement.md) | `DateTimePickerElement` | `find(page, DateTimePickerElement.class).withLabel("Meeting").single()` |
 
 ## Selection
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Combo Box](ComboBoxElement.md) | `ComboBoxElement` | `ComboBoxElement.getByLabel(page, "Country")` |
-| [Multi-Select Combo Box](MultiSelectComboBoxElement.md) | `MultiSelectComboBoxElement` | `MultiSelectComboBoxElement.getByLabel(page, "Tags")` |
-| [Select](SelectElement.md) | `SelectElement` | `SelectElement.getByLabel(page, "Size")` |
+| [Combo Box](ComboBoxElement.md) | `ComboBoxElement` | `find(page, ComboBoxElement.class).withLabel("Country").single()` |
+| [Multi-Select Combo Box](MultiSelectComboBoxElement.md) | `MultiSelectComboBoxElement` | `find(page, MultiSelectComboBoxElement.class).withLabel("Tags").single()` |
+| [Select](SelectElement.md) | `SelectElement` | `find(page, SelectElement.class).withLabel("Size").single()` |
 | [List Box](ListBoxElement.md) | `ListBoxElement` | `find(page, ListBoxElement.class).withAccessibleName("Fruits").single()` |
-| [Checkbox](CheckboxElement.md) | `CheckboxElement` | `CheckboxElement.getByLabel(page, "I agree")` |
-| [Checkbox Group](CheckboxGroupElement.md) | `CheckboxGroupElement` | `CheckboxGroupElement.getByLabel(page, "Toppings")` |
-| [Radio Button Group](RadioButtonGroupElement.md) | `RadioButtonGroupElement` | `RadioButtonGroupElement.getByLabel(page, "Plan")` |
-| [Switch](SwitchElement.md) | `SwitchElement` | `SwitchElement.getByLabel(page, "Notifications")` |
-| [Slider](SliderElement.md) | `SliderElement` | `SliderElement.getByLabel(page, "Volume")` |
+| [Checkbox](CheckboxElement.md) | `CheckboxElement` | `find(page, CheckboxElement.class).withLabel("I agree").single()` |
+| [Checkbox Group](CheckboxGroupElement.md) | `CheckboxGroupElement` | `find(page, CheckboxGroupElement.class).withLabel("Toppings").single()` |
+| [Radio Button Group](RadioButtonGroupElement.md) | `RadioButtonGroupElement` | `find(page, RadioButtonGroupElement.class).withLabel("Plan").single()` |
+| [Switch](SwitchElement.md) | `SwitchElement` | `find(page, SwitchElement.class).withLabel("Notifications").single()` |
+| [Slider](SliderElement.md) | `SliderElement` | `find(page, SliderElement.class).withLabel("Volume").single()` |
 | [Upload](UploadElement.md) | `UploadElement` | `UploadElement.getByButtonText(page, "Upload file...")` |
 
 ## Actions and menus
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Button](ButtonElement.md) | `ButtonElement` | `ButtonElement.getByText(page, "Save")` |
+| [Button](ButtonElement.md) | `ButtonElement` | `find(page, ButtonElement.class).withAccessibleName("Save").single()` |
 | [Menu Bar](MenuBarElement.md) | `MenuBarElement`, `MenuElement`, `MenuItemElement` | `MenuBarElement.getById(page, "main-menu")` |
 | [Context Menu](ContextMenuElement.md) | `ContextMenuElement` | `new ContextMenuElement(page)` |
 
@@ -54,9 +54,9 @@ signature.
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Dialog](DialogElement.md) | `DialogElement` | `DialogElement.getByHeaderText(page, "Edit person")` |
-| [Confirm Dialog](ConfirmDialogElement.md) | `ConfirmDialogElement` | `ConfirmDialogElement.getByHeaderText(page, "Delete?")` |
-| [Notification](NotificationElement.md) | `NotificationElement` | `NotificationElement.getByText(page, "Saved")` |
+| [Dialog](DialogElement.md) | `DialogElement` | `find(page, DialogElement.class).withAccessibleName("Edit person").single()` |
+| [Confirm Dialog](ConfirmDialogElement.md) | `ConfirmDialogElement` | `find(page, ConfirmDialogElement.class).withAccessibleName("Delete?").single()` |
+| [Notification](NotificationElement.md) | `NotificationElement` | `find(page, NotificationElement.class).withTextContaining("Saved").single()` |
 | [Popover](PopoverElement.md) | `PopoverElement` | `find(page, PopoverElement.class).withAccessibleName("Details").single()` |
 | [Tooltip](TooltipElement.md) | `TooltipElement` | `field.getTooltip()` |
 | [Progress Bar](ProgressBarElement.md) | `ProgressBarElement` | `ProgressBarElement.getById(page, "progress")` |
@@ -79,7 +79,7 @@ signature.
 |---|---|---|
 | [Tabs](TabsElement.md) | `TabsElement`, `TabElement` | `TabsElement.get(page)` |
 | [Tab Sheet](TabSheetElement.md) | `TabSheetElement` | `TabSheetElement.get(page)` |
-| [Side Navigation](SideNavigationElement.md) | `SideNavigationElement`, `SideNavigationItemElement` | `SideNavigationElement.getByLabel(page, "Menu")` |
+| [Side Navigation](SideNavigationElement.md) | `SideNavigationElement`, `SideNavigationItemElement` | `find(page, SideNavigationElement.class).withLabel("Menu").single()` |
 | [Breadcrumbs](BreadcrumbsElement.md) | `BreadcrumbsElement`, `BreadcrumbsItemElement` | `BreadcrumbsElement.get(page)` |
 
 ## Data
@@ -94,9 +94,9 @@ signature.
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Avatar](AvatarElement.md) | `AvatarElement` | `AvatarElement.getByName(page, "Ada Lovelace")` |
+| [Avatar](AvatarElement.md) | `AvatarElement` | `find(page, AvatarElement.class).withAttribute("name", "Ada Lovelace").single()` |
 | [Avatar Group](AvatarGroupElement.md) | `AvatarGroupElement` | `AvatarGroupElement.get(page)` |
-| [Badge](BadgeElement.md) | `BadgeElement` | `BadgeElement.getByText(page, "Completed")` |
+| [Badge](BadgeElement.md) | `BadgeElement` | `find(page, BadgeElement.class).withText("Completed").single()` |
 | [Markdown](MarkdownElement.md) | `MarkdownElement` | `MarkdownElement.get(page)` |
 | [Message List](MessageListElement.md) | `MessageListElement` | `MessageListElement.get(page)` |
 | [Message Input](MessageInputElement.md) | `MessageInputElement` | `MessageInputElement.get(page)` |
