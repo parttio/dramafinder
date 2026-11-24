@@ -71,7 +71,9 @@ public final class AutoWait {
      * page's script context and the evaluation fails with "Execution context
      * was destroyed"; after {@code leavingTimeout} ms the flag is cleared and
      * the idle check goes on. Browsers without the Navigation API never set
-     * it. Resolves to {@code false} after {@code timeout} ms.
+     * it. A page that has not loaded yet is not settled either: Flow starts
+     * during the load, and Playwright can run the script in the new document
+     * before its load state has caught up. Resolves to {@code false} after {@code timeout} ms.
      */
     private static final String SETTLE_SCRIPT =
             // @formatter:off
@@ -108,7 +110,7 @@ public final class AutoWait {
             + "  }"
             + "  return performance.now() - navigationSeenAt >= navigationTimeout;"
             + "};"
-            + "const settled = () => !leaving() && navigationSettled() && idle();"
+            + "const settled = () => document.readyState === 'complete' && !leaving() && navigationSettled() && idle();"
             + "const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));"
             + "while (performance.now() - start < timeout) {"
             + "  if (settled()) {"

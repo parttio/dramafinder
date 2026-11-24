@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -116,6 +117,19 @@ public class AutoWaitIT extends SpringPlaywrightIT {
     public void clickWaitsForAPageLoadTheServerStarted() {
         ButtonElement.getByText(page, "Reload to greeting").click();
         assertEquals(1, page.getByText("Greeting", new Page.GetByTextOptions().setExact(true)).count());
+    }
+
+    /**
+     * A regression guard rather than a red-first test: Playwright's
+     * {@code click()} already waits for a document load the click starts, so
+     * this passed before issue #320 too. It pins that a page without Flow is
+     * idle as soon as it has loaded.
+     */
+    @Test
+    public void explicitWaitWaitsForALinkToLoadAPageWithoutFlow() {
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Plain link")).click();
+        AutoWait.waitForVaadinIdle(page);
+        assertEquals(1, page.getByText("Plain page content").count());
     }
 
     /**

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.button.Button;
 
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
@@ -48,7 +49,11 @@ public class AutoWaitView extends Main {
         Button reload = new Button("Reload to greeting",
                 e -> e.getSource().getUI().ifPresent(ui -> ui.getPage().setLocation("nav/greeting")));
 
-        add(button, field, checkbox, combo, navigate, reload, result);
+        // Plain link to a page without Flow, loaded by the browser
+        Anchor plainLink = new Anchor("plain-page.html", "Plain link");
+        plainLink.setRouterIgnore(true);
+
+        add(button, field, checkbox, combo, navigate, reload, plainLink, result);
     }
 
     private static void slowly(Runnable update) {
