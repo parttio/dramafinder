@@ -47,18 +47,54 @@ public final class AutoWait {
     private static final int IDLE_TIMEOUT_MS = 30_000;
 
     /**
+     * How long to wait for a document load the page has started to replace
+     * the page, before treating the load as abandoned (a {@code 204} response,
+     * a cancelled load) and going on with the idle check.
+     */
+    private static final int LEAVING_TIMEOUT_MS = 5000;
+
+    /** How many times in a row the wait starts again on a page that replaced the previous one. */
+    private static final int MAX_PAGE_REPLACEMENTS = 5;
+
+    /**
      * Resolves once Flow is idle and no navigation is pending, in one browser
      * call. {@code window.Vaadin.Flow.navigation} is true while Flow hands a
      * server-side {@code ui.navigate(..)} to React Router; Flow deletes it once
      * the address bar shows the new location (Flow internal, not an API). A
      * navigation pending for {@code navigationTimeout} ms is given up on. A
      * settled state is checked again one task later, so a navigation that
-     * starts right after the client goes idle is not missed. Resolves to
-     * {@code false} after {@code timeout} ms.
+     * starts right after the client goes idle is not missed.
+     * <p>
+     * It also installs, once per page, a Navigation API listener that flags a
+     * load of another document (not same-document, not a download). While the
+     * flag is set the script keeps waiting, so the new document replaces the
+     * page's script context and the evaluation fails with "Execution context
+     * was destroyed"; after {@code leavingTimeout} ms the flag is cleared and
+     * the idle check goes on. Browsers without the Navigation API never set
+     * it. Resolves to {@code false} after {@code timeout} ms.
      */
     private static final String SETTLE_SCRIPT =
             // @formatter:off
-            "async ([timeout, navigationTimeout]) => {"
+            "async ([timeout, navigationTimeout, leavingTimeout]) => {"
+            + "if (window.navigation && !window.__dramafinderLeavingListener) {"
+            + "  window.__dramafinderLeavingListener = e => {"
+            + "    if (!e.destination.sameDocument && e.downloadRequest === null) {"
+            + "      window.__dramafinderLeavingSince = performance.now();"
+            + "    }"
+            + "  };"
+            + "  window.navigation.addEventListener('navigate', window.__dramafinderLeavingListener);"
+            + "}"
+            + "const leaving = () => {"
+            + "  const since = window.__dramafinderLeavingSince;"
+            + "  if (since === undefined) {"
+            + "    return false;"
+            + "  }"
+            + "  if (performance.now() - since < leavingTimeout) {"
+            + "    return true;"
+            + "  }"
+            + "  delete window.__dramafinderLeavingSince;"
+            + "  return false;"
+            + "};"
             + "const idle = " + AbstractBasePlaywrightIT.WAIT_FOR_VAADIN_SCRIPT + ";"
             + "const start = performance.now();"
             + "let navigationSeenAt;"
@@ -72,7 +108,7 @@ public final class AutoWait {
             + "  }"
             + "  return performance.now() - navigationSeenAt >= navigationTimeout;"
             + "};"
-            + "const settled = () => navigationSettled() && idle();"
+            + "const settled = () => !leaving() && navigationSettled() && idle();"
             + "const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));"
             + "while (performance.now() - start < timeout) {"
             + "  if (settled()) {"
@@ -157,8 +193,14 @@ public final class AutoWait {
      * When the server navigated with {@code ui.navigate(..)}, it also waits,
      * up to two seconds, for the address bar to show the new location, which
      * Flow (in React mode, Vaadin's default) updates only after it has handled
-     * the response. When the action navigated and the page's script context
-     * was replaced while waiting, the wait starts again on the new page.
+     * the response. When the action started loading another document (a
+     * {@code setLocation(..)} from the server, a plain link, a form post), it
+     * waits for that document to replace the page, then starts again on the
+     * new page, where it also waits for Flow to start its UI. A page with no
+     * Flow is idle once loaded. This needs the browser's Navigation API
+     * (Chromium); elsewhere a load the action started is only waited for when
+     * it replaces the page during the wait. Only loads that start after a
+     * first wait on the page are seen.
      * <p>
      * The wait is one browser call when nothing is pending. It runs in the
      * page, so Playwright's default timeout does not apply: it has its own
@@ -168,19 +210,24 @@ public final class AutoWait {
      * @throws TimeoutError when Flow is still busy after 30 seconds
      */
     public static void waitForVaadinIdle(Page page) {
-        try {
-            waitForIdleAndNavigation(page);
-        } catch (PlaywrightException e) {
-            if (!isNavigation(e)) {
-                throw e;
+        for (int attempt = 1; ; attempt++) {
+            try {
+                waitForIdleAndNavigation(page);
+                return;
+            } catch (PlaywrightException e) {
+                // Playwright can report the old context destroyed before the
+                // frame has switched to the new document, so the wait right
+                // after a load may land on the old one too.
+                if (!isNavigation(e) || attempt == MAX_PAGE_REPLACEMENTS) {
+                    throw e;
+                }
+                page.waitForLoadState();
             }
-            page.waitForLoadState();
-            waitForIdleAndNavigation(page);
         }
     }
 
     private static void waitForIdleAndNavigation(Page page) {
-        Object settled = page.evaluate(SETTLE_SCRIPT, List.of(IDLE_TIMEOUT_MS, NAVIGATION_TIMEOUT_MS));
+        Object settled = page.evaluate(SETTLE_SCRIPT, List.of(IDLE_TIMEOUT_MS, NAVIGATION_TIMEOUT_MS, LEAVING_TIMEOUT_MS));
         if (!Boolean.TRUE.equals(settled)) {
             throw new TimeoutError("Vaadin Flow did not become idle within " + IDLE_TIMEOUT_MS + " ms");
         }

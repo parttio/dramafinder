@@ -112,6 +112,12 @@ public class AutoWaitIT extends SpringPlaywrightIT {
         assertTrue(page.url().endsWith("/nav/greeting"), page.url());
     }
 
+    @Test
+    public void clickWaitsForAPageLoadTheServerStarted() {
+        ButtonElement.getByText(page, "Reload to greeting").click();
+        assertEquals(1, page.getByText("Greeting", new Page.GetByTextOptions().setExact(true)).count());
+    }
+
     /**
      * Flow 25.3 starts handing a server-side navigation to React Router, and
      * sets {@code window.Vaadin.Flow.navigation}, while its client is still
