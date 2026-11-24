@@ -112,12 +112,12 @@ itself, not the cell. For text, prefer `CellElement.getText()` / `assertText(Str
 or `GridElement.assertCellContent(row, column, expected)`.
 
 **A label is matched in full.** Every label- or name-keyed lookup —
-`find(page, TextFieldElement.class).withLabel("Name").single()`, `ButtonElement.getByText(page, "Save")`,
-`DialogElement.getByHeaderText(page, "Delete?")`, and the item lookups such as
+`find(page, TextFieldElement.class).withLabel("Name").single()`, `find(page, ButtonElement.class).withAccessibleName("Save").single()`,
+`find(page, DialogElement.class).withAccessibleName("Delete?").single()`, and the item lookups such as
 `group.getCheckbox("Cheese")` or `tabs.getTab("Details")` — matches the whole label,
 case-sensitively, and raises a strict-mode error if two components share it. Passing
 part of a label finds nothing: use `.withLabelContaining("Name")` (or
-`ButtonElement.getByTextContaining`) for a case-insensitive partial match, which also
+`.withAccessibleNameContaining(..)` on a button) for a case-insensitive partial match, which also
 fails rather than guessing when several components match. A label is the
 **visible** label: `withLabel` never matches an `aria-label` or a placeholder. A
 field with no label of its own inside a form item (`formLayout.addFormItem(field,

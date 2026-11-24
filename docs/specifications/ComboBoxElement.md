@@ -332,7 +332,7 @@ Button validate = new Button("Validate", e -> binder.validate());
 // Test
 ComboBoxElement required = find(page, ComboBoxElement.class).withLabel("ComboBox with theme").single();
 required.assertValid();
-ButtonElement.getByText(page, "Validate").click();
+find(page, ButtonElement.class).withAccessibleName("Validate").single().click();
 required.assertInvalid();
 required.assertErrorMessage("Required field");
 ```
@@ -342,7 +342,7 @@ required.assertErrorMessage("Required field");
 ```java
 ComboBoxElement toggled = find(page, ComboBoxElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();
 
 ComboBoxElement readOnly = find(page, ComboBoxElement.class).withLabel("Read-only ComboBox").single();

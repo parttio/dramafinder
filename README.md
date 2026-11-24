@@ -27,9 +27,9 @@ public class ContactViewIT extends SpringPlaywrightIT {
         find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada Lovelace");
         find(page, ComboBoxElement.class).withLabel("Country").single().selectItem("United Kingdom");
         find(page, DatePickerElement.class).withLabel("Birthday").single().setValue(LocalDate.of(1815, 12, 10));
-        ButtonElement.getByText(page, "Save").click();
+        find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 
-        NotificationElement.getByText(page, "Contact saved").assertOpen();
+        find(page, NotificationElement.class).withTextContaining("Contact saved").single().assertOpen();
         GridElement.get(page).assertCellContent(0, "Name", "Ada Lovelace");
     }
 }

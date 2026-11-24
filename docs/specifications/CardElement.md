@@ -111,7 +111,7 @@ card.addToFooter(new Button("Book now", e -> status.setText("Booked")),
 // Test
 CardElement card = CardElement.getByTitle(page, "Booking Card");
 
-ButtonElement.getByText(card.getLocator(), "Book now").click();
+card.find(ButtonElement.class).withAccessibleName("Book now").single().click();
 assertThat(page.locator("#card-action-status")).hasText("Booked");
 
 // Or with a typed query scoped to the card

@@ -63,35 +63,47 @@ TextAreaElement notes = find(page, TextAreaElement.class).withLabelContaining("a
 
 ## By text
 
-Components identified by what they show use `getByText`:
+Components identified by what they show use a text filter. On a button,
+`withAccessibleName` matches its text, or the `aria-label` of an icon-only
+button, as the `ButtonElement.getByText` shortcut does:
 
 ```java
-ButtonElement save = ButtonElement.getByText(page, "Save");
-ButtonElement close = ButtonElement.getByText(page, "Close"); // also an icon button with aria-label "Close"
-ButtonElement anySave = ButtonElement.getByTextContaining(page, "save"); // "Save draft", "Save"... must be unique
-BreadcrumbsItemElement home = BreadcrumbsItemElement.getByText(page, "Home");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
+ButtonElement close = find(page, ButtonElement.class).withAccessibleName("Close").single(); // also an icon button with aria-label "Close"
+ButtonElement anySave = find(page, ButtonElement.class).withAccessibleNameContaining("save").single(); // "Save draft", "Save"... must be unique
+BreadcrumbsItemElement home = find(page, BreadcrumbsItemElement.class).withText("Home").single();
 ```
 
-Other components have a factory named after their caption:
+A dialog's header is its accessible name, and an avatar's name is an
+attribute, so the same grammar finds them:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "Delete user?");
-ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Discard changes?");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delete user?").single();
+ConfirmDialogElement confirm = find(page, ConfirmDialogElement.class).withAccessibleName("Discard changes?").single();
+AvatarElement avatar = find(page, AvatarElement.class).withAttribute("name", "Ada Lovelace").single();
+```
+
+`DialogElement.getByHeaderText` and `ConfirmDialogElement.getByHeaderText` are
+shortcuts for the first two. A few components are found by a caption that no
+filter covers, so they keep a factory named after it:
+
+```java
 DetailsElement shipping = DetailsElement.getBySummaryText(page, "Shipping address");
 CardElement card = CardElement.getByTitle(page, "Monthly revenue");
-AvatarElement avatar = AvatarElement.getByName(page, "Ada Lovelace");
 UploadElement upload = UploadElement.getByButtonText(page, "Upload invoice");
 ```
 
-A few lookups deliberately match **free-form content** as a case-insensitive
-substring and take the first match: `NotificationElement.getByText`,
-`BadgeElement.getByText`, `TooltipElement.getByText` and
-`VirtualListElement.getItemByText`. Their content is not a label, so a fragment
-is the natural key:
+A notification's content is free-form text, not a label, so a fragment is the
+natural key. `withTextContaining` matches a case-insensitive substring of it:
 
 ```java
-NotificationElement.getByText(page, "saved").assertOpen(); // "Contact saved successfully"
+find(page, NotificationElement.class).withTextContaining("saved").single().assertOpen(); // "Contact saved successfully"
 ```
+
+Use `withText` for the whole text. A few factories also match free-form content
+as a case-insensitive substring, but take the **first** match instead of
+failing on several: `BadgeElement.getByText`, `TooltipElement.getByText` and
+`VirtualListElement.getItemByText`.
 
 ## The only one on the page
 
@@ -132,9 +144,9 @@ Every element has `find(..)`, which searches inside it, and `find` also takes a
 `Locator`, so lookups compose:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "New contact");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("New contact").single();
 TextFieldElement name = dialog.find(TextFieldElement.class).withLabel("Name").single();
-ButtonElement.getByText(dialog.getLocator(), "Save").click();
+dialog.find(ButtonElement.class).withAccessibleName("Save").single().click();
 
 FormLayoutElement billing = FormLayoutElement.getById(page, "billing");
 TextFieldElement billingStreet = billing.find(TextFieldElement.class).withLabel("Street").single();

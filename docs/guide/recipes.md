@@ -29,16 +29,16 @@ void savesAValidPerson() {
     find(page, DatePickerElement.class).withLabel("Birthday").single().setValue(LocalDate.of(1815, 12, 10));
     find(page, CheckboxElement.class).withLabel("Subscribe to the newsletter").single().check();
 
-    ButtonElement.getByText(page, "Save").click();
+    find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 
-    NotificationElement.getByText(page, "Saved Ada Lovelace").assertOpen();
+    find(page, NotificationElement.class).withTextContaining("Saved Ada Lovelace").single().assertOpen();
 }
 
 @Test
 void rejectsAnInvalidEmail() {
     EmailFieldElement email = find(page, EmailFieldElement.class).withLabel("Email").single();
     email.setValue("not-an-email");
-    ButtonElement.getByText(page, "Save").click();
+    find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 
     email.assertInvalid();
     email.assertErrorMessage("Enter a valid email address");
@@ -99,7 +99,7 @@ private void openEditor(Person person) {
 @Test
 void editsTheSelectedPerson() {
     GridElement grid = GridElement.get(page);
-    ButtonElement edit = ButtonElement.getByText(page, "Edit");
+    ButtonElement edit = find(page, ButtonElement.class).withAccessibleName("Edit").single();
     edit.assertDisabled();
 
     grid.select(0);
@@ -107,11 +107,11 @@ void editsTheSelectedPerson() {
     edit.assertEnabled();
     edit.click();
 
-    DialogElement dialog = DialogElement.getByHeaderText(page, "Edit person");
+    DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Edit person").single();
     dialog.assertOpen();
     TextFieldElement name = dialog.find(TextFieldElement.class).withLabel("Name").single();
     name.setValue("Ada King");
-    ButtonElement.getByText(dialog.getLocator(), "Save").click();
+    dialog.find(ButtonElement.class).withAccessibleName("Save").single().click();
 
     dialog.assertClosed();
     grid.assertCellContent(0, "Name", "Ada King");
@@ -130,9 +130,9 @@ confirm.setCancelable(true);
 ```java
 @Test
 void deletingAsksForConfirmation() {
-    ButtonElement.getByText(page, "Delete").click();
+    find(page, ButtonElement.class).withAccessibleName("Delete").single().click();
 
-    ConfirmDialogElement confirm = ConfirmDialogElement.getByHeaderText(page, "Delete person?");
+    ConfirmDialogElement confirm = find(page, ConfirmDialogElement.class).withAccessibleName("Delete person?").single();
     confirm.assertMessage("This cannot be undone.");
     confirm.assertConfirmText("Delete");
     confirm.confirm();
@@ -143,7 +143,7 @@ void deletingAsksForConfirmation() {
 
 @Test
 void cancelKeepsThePerson() {
-    ButtonElement.getByText(page, "Delete").click();
+    find(page, ButtonElement.class).withAccessibleName("Delete").single().click();
     ConfirmDialogElement.get(page).cancel();
     GridElement.get(page).assertRowCount(100);
 }
@@ -174,8 +174,8 @@ void rowDetailsShowTheBio() {
 void buttonInACell() {
     GridElement grid = GridElement.get(page);
     var actions = grid.findCell(0, "Actions").orElseThrow();
-    ButtonElement.getByText(actions.getCellContentLocator(), "Details").click();
-    DialogElement.getByHeaderText(page, "Ada Lovelace").assertOpen();
+    find(actions.getCellContentLocator(), ButtonElement.class).withAccessibleName("Details").single().click();
+    find(page, DialogElement.class).withAccessibleName("Ada Lovelace").single().assertOpen();
 }
 ```
 
@@ -213,7 +213,7 @@ void uploadsAnInvoice() {
     upload.uploadFiles(Paths.get("src/test/resources/invoice.pdf"));
 
     upload.assertFileComplete("invoice.pdf");
-    NotificationElement.getByText(page, "invoice.pdf received").assertOpen();
+    find(page, NotificationElement.class).withTextContaining("invoice.pdf received").single().assertOpen();
 }
 ```
 
@@ -238,7 +238,7 @@ file.getSubMenu().addItem("Export", e -> export());
 void exportFromTheFileMenu() {
     MenuBarElement menu = find(page, MenuBarElement.class).withAccessibleName("Actions").single();
     menu.openSubMenu("File").getMenuItemElement("Export").click();
-    NotificationElement.getByText(page, "Export started").assertOpen();
+    find(page, NotificationElement.class).withTextContaining("Export started").single().assertOpen();
 }
 ```
 
@@ -247,7 +247,7 @@ void exportFromTheFileMenu() {
 ```java
 @Test
 void exportShowsProgressWhileRunning() {
-    ButtonElement export = ButtonElement.getByText(page, "Export");
+    ButtonElement export = find(page, ButtonElement.class).withAccessibleName("Export").single();
     AutoWait.withoutWaiting(export::click);
 
     ProgressBarElement.getById(page, "export-progress").assertVisible();
@@ -264,7 +264,7 @@ void exportShowsProgressWhileRunning() {
 @WithMockUser(username = "alice", roles = "ADMIN")
 void adminCanDeleteUsers() {
     navigate(UsersView.class);
-    ButtonElement.getByText(page, "Delete").assertEnabled();
+    find(page, ButtonElement.class).withAccessibleName("Delete").single().assertEnabled();
 }
 ```
 

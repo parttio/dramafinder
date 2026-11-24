@@ -46,7 +46,7 @@ signature.
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Button](ButtonElement.md) | `ButtonElement` | `ButtonElement.getByText(page, "Save")` |
+| [Button](ButtonElement.md) | `ButtonElement` | `find(page, ButtonElement.class).withAccessibleName("Save").single()` |
 | [Menu Bar](MenuBarElement.md) | `MenuBarElement`, `MenuElement`, `MenuItemElement` | `MenuBarElement.getById(page, "main-menu")` |
 | [Context Menu](ContextMenuElement.md) | `ContextMenuElement` | `new ContextMenuElement(page)` |
 
@@ -54,9 +54,9 @@ signature.
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Dialog](DialogElement.md) | `DialogElement` | `DialogElement.getByHeaderText(page, "Edit person")` |
-| [Confirm Dialog](ConfirmDialogElement.md) | `ConfirmDialogElement` | `ConfirmDialogElement.getByHeaderText(page, "Delete?")` |
-| [Notification](NotificationElement.md) | `NotificationElement` | `NotificationElement.getByText(page, "Saved")` |
+| [Dialog](DialogElement.md) | `DialogElement` | `find(page, DialogElement.class).withAccessibleName("Edit person").single()` |
+| [Confirm Dialog](ConfirmDialogElement.md) | `ConfirmDialogElement` | `find(page, ConfirmDialogElement.class).withAccessibleName("Delete?").single()` |
+| [Notification](NotificationElement.md) | `NotificationElement` | `find(page, NotificationElement.class).withTextContaining("Saved").single()` |
 | [Popover](PopoverElement.md) | `PopoverElement` | `find(page, PopoverElement.class).withAccessibleName("Details").single()` |
 | [Tooltip](TooltipElement.md) | `TooltipElement` | `field.getTooltip()` |
 | [Progress Bar](ProgressBarElement.md) | `ProgressBarElement` | `ProgressBarElement.getById(page, "progress")` |
@@ -94,9 +94,9 @@ signature.
 
 | Component | Element | Typical lookup |
 |---|---|---|
-| [Avatar](AvatarElement.md) | `AvatarElement` | `AvatarElement.getByName(page, "Ada Lovelace")` |
+| [Avatar](AvatarElement.md) | `AvatarElement` | `find(page, AvatarElement.class).withAttribute("name", "Ada Lovelace").single()` |
 | [Avatar Group](AvatarGroupElement.md) | `AvatarGroupElement` | `AvatarGroupElement.get(page)` |
-| [Badge](BadgeElement.md) | `BadgeElement` | `BadgeElement.getByText(page, "Completed")` |
+| [Badge](BadgeElement.md) | `BadgeElement` | `find(page, BadgeElement.class).withText("Completed").single()` |
 | [Markdown](MarkdownElement.md) | `MarkdownElement` | `MarkdownElement.get(page)` |
 | [Message List](MessageListElement.md) | `MessageListElement` | `MessageListElement.get(page)` |
 | [Message Input](MessageInputElement.md) | `MessageInputElement` | `MessageInputElement.get(page)` |

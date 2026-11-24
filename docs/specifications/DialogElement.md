@@ -29,10 +29,10 @@ Button open = new Button("Open dialog", e -> dialog.open());
 
 ```java
 // Test
-ButtonElement.getByText(page, "Open dialog").click();
+find(page, ButtonElement.class).withAccessibleName("Open dialog").single().click();
 
 // by header title: exact, case-sensitive, no .first()
-DialogElement dialog = DialogElement.getByHeaderText(page, "My Dialog");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("My Dialog").single();
 
 // the single open dialog, found by its dialog role
 DialogElement onlyDialog = new DialogElement(page);
@@ -101,7 +101,7 @@ for the whole dialog, or one of its slot locators to narrow it further:
 
 ```java
 TextFieldElement reason = dialog.find(TextFieldElement.class).withLabel("Reason").single();
-ButtonElement close = ButtonElement.getByText(dialog.getFooterLocator(), "Close");
+ButtonElement close = find(dialog.getFooterLocator(), ButtonElement.class).withAccessibleName("Close").single();
 close.click();
 ```
 
@@ -127,7 +127,7 @@ dialog.getFooter().add(new Button("Close", e -> dialog.close()));
 
 ```java
 // Test
-DialogElement dialog = DialogElement.getByHeaderText(page, "Header title");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Header title").single();
 dialog.assertHeaderText("Header title");
 assertThat(dialog.getHeaderLocator()).hasText("This is the header of the dialog.");
 assertThat(dialog.getContentLocator()).hasText("This is the content of the dialog.");
@@ -145,8 +145,8 @@ overlay is hidden, so it waits out the closing animation, and it also passes
 when Flow has removed the dialog from the page.
 
 ```java
-ButtonElement.getByText(page, "Open dialog").click();
-DialogElement dialog = DialogElement.getByHeaderText(page, "My Dialog");
+find(page, ButtonElement.class).withAccessibleName("Open dialog").single().click();
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("My Dialog").single();
 dialog.assertOpen();
 dialog.assertVisible();
 
@@ -181,22 +181,22 @@ dialog1.setModal(false);
 
 ```java
 // Test
-ButtonElement.getByText(page, "Open non-modal 1").click();
-DialogElement dialog1 = DialogElement.getByHeaderText(page, "My non-modal Dialog 1");
+find(page, ButtonElement.class).withAccessibleName("Open non-modal 1").single().click();
+DialogElement dialog1 = find(page, DialogElement.class).withAccessibleName("My non-modal Dialog 1").single();
 dialog1.assertModeless();
 
 // the page stays usable: open a second modeless dialog
-ButtonElement.getByText(page, "Open non-modal 2").click();
-DialogElement dialog2 = DialogElement.getByHeaderText(page, "My non-modal Dialog 2");
+find(page, ButtonElement.class).withAccessibleName("Open non-modal 2").single().click();
+DialogElement dialog2 = find(page, DialogElement.class).withAccessibleName("My non-modal Dialog 2").single();
 dialog2.assertModeless();
 
-ButtonElement.getByText(dialog2.getFooterLocator(), "Close").click();
+find(dialog2.getFooterLocator(), ButtonElement.class).withAccessibleName("Close").single().click();
 dialog2.assertClosed();
 dialog1.assertOpen();
 ```
 
 ```java
-DialogElement modal = DialogElement.getByHeaderText(page, "My Dialog");
+DialogElement modal = find(page, DialogElement.class).withAccessibleName("My Dialog").single();
 modal.assertModal();
 boolean isModal = modal.isModal(); // read once, no retry
 ```

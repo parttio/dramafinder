@@ -293,7 +293,7 @@ public void test<ComponentLabel>() {
 @Test
 public void testFormSubmitWithInvalidInput() {
     TextFieldElement nameField = find(page, TextFieldElement.class).withLabel("Name").single();
-    ButtonElement submitBtn = ButtonElement.getByText(page, "Save");
+    ButtonElement submitBtn = find(page, ButtonElement.class).withAccessibleName("Save").single();
     nameField.setValue("");
     submitBtn.click();
     nameField.assertInvalid();
@@ -303,7 +303,7 @@ public void testFormSubmitWithInvalidInput() {
 @Test
 public void testFormSubmitWithValidInput() {
     TextFieldElement nameField = find(page, TextFieldElement.class).withLabel("Name").single();
-    ButtonElement submitBtn = ButtonElement.getByText(page, "Save");
+    ButtonElement submitBtn = find(page, ButtonElement.class).withAccessibleName("Save").single();
     nameField.setValue("Jane Doe");
     submitBtn.click();
     nameField.assertValid();

@@ -32,7 +32,7 @@ Generate the outline of a view on demand, in a throwaway test:
 ```java
 @Test
 void outline() {
-    ButtonElement.getByText(page, "New contact").click(); // open what you need first
+    find(page, ButtonElement.class).withAccessibleName("New contact").single().click(); // open what you need first
     ViewOutline.write(page);                             // target/agent-report/view-outline.txt
 }
 ```

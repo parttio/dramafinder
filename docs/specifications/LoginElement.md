@@ -61,7 +61,7 @@ add(new Button("Open login overlay", e -> loginOverlay.setOpened(true)));
 
 ```java
 // Test
-ButtonElement.getByText(page, "Open login overlay").click();
+find(page, ButtonElement.class).withAccessibleName("Open login overlay").single().click();
 
 // by application title: exact, case-sensitive
 LoginOverlayElement overlay = LoginOverlayElement.getByTitle(page, "DramaFinder");
@@ -200,7 +200,7 @@ not reflected to an attribute on the host, so:
 
 ```java
 loginForm.assertEnabled();
-ButtonElement.getByText(page, "Disable login").click();
+find(page, ButtonElement.class).withAccessibleName("Disable login").single().click();
 loginForm.assertDisabled();
 ```
 
@@ -219,7 +219,7 @@ the `opened` attribute on the host.
 LoginOverlayElement loginOverlay = new LoginOverlayElement(page);
 loginOverlay.assertHidden();
 
-ButtonElement.getByText(page, "Open login overlay").click();
+find(page, ButtonElement.class).withAccessibleName("Open login overlay").single().click();
 loginOverlay.assertOpen();
 loginOverlay.assertVisible();
 

@@ -23,14 +23,14 @@ add(new Button("Show notification", e -> notification.open()));
 
 ```java
 // Test
-ButtonElement.getByText(page, "Show notification").click();
+find(page, ButtonElement.class).withAccessibleName("Show notification").single().click();
 
 // the single open notification
 NotificationElement notification = new NotificationElement(page);
 notification.assertOpen();
 
 // by (a substring of) its text, case-insensitive
-NotificationElement byText = NotificationElement.getByText(page, "notification");
+NotificationElement byText = find(page, NotificationElement.class).withTextContaining("notification").single();
 
 // typed query: exact text, case-sensitive
 NotificationElement exact = find(page, NotificationElement.class)
@@ -65,7 +65,7 @@ second.open();
 
 ```java
 // Test
-NotificationElement first = NotificationElement.getByText(page, "First notification");
+NotificationElement first = find(page, NotificationElement.class).withTextContaining("First notification").single();
 first.assertOpen();
 first.assertContent("First notification");
 
@@ -142,7 +142,7 @@ close.addClickListener(e -> notification.close());
 NotificationElement notification = find(page, NotificationElement.class)
         .withTextContaining("This is a notification.")
         .single();
-ButtonElement.getByText(notification.getContentLocator(), "Close").click();
+find(notification.getContentLocator(), ButtonElement.class).withAccessibleName("Close").single().click();
 // or: notification.find(ButtonElement.class).withText("Close").single().click();
 notification.assertClosed();
 assertThat(find(page, NotificationElement.class).getLocator()).hasCount(0);

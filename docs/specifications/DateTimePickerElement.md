@@ -227,7 +227,7 @@ find(page, DateTimePickerElement.class).withAccessibleName("Invisible label").si
 
 DateTimePickerElement toggled = find(page, DateTimePickerElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();                       // both halves disabled
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();                        // both halves enabled
 ```
 

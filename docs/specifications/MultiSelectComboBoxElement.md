@@ -249,7 +249,7 @@ readOnly.assertSelectedItems("Apple", "Cherry");
 
 MultiSelectComboBoxElement toggled = find(page, MultiSelectComboBoxElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();
 
 // aria-label on the input; null when the name comes from aria-labelledby
@@ -265,7 +265,7 @@ Validation and theme variants work as on any field:
 MultiSelectComboBoxElement required = find(page, MultiSelectComboBoxElement.class).withLabel("MultiSelect with theme").single();
 required.assertTheme("small");
 required.assertValid();
-ButtonElement.getByText(page, "Validate").click();
+find(page, ButtonElement.class).withAccessibleName("Validate").single().click();
 required.assertInvalid();
 required.assertErrorMessage("Required field");
 ```

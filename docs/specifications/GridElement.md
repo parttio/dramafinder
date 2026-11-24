@@ -636,7 +636,7 @@ grid.addColumn(new ComponentRenderer<>(person -> {
 // Test
 GridElement grid = GridElement.getById(page, "component-grid");
 Locator content = grid.findCell(0, "Action").orElseThrow().getCellContentLocator();
-ButtonElement button = ButtonElement.getByText(content, "Click First1");
+ButtonElement button = find(content, ButtonElement.class).withAccessibleName("Click First1").single();
 button.click();
 assertThat(page.locator("#click-output")).hasText("Clicked: First1");
 ```

@@ -39,7 +39,7 @@ expected, and a `TreeGridElement` has every `GridElement` method.
 ## Clicking and reading text
 
 ```java
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 save.click();                 // clicks the host, then waits for the server round-trip
 
 CardElement card = CardElement.getByTitle(page, "Revenue");
@@ -148,7 +148,7 @@ component's own element class when there is one.
 // View: details.setVisible(false) until "Show details" is clicked
 DetailsElement details = DetailsElement.getBySummaryText(page, "Advanced");
 details.assertHidden();
-ButtonElement.getByText(page, "Show details").click();
+find(page, ButtonElement.class).withAccessibleName("Show details").single().click();
 details.assertVisible();
 
 details.assertVisible(true);  // boolean variant, handy in parameterised tests
@@ -196,7 +196,7 @@ assertThat(card.getLocator()).hasAttribute("theme", "outlined");
 It is also the scope for lookups inside the component:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "New contact");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("New contact").single();
 dialog.find(TextFieldElement.class).withLabel("Name").single().setValue("Ada");
 ```
 
@@ -206,7 +206,7 @@ dialog.find(TextFieldElement.class).withLabel("Name").single().setValue("Ada");
 inside the component:
 
 ```java
-DialogElement dialog = DialogElement.getByHeaderText(page, "Delete account?");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Delete account?").single();
 dialog.find(ButtonElement.class).withText("Delete").single().click();
 
 FormLayoutElement form = FormLayoutElement.get(page);

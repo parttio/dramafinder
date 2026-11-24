@@ -152,7 +152,7 @@ find(page, TimePickerElement.class).withAccessibleName("Labelled by").single()
 
 TimePickerElement toggled = find(page, TimePickerElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();
 ```
 

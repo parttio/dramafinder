@@ -91,8 +91,8 @@ public class ContactView extends VerticalLayout {
         @Test
         public void sendShowsAThankYouNotification() {
             find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
-            ButtonElement.getByText(page, "Send").click();
-            NotificationElement.getByText(page, "Thanks Ada").assertOpen();
+            find(page, ButtonElement.class).withAccessibleName("Send").single().click();
+            find(page, NotificationElement.class).withTextContaining("Thanks Ada").single().assertOpen();
         }
     }
     ```
@@ -128,8 +128,8 @@ public class ContactView extends VerticalLayout {
         @Test
         public void sendShowsAThankYouNotification() {
             find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
-            ButtonElement.getByText(page, "Send").click();
-            NotificationElement.getByText(page, "Thanks Ada").assertOpen();
+            find(page, ButtonElement.class).withAccessibleName("Send").single().click();
+            find(page, NotificationElement.class).withTextContaining("Thanks Ada").single().assertOpen();
         }
     }
     ```
@@ -176,8 +176,8 @@ public class ContactView extends VerticalLayout {
         @Test
         void sendShowsAThankYouNotification() {
             find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
-            ButtonElement.getByText(page, "Send").click();
-            NotificationElement.getByText(page, "Thanks Ada").assertOpen();
+            find(page, ButtonElement.class).withAccessibleName("Send").single().click();
+            find(page, NotificationElement.class).withTextContaining("Thanks Ada").single().assertOpen();
         }
     }
     ```
@@ -215,7 +215,7 @@ mvn verify -Dit.test=ContactViewIT
 ```java
 @BeforeEach
 void openTheEditor() {
-    ButtonElement.getByText(page, "New contact").click();
+    find(page, ButtonElement.class).withAccessibleName("New contact").single().click();
 }
 ```
 

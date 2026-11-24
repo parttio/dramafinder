@@ -143,7 +143,7 @@ Button validate = new Button("Validate", e -> binder.validate());
 // Test
 SelectElement required = find(page, SelectElement.class).withLabel("Select with theme").single();
 required.assertValid();
-ButtonElement.getByText(page, "Validate").click();
+find(page, ButtonElement.class).withAccessibleName("Validate").single().click();
 required.assertInvalid();
 required.assertErrorMessage("Required field");
 ```
@@ -153,7 +153,7 @@ required.assertErrorMessage("Required field");
 ```java
 SelectElement toggled = find(page, SelectElement.class).withLabel("Enabled/Disabled Field").single();
 toggled.assertDisabled();
-ButtonElement.getByText(page, "Enable/Disable").click();
+find(page, ButtonElement.class).withAccessibleName("Enable/Disable").single().click();
 toggled.assertEnabled();
 
 SelectElement other = find(page, SelectElement.class).withLabel("Select with helper component").single();

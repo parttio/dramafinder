@@ -49,7 +49,7 @@ loading the view.
 ## Asserting where the browser is
 
 ```java
-ButtonElement.getByText(page, "Open profile").click();
+find(page, ButtonElement.class).withAccessibleName("Open profile").single().click();
 assertAt(ProfileView.class);
 ```
 

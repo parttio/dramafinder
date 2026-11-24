@@ -26,9 +26,9 @@ matches nothing only fails when it is used.
 
 ```java
 // Nothing happens in the browser yet
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 
-ButtonElement.getByText(page, "Edit").click();
+find(page, ButtonElement.class).withAccessibleName("Edit").single().click();
 save.click(); // resolved now, after the form switched to edit mode
 ```
 
@@ -50,9 +50,10 @@ wrapper can also be built directly from a locator:
 `new TextFieldElement(someLocator)`.
 
 Factories are **not uniform**: an element has exactly the ones listed in its
-API section. [Finding components](finding-components.md) explains each kind and
-the typed query builder, `find(page, X.class)`, which gives every element the
-same grammar.
+API section. Prefer the typed query builder, `find(page, X.class)`, which gives
+every element the same grammar — `find(page, TextFieldElement.class).withLabel("Name").single()`
+is the same lookup as `TextFieldElement.getByLabel(page, "Name")`.
+[Finding components](finding-components.md) explains each kind.
 
 ## Actions
 

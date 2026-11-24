@@ -162,7 +162,7 @@ Button validate = new Button("Mark mobile invalid", e -> mobile.setInvalid(true)
 // Test
 CustomFieldElement mobile = find(page, CustomFieldElement.class).withLabel("Mobile phone").single();
 mobile.assertValid();
-ButtonElement.getByText(page, "Mark mobile invalid").click();
+find(page, ButtonElement.class).withAccessibleName("Mark mobile invalid").single().click();
 mobile.assertInvalid();
 mobile.assertErrorMessage("Enter a valid number");
 ```

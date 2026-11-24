@@ -165,12 +165,12 @@ Button validate = new Button("Validate CheckboxGroup",
 CheckboxGroupElement group = find(page, CheckboxGroupElement.class).withLabel("Required CheckboxGroup").single();
 group.assertValid();
 
-ButtonElement.getByText(page, "Validate CheckboxGroup").click();
+find(page, ButtonElement.class).withAccessibleName("Validate CheckboxGroup").single().click();
 group.assertInvalid();
 group.assertErrorMessage("Selection is required");
 
 group.selectByLabel("Option 1");
-ButtonElement.getByText(page, "Validate CheckboxGroup").click();
+find(page, ButtonElement.class).withAccessibleName("Validate CheckboxGroup").single().click();
 group.assertValid();
 ```
 

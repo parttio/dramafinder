@@ -23,7 +23,7 @@ Getters are still useful when you need the value itself, e.g. to reuse it:
 
 ```java
 String orderNumber = find(page, TextFieldElement.class).withLabel("Order number").single().getValue();
-NotificationElement.getByText(page, orderNumber).assertOpen();
+find(page, NotificationElement.class).withTextContaining(orderNumber).single().assertOpen();
 ```
 
 ## Failure messages
@@ -107,7 +107,7 @@ binder.forField(email).asRequired("Email is required").bind(...);
 
 ```java
 TextFieldElement email = find(page, TextFieldElement.class).withLabel("Email").single();
-ButtonElement.getByText(page, "Save").click();
+find(page, ButtonElement.class).withAccessibleName("Save").single().click();
 
 email.assertInvalid();
 email.assertErrorMessage("Email is required");
@@ -145,7 +145,7 @@ price.assertTooltipHasText("Monthly price shown to customers");
 ## Enabled and read-only
 
 ```java
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 save.assertDisabled();
 find(page, TextFieldElement.class).withLabel("Name").single().setValue("Ada");
 save.assertEnabled();
@@ -161,7 +161,7 @@ Vaadin writes every theme variant into one space-separated `theme` attribute.
 
 ```java
 // View: save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL)
-ButtonElement save = ButtonElement.getByText(page, "Save");
+ButtonElement save = find(page, ButtonElement.class).withAccessibleName("Save").single();
 save.assertTheme("small primary");          // every variant, any order
 save.assertHasThemeVariant("primary");      // one variant
 save.assertHasNoThemeVariant("error");
@@ -207,7 +207,7 @@ its tooltip, a badge's `assertText` leaves out its number.
 
 ```java
 // new Badge("unread messages", 5)
-BadgeElement badge = BadgeElement.getByText(page, "unread messages");
+BadgeElement badge = find(page, BadgeElement.class).withText("unread messages").single();
 badge.assertText("unread messages");
 badge.assertNumber(5);
 ```
@@ -224,7 +224,7 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 assertThat(page).hasTitle("Orders | Acme");
 assertThat(page.getByText("No orders yet")).isVisible();
 
-DialogElement dialog = DialogElement.getByHeaderText(page, "Order 42");
+DialogElement dialog = find(page, DialogElement.class).withAccessibleName("Order 42").single();
 assertThat(dialog.getContentLocator()).containsText("Shipped");
 
 var cells = GridElement.get(page).getHeaderCells(0);
@@ -235,7 +235,7 @@ To assert that something is **not** there, use an assertion that retries until
 it disappears, not a one-shot check:
 
 ```java
-NotificationElement.getByText(page, "Saving").assertClosed();
+find(page, NotificationElement.class).withTextContaining("Saving").single().assertClosed();
 GridElement.get(page).assertColumnNotPresent("Internal id");
 assertThat(find(page, ButtonElement.class).withText("Delete").getLocator()).hasCount(0);
 // not: assertFalse(find(page, ButtonElement.class).withText("Delete").exists());
@@ -260,12 +260,12 @@ tests over one long scenario, and name each after the behaviour:
 ```java
 @Test
 void saveIsDisabledUntilTheFormIsValid() {
-    ButtonElement.getByText(page, "Save").assertDisabled();
+    find(page, ButtonElement.class).withAccessibleName("Save").single().assertDisabled();
 }
 
 @Test
 void emailIsRequired() {
-    ButtonElement.getByText(page, "Validate").click();
+    find(page, ButtonElement.class).withAccessibleName("Validate").single().click();
     find(page, TextFieldElement.class).withLabel("Email").single().assertErrorMessage("Email is required");
 }
 ```
