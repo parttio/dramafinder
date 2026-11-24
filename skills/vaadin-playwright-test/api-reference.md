@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.2.2-SNAPSHOT — 61 element wrappers.
+> DramaFinder 2.2.3-SNAPSHOT — 61 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -1956,9 +1956,10 @@ PlaywrightElement for `<vaadin-multi-select-combo-box>`.
 - `void assertValue(String expected)` — Assert that the displayed value equals the expected string.
 - `void selectItem(String item)` — Select an item by its visible label.
 - `void deselectItem(String item)` — Deselect an item by its visible label.
+- `void toggleItem(String item)` — Toggle an item by its visible label, as a user click does: a selected item becomes deselected and an unselected one selected.
 - `void clear()` — Clear the selection as a user does: click the clear button when it is visible, otherwise deselect every selected item in the overlay and close it.
-- `void selectItems(String... items)` — Select multiple items in sequence.
-- `void deselectItems(String... items)` — Deselect multiple items in sequence.
+- `void selectItems(String... items)` — Select multiple items in sequence, leaving those already selected as they are (see `selectItem(String)`).
+- `void deselectItems(String... items)` — Deselect multiple items in sequence, leaving those not selected as they are (see `deselectItem(String)`).
 - `void filterAndSelectItem(String filter, String item)` — Type filter text into the input, then click the matching item, scrolling the overlay to it when the filter leaves more items than it renders.
 - `void setFilter(String filter)` — Type into the input to trigger filtering.
 - `String getFilter()` — Get the current filter value from the DOM property.
@@ -1974,8 +1975,11 @@ PlaywrightElement for `<vaadin-multi-select-combo-box>`.
 - `Locator getChipLocators()` — Get the locator for all non-overflow chips.
 - `Locator getOverflowChipLocator()` — Get the locator for the overflow chip.
 - `List<String> getSelectedItems()` — Get the labels of all currently selected items by reading the `selectedItems` property from the web component.
+- `boolean isSelected(String item)` — Whether the item labelled `item` is selected, read from the `selectedItems` property: the overlay is not opened, so this works for an item the overlay has not rendered.
 - `int getSelectedItemCount()` — Get the count of currently selected items from the `selectedItems` property.
 - `void assertSelectedItems(String... expected)` — Assert that the selected item labels match the expected values, in any order: the selection holds exactly as many items as `expected` and contains each of them.
+- `void assertItemSelected(String item)` — Assert that the item labelled `item` is selected, retrying until the timeout.
+- `void assertItemNotSelected(String item)` — Assert that the item labelled `item` is not selected, retrying until the timeout.
 - `void assertSelectedCount(int expected)` — Assert that the number of selected items matches.
 - `List<String> getItemLabels()` — Get the labels of every item the drop-down offers for the current filter, in order, selected or not.
 - `<T extends VaadinElement> T getOverlayItemComponent(String itemText, Class<T> type)` — Get a typed component element from an overlay item matching the given text.

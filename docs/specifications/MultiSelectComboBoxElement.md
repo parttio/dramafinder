@@ -64,9 +64,11 @@ fruits.close();
 fruits.assertSelectedItems("Cherry");
 ```
 
-- `selectItem(label)` / `selectItems(..)` open the overlay and click each item;
-  `deselectItem(label)` / `deselectItems(..)` do the same. A click **toggles**
-  the item, so selecting an item that is already selected deselects it.
+- `selectItem(label)` / `selectItems(..)` leave each item selected: an item
+  already selected is skipped, the others are clicked in the open overlay.
+  `deselectItem(label)` / `deselectItems(..)` leave each item unselected the
+  same way. `toggleItem(label)` clicks the item whatever its state, as a user
+  click does.
 - The overlay stays open after these calls (a user keeps picking): call
   `close()` when the test needs it closed.
 - Items match on their whole label: `"Item 1"` does not pick `"Item 10"`.
@@ -78,7 +80,8 @@ fruits.assertSelectedItems("Cherry");
 ## Filtering
 
 `setFilter` types into the input with real key presses and replaces any previous
-filter. `filterAndSelectItem(filter, label)` filters, then clicks the item.
+filter. `filterAndSelectItem(filter, label)` filters, then clicks the item; it
+does nothing, not even filter, when the item is already selected.
 
 ```java
 MultiSelectComboBoxElement fruits = MultiSelectComboBoxElement.getByLabel(page, "Filterable MultiSelect");
@@ -119,7 +122,14 @@ fruits.assertClosed();       // left as it was
 fruits.selectItems("Apple", "Cherry");
 List<String> selected = fruits.getSelectedItems();   // read from selectedItems
 int count = fruits.getSelectedItemCount();
+boolean apple = fruits.isSelected("Apple");          // true
+fruits.assertItemSelected("Cherry");
+fruits.assertItemNotSelected("Banana");
 ```
+
+`isSelected(label)`, `assertItemSelected(label)` and
+`assertItemNotSelected(label)` read `selectedItems` too, matching the whole
+label, so they work with the overlay closed and for an item it has not rendered.
 
 `getItemLabels()` returns every item the drop-down offers for the current
 filter, selected or not, loading every page of a lazy data provider; it throws
@@ -265,11 +275,13 @@ The multi-select combo box also has `assertAllowedCharPattern(..)` and
 
 ## Pitfalls
 
-- **Selection clicks toggle.** `selectItem` on a selected item deselects it, and
-  `deselectItem` on an unselected item selects it. Check the state first when
-  in doubt.
-- **The overlay stays open** after `selectItem(s)`, `deselectItem(s)` and
-  `filterAndSelectItem`. Close it before asserting a closed field or
+- **Only `toggleItem` toggles.** Since 2.2.3, `selectItem(s)`, `deselectItem(s)`
+  and `filterAndSelectItem` skip items already in the requested state (issue
+  #321); before, each was a plain click. A test that relied on
+  `selectItem` deselecting a selected item should call `toggleItem`.
+- **The overlay stays open** after `selectItem(s)`, `deselectItem(s)`,
+  `toggleItem` and `filterAndSelectItem` when they click. A call that skips
+  every item does not open it. Close it before asserting a closed field or
   interacting with what it covers.
 - **`setValue(..)` does not select.** It is the generic text-field action. Use
   `selectItem(s)` to select and `clear()` to empty the selection.
