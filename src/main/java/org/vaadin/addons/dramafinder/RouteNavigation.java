@@ -17,6 +17,7 @@ import com.vaadin.flow.router.DefaultRoutePathProvider;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.ParentLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RoutePrefix;
 
@@ -29,7 +30,10 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
  * view's {@code @Route} value (or Flow's naming convention when it has none),
  * prefixed by the {@code @RoutePrefix} of its {@code layout} and of that
  * layout's {@code @ParentLayout} chain, the way Flow does — so renaming a route
- * cannot silently break a test. Routes resolved at runtime (a custom
+ * cannot silently break a test. {@link #assertAt(Page, String, Class)} and
+ * {@link #isAt(Page, String, Class)} also accept each {@code @RouteAlias} of
+ * the view, resolved the same way from the alias's own {@code layout}; the
+ * paths built for navigation always use the {@code @Route}. Routes resolved at runtime (a custom
  * {@code RoutePathProvider}, {@code @Layout} auto layouts carrying a prefix,
  * {@code RouteConfiguration.setRoute}) are not seen; navigate to those by path.
  * <p>
@@ -59,9 +63,24 @@ public final class RouteNavigation {
         if (route == null) {
             throw new IllegalArgumentException(view.getSimpleName() + " is not annotated with @Route");
         }
-        List<String> parts = route.absolute() ? new ArrayList<>() : prefixesOf(route.layout());
-        parts.add(new DefaultRoutePathProvider().getRoutePath(view));
-        return String.join("/", parts.stream().filter(p -> !p.isEmpty()).toList());
+        return join(route.absolute(), route.layout(), new DefaultRoutePathProvider().getRoutePath(view));
+    }
+
+    /** The route template followed by the template of each {@code @RouteAlias}. */
+    private static List<String> templatesOf(Class<?> view) {
+        List<String> templates = new ArrayList<>();
+        templates.add(templateOf(view));
+        for (RouteAlias alias : view.getAnnotationsByType(RouteAlias.class)) {
+            templates.add(join(alias.absolute(), alias.layout(), alias.value()));
+        }
+        return templates;
+    }
+
+    /** A route or alias value under the prefixes of its layout chain, unless absolute. */
+    private static String join(boolean absolute, Class<?> layout, String value) {
+        List<String> parts = absolute ? new ArrayList<>() : prefixesOf(layout);
+        parts.add(value);
+        return String.join("/", parts.stream().map(RouteNavigation::strip).filter(p -> !p.isEmpty()).toList());
     }
 
     /**
@@ -183,8 +202,9 @@ public final class RouteNavigation {
 
     /**
      * Assert, retrying until the timeout, that the browser is on {@code view}:
-     * its path matches the view's route template, any parameter value
-     * accepted, whatever the query string.
+     * its path matches the view's route template or one of its
+     * {@code @RouteAlias} templates (each resolved with its own {@code layout}
+     * prefixes), any parameter value accepted, whatever the query string.
      *
      * @param page    the Playwright page
      * @param baseUrl the application's base URL
@@ -271,7 +291,8 @@ public final class RouteNavigation {
      * @param page    the Playwright page
      * @param baseUrl the application's base URL
      * @param view    a class annotated with {@code @Route}
-     * @return {@code true} when the path matches the view's route template
+     * @return {@code true} when the path matches the view's route template or
+     *         one of its {@code @RouteAlias} templates
      */
     public static boolean isAt(Page page, String baseUrl, Class<?> view) {
         return urlPattern(baseUrl, view).matcher(currentUrl(page)).find();
@@ -322,10 +343,29 @@ public final class RouteNavigation {
         return prefixes;
     }
 
-    /** Pattern of every URL that shows {@code view}; package-private for tests. */
+    /**
+     * Pattern of every URL that shows {@code view}: its route template or any of
+     * its {@code @RouteAlias} templates; package-private for tests.
+     */
     static Pattern urlPattern(String baseUrl, Class<?> view) {
-        StringBuilder regex = new StringBuilder("^").append(quote(root(baseUrl)));
-        for (String segment : templateOf(view).split("/")) {
+        boolean urlParameter = HasUrlParameter.class.isAssignableFrom(view);
+        List<String> alternatives = new ArrayList<>();
+        for (String template : templatesOf(view)) {
+            String regex = templateRegex(template) + (urlParameter ? "(/[^?#]*)?" : "");
+            if (!alternatives.contains(regex)) {
+                alternatives.add(regex);
+            }
+        }
+        String paths = alternatives.size() == 1
+                ? alternatives.get(0)
+                : "(?:" + String.join("|", alternatives) + ")";
+        return Pattern.compile("^" + quote(root(baseUrl)) + paths + "/?" + QUERY_AND_FRAGMENT);
+    }
+
+    /** Regex of the path a template matches, each segment with its leading slash. */
+    private static String templateRegex(String template) {
+        StringBuilder regex = new StringBuilder();
+        for (String segment : template.split("/")) {
             if (segment.isEmpty()) {
                 continue;
             }
@@ -340,10 +380,7 @@ public final class RouteNavigation {
                 regex.append(isOptional(segment) ? "(/(" + body + "))?" : "/(" + body + ")");
             }
         }
-        if (HasUrlParameter.class.isAssignableFrom(view)) {
-            regex.append("(/[^?#]*)?");
-        }
-        return Pattern.compile(regex.append("/?").append(QUERY_AND_FRAGMENT).toString());
+        return regex.toString();
     }
 
     static String queryParameter(String url, String name) {

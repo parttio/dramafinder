@@ -7,6 +7,7 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.ParentLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteParam;
 import com.vaadin.flow.router.RouteParameters;
 import com.vaadin.flow.router.RoutePrefix;
@@ -82,6 +83,26 @@ class RouteNavigationTest {
     static class NotARoute extends Div {
     }
 
+    // Bakery's StorefrontView (issue #318): an optional parameter and two aliases
+    @Route(value = "storefront/:orderID?", layout = AppLayout.class)
+    @RouteAlias(value = "storefront/:orderID/edit", layout = AppLayout.class)
+    @RouteAlias("")
+    static class StorefrontView extends Div {
+    }
+
+    @Route("dashboard")
+    @RouteAlias(value = "home", layout = AdminLayout.class)
+    static class DashboardView extends Div {
+    }
+
+    @Route("news")
+    @RouteAlias(value = "latest", layout = AdminLayout.class, absolute = true)
+    static class NewsView extends Div implements HasUrlParameter<String> {
+        @Override
+        public void setParameter(BeforeEvent event, String parameter) {
+        }
+    }
+
     @Test
     void resolvesRouteValuesAndPrefixes() {
         assertEquals("", RouteNavigation.pathOf(RootView.class));
@@ -136,6 +157,43 @@ class RouteNavigationTest {
         assertTrue(RouteNavigation.urlPattern(base, RootView.class).matcher("http://host/ctx/").find());
         assertTrue(RouteNavigation.urlPattern(base, RootView.class).matcher("http://host/ctx").find());
         assertFalse(RouteNavigation.urlPattern(base, RootView.class).matcher("http://host/ctx/other").find());
+    }
+
+    private static boolean at(Class<?> view, String path) {
+        return RouteNavigation.urlPattern("http://host/ctx/", view).matcher("http://host/ctx/" + path).find();
+    }
+
+    @Test
+    void urlPatternMatchesTheRouteAndEveryAlias() {
+        for (String path : List.of("app/storefront", "app/storefront/", "app/storefront/42",
+                "app/storefront/42?x=1", "app/storefront/42/edit", "app/storefront/42/edit/#top",
+                "", "?x=1")) {
+            assertTrue(at(StorefrontView.class, path), path);
+        }
+        for (String path : List.of("storefront", "app/storefront/42/view",
+                "app/storefront/42/edit/more", "app", "other")) {
+            assertFalse(at(StorefrontView.class, path), path);
+        }
+    }
+
+    @Test
+    void anAliasIsResolvedWithItsOwnLayout() {
+        // a single @RouteAlias (no container) under a prefixed layout chain
+        assertTrue(at(DashboardView.class, "dashboard"));
+        assertTrue(at(DashboardView.class, "app/admin/home"));
+        assertFalse(at(DashboardView.class, "home"));
+        // absolute alias skips the prefixes; a HasUrlParameter view takes its parameter on aliases too
+        assertTrue(at(NewsView.class, "latest"));
+        assertTrue(at(NewsView.class, "latest/7"));
+        assertTrue(at(NewsView.class, "news/7"));
+        assertFalse(at(NewsView.class, "app/admin/latest"));
+    }
+
+    @Test
+    void aliasesDoNotChangeTheRoutePath() {
+        assertEquals("app/storefront/:orderID?", RouteNavigation.templateOf(StorefrontView.class));
+        assertEquals("app/storefront", RouteNavigation.pathOf(StorefrontView.class));
+        assertEquals("dashboard", RouteNavigation.pathOf(DashboardView.class));
     }
 
     @Test

@@ -159,7 +159,8 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
 
     /**
      * Assert, retrying until the timeout, that the browser is on {@code view},
-     * e.g. after a login redirect or a navigation guard.
+     * e.g. after a login redirect or a navigation guard. The path may match the
+     * view's {@code @Route} or any of its {@code @RouteAlias} paths.
      *
      * @param view a class annotated with {@code @Route}
      */
@@ -206,7 +207,8 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
      * non-asserting form of {@link #assertAt(Class)}.
      *
      * @param view a class annotated with {@code @Route}
-     * @return {@code true} when the path matches the view's route
+     * @return {@code true} when the path matches the view's route or one of
+     *         its aliases
      */
     protected boolean isAt(Class<?> view) {
         return RouteNavigation.isAt(page, getUrl(), view);

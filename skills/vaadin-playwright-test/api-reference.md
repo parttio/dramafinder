@@ -146,7 +146,7 @@ Navigates by Vaadin route class and asserts which view the browser is on.
 - `void navigate(Page page, String baseUrl, Class<?> view)` — Open `view` and wait for Vaadin to finish loading it.
 - `void navigate(Page page, String baseUrl, Class<?> view, Object parameter)` — Open a parameterized view and wait for Vaadin to finish loading it.
 - `void open(Page page, String baseUrl, String path)` — Open `path` under the base URL and wait for Vaadin to finish loading.
-- `void assertAt(Page page, String baseUrl, Class<?> view)` — Assert, retrying until the timeout, that the browser is on `view`: its path matches the view's route template, any parameter value accepted, whatever the query string.
+- `void assertAt(Page page, String baseUrl, Class<?> view)` — Assert, retrying until the timeout, that the browser is on `view`: its path matches the view's route template or one of its `@RouteAlias` templates (each resolved with its own `layout` prefixes), any parameter value accepted, whatever the query string.
 - `void assertPath(Page page, String baseUrl, String path)` — Assert, retrying until the timeout, that the browser's path is exactly `path`, whatever the query string.
 - `void assertQueryParameter(Page page, String name, String value)` — Assert, retrying until the timeout, that the URL's query string holds `name` with `value` (compared decoded), or no `name` at all when `value` is `null`.
 - `String currentPath(Page page, String baseUrl)` — Get the path the browser is on, relative to the application root, with no leading or trailing slash and without the query string, e.g. `"orders/42"`; `""` for the root.
