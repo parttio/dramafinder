@@ -64,7 +64,22 @@ navigate(LegacyProfileView.class);     // forwards in beforeEnter
 assertAt(ProfileView.class);
 ```
 
-A parameterized route matches any parameter value. To check the exact path or
+A parameterized route matches any parameter value. A view is also matched at
+each of its `@RouteAlias` paths, with the same template rules as its `@Route`
+(`:p` one segment, `:p?` zero or one, `:p*` the rest) and the `@RoutePrefix`
+of the alias's own `layout`:
+
+```java
+@Route(value = "storefront/:orderID?", layout = MainLayout.class)
+@RouteAlias(value = "storefront/:orderID/edit", layout = MainLayout.class)
+@RouteAlias(value = "", layout = MainLayout.class)
+public class StorefrontView extends Main { }
+
+page.navigate(getUrl());               // the root alias
+assertAt(StorefrontView.class);        // passes; so does isAt(StorefrontView.class)
+```
+
+`navigate` and `pathOf` always use the `@Route`. To check the exact path or
 the query string:
 
 ```java

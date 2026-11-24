@@ -16,6 +16,7 @@ import org.vaadin.addons.dramafinder.tests.testuis.navigation.ArticleView;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.GreetingView;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.LegacyProfileView;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.ProfileView;
+import org.vaadin.addons.dramafinder.tests.testuis.navigation.StorefrontView;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.TopLevelView;
 import org.vaadin.addons.dramafinder.tests.testuis.navigation.UserEditView;
 
@@ -85,6 +86,46 @@ public class RouteNavigationIT extends SpringPlaywrightIT {
         try {
             AssertionError e = assertThrows(AssertionError.class, () -> assertAt(ProfileView.class));
             assertTrue(e.getMessage().contains("nav/greeting"), e.getMessage());
+        } finally {
+            PlaywrightAssertions.setDefaultAssertionTimeout(5000);
+        }
+    }
+
+    @Test
+    public void matchesTheRouteWithAndWithoutItsOptionalParameter() {
+        navigate(StorefrontView.class);
+        assertPath("nav/storefront");
+        assertAt(StorefrontView.class);
+        assertTrue(isAt(StorefrontView.class));
+
+        navigate(StorefrontView.class, new RouteParameters("orderID", "42"));
+        assertPath("nav/storefront/42");
+        assertAt(StorefrontView.class);
+        assertTrue(isAt(StorefrontView.class));
+        assertThat(page.locator("#order")).hasText("Order 42");
+    }
+
+    @Test
+    public void matchesEveryRouteAlias() {
+        RouteNavigation.open(page, getUrl(), "nav/storefront/42/edit");
+        assertThat(page.locator("#order")).hasText("Order 42");
+        assertAt(StorefrontView.class);
+        assertTrue(isAt(StorefrontView.class));
+
+        RouteNavigation.open(page, getUrl(), "nav");
+        assertThat(page.locator("#order")).hasText("Order -");
+        assertAt(StorefrontView.class);
+        assertTrue(isAt(StorefrontView.class));
+        assertFalse(isAt(ProfileView.class));
+    }
+
+    @Test
+    public void anAliasDoesNotMatchAnotherView() {
+        navigate(ProfileView.class);
+        assertFalse(isAt(StorefrontView.class));
+        PlaywrightAssertions.setDefaultAssertionTimeout(1000);
+        try {
+            assertThrows(AssertionError.class, () -> assertAt(StorefrontView.class));
         } finally {
             PlaywrightAssertions.setDefaultAssertionTimeout(5000);
         }
