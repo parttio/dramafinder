@@ -64,12 +64,12 @@ sort.assertSelectedValue("Most recent first");
 sort.selectItem("Rating: high to low");
 sort.assertSelectedValue("Rating: high to low");
 
-sort.selectItem("Rating: high to low");      // clicking the selected item keeps it selected
+sort.selectItem("Rating: high to low");      // already selected: nothing to do
 sort.assertSelectedValue("Rating: high to low");
 ```
 
-`selectItem(label)` clicks the item whose **whole** label is `label` and waits
-for the server round-trip. `assertSelectedValue(..)` checks that exactly these
+`selectItem(label)` clicks the item whose **whole** label is `label`, unless it
+is already selected, and waits for the server round-trip. `assertSelectedValue(..)` checks that exactly these
 items carry the `selected` attribute. `getSingleSelectedValue()` returns the
 selected item's text when the test needs the value itself.
 
@@ -92,14 +92,23 @@ multi.assertSelectedValue("Most recent first");
 multi.selectItem("Rating: high to low");     // adds to the selection
 multi.assertSelectedValue("Most recent first", "Rating: high to low");
 
-multi.selectItem("Rating: high to low");     // toggles it off again
+multi.selectItem("Rating: high to low");     // already selected: stays selected
+multi.deselectItem("Rating: high to low");   // removes it from the selection
 multi.assertSelectedValue("Most recent first");
+multi.assertItemSelected("Most recent first");
+multi.assertItemNotSelected("Rating: high to low");
 
-multi.selectItem("Most recent first");
+multi.toggleItem("Most recent first");       // a plain click: flips the item
 multi.assertSelectedValue();                 // no argument: nothing selected
 ```
 
-In multiple mode `selectItem` toggles: clicking a selected item deselects it.
+`selectItem` and `deselectItem` skip an item already in the requested state, so
+they never toggle it (issue #322). `toggleItem` clicks whatever the state, as a
+user does. In single mode a click never deselects, so `deselectItem` leaves the
+item selected there, as a user's click would.
+
+`isSelected(label)` reads one item's state without waiting;
+`assertItemSelected(label)` / `assertItemNotSelected(label)` retry.
 `getSelectedValue()` returns the labels of every selected item, and
 `isMultiple()` reads the mode without waiting.
 
@@ -172,8 +181,12 @@ find(page, ListBoxElement.class).withAccessibleName("Labelled by").single()
 
 ## Pitfalls
 
-- **Single vs multiple behave differently on a second click.** Single mode keeps
-  the item selected; multiple mode deselects it.
+- **Only `toggleItem` toggles.** Since 2.2.3, `selectItem` skips an item that
+  is already selected (issue #322); before, it was a plain click, so in multiple
+  mode it deselected a selected item. A test that relied on that should call
+  `toggleItem` or `deselectItem`.
+- **`deselectItem` cannot empty a single-mode list box.** A click there never
+  deselects, so the item stays selected.
 - **`getSingleSelectedValue()` expects one selected item.** On a multi-select
   list box with several selected items it fails with a strict-mode error; use
   `getSelectedValue()` or `assertSelectedValue(..)`.

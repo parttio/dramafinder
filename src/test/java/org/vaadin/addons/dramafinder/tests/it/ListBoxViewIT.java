@@ -8,6 +8,7 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -86,10 +87,58 @@ public class ListBoxViewIT extends SpringPlaywrightIT {
         listBox.assertSelectedValue("Most recent first");
         listBox.selectItem("Rating: high to low");
         listBox.assertSelectedValue("Most recent first", "Rating: high to low");
-        listBox.selectItem("Rating: high to low");
+        listBox.deselectItem("Rating: high to low");
         listBox.assertSelectedValue("Most recent first");
-        listBox.selectItem("Most recent first");
+        listBox.deselectItem("Most recent first");
         listBox.assertSelectedValue();
+    }
+
+    @Test
+    public void testSelectItemKeepsAnAlreadySelectedItemSelectedInMultipleMode() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        listBox.selectItem("Most recent first");
+        listBox.assertSelectedValue("Most recent first");
+    }
+
+    @Test
+    public void testDeselectItemDeselectsASelectedItemInMultipleMode() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        listBox.deselectItem("Most recent first");
+        listBox.assertSelectedValue();
+    }
+
+    @Test
+    public void testDeselectItemLeavesAnUnselectedItemUnselectedInMultipleMode() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        listBox.deselectItem("Rating: high to low");
+        listBox.assertSelectedValue("Most recent first");
+    }
+
+    @Test
+    public void testIsSelected() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        assertTrue(listBox.isSelected("Most recent first"));
+        assertFalse(listBox.isSelected("Rating: high to low"));
+    }
+
+    @Test
+    public void testAssertItemSelectedAndNotSelected() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        listBox.assertItemSelected("Most recent first");
+        listBox.assertItemNotSelected("Rating: high to low");
+
+        page.setDefaultTimeout(1000);
+        assertThrows(AssertionError.class, () -> listBox.assertItemSelected("Rating: high to low"));
+        assertThrows(AssertionError.class, () -> listBox.assertItemNotSelected("Most recent first"));
+    }
+
+    @Test
+    public void testToggleItemFlipsTheSelectionInMultipleMode() {
+        ListBoxElement listBox = ListBoxElement.getByLabel(page, "Multiple list");
+        listBox.toggleItem("Rating: high to low");
+        listBox.assertSelectedValue("Most recent first", "Rating: high to low");
+        listBox.toggleItem("Rating: high to low");
+        listBox.assertSelectedValue("Most recent first");
     }
 
     @Test
