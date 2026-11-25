@@ -51,7 +51,10 @@ own `BrowserContext`), add `@Import(TestLoginConfiguration.class)` to the
 `AbstractBasePlaywrightIT` opens the `page` field before each test, navigates it to
 `getUrl() + getView()`, waits for Vaadin to go idle, and closes it after. The browser
 is headless unless the `headless` system property or the `HEADLESS` environment
-variable says otherwise. Playwright's browser binaries must already be installed.
+variable says otherwise. It launches Playwright's Chromium, whose binaries must
+already be installed, unless `playwright.executable` (`PLAYWRIGHT_EXECUTABLE`) names
+another Chromium-based binary or `playwright.channel` (`PLAYWRIGHT_CHANNEL`) a browser
+channel such as `chrome`.
 
 To go to another view, navigate by its route class rather than a hand-built URL, so
 renaming a route cannot break the test silently: `navigate(ProfileView.class)`,

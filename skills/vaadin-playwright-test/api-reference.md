@@ -57,7 +57,8 @@ Base class for Playwright integration tests of a Vaadin view.
 
 - `void cleanup()`
 - `void setup()`
-- `protected boolean isHeadless()`
+- `protected LaunchOptions launchOptions()` — Build the launch options of each test class's browser from the `headless`, `playwright.executable` and `playwright.channel` settings.
+- `protected boolean isHeadless()` — Whether the browser runs headless: the `headless` system property, else the `HEADLESS` environment variable, else `true`.
 
 **Methods:**
 
