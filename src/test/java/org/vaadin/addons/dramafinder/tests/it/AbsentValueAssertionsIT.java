@@ -4,6 +4,7 @@ import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.vaadin.addons.dramafinder.element.IntegerFieldElement;
 import org.vaadin.addons.dramafinder.element.ProgressBarElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
@@ -18,7 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * {@code null} passed to an assertion helper asserts that the value is absent
  * (issue #257): it passes on a component without the value and fails on one
  * that has it.
+ * <p>
+ * Isolated from the other test classes, which run in parallel: the assertion
+ * timeout shortened here is JVM-wide, so their retrying assertions would give
+ * up after a second too.
  */
+@Isolated
 public class AbsentValueAssertionsIT extends SpringPlaywrightIT {
 
     @Override

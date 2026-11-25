@@ -7,6 +7,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import com.vaadin.flow.router.RouteParameters;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.RouteNavigation;
@@ -27,7 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Navigation by route class and location assertions (issue #204). */
+/**
+ * Navigation by route class and location assertions (issue #204).
+ * <p>
+ * Isolated from the other test classes, which run in parallel: two tests
+ * shorten the assertion timeout, which is JVM-wide, so the retrying assertions
+ * of the other classes would give up after a second too.
+ */
+@Isolated
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RouteNavigationIT extends SpringPlaywrightIT {
 
