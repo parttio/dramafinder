@@ -106,3 +106,13 @@ gh api repos/parttio/dramafinder/milestones --jq '.[] | "\(.number) \(.title)"'
 gh api -X PATCH repos/parttio/dramafinder/milestones/<number> -f state=closed
 gh api repos/parttio/dramafinder/milestones -f title="2.2.4"
 ```
+
+`gh issue edit --milestone` only finds open milestones. To move an issue into
+the milestone of a release that is already out, pass the milestone's number to
+the API instead:
+
+```bash
+gh api 'repos/parttio/dramafinder/milestones?state=closed&per_page=100' \
+    --jq '.[] | "\(.number) \(.title)"'
+gh api -X PATCH repos/parttio/dramafinder/issues/<issue> -F milestone=<number>
+```
