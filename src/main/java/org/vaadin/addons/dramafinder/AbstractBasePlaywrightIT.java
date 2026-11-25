@@ -1,5 +1,7 @@
 package org.vaadin.addons.dramafinder;
 
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Optional;
 
 import com.microsoft.playwright.Browser;
@@ -18,9 +20,8 @@ import org.vaadin.addons.dramafinder.agent.AgentReporting;
 /**
  * Base class for Playwright integration tests of a Vaadin view.
  * <p>
- * Launches one Chromium browser per test class (headless unless the
- * {@code headless} system property or {@code HEADLESS} environment variable says
- * otherwise), opens a fresh {@link #page} before each test, navigates it to
+ * Launches one Chromium browser per test class with {@link #launchOptions()},
+ * opens a fresh {@link #page} before each test, navigates it to
  * {@code getUrl() + getView()} and waits for Vaadin to go idle.
  * <p>
  * Every failing test writes an {@link AgentReporting agent report} to
@@ -119,10 +120,54 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
 
     @BeforeAll
     public static void setup() {
-        Playwright p = Playwright.create();
+        LaunchOptions options = launchOptions();
+        Playwright.CreateOptions createOptions = new Playwright.CreateOptions();
+        if (options.executablePath != null) {
+            // The configured binary replaces Playwright's Chromium: don't download it.
+            createOptions.setEnv(Map.of("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1"));
+        }
+        Playwright p = Playwright.create(createOptions);
         playwright.set(p);
-        browser.set(p.chromium().launch(new LaunchOptions()
-                .setHeadless(isHeadless())));
+        browser.set(p.chromium().launch(options));
+    }
+
+    /**
+     * Build the launch options of each test class's browser from the
+     * {@code headless}, {@code playwright.executable} and
+     * {@code playwright.channel} settings.
+     * <p>
+     * Each setting is a system property, else an environment variable
+     * ({@code HEADLESS}, {@code PLAYWRIGHT_EXECUTABLE},
+     * {@code PLAYWRIGHT_CHANNEL}); blank counts as unset. {@code headless} is
+     * read by {@link #isHeadless()}. {@code playwright.executable} names a
+     * Chromium-based binary to launch instead of Playwright's own Chromium,
+     * e.g. {@code /usr/bin/google-chrome}, and makes Playwright skip
+     * downloading its browsers. {@code playwright.channel} names an installed
+     * browser channel such as {@code chrome} or {@code msedge}. A test that
+     * launches its own browser can start from these options.
+     *
+     * @return new launch options; executable path and channel are {@code null}
+     *         when not configured
+     */
+    protected static LaunchOptions launchOptions() {
+        LaunchOptions options = new LaunchOptions().setHeadless(isHeadless());
+        String executable = setting("playwright.executable", "PLAYWRIGHT_EXECUTABLE");
+        if (executable != null) {
+            options.setExecutablePath(Path.of(executable));
+        }
+        String channel = setting("playwright.channel", "PLAYWRIGHT_CHANNEL");
+        if (channel != null) {
+            options.setChannel(channel);
+        }
+        return options;
+    }
+
+    private static String setting(String property, String environmentVariable) {
+        String value = System.getProperty(property);
+        if (value == null || value.isBlank()) {
+            value = System.getenv(environmentVariable);
+        }
+        return value == null || value.isBlank() ? null : value.strip();
     }
 
     protected Page getPage() {
@@ -244,6 +289,12 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
         return playwright.get();
     }
 
+    /**
+     * Whether the browser runs headless: the {@code headless} system property,
+     * else the {@code HEADLESS} environment variable, else {@code true}.
+     *
+     * @return {@code false} only when the setting is {@code false}
+     */
     protected static boolean isHeadless() {
         String propertyValue = System.getProperty("headless");
         if (propertyValue == null || propertyValue.isBlank()) {

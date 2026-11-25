@@ -243,6 +243,25 @@ A Maven profile makes it shorter:
 mvn verify -Pdebug-ui -Dit.test=ContactViewIT
 ```
 
+## Choosing the browser
+
+Tests launch Playwright's own Chromium. To launch another Chromium-based
+browser, set its binary with the `playwright.executable` system property (or the
+`PLAYWRIGHT_EXECUTABLE` environment variable), or an installed browser channel
+with `playwright.channel` (`PLAYWRIGHT_CHANNEL`):
+
+```bash
+mvn verify -Dplaywright.executable=/usr/bin/google-chrome
+```
+
+```bash
+mvn verify -Dplaywright.channel=chrome
+```
+
+With an executable set, Playwright skips downloading its browsers, so a CI job
+whose runner already has Chrome (GitHub's `ubuntu-latest` does) can drop the
+`playwright install` step.
+
 To step through a test, put `page.pause()` where you want to stop: Playwright
 opens its inspector, from which you can resume or record locators.
 
