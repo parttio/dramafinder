@@ -85,3 +85,24 @@ The defaults are usually fine. `release:perform` is not needed: a GitHub Action
 builds and pushes the release to Maven Central. Vaadin Directory picks up new
 releases within about half an hour; if browser or Vaadin version support
 changed, adjust the metadata in the Directory UI.
+
+### Tracking issues per release
+
+Each release has a GitHub milestone named after its version (`2.2.3`), holding
+the issues it fixes. Assign an issue to the milestone of the next release when
+it is closed:
+
+```bash
+gh issue edit 320 --milestone "2.2.3"
+gh issue list --state all --milestone "2.2.3"   # what the release contains
+```
+
+Before cutting the release, check that every issue closed since the previous
+tag is in the milestone. Once the release is published, close the milestone and
+create the one for the next version:
+
+```bash
+gh api repos/parttio/dramafinder/milestones --jq '.[] | "\(.number) \(.title)"'
+gh api -X PATCH repos/parttio/dramafinder/milestones/<number> -f state=closed
+gh api repos/parttio/dramafinder/milestones -f title="2.2.4"
+```
