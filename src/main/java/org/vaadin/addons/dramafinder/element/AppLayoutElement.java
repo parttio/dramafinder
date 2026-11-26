@@ -120,8 +120,8 @@ public class AppLayoutElement extends VaadinElement implements HasStyleElement, 
      * @return the locator for the content area
      */
     public Locator getContentLocator() {
-        // using xpath to not pierce the shadow dom
-        return getLocator().locator("xpath=./*[not(@slot)]");
+        // css:light, to not pierce the shadow dom
+        return getLocator().locator("css:light=:scope > :not([slot])");
     }
 
     /**

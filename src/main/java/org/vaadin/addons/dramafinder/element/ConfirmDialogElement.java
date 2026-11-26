@@ -172,7 +172,7 @@ public class ConfirmDialogElement extends VaadinElement
      * @return the message locator
      */
     public Locator getMessageLocator() {
-        return getLocator().locator("> :not([slot])");
+        return getLocator().locator("css:light=:scope > :not([slot])");
     }
 
     /**

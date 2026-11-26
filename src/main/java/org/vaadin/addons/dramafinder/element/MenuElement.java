@@ -32,13 +32,13 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
      * A {@code vaadin-menu-bar-submenu} directly below a menu bar or a sub-menu:
      * each level nests the next one as a {@code slot="submenu"} child.
      */
-    private static final String CHILD_SUB_MENU = ":scope > " + SUB_MENU_TAG_NAME;
+    private static final String CHILD_SUB_MENU = "css:light=:scope > " + SUB_MENU_TAG_NAME;
 
     /**
      * The list box of a {@code vaadin-menu-bar-submenu}, without those of the
      * sub-menus nested in it, whatever wraps it inside the overlay.
      */
-    private static final String OWN_LIST_BOX = ":scope > :not(" + SUB_MENU_TAG_NAME + ") " + FIELD_TAG_NAME;
+    private static final String OWN_LIST_BOX = "css:light=:scope > :not(" + SUB_MENU_TAG_NAME + ") " + FIELD_TAG_NAME;
 
     /** The {@code vaadin-menu-bar-submenu} this list box belongs to; {@code null} when not known. */
     private final Locator subMenu;

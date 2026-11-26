@@ -38,12 +38,12 @@ public class AvatarGroupElement extends VaadinElement
 
     /**
      * Selector for the visible avatars: direct {@code <vaadin-avatar>} children
-     * without a {@code slot} attribute. The explicit xpath does not pierce the
-     * shadow DOM, which keeps the overflow avatar ({@code slot="overflow"}) and
+     * without a {@code slot} attribute. The {@code css:light} engine does not
+     * enter shadow roots, which keeps the overflow avatar ({@code slot="overflow"}) and
      * the avatars nested in the overlay menu out of the match.
      */
     private static final String VISIBLE_AVATARS_XPATH =
-            "xpath=./" + AvatarElement.FIELD_TAG_NAME + "[not(@slot)]";
+            "css:light=:scope > " + AvatarElement.FIELD_TAG_NAME + ":not([slot])";
 
     private static final String OVERFLOW_AVATAR_SELECTOR =
             AvatarElement.FIELD_TAG_NAME + "[slot='overflow']";

@@ -70,9 +70,9 @@ property, into three distinct places:
 
 All three match a naive `vaadin-avatar` CSS lookup, because Playwright's CSS
 selectors pierce the shadow DOM and the overlay menu is a light-DOM child of the
-group. `getAvatarsLocator()` therefore uses an explicit
-`xpath=./vaadin-avatar[not(@slot)]`, which matches direct children only and does
-not pierce — so the overflow avatar and the menu avatars stay out of
+group. `getAvatarsLocator()` therefore uses
+`css:light=:scope > vaadin-avatar:not([slot])`, which matches direct children only
+and does not pierce — so the overflow avatar and the menu avatars stay out of
 `getAvatars()`, `getVisibleCount()` and `assertNames()`.
 
 ## Overflow

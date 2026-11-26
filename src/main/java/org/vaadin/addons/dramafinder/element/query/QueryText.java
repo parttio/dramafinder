@@ -14,10 +14,10 @@ final class QueryText {
     static final String OWN_LABEL = ":scope > [slot='label']";
 
     /** A form item's own label, the caption of the field it wraps. */
-    private static final String FORM_ITEM_OWN_LABEL = "vaadin-form-item > [slot='label']";
+    private static final String FORM_ITEM_TAG_NAME = "vaadin-form-item";
 
     /** From a form item: the field it wraps, its one direct child without a slot. */
-    private static final String FORM_ITEM_FIELD = "xpath=./*[not(@slot)]";
+    private static final String FORM_ITEM_FIELD = "css:light=:scope > :not([slot])";
 
     /** Any non-whitespace text: a label element that actually shows a label. */
     private static final Pattern NOT_BLANK = Pattern.compile("\\S");
@@ -105,8 +105,9 @@ final class QueryText {
         Page page = candidates.page();
         Locator ownLabel = candidates.filter(new Locator.FilterOptions()
                 .setHas(page.locator(OWN_LABEL).filter(labelText)));
-        Locator formItemField = page.locator(FORM_ITEM_OWN_LABEL).filter(labelText)
-                .locator("xpath=..").locator(FORM_ITEM_FIELD);
+        Locator formItemField = page.locator(FORM_ITEM_TAG_NAME)
+                .filter(new Locator.FilterOptions().setHas(page.locator(OWN_LABEL).filter(labelText)))
+                .locator(FORM_ITEM_FIELD);
         Locator itemLabel = candidates.and(formItemField).filter(new Locator.FilterOptions()
                 .setHasNot(page.locator(OWN_LABEL)
                         .filter(new Locator.FilterOptions().setHasText(NOT_BLANK))));

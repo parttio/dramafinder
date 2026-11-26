@@ -191,7 +191,7 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
      * included, without the overflow button itself or sub-menu items.
      */
     static Locator topLevelItems(Locator menuBar) {
-        return menuBar.locator(":scope > " + FIELD_TAG_NAME + ":not([hidden]):not([slot='overflow'])");
+        return menuBar.locator("css:light=:scope > " + FIELD_TAG_NAME + ":not([hidden]):not([slot='overflow'])");
     }
 
     /**
@@ -226,12 +226,12 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
 
     /** The menu bar's overflow button ("More options"), {@code hidden} while every item fits. */
     static Locator overflowButton(Locator menuBar) {
-        return menuBar.locator(":scope > " + FIELD_TAG_NAME + "[slot='overflow']");
+        return menuBar.locator("css:light=:scope > " + FIELD_TAG_NAME + "[slot='overflow']");
     }
 
     /** The items of one sub-menu list box, without those of nested sub-menus. */
     static Locator subMenuItems(Locator listBox) {
-        return listBox.locator(":scope > " + SUB_MENU_ITEM_TAG_NAME);
+        return listBox.locator("css:light=:scope > " + SUB_MENU_ITEM_TAG_NAME);
     }
 
     /**

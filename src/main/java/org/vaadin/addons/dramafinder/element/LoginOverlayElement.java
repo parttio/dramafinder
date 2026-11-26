@@ -104,14 +104,14 @@ public class LoginOverlayElement extends AbstractLoginElement implements Findabl
      * Locator for the application title shown in the branding area.
      * <p>
      * The title is slotted into the overlay from the light DOM, so the lookup
-     * uses {@code xpath} to avoid matching the {@code <slot name="title">} in the
+     * uses {@code css:light} to avoid matching the {@code <slot name="title">} in the
      * shadow root. Note that {@link #getTitleLocator()} returns the title of the
      * form itself, which is a different element.
      *
      * @return the locator for the application title
      */
     public Locator getHeaderTitleLocator() {
-        return getLocator().locator("xpath=./*[@slot='title']");
+        return getLocator().locator("css:light=:scope > [slot='title']");
     }
 
     /**

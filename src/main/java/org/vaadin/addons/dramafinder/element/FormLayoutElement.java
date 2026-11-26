@@ -128,14 +128,15 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
      * and the {@code <br>} elements used to force a row break are skipped, so
      * the count matches what the user sees rather than the raw child list.
      * <p>
-     * The lookup is an XPath union because a CSS child selector would pierce the
-     * shadow DOM and pick up the layout's internal wrapper as a child too.
+     * The lookup uses the {@code css:light} engine because a plain CSS child
+     * selector would pierce the shadow DOM and pick up the layout's internal
+     * wrapper as a child too.
      *
      * @return a locator resolving to all fields of this layout
      */
     public Locator getFields() {
-        return getLocator().locator("xpath=./*[not(self::br)][not(self::" + FORM_ROW_TAG_NAME + ")]"
-                + " | ./" + FORM_ROW_TAG_NAME + "/*[not(self::br)]");
+        return getLocator().locator("css:light=:scope > :not(br):not(" + FORM_ROW_TAG_NAME + "),"
+                + " :scope > " + FORM_ROW_TAG_NAME + " > :not(br)");
     }
 
     /**
@@ -187,7 +188,7 @@ public class FormLayoutElement extends VaadinElement implements HasThemeElement,
         return getFormItems()
                 .filter(new Locator.FilterOptions().setHas(page.locator(":scope > [slot='label']")
                         .and(ItemLocator.exactText(page, label))))
-                .locator("xpath=./*[not(@slot)]");
+                .locator("css:light=:scope > :not([slot])");
     }
 
     // ── Layout ─────────────────────────────────────────────────────────

@@ -77,15 +77,15 @@ public abstract class AbstractLoginElement extends VaadinElement
      * Get the submit button of the login form.
      * <p>
      * Resolved through the {@code submit} slot rather than its text, because the
-     * caption is i18n driven. The {@code xpath} lookup is deliberate: it does not
-     * pierce the shadow root, where a {@code <slot name="submit" slot="submit">}
+     * caption is i18n driven. The {@code css:light} lookup is deliberate: it does
+     * not enter the shadow root, where a {@code <slot name="submit" slot="submit">}
      * would otherwise match as well.
      *
      * @return the {@code ButtonElement} submitting the form
      */
     public ButtonElement getSubmitButton() {
         return new ButtonElement(
-                getLocator().locator("xpath=./" + ButtonElement.FIELD_TAG_NAME + "[@slot='submit']"));
+                getLocator().locator("css:light=:scope > " + ButtonElement.FIELD_TAG_NAME + "[slot='submit']"));
     }
 
     /**
@@ -98,7 +98,7 @@ public abstract class AbstractLoginElement extends VaadinElement
      */
     public ButtonElement getForgotPasswordButton() {
         return new ButtonElement(
-                getLocator().locator("xpath=./" + ButtonElement.FIELD_TAG_NAME + "[@slot='forgot-password']"));
+                getLocator().locator("css:light=:scope > " + ButtonElement.FIELD_TAG_NAME + "[slot='forgot-password']"));
     }
 
     /**
