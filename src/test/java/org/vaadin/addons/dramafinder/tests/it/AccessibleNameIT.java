@@ -5,10 +5,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CheckboxElement;
+import org.vaadin.addons.dramafinder.element.GridElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.element.TabElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
 import org.vaadin.addons.dramafinder.element.TooltipElement;
+import org.vaadin.addons.dramafinder.element.TreeGridElement;
 import org.vaadin.addons.dramafinder.element.VaadinElement;
 import org.vaadin.addons.dramafinder.element.query.ElementQuery;
 import org.vaadin.addons.dramafinder.element.query.Findable;
@@ -67,6 +69,28 @@ public class AccessibleNameIT extends SpringPlaywrightIT {
         } else {
             assertNull(select.getAccessibleName());
         }
+    }
+
+    @Test
+    public void grid_isNamedByItsAccessibleName() {
+        assertEquals("Users", GridElement.getById(page, "aria-label-grid").getAccessibleName());
+    }
+
+    @Test
+    public void grid_withoutAccessibleName_hasNoName() {
+        assertNull(GridElement.getById(page, "unnamed-grid").getAccessibleName());
+    }
+
+    @Test
+    public void grid_isFoundByItsAccessibleName() {
+        assertFoundByItsName(GridElement.class, GridElement.getById(page, "aria-label-grid"));
+    }
+
+    @Test
+    public void treeGrid_isNamedAndFoundByItsAccessibleName() {
+        TreeGridElement folders = TreeGridElement.getById(page, "aria-label-tree-grid");
+        assertEquals("Folders", folders.getAccessibleName());
+        assertFoundByItsName(GridElement.class, folders);
     }
 
     @Test

@@ -9,8 +9,10 @@ import com.microsoft.playwright.Page;
  * By default the name is the one given by {@code aria-label},
  * {@code aria-labelledby} or an associated {@code <label>}, read on the
  * component itself or on its own input (the {@code input}, {@code textarea} or
- * {@code value} slotted directly into a field). Components nested inside it are
- * not considered, so a dialog is not matched by the name of a field it holds.
+ * {@code value} slotted directly into a field), or on the internal table of a
+ * {@code vaadin-grid}, where the grid forwards its {@code accessibleName}.
+ * Components nested inside it are not considered, so a dialog is not matched
+ * by the name of a field it holds.
  * Queries for components named by their content (buttons, tabs) refine this.
  *
  * @param <Q> the query type returned by the filter
@@ -56,7 +58,12 @@ public interface AccessibleNameFilters<Q> extends Refinable<Q> {
         // One pass of Playwright's label engine: every labelled element, plus the component
         // that a labelled input, textarea or value is slotted directly into. Matching the
         // own input with `has` instead ran the engine again over each candidate's subtree.
-        Locator named = candidates.page().getByLabel(name, new Page.GetByLabelOptions().setExact(exact));
-        return candidates.and(named.locator(QueryText.SELF_OR_OWNING_FIELD));
+        Page page = candidates.page();
+        Locator named = page.getByLabel(name, new Page.GetByLabelOptions().setExact(exact));
+        Locator labelled = candidates.and(named.locator(QueryText.SELF_OR_OWNING_FIELD));
+        // A grid's name is on the table in its shadow root, which the XPath above cannot leave.
+        Locator namedGrid = candidates.and(page.locator(QueryText.GRID_TAGS)).filter(new Locator.FilterOptions()
+                .setHas(page.locator(QueryText.OWN_GRID_TABLE).and(named)));
+        return labelled.or(namedGrid);
     }
 }
