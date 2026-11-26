@@ -119,7 +119,9 @@ public abstract class VaadinElement implements HasLocatorElement {
      * By default the name comes from {@code aria-labelledby}, {@code aria-label}
      * or a native {@code <label>}, read on the host and then on the field's own
      * input — so a field's label, its {@code accessibleName} and its
-     * {@code accessibleNameRef} all count. A placeholder does not. Components
+     * {@code accessibleNameRef} all count. A grid's name is read on the
+     * internal table its {@code accessibleName} is forwarded to. A placeholder
+     * does not count. Components
      * named by their content (buttons, tabs, ...) fall back to their own text.
      * Unlike {@code getAriaLabel()}, this is not limited to the
      * {@code aria-label} attribute. Read without waiting.

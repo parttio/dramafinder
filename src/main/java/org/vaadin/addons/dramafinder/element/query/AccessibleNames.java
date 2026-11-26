@@ -60,9 +60,12 @@ public final class AccessibleNames {
             const join = texts => texts.map(t => t.replace(/\\s+/g, ' ').trim()).filter(t => t).join(' ') || null;
             """;
 
-    // The host, then the input, textarea or value button slotted directly into it.
+    // The host, then the input, textarea or value button slotted directly into it, or the
+    // internal <table> a grid forwards its accessibleName to.
     private static final String LABELLED_JS = "el => {" + LABELS_JS + """
-                const own = [...el.children].find(c => ['input', 'textarea', 'value'].includes(c.getAttribute('slot')));
+                const own = [...el.children].find(c => ['input', 'textarea', 'value'].includes(c.getAttribute('slot')))
+                        ?? (['vaadin-grid', 'vaadin-grid-pro'].includes(el.localName)
+                                ? el.shadowRoot?.querySelector('#table') : null);
                 return join(labels(el)) ?? (own ? join(labels(own)) : null);
             }""";
 
@@ -91,7 +94,9 @@ public final class AccessibleNames {
      * given by {@code aria-labelledby}, {@code aria-label} or a native
      * {@code <label>} on the host, or else on its own input (the
      * {@code input}, {@code textarea} or {@code value} slotted directly into
-     * it). Nested components are not read.
+     * it) or, for a {@code vaadin-grid} or {@code vaadin-grid-pro}, on the
+     * internal table the grid forwards its {@code accessibleName} to. Nested
+     * components are not read.
      * <p>
      * With several {@code aria-labelledby} targets the texts are joined with a
      * space, as a screen reader announces them; {@code withAccessibleName}

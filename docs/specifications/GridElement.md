@@ -47,6 +47,15 @@ GridElement grid = find(page, GridElement.class).withClassName("styled-grid").si
 GridElement inDialog = dialog.find(GridElement.class).first();
 ```
 
+A grid named on the server with `grid.setAriaLabel("Users")` keeps that name on
+the `<table>` inside its shadow root, not on the `vaadin-grid` host. Both
+`getAccessibleName()` and `withAccessibleName(..)` read it there (issue #333):
+
+```java
+GridElement users = find(page, GridElement.class).withAccessibleName("Users").single();
+users.assertAccessibleName("Users");
+```
+
 ## Row and column counts
 
 ```java

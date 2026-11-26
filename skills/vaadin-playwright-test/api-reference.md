@@ -276,7 +276,7 @@ Reads a component's accessible name the way the withAccessibleName filters match
 
 **Static methods:**
 
-- `String labelled(Locator component)` — Read the accessible name of a component named by its label: the name given by `aria-labelledby`, `aria-label` or a native `<label>` on the host, or else on its own input (the `input`, `textarea` or `value` slotted directly into it).
+- `String labelled(Locator component)` — Read the accessible name of a component named by its label: the name given by `aria-labelledby`, `aria-label` or a native `<label>` on the host, or else on its own input (the `input`, `textarea` or `value` slotted directly into it) or, for a `vaadin-grid` or `vaadin-grid-pro`, on the internal table the grid forwards its `accessibleName` to.
 - `String labelledOrOwnText(Locator component)` — Read the accessible name of a component named by its content, such as a button or a tab: the name given by `aria-labelledby` or `aria-label` on the host when either attribute is set, otherwise the component's own text — its light-DOM text without the children assigned to a named slot, so neither an icon nor a slotted tooltip is part of it.
 
 ### ButtonQuery

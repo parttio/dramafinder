@@ -76,20 +76,12 @@ public class AccessibleNameView extends Main {
         Button rename = new Button("Rename", e -> labelled.setLabel("Full name"));
         rename.setId("rename");
 
-        // Vaadin forwards a grid's accessibleName and accessibleNameRef to its internal <table>.
+        // Grid.setAriaLabel sets accessibleName, which the grid forwards to its internal <table>.
         Grid<String> users = new Grid<>();
         users.addColumn(s -> s).setHeader("User");
         users.setItems("Ada", "Linus");
         users.setAriaLabel("Users");
         users.setId("aria-label-grid");
-
-        Span teamHeading = new Span("Team members");
-        teamHeading.setId("team-heading");
-        Grid<String> team = new Grid<>();
-        team.addColumn(s -> s).setHeader("Member");
-        team.setItems("Grace");
-        team.setAriaLabelledBy("team-heading");
-        team.setId("labelledby-grid");
 
         Grid<String> unnamedGrid = new Grid<>();
         unnamedGrid.addColumn(s -> s).setHeader("Item");
@@ -104,6 +96,6 @@ public class AccessibleNameView extends Main {
 
         add(new Div(labelled, ariaLabelled, billing, referenced, unnamed), new Div(first, second, multiRef),
                 new Div(terms, size), new Div(save, close, iconOnly, rename), tabs,
-                new Div(users, teamHeading, team, unnamedGrid, folders));
+                new Div(users, unnamedGrid, folders));
     }
 }

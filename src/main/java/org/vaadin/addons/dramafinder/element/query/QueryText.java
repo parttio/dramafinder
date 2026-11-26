@@ -31,6 +31,15 @@ final class QueryText {
     static final String SELF_OR_OWNING_FIELD = "xpath=self::*"
             + " | self::*[@slot = 'input' or @slot = 'textarea' or @slot = 'value']/parent::*";
 
+    /** The grids, which forward their {@code accessibleName} to an internal table. */
+    static final String GRID_TAGS = "vaadin-grid, vaadin-grid-pro";
+
+    /**
+     * From a grid: its own internal table, in its shadow root. A grid nested in
+     * a cell has its table deeper and is not reached.
+     */
+    static final String OWN_GRID_TABLE = ":scope > #scroller > #table";
+
     private QueryText() {
     }
 
