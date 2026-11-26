@@ -26,12 +26,22 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
 
     public static final String FIELD_TAG_NAME = "vaadin-menu-bar-list-box";
 
-    /** The first-level list box, relative to its {@code vaadin-menu-bar}. */
-    static final String ROOT_LIST_BOX = "xpath=./vaadin-menu-bar-submenu/*/" + FIELD_TAG_NAME;
+    static final String SUB_MENU_TAG_NAME = "vaadin-menu-bar-submenu";
 
-    /** The list box one level down, relative to a list box. */
-    private static final String NESTED_LIST_BOX =
-            "xpath=ancestor::vaadin-menu-bar-submenu[1]/vaadin-menu-bar-submenu/*/" + FIELD_TAG_NAME;
+    /**
+     * A {@code vaadin-menu-bar-submenu} directly below a menu bar or a sub-menu:
+     * each level nests the next one as a {@code slot="submenu"} child.
+     */
+    private static final String CHILD_SUB_MENU = ":scope > " + SUB_MENU_TAG_NAME;
+
+    /**
+     * The list box of a {@code vaadin-menu-bar-submenu}, without those of the
+     * sub-menus nested in it, whatever wraps it inside the overlay.
+     */
+    private static final String OWN_LIST_BOX = ":scope > :not(" + SUB_MENU_TAG_NAME + ") " + FIELD_TAG_NAME;
+
+    /** The {@code vaadin-menu-bar-submenu} this list box belongs to; {@code null} when not known. */
+    private final Locator subMenu;
 
     /**
      * Create a {@code MenuElement} matching every menu bar list box on the page.
@@ -42,12 +52,27 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
      * @param page the Playwright page
      */
     public MenuElement(Page page) {
-        super(page.locator(FIELD_TAG_NAME));
+        this(page.locator(FIELD_TAG_NAME));
     }
 
     /** Create a {@code MenuElement} from an existing locator. */
     public MenuElement(Locator locator) {
         super(locator);
+        this.subMenu = null;
+    }
+
+    private MenuElement(Locator listBox, Locator subMenu) {
+        super(listBox);
+        this.subMenu = subMenu;
+    }
+
+    /** The first-level menu of {@code menuBar}: the one its top-level items and its overflow button open. */
+    static MenuElement firstLevel(Locator menuBar) {
+        return ofSubMenu(menuBar.locator(CHILD_SUB_MENU));
+    }
+
+    private static MenuElement ofSubMenu(Locator subMenu) {
+        return new MenuElement(subMenu.locator(OWN_LIST_BOX), subMenu);
     }
 
     /**
@@ -91,9 +116,18 @@ public class MenuElement extends VaadinElement implements HasThemeElement, HasSt
         menuItemElement.click();
         waitAfterAction();
         menuItemElement.assertExpanded();
-        MenuElement menu = new MenuElement(getLocator().locator(NESTED_LIST_BOX));
+        MenuElement menu = ofSubMenu(ownSubMenu().locator(CHILD_SUB_MENU));
         menu.assertVisible();
         return menu;
+    }
+
+    /**
+     * The {@code vaadin-menu-bar-submenu} of this list box. A menu returned by
+     * the library knows it; one built from an arbitrary locator looks for its
+     * nearest enclosing sub-menu, which only an ancestor axis can express.
+     */
+    private Locator ownSubMenu() {
+        return subMenu != null ? subMenu : getLocator().locator("xpath=ancestor::" + SUB_MENU_TAG_NAME + "[1]");
     }
 
     /**

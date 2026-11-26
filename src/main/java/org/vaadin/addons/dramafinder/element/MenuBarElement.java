@@ -134,7 +134,7 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
         MenuItemElement.waitForLayoutToSettle(getLocator());
         overflowButton.click();
         waitAfterAction();
-        MenuElement overflowMenu = new MenuElement(getLocator().locator(MenuElement.ROOT_LIST_BOX));
+        MenuElement overflowMenu = MenuElement.firstLevel(getLocator());
         overflowMenu.assertVisible();
         return overflowMenu;
     }
@@ -169,7 +169,7 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
         menuItemElement.click();
         waitAfterAction();
         menuItemElement.assertExpanded();
-        MenuElement menu = new MenuElement(getLocator().locator(MenuElement.ROOT_LIST_BOX));
+        MenuElement menu = MenuElement.firstLevel(getLocator());
         menu.assertVisible();
         return menu;
     }
