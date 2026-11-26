@@ -33,9 +33,35 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
         this(page.locator(FIELD_TAG_NAME));
     }
 
+    /** Whether items found through this element go through "More options" when they are overflowed. */
+    private final boolean unfoldOverflow;
+
     /** Create a {@code MenuBarElement} from an existing locator. */
     public MenuBarElement(Locator locator) {
+        this(locator, false);
+    }
+
+    private MenuBarElement(Locator locator, boolean unfoldOverflow) {
         super(locator);
+        this.unfoldOverflow = unfoldOverflow;
+    }
+
+    /**
+     * Get a view of this menu bar that reaches collapsed items through the
+     * overflow menu automatically.
+     * <p>
+     * By default an item collapsed into the overflow menu ("More options") is
+     * not clickable, as for a user: {@link MenuItemElement#click()} and
+     * {@link #openSubMenu(String)} fail on it, and the test opens the overflow
+     * menu itself with {@link #openOverflowMenu()}. Items found through the
+     * returned element instead open "More options" first when they are
+     * collapsed, and are clicked in place otherwise, so the same test runs at
+     * every viewport width.
+     *
+     * @return a {@code MenuBarElement} on the same menu bar that unfolds the overflow menu
+     */
+    public MenuBarElement unfoldingOverflow() {
+        return new MenuBarElement(getLocator(), true);
     }
 
     /**
@@ -43,26 +69,68 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * <p>
      * The label is the item's own text, matched in full and case-sensitively; an
      * item is also found by its accessible name, which is all an icon-only item
-     * with an {@code aria-label} has. Items of open sub-menus and the hidden
-     * overflow button are not considered; two items sharing the label fail with
-     * a strict-mode error.
+     * with an {@code aria-label} has. Items of open sub-menus and the overflow
+     * button are not considered; two items sharing the label fail with a
+     * strict-mode error. An item collapsed into the overflow menu is found too;
+     * see {@link MenuItemElement#click()} for clicking it.
      *
      * @param name the item's full text or accessible name
      * @return the matching top-level item
      */
     public MenuItemElement getMenuItemElement(String name) {
-        return MenuItemElement.byLabel(MenuItemElement.topLevelItems(getLocator()), name);
+        return MenuItemElement.topLevelByLabel(getLocator(), name, unfoldOverflow);
     }
 
     /**
      * Get the labels of the top-level items, in display order: each item's own
-     * text, or its {@code aria-label} when it has no text. The hidden overflow
-     * button is left out.
+     * text, or its {@code aria-label} when it has no text. Items collapsed into
+     * the overflow menu are included; the overflow button ("More options")
+     * itself never is.
      *
-     * @return the labels of the menu bar's buttons; empty when there are none
+     * @return the labels of the menu bar's items; empty when there are none
      */
     public List<String> getItemLabels() {
         return MenuItemElement.labelsOf(MenuItemElement.topLevelItems(getLocator()));
+    }
+
+    /**
+     * Get the labels of the top-level items that do not fit in the menu bar and
+     * are collapsed into its overflow menu ("More options"), in display order.
+     * <p>
+     * The menu bar lays its items out again after a resize, so read this once
+     * the layout has settled. Read without waiting; empty while the menu bar
+     * itself is hidden.
+     *
+     * @return the labels of the overflowed items; empty when every item fits
+     */
+    public List<String> getOverflowItemLabels() {
+        if (!MenuItemElement.overflowButton(getLocator()).isVisible()) {
+            return List.of();
+        }
+        return MenuItemElement.labelsOf(MenuItemElement.overflowedItems(getLocator()));
+    }
+
+    /**
+     * Open the overflow menu ("More options") that holds the items the menu bar
+     * has no room for, and return it.
+     * <p>
+     * This is the step a user takes on a narrow screen before reaching a
+     * collapsed item: the returned menu lists the collapsed items, clicks them
+     * and opens their sub-menus like any first-level sub-menu. Waits until the
+     * overflow button is shown, then until the menu is visible.
+     *
+     * @return the opened overflow menu
+     * @throws AssertionError if the overflow button does not show up before the
+     *                        assertion timeout, because every item fits
+     */
+    public MenuElement openOverflowMenu() {
+        Locator overflowButton = MenuItemElement.overflowButton(getLocator());
+        assertThat(overflowButton).isVisible();
+        overflowButton.click();
+        waitAfterAction();
+        MenuElement overflowMenu = new MenuElement(getLocator().locator(MenuElement.ROOT_LIST_BOX));
+        overflowMenu.assertVisible();
+        return overflowMenu;
     }
 
     /**
@@ -71,13 +139,27 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * The returned menu is the first-level list box of this menu bar, so it
      * neither matches another menu bar's sub-menu nor a nested level; this
      * waits until it is visible.
+     * <p>
+     * An item collapsed into the overflow menu fails at once with an
+     * {@link IllegalStateException}; open it through {@link #openOverflowMenu()}
+     * instead. Through {@link #unfoldingOverflow()}, such an item is reached
+     * through "More options" as a user does, and the returned menu is the
+     * item's sub-menu, one level below the overflow menu.
      *
      * @param name the item's full text or accessible name, as for
      *             {@link #getMenuItemElement(String)}
      * @return the opened first-level sub-menu
+     * @throws IllegalStateException if the item is collapsed into the overflow
+     *                               menu and this element is not
+     *                               {@link #unfoldingOverflow()}
      */
     public MenuElement openSubMenu(String name) {
         MenuItemElement menuItemElement = getMenuItemElement(name);
+        if (menuItemElement.isOverflowed()) {
+            String label = menuItemElement.getLabel();
+            menuItemElement.requireUnfolding(label);
+            return menuItemElement.openOverflowMenu().openSubMenu(label);
+        }
         menuItemElement.click();
         waitAfterAction();
         menuItemElement.assertExpanded();

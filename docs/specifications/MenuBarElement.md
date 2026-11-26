@@ -85,8 +85,9 @@ assertThat(page.locator("#text")).hasText("Clicked item: View");
 
 The name is the item's own text, matched in full and case-sensitively. An item is
 also found by its accessible name, which is all an icon-only item with an
-`aria-label` has. Items of open sub-menus and the hidden overflow button are not
-considered; two items sharing the label fail with a strict-mode error.
+`aria-label` has. Items of open sub-menus and the overflow button ("More
+options") are not considered; two items sharing the label fail with a
+strict-mode error.
 
 ## Opening sub-menus and clicking nested items
 
@@ -207,8 +208,8 @@ covered by an IT of its own.
 ## Reading the item labels
 
 `getItemLabels()` returns each item's own text — or its `aria-label` when it has
-no text — in display order. Nested items and the hidden overflow button are left
-out. Use it when the test asserts the menu's structure:
+no text — in display order. Items collapsed into the overflow menu are included;
+nested items and the overflow button itself are left out. Use it when the test asserts the menu's structure:
 
 ```java
 assertEquals(List.of("View", "Edit", "Share", "File", "Archive", "More actions"),
@@ -216,6 +217,50 @@ assertEquals(List.of("View", "Edit", "Share", "File", "Archive", "More actions")
 assertEquals(List.of("New", "Export", "Print", "Close"),
         menuBar.openSubMenu("File").getItemLabels());
 ```
+
+## Items in the overflow menu
+
+When the menu bar is too narrow for its items (a phone viewport, a narrow
+navbar), it collapses the trailing ones into an overflow menu behind a "More
+options" button. A collapsed item is still one of the menu bar's items — it is
+found, listed and checked as usual — but, as for a user, it is not clickable in
+place:
+
+```java
+// View: a full-width menu bar with File, Edit, View, Insert, Format, Share, Print
+page.setViewportSize(375, 812);
+MenuBarElement menuBar = MenuBarElement.getById(page, "overflow-menu-bar");
+
+menuBar.getMenuItemElement("Print").assertOverflowed();   // waits for the layout
+menuBar.getMenuItemElement("File").assertNotOverflowed();
+assertEquals(List.of("Share", "Print"), menuBar.getOverflowItemLabels());
+
+menuBar.getMenuItemElement("Print").click();   // IllegalStateException, at once
+```
+
+Take the step the user takes with `openOverflowMenu()`, which returns the
+overflow menu as a first-level `MenuElement`:
+
+```java
+menuBar.openOverflowMenu().getMenuItemElement("Print").click();
+menuBar.openOverflowMenu().openSubMenu("Share").getMenuItemElement("Get Link").click();
+```
+
+When the test should run unchanged at every viewport width, look the items up
+through `unfoldingOverflow()`: a collapsed item then opens "More options" first,
+and a visible one is clicked in place:
+
+```java
+MenuBarElement menuBar = MenuBarElement.getById(page, "overflow-menu-bar").unfoldingOverflow();
+menuBar.getMenuItemElement("Print").click();
+menuBar.openSubMenu("Share").getMenuItemElement("Get Link").click();
+```
+
+`getOverflowItemLabels()` is empty when every item fits. It and `isOverflowed()`
+read without waiting, and the menu bar lays its items out again after every
+resize: assert an item with `assertOverflowed()` / `assertNotOverflowed()`
+(which retry) before reading them. `openOverflowMenu()` waits for the "More
+options" button and fails when every item fits.
 
 ## Typed queries
 
@@ -279,6 +324,11 @@ menuBar.assertAriaLabel("Main menu");
   sub-menu with `openSubMenu` and look the item up on the menu it returns.
 - **A closing sub-menu stays visible while it animates out.** Use `close()`,
   which waits until it is gone, before reopening the same menu.
+- **The overflow depends on the viewport.** Set the viewport size before the
+  lookup and wait with `assertOverflowed()` before reading
+  `getOverflowItemLabels()`; on a wide viewport the list is empty.
+- **A collapsed item is not clickable by default.** Open "More options" with
+  `openOverflowMenu()`, or look the item up through `unfoldingOverflow()`.
 - **Clicking a leaf item closes the sub-menus.** Reopen the menu to check the
   state of a checkable item.
 
@@ -289,4 +339,5 @@ menuBar.assertAriaLabel("Main menu");
   [Assertions](../guide/assertions.md),
   [Actions and waiting](../guide/actions-and-waiting.md),
   [Core concepts](../guide/core-concepts.md)
-- Full example: [MenuBarViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/MenuBarViewIT.java)
+- Full examples: [MenuBarViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/MenuBarViewIT.java),
+  [MenuBarOverflowViewIT](../../src/test/java/org/vaadin/addons/dramafinder/tests/it/MenuBarOverflowViewIT.java)
