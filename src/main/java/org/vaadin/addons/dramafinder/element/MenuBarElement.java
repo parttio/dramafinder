@@ -97,13 +97,16 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * Get the labels of the top-level items that do not fit in the menu bar and
      * are collapsed into its overflow menu ("More options"), in display order.
      * <p>
-     * The menu bar lays its items out again after a resize, so read this once
-     * the layout has settled. Read without waiting; empty while the menu bar
-     * itself is hidden.
+     * The menu bar lays its items out again after a resize, so this first waits
+     * until the menu bar has stopped changing size (a container animating its
+     * width, such as {@code vaadin-app-layout} closing its drawer, keeps it
+     * resizing for a moment), then reads without retrying; empty while the
+     * menu bar itself is hidden.
      *
      * @return the labels of the overflowed items; empty when every item fits
      */
     public List<String> getOverflowItemLabels() {
+        MenuItemElement.waitForLayoutToSettle(getLocator());
         if (!MenuItemElement.overflowButton(getLocator()).isVisible()) {
             return List.of();
         }
@@ -117,7 +120,9 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * This is the step a user takes on a narrow screen before reaching a
      * collapsed item: the returned menu lists the collapsed items, clicks them
      * and opens their sub-menus like any first-level sub-menu. Waits until the
-     * overflow button is shown, then until the menu is visible.
+     * overflow button is shown and the menu bar has stopped changing size (an
+     * overflow menu opened during a relayout loses its items), then until the
+     * menu is visible.
      *
      * @return the opened overflow menu
      * @throws AssertionError if the overflow button does not show up before the
@@ -126,6 +131,7 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
     public MenuElement openOverflowMenu() {
         Locator overflowButton = MenuItemElement.overflowButton(getLocator());
         assertThat(overflowButton).isVisible();
+        MenuItemElement.waitForLayoutToSettle(getLocator());
         overflowButton.click();
         waitAfterAction();
         MenuElement overflowMenu = new MenuElement(getLocator().locator(MenuElement.ROOT_LIST_BOX));
