@@ -25,6 +25,12 @@ public class GridSortingViewIT extends SpringPlaywrightIT {
     }
 
     @Test
+    public void testSortableHeaderCellIsNamedByItsSorter() {
+        GridElement grid = GridElement.getById(page, "sortable-grid");
+        assertEquals("Sort by First Name", grid.findHeaderCell(0).orElseThrow().getAccessibleName());
+    }
+
+    @Test
     public void testInitiallyUnsorted() {
         GridElement grid = GridElement.getById(page, "sortable-grid");
         var headerCell = grid.findHeaderCell(0);

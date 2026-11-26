@@ -175,4 +175,30 @@ public class GridSelectionViewIT extends SpringPlaywrightIT {
         var e = assertThrows(AssertionError.class, () -> grid.deselect(0));
         assertTrue(e.getMessage().contains("row 0"), e.getMessage());
     }
+
+    @Test
+    public void testSorterHeaderCellIsNamedByTheTranslatedSorterName() {
+        GridElement grid = GridElement.getById(page, "i18n-grid");
+        grid.findHeaderCell(1).orElseThrow().assertAccessibleName("Sortieren nach First Name");
+    }
+
+    @Test
+    public void testSelectionHeaderCellIsNamedUnavailableWhenSelectAllIsHidden() {
+        GridElement grid = GridElement.getById(page, "lazy-multi-select-grid");
+        assertEquals("Select All unavailable", grid.findHeaderCell(0).orElseThrow().getAccessibleName());
+    }
+
+    @Test
+    public void testSelectAllCheckboxIsNamedBySelectAll() {
+        GridElement.getById(page, "multi-select-grid").getSelectAllCheckbox().assertAccessibleName("Select All");
+        GridElement.getById(page, "i18n-grid").getSelectAllCheckbox().assertAccessibleName("Alle auswählen");
+    }
+
+    @Test
+    public void testRowSelectionCheckboxIsNamedBySelectRow() {
+        GridElement.getById(page, "multi-select-grid").findRow(0).orElseThrow().getSelectionCheckbox()
+                .assertAccessibleName("Select Row 1");
+        GridElement.getById(page, "i18n-grid").findRow(1).orElseThrow().getSelectionCheckbox()
+                .assertAccessibleName("Zeile 2 auswählen");
+    }
 }
