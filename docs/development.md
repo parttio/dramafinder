@@ -86,6 +86,29 @@ builds and pushes the release to Maven Central. Vaadin Directory picks up new
 releases within about half an hour; if browser or Vaadin version support
 changed, adjust the metadata in the Directory UI.
 
+### GitHub release
+
+Write the notes in `docs/release-notes/<version>.md` before cutting the
+release. Once the tag is pushed, publish them as the GitHub release. Their links
+are relative (`../specifications/GridElement.md#headers`), which the
+documentation site resolves but a release page does not, so rewrite them to the
+site's URLs on the way:
+
+```bash
+V=2.2.4
+SITE=https://parttio.github.io/dramafinder
+sed -E \
+    -e "s#\]\(\.\./\.\./src/([^)#]+)\.md#](${SITE}/src/\1/#g" \
+    -e "s#\]\(\.\./(guide|specifications)/([^)#]+)\.md#](${SITE}/docs/\1/\2/#g" \
+    docs/release-notes/$V.md > /tmp/release-notes-$V.md
+gh release create dramafinder-$V --verify-tag --latest \
+    --title "DramaFinder $V" --notes-file /tmp/release-notes-$V.md
+```
+
+A page `docs/x/y.md` is served at `${SITE}/docs/x/y/`. A link to any other
+folder needs the same rewrite: add a rule for it, and open the release page to
+check the links.
+
 ### Tracking issues per release
 
 Each release has a GitHub milestone named after its version (`2.2.3`), holding
