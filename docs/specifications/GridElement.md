@@ -187,6 +187,23 @@ grid.findColumnIndexById("key-only");    // OptionalInt.empty(): a key is not an
 the id; `getColumnIndexById` throws `IllegalArgumentException` instead. Both match
 the id exactly and reject an empty or `null` id.
 
+### Column text alignment
+
+`getColumnTextAlign(columnIndex)` reads a column's `textAlign`, as set with
+`Column.setTextAlign(ColumnTextAlign)`: `start`, `center`, `end`, or, from Vaadin
+25.3, `left` and `right`. A column that sets none reads `start`.
+
+```java
+// View
+grid.addColumn(GridPerson::email).setTextAlign(ColumnTextAlign.RIGHT).setId("email");
+```
+
+```java
+// Test
+grid.assertColumnTextAlign(grid.getColumnIndexById("email"), "right");
+assertEquals("start", grid.getColumnTextAlign(0));
+```
+
 ## Headers
 
 ```java
@@ -478,6 +495,27 @@ grid.assertSelectedItemCount(0);
 Getters for the same state: `getSelectedItemCount()`, `isSelectAllChecked()`,
 `isSelectAllIndeterminate()`, `isSelectAllUnchecked()` and `RowElement.isSelected()`.
 
+### Accessible names of the selection column
+
+The select-all checkbox and each row's checkbox are `CheckboxElement`s, so their
+accessible names can be asserted. They come from the grid's i18n (Vaadin 25.3):
+`selectAll` ("Select All") and `selectRow` ("Select Row {rowHeader}", with the row
+header text or the row number in place of `{rowHeader}`). Over a lazy data provider
+the grid hides the select-all checkbox and names the header cell with
+`selectAllUnavailable` ("Select All unavailable") instead.
+
+```java
+// View
+grid.setI18n(new GridI18n().setSelectAll("Alle auswählen").setSelectRow("Zeile {rowHeader} auswählen"));
+```
+
+```java
+// Test
+grid.getSelectAllCheckbox().assertAccessibleName("Alle auswählen");
+grid.findRow(1).orElseThrow().getSelectionCheckbox().assertAccessibleName("Zeile 2 auswählen");
+lazyGrid.findHeaderCell(0).orElseThrow().assertAccessibleName("Select All unavailable");
+```
+
 ### How a row gets selected
 
 `select` and `deselect` click the row like a user would. In a multi-select grid
@@ -583,6 +621,7 @@ lastName.assertSortAscending();
 | `isSortAscending()` / `assertSortAscending()` | Sorted ascending |
 | `isSortDescending()` / `assertSortDescending()` | Sorted descending |
 | `isNotSorted()` / `assertNotSorted()` | Not sorted |
+| `getAccessibleName()` / `assertAccessibleName(String)` | The header cell's name as the browser computes it: `i18n.sorter` ("Sort by {column}") on a sortable column, else the header text |
 
 `sort`, `getSortDirection` and `clickSort` throw `IllegalStateException` on a
 header cell without a sorter, such as a joined group cell.

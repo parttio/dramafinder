@@ -105,7 +105,10 @@ public class GridElement extends VaadinElement
                         [...cell.parentElement.querySelectorAll(':scope > th')].indexOf(cell)];
                 return %s.map(column => {
                     let own = null;
-                    for (let c = column; c && c.localName.startsWith('vaadin-grid-column'); c = c.parentElement) {
+                    // The column itself (also a selection column, vaadin-grid-flow-selection-column),
+                    // then its enclosing groups.
+                    for (let c = column; c && (c === column || c.localName.startsWith('vaadin-grid-column'));
+                            c = c.parentElement) {
                         const cell = c._headerCell;
                         if (!cell || !rows.includes(cell.parentElement) || cell.parentElement.hidden) continue;
                         const slot = cell.querySelector('slot');
@@ -444,6 +447,41 @@ public class GridElement extends VaadinElement
                     + ": the grid has " + getColumnCount() + " visible columns");
         }
         return Boolean.TRUE.equals(selection);
+    }
+
+    /**
+     * Get the horizontal alignment of the visible column at {@code columnIndex},
+     * its {@code textAlign}: {@code start}, {@code center}, {@code end},
+     * {@code left} or {@code right}, as set with Flow's
+     * {@code Column.setTextAlign(ColumnTextAlign)}. Read without waiting.
+     *
+     * @param columnIndex 0-based visible column index, in display order
+     * @return the alignment; {@code start} when the column sets none, as that
+     *         is how its cells are laid out
+     * @throws IllegalArgumentException if no visible column has that index
+     */
+    public String getColumnTextAlign(int columnIndex) {
+        Object align = locator.evaluate("(g, i) => { const c = " + VISIBLE_COLUMNS_JS + "[i];"
+                + " return c ? (c.textAlign || 'start') : null; }", columnIndex);
+        if (align == null) {
+            throw new IllegalArgumentException("No visible column at index " + columnIndex
+                    + ": the grid has " + getColumnCount() + " visible columns");
+        }
+        return (String) align;
+    }
+
+    /**
+     * Assert the horizontal alignment of the visible column at
+     * {@code columnIndex}, as read by {@link #getColumnTextAlign(int)},
+     * retrying until it matches or the timeout expires.
+     *
+     * @param columnIndex 0-based visible column index, in display order
+     * @param expected    {@code start}, {@code center}, {@code end},
+     *                    {@code left} or {@code right}
+     */
+    public void assertColumnTextAlign(int columnIndex, String expected) {
+        assertEventually(locator.page(), "Column " + columnIndex + " text align",
+                () -> getColumnTextAlign(columnIndex), expected);
     }
 
     /**
@@ -1489,6 +1527,21 @@ public class GridElement extends VaadinElement
     }
 
     /**
+     * Get the select-all checkbox in the header of a multi-select grid's
+     * selection column, for its state or its accessible name
+     * ({@code i18n.selectAll}, "Select All" by default). Over a lazy data
+     * provider the grid keeps the checkbox but hides it; the header cell is then
+     * named by {@code i18n.selectAllUnavailable}, see
+     * {@link HeaderCellElement#getAccessibleName()}.
+     *
+     * @return the select-all checkbox
+     * @throws IllegalStateException if the grid has no select-all checkbox
+     */
+    public CheckboxElement getSelectAllCheckbox() {
+        return new CheckboxElement(getSelectAllCheckboxLocator());
+    }
+
+    /**
      * Get the select-all checkbox element.
      *
      * @return the select-all checkbox element
@@ -2097,6 +2150,37 @@ public class GridElement extends VaadinElement
         }
 
         /**
+         * Get the accessible name of the header cell (the {@code columnheader}),
+         * as the browser computes it and a screen reader announces it: the
+         * sorter's name ({@code i18n.sorter}, "Sort by First Name" by default)
+         * for a sortable column, the select-all checkbox's name
+         * ({@code i18n.selectAll}) or, when that checkbox is hidden,
+         * {@code i18n.selectAllUnavailable} for the selection column, otherwise
+         * the header text. Read from Playwright's ARIA snapshot of the cell,
+         * without waiting.
+         *
+         * @return the whitespace-normalized name, or {@code null} when the cell
+         *         has none
+         */
+        public String getAccessibleName() {
+            return AriaSnapshots.name(getTableCellLocator().ariaSnapshot());
+        }
+
+        /**
+         * Assert the accessible name of the header cell, as read by
+         * {@link #getAccessibleName()}, retrying until it matches or the
+         * timeout expires. The comparison is exact and case-sensitive, with
+         * whitespace normalized.
+         *
+         * @param name the expected full name, or {@code null} to assert that
+         *             the cell has no accessible name
+         */
+        public void assertAccessibleName(String name) {
+            String expected = name == null ? null : name.strip().replaceAll("\\s+", " ");
+            assertEventually(locator.page(), "Header cell accessible name", this::getAccessibleName, expected);
+        }
+
+        /**
          * Whether the header cell supports sorting.
          *
          * @return {@code true} if the header cell supports sorting, {@code false} otherwise
@@ -2306,6 +2390,22 @@ public class GridElement extends VaadinElement
          */
         public int getRowIndex() {
             return rowIndex;
+        }
+
+        /**
+         * Get this row's checkbox in a multi-select grid's selection column,
+         * for its state or its accessible name ({@code i18n.selectRow},
+         * "Select Row {rowHeader}" by default, with the row header text or the
+         * row number in place of {@code {rowHeader}}).
+         *
+         * @return the row's selection checkbox
+         * @throws IllegalStateException if the grid has no visible selection column
+         */
+        public CheckboxElement getSelectionCheckbox() {
+            int selectionColumn = getColumns().stream().filter(ColumnInfo::selectionColumn).findFirst()
+                    .orElseThrow(() -> new IllegalStateException("The grid has no visible selection column"))
+                    .index();
+            return new CheckboxElement(getCell(selectionColumn).getCellContentLocator().locator("vaadin-checkbox"));
         }
 
         /**

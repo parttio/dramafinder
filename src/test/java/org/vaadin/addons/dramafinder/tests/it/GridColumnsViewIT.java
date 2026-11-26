@@ -82,6 +82,14 @@ public class GridColumnsViewIT extends SpringPlaywrightIT {
     /**
      * Drag a header cell past the right edge of another one, as a user reorders columns.
      */
+    @Test
+    public void testColumnTextAlign() {
+        GridElement grid = GridElement.getById(page, "columns-grid");
+        assertEquals("start", grid.getColumnTextAlign(0));
+        assertEquals("right", grid.getColumnTextAlign(1));
+        grid.assertColumnTextAlign(2, "left");
+    }
+
     private void dragHeader(GridElement grid, String sourceHeader, String targetHeader) {
         grid.getLocator().scrollIntoViewIfNeeded();
         var source = headerContent(grid, sourceHeader).boundingBox();

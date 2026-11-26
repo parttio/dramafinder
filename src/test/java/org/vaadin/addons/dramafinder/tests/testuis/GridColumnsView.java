@@ -1,5 +1,6 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
@@ -20,9 +21,10 @@ public class GridColumnsView extends Main {
         lastName.setId("last-name");
         lastName.setVisible(false);
         // No header text: only findable by id
-        grid.addColumn(GridPerson::email).setId("email");
+        grid.addColumn(GridPerson::email).setTextAlign(ColumnTextAlign.RIGHT).setId("email");
         // A key stays on the server; no id in the browser
-        grid.addColumn(person -> "key " + person.firstName()).setHeader("Key Only").setKey("key-only");
+        grid.addColumn(person -> "key " + person.firstName()).setHeader("Key Only")
+                .setTextAlign(ColumnTextAlign.LEFT).setKey("key-only");
         grid.setItems(GridBasicView.generatePersons(5));
         add(new H2("Columns Grid"), grid);
     }

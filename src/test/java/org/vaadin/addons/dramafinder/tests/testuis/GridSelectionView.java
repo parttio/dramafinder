@@ -1,9 +1,11 @@
 package org.vaadin.addons.dramafinder.tests.testuis;
 
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridI18n;
 import com.vaadin.flow.component.grid.GridSingleSelectionModel;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -16,6 +18,8 @@ public class GridSelectionView extends Main {
         createMultiSelectGrid();
         createNoSelectionGrid();
         createNoDeselectGrid();
+        createI18nGrid();
+        createLazyMultiSelectGrid();
     }
 
     private void createSingleSelectGrid() {
@@ -61,5 +65,33 @@ public class GridSelectionView extends Main {
         grid.addColumn(GridPerson::firstName).setHeader("First Name");
         grid.setItems(GridBasicView.generatePersons(5));
         add(new H2("No Deselect Grid"), grid);
+    }
+
+    /** A multi-select grid with translated accessible names for its checkboxes and sorters. */
+    private void createI18nGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("i18n-grid");
+        grid.setHeight("300px");
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addColumn(GridPerson::firstName).setHeader("First Name").setSortable(true);
+        grid.addColumn(GridPerson::lastName).setHeader("Last Name");
+        grid.setItems(GridBasicView.generatePersons(5));
+        grid.setI18n(new GridI18n().setSelectAll("Alle auswählen").setSelectRow("Zeile {rowHeader} auswählen")
+                .setSorter("Sortieren nach {column}"));
+        add(new H2("Translated Grid"), grid);
+    }
+
+    /** A multi-select grid over a lazy data provider: it hides the select-all checkbox. */
+    private void createLazyMultiSelectGrid() {
+        Grid<GridPerson> grid = new Grid<>();
+        grid.setId("lazy-multi-select-grid");
+        grid.setHeight("300px");
+        grid.setSelectionMode(Grid.SelectionMode.MULTI);
+        grid.addColumn(GridPerson::firstName).setHeader("First Name");
+        var persons = GridBasicView.generatePersons(5);
+        grid.setItems(DataProvider.fromCallbacks(
+                query -> persons.stream().skip(query.getOffset()).limit(query.getLimit()),
+                query -> persons.size()));
+        add(new H2("Lazy Multi Select Grid"), grid);
     }
 }

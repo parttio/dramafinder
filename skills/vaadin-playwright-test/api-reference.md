@@ -1454,6 +1454,8 @@ PlaywrightElement for `<vaadin-grid>`.
 - `int getColumnIndexById(String id)` — Get the index of the visible column with the given id, for a column that must exist.
 - `List<ColumnInfo> getColumns()` — Get the visible columns in display order, the order a column index counts (see the class description), read in one script.
 - `boolean isSelectionColumn(int columnIndex)` — Whether the visible column at `columnIndex` is the selection (checkbox) column of a multi-select grid.
+- `String getColumnTextAlign(int columnIndex)` — Get the horizontal alignment of the visible column at `columnIndex`, its `textAlign`: `start`, `center`, `end`, `left` or `right`, as set with Flow's `Column.setTextAlign(ColumnTextAlign)`.
+- `void assertColumnTextAlign(int columnIndex, String expected)` — Assert the horizontal alignment of the visible column at `columnIndex`, as read by `getColumnTextAlign(int)`, retrying until it matches or the timeout expires.
 - `boolean isAllRowsVisible()` — Whether the grid has `allRowsVisible` enabled.
 - `boolean isMultiSort()` — Whether the grid has multi-sort enabled.
 - `boolean isColumnReorderingAllowed()` — Whether column reordering is allowed.
@@ -1487,6 +1489,7 @@ PlaywrightElement for `<vaadin-grid>`.
 - `boolean isSelectAllUnchecked()` — Check if the select-all checkbox is unchecked.
 - `void checkSelectAll()` — Check the select-all checkbox.
 - `void uncheckSelectAll()` — Uncheck the select-all checkbox.
+- `CheckboxElement getSelectAllCheckbox()` — Get the select-all checkbox in the header of a multi-select grid's selection column, for its state or its accessible name (`i18n.selectAll`, "Select All" by default).
 - `void waitForGridToStopLoading()` — Wait for the grid to finish loading after a scroll or other action that triggers loading of new rows.
 - `boolean isRowInView(int rowIndex)` — Whether the row with the given index is currently scrolled into view (at least partially visible between the header and footer), without triggering any scrolling.
 - `int getFirstVisibleRowIndex()` — Get the index of the first row that is at least partially scrolled into view between the header and footer, without triggering any scrolling.
@@ -1554,6 +1557,8 @@ The sort direction of a grid column, as its `vaadin-grid-sorter` shows it: `ASCE
 
 Represents a header cell in the grid, providing access to the table cell (th), the cell content and sorting.
 
+- `String getAccessibleName()` — Get the accessible name of the header cell (the `columnheader`), as the browser computes it and a screen reader announces it: the sorter's name (`i18n.sorter`, "Sort by First Name" by default) for a sortable column, the select-all checkbox's name (`i18n.selectAll`) or, when that checkbox is hidden, `i18n.selectAllUnavailable` for the selection column, otherwise the header text.
+- `void assertAccessibleName(String name)` — Assert the accessible name of the header cell, as read by `getAccessibleName()`, retrying until it matches or the timeout expires.
 - `boolean isSortable()` — Whether the header cell supports sorting.
 - `void clickSort()` — Click the header cell sorter to sort the column.
 - `boolean isSortAscending()` — Whether the column is currently sorted in ascending order.
@@ -1579,6 +1584,7 @@ Represents a row in the grid, providing access to the row locator, row index, an
 
 - `Locator getRowLocator()` — Get the locator for the row (tr).
 - `int getRowIndex()` — Get the row index (0-based) of this row.
+- `CheckboxElement getSelectionCheckbox()` — Get this row's checkbox in a multi-select grid's selection column, for its state or its accessible name (`i18n.selectRow`, "Select Row {rowHeader}" by default, with the row header text or the row number in place of `{rowHeader}`).
 - `CellElement getCell(int columnIndex)` — Get the cell element for the given column index in this row.
 - `CellElement getCell(String columnHeaderText)` — Get the cell element for the given column header text in this row.
 - `CellElement getDetailsCell()` — Get the cell element for the details column in this row.
