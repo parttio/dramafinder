@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.vaadin.addons.dramafinder.element.ButtonElement;
 import org.vaadin.addons.dramafinder.element.CheckboxElement;
+import org.vaadin.addons.dramafinder.element.GridElement;
 import org.vaadin.addons.dramafinder.element.SelectElement;
 import org.vaadin.addons.dramafinder.element.TabElement;
 import org.vaadin.addons.dramafinder.element.TextFieldElement;
@@ -67,6 +68,11 @@ public class AccessibleNameIT extends SpringPlaywrightIT {
         } else {
             assertNull(select.getAccessibleName());
         }
+    }
+
+    @Test
+    public void grid_isNamedByItsAccessibleName() {
+        assertEquals("Users", GridElement.getById(page, "aria-label-grid").getAccessibleName());
     }
 
     @Test
