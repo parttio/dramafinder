@@ -51,18 +51,36 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * @return the matching top-level item
      */
     public MenuItemElement getMenuItemElement(String name) {
-        return MenuItemElement.byLabel(MenuItemElement.topLevelItems(getLocator()), name);
+        return MenuItemElement.topLevelByLabel(getLocator(), name);
     }
 
     /**
      * Get the labels of the top-level items, in display order: each item's own
-     * text, or its {@code aria-label} when it has no text. The hidden overflow
-     * button is left out.
+     * text, or its {@code aria-label} when it has no text. Items collapsed into
+     * the overflow menu are included; the overflow button ("More options")
+     * itself never is.
      *
-     * @return the labels of the menu bar's buttons; empty when there are none
+     * @return the labels of the menu bar's items; empty when there are none
      */
     public List<String> getItemLabels() {
         return MenuItemElement.labelsOf(MenuItemElement.topLevelItems(getLocator()));
+    }
+
+    /**
+     * Get the labels of the top-level items that do not fit in the menu bar and
+     * are collapsed into its overflow menu ("More options"), in display order.
+     * <p>
+     * The menu bar lays its items out again after a resize, so read this once
+     * the layout has settled. Read without waiting; empty while the menu bar
+     * itself is hidden.
+     *
+     * @return the labels of the overflowed items; empty when every item fits
+     */
+    public List<String> getOverflowItemLabels() {
+        if (!MenuItemElement.overflowButton(getLocator()).isVisible()) {
+            return List.of();
+        }
+        return MenuItemElement.labelsOf(MenuItemElement.overflowedItems(getLocator()));
     }
 
     /**
@@ -70,7 +88,9 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      * <p>
      * The returned menu is the first-level list box of this menu bar, so it
      * neither matches another menu bar's sub-menu nor a nested level; this
-     * waits until it is visible.
+     * waits until it is visible. An item collapsed into the overflow menu is
+     * reached through "More options", as a user does: the returned menu is then
+     * the item's sub-menu, one level below the overflow menu.
      *
      * @param name the item's full text or accessible name, as for
      *             {@link #getMenuItemElement(String)}
@@ -78,6 +98,10 @@ public class MenuBarElement extends VaadinElement implements HasThemeElement, Ha
      */
     public MenuElement openSubMenu(String name) {
         MenuItemElement menuItemElement = getMenuItemElement(name);
+        if (menuItemElement.isOverflowed()) {
+            String label = menuItemElement.getLabel();
+            return menuItemElement.openOverflowMenu().openSubMenu(label);
+        }
         menuItemElement.click();
         waitAfterAction();
         menuItemElement.assertExpanded();

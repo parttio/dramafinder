@@ -46,10 +46,15 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
     /**
      * Each item's label: its own text (named-slot children left out), or its
      * {@code aria-label} — on the item, or on the {@code vaadin-menu-bar-item}
-     * inside a button — when it has no text.
+     * inside a button — when it has no text. A button collapsed into the
+     * overflow menu has lent its content ({@code item.component}) to that menu
+     * once it was opened, and gets it back only when the menu bar lays out its
+     * items again, so the label is read from that content wherever it is.
      */
     private static final String LABELS_SCRIPT = """
-            els => els.map(el => {
+            els => els.map(button => {
+              const lent = button.item?.component;
+              const el = lent instanceof Element && !button.contains(lent) ? lent : button;
               const text = [...el.childNodes]
                 .filter(c => c.nodeType === 3 || (c.nodeType === 1 && !c.hasAttribute('slot')))
                 .map(c => c.textContent).join(' ').replace(/\\s+/g, ' ').trim();
@@ -59,9 +64,22 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
             })
             """;
 
+    /**
+     * The menu bar the item belongs to. Kept apart from the item's own locator,
+     * which is usually keyed on the item's text: while the overflow menu is
+     * open, the menu bar moves the text of an overflowed button into that menu.
+     */
+    private final Locator menuBar;
+
     /** Create a {@code MenuItemElement} from an existing locator. */
     public MenuItemElement(Locator locator) {
+        this(locator, locator.locator("xpath=.."));
+    }
+
+    /** Create a top-level item of the given menu bar. */
+    MenuItemElement(Locator locator, Locator menuBar) {
         super(locator);
+        this.menuBar = menuBar;
     }
 
     /**
@@ -89,9 +107,90 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
         assertThat(getLocator()).not().hasAttribute("expanded", "");
     }
 
-    /** The menu bar's own buttons, without the hidden overflow button or sub-menu items. */
+    /**
+     * Click the item — through the menu bar's overflow menu when the item is
+     * collapsed there — then wait for the server round-trip it triggers.
+     * <p>
+     * A top-level item collapsed into the overflow menu (see
+     * {@link #isOverflowed()}) cannot be clicked in place: this opens "More
+     * options" and clicks the item there, as a user does, so the same test
+     * works at every viewport width.
+     */
+    @Override
+    public void click() {
+        if (isOverflowed()) {
+            String label = getLabel();
+            openOverflowMenu().getMenuItemElement(label).click();
+            waitAfterAction();
+        } else {
+            super.click();
+        }
+    }
+
+    /** This item's label, as {@link MenuBarElement#getItemLabels()} reads it. */
+    String getLabel() {
+        return labelsOf(getLocator()).getFirst();
+    }
+
+    /** Open the menu bar's overflow menu ("More options") and wait until it is visible. */
+    MenuElement openOverflowMenu() {
+        new MenuItemElement(overflowButton(menuBar)).click();
+        waitAfterAction();
+        MenuElement overflowMenu = new MenuElement(menuBar.locator(MenuElement.ROOT_LIST_BOX));
+        overflowMenu.assertVisible();
+        return overflowMenu;
+    }
+
+    /**
+     * Whether this is a top-level item collapsed into the menu bar's overflow
+     * menu ("More options") because it does not fit: the menu bar keeps such a
+     * button in place but hides it with {@code visibility: hidden}. A sub-menu
+     * item is never overflowed. Read without waiting.
+     *
+     * @return {@code true} when the item is reachable only through the overflow menu
+     */
+    public boolean isOverflowed() {
+        return (Boolean) getLocator().evaluate(
+                "el => el.localName === '" + FIELD_TAG_NAME + "' && el.slot !== 'overflow'"
+                        + " && getComputedStyle(el).visibility === 'hidden'");
+    }
+
+    /**
+     * Assert that this top-level item is collapsed into the overflow menu,
+     * retrying until the menu bar has laid out its items.
+     */
+    public void assertOverflowed() {
+        assertThat(getLocator()).hasCSS("visibility", "hidden");
+    }
+
+    /**
+     * Assert that this item is shown in the menu bar itself, not collapsed into
+     * the overflow menu, retrying until the menu bar has laid out its items.
+     */
+    public void assertNotOverflowed() {
+        assertThat(getLocator()).not().hasCSS("visibility", "hidden");
+    }
+
+    /**
+     * The menu bar's own buttons, those collapsed into the overflow menu
+     * included, without the overflow button itself or sub-menu items.
+     */
     static Locator topLevelItems(Locator menuBar) {
-        return menuBar.locator("xpath=./" + FIELD_TAG_NAME + "[not(@hidden)]");
+        return menuBar.locator("xpath=./" + FIELD_TAG_NAME + "[not(@hidden)][not(@slot='overflow')]");
+    }
+
+    /**
+     * The menu bar's buttons that are collapsed into the overflow menu: while
+     * the overflow button is shown, the menu bar hides each item that no longer
+     * fits with {@code visibility: hidden}.
+     */
+    static Locator overflowedItems(Locator menuBar) {
+        return topLevelItems(menuBar).filter(new Locator.FilterOptions().setVisible(false));
+    }
+
+    /** The menu bar's overflow button ("More options"), {@code hidden} while every item fits. */
+    static Locator overflowButton(Locator menuBar) {
+        return menuBar.locator("xpath=./" + FIELD_TAG_NAME + "[@slot='overflow']");
     }
 
     /** The items of one sub-menu list box, without those of nested sub-menus. */
@@ -106,10 +205,28 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
      * also shows a text). Case-sensitive, no {@code .first()}.
      */
     static MenuItemElement byLabel(Locator items, String label) {
+        return new MenuItemElement(byLabelLocator(items, label));
+    }
+
+    /** Like {@link #byLabel(Locator, String)}, for a top-level item of {@code menuBar}. */
+    static MenuItemElement topLevelByLabel(Locator menuBar, String label) {
+        Locator items = topLevelItems(menuBar);
+        Locator item = byLabelLocator(items, label);
+        // Also pin the item by position when its label is already on the page: an
+        // overflowed button loses its text to the overflow menu once that menu has
+        // been opened, and only the position still finds it then.
+        List<String> labels = labelsOf(items);
+        if (labels.indexOf(label) >= 0 && labels.indexOf(label) == labels.lastIndexOf(label)) {
+            item = item.or(items.nth(labels.indexOf(label)));
+        }
+        return new MenuItemElement(item, menuBar);
+    }
+
+    private static Locator byLabelLocator(Locator items, String label) {
         Locator byText = new TextQuery<>(MenuItemElement.class, items).withText(label).getLocator();
         Locator byName = items.and(items.page().getByRole(AriaRole.MENUITEM,
                 new Page.GetByRoleOptions().setName(label).setExact(true)));
-        return new MenuItemElement(byText.or(byName));
+        return byText.or(byName);
     }
 
     /** The label of each of {@code items}, in DOM order; see {@link #byLabel}. */

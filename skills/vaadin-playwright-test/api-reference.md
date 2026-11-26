@@ -1,7 +1,7 @@
 # DramaFinder API Reference
 
 > **Auto-generated from source — do not edit by hand.** Regenerate with `jbang tools/generate-api-reference.java`.
-> DramaFinder 2.2.3-SNAPSHOT — 61 element wrappers.
+> DramaFinder 2.2.4-SNAPSHOT — 61 element wrappers.
 
 Complete public API of every DramaFinder element wrapper. Each element lists the shared mixin interfaces it implements; those interfaces' methods are documented once under **Shared mixins** at the end (not repeated per element) — except where an element overrides one to change its behaviour, in which case the element lists it again with the behaviour that applies there. Method one-liners come from Javadoc.
 
@@ -1802,6 +1802,7 @@ PlaywrightElement for `<vaadin-menu-bar>`.
 
 - `MenuItemElement getMenuItemElement(String name)` — Get a top-level item of this menu bar by its label.
 - `List<String> getItemLabels()` — Get the labels of the top-level items, in display order: each item's own text, or its `aria-label` when it has no text.
+- `List<String> getOverflowItemLabels()` — Get the labels of the top-level items that do not fit in the menu bar and are collapsed into its overflow menu ("More options"), in display order.
 - `MenuElement openSubMenu(String name)` — Click a top-level item and return the sub-menu it opens.
 - `void close()` — Close every open sub-menu of this menu bar and wait until they are gone.
 
@@ -1851,6 +1852,10 @@ PlaywrightElement for a menu bar item: a top-level `<vaadin-menu-bar-button>` or
 
 - `void assertExpanded()` — Assert that the menu item is expanded (shows submenu).
 - `void assertCollapsed()` — Assert that the menu item is collapsed.
+- `void click()` — Click the item — through the menu bar's overflow menu when the item is collapsed there — then wait for the server round-trip it triggers.
+- `boolean isOverflowed()` — Whether this is a top-level item collapsed into the menu bar's overflow menu ("More options") because it does not fit: the menu bar keeps such a button in place but hides it with `visibility: hidden`.
+- `void assertOverflowed()` — Assert that this top-level item is collapsed into the overflow menu, retrying until the menu bar has laid out its items.
+- `void assertNotOverflowed()` — Assert that this item is shown in the menu bar itself, not collapsed into the overflow menu, retrying until the menu bar has laid out its items.
 - `String getAccessibleName()` — Get the menu item's accessible name: its `aria-label` or `aria-labelledby` text when either attribute is set, otherwise its own text, without slotted children such as an icon or a tooltip — what `withAccessibleName` matches.
 
 ### MessageInputElement  `<vaadin-message-input>`
