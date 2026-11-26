@@ -222,9 +222,9 @@ assertEquals(List.of("New", "Export", "Print", "Close"),
 
 When the menu bar is too narrow for its items (a phone viewport, a narrow
 navbar), it collapses the trailing ones into an overflow menu behind a "More
-options" button. A collapsed item is still one of the menu bar's items, and the
-item API works the same at every width — `click()` and `openSubMenu(name)` open
-"More options" first and act on the item there, as a user does:
+options" button. A collapsed item is still one of the menu bar's items — it is
+found, listed and checked as usual — but, as for a user, it is not clickable in
+place:
 
 ```java
 // View: a full-width menu bar with File, Edit, View, Insert, Format, Share, Print
@@ -235,14 +235,32 @@ menuBar.getMenuItemElement("Print").assertOverflowed();   // waits for the layou
 menuBar.getMenuItemElement("File").assertNotOverflowed();
 assertEquals(List.of("Share", "Print"), menuBar.getOverflowItemLabels());
 
-menuBar.getMenuItemElement("Print").click();               // through "More options"
+menuBar.getMenuItemElement("Print").click();   // IllegalStateException, at once
+```
+
+Take the step the user takes with `openOverflowMenu()`, which returns the
+overflow menu as a first-level `MenuElement`:
+
+```java
+menuBar.openOverflowMenu().getMenuItemElement("Print").click();
+menuBar.openOverflowMenu().openSubMenu("Share").getMenuItemElement("Get Link").click();
+```
+
+When the test should run unchanged at every viewport width, look the items up
+through `unfoldingOverflow()`: a collapsed item then opens "More options" first,
+and a visible one is clicked in place:
+
+```java
+MenuBarElement menuBar = MenuBarElement.getById(page, "overflow-menu-bar").unfoldingOverflow();
+menuBar.getMenuItemElement("Print").click();
 menuBar.openSubMenu("Share").getMenuItemElement("Get Link").click();
 ```
 
 `getOverflowItemLabels()` is empty when every item fits. It and `isOverflowed()`
 read without waiting, and the menu bar lays its items out again after every
 resize: assert an item with `assertOverflowed()` / `assertNotOverflowed()`
-(which retry) before reading them.
+(which retry) before reading them. `openOverflowMenu()` waits for the "More
+options" button and fails when every item fits.
 
 ## Typed queries
 
@@ -309,6 +327,8 @@ menuBar.assertAriaLabel("Main menu");
 - **The overflow depends on the viewport.** Set the viewport size before the
   lookup and wait with `assertOverflowed()` before reading
   `getOverflowItemLabels()`; on a wide viewport the list is empty.
+- **A collapsed item is not clickable by default.** Open "More options" with
+  `openOverflowMenu()`, or look the item up through `unfoldingOverflow()`.
 - **Clicking a leaf item closes the sub-menus.** Reopen the menu to check the
   state of a checkable item.
 

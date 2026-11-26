@@ -1800,9 +1800,11 @@ PlaywrightElement for `<vaadin-menu-bar>`.
 
 **Methods:**
 
+- `MenuBarElement unfoldingOverflow()` — Get a view of this menu bar that reaches collapsed items through the overflow menu automatically.
 - `MenuItemElement getMenuItemElement(String name)` — Get a top-level item of this menu bar by its label.
 - `List<String> getItemLabels()` — Get the labels of the top-level items, in display order: each item's own text, or its `aria-label` when it has no text.
 - `List<String> getOverflowItemLabels()` — Get the labels of the top-level items that do not fit in the menu bar and are collapsed into its overflow menu ("More options"), in display order.
+- `MenuElement openOverflowMenu()` — Open the overflow menu ("More options") that holds the items the menu bar has no room for, and return it.
 - `MenuElement openSubMenu(String name)` — Click a top-level item and return the sub-menu it opens.
 - `void close()` — Close every open sub-menu of this menu bar and wait until they are gone.
 
@@ -1852,7 +1854,7 @@ PlaywrightElement for a menu bar item: a top-level `<vaadin-menu-bar-button>` or
 
 - `void assertExpanded()` — Assert that the menu item is expanded (shows submenu).
 - `void assertCollapsed()` — Assert that the menu item is collapsed.
-- `void click()` — Click the item — through the menu bar's overflow menu when the item is collapsed there — then wait for the server round-trip it triggers.
+- `void click()` — Click the item, then wait for the server round-trip it triggers; a top-level item collapsed into the overflow menu fails at once instead.
 - `boolean isOverflowed()` — Whether this is a top-level item collapsed into the menu bar's overflow menu ("More options") because it does not fit: the menu bar keeps such a button in place but hides it with `visibility: hidden`.
 - `void assertOverflowed()` — Assert that this top-level item is collapsed into the overflow menu, retrying until the menu bar has laid out its items.
 - `void assertNotOverflowed()` — Assert that this item is shown in the menu bar itself, not collapsed into the overflow menu, retrying until the menu bar has laid out its items.

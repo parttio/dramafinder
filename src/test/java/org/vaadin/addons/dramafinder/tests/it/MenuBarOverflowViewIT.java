@@ -14,6 +14,7 @@ import org.vaadin.addons.dramafinder.spring.SpringPlaywrightIT;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** A menu bar whose trailing items collapse into "More options" on a phone-sized viewport (issue #334). */
@@ -78,37 +79,19 @@ public class MenuBarOverflowViewIT extends SpringPlaywrightIT implements HasTest
     }
 
     @Test
-    public void clickingAnOverflowedItemGoesThroughTheOverflowMenu() {
-        MenuBarElement menuBar = phoneSizedMenuBar();
-        menuBar.getMenuItemElement("Print").click();
-        assertText("Print");
-
-        // the overflow menu has closed and given the item back: it works again
-        menuBar.getMenuItemElement("Edit").click();
-        assertText("Edit");
-        menuBar.getMenuItemElement("Print").click();
-        assertText("Print");
-    }
-
-    @Test
-    public void anItemHeldAcrossClicksStillWorksThroughTheOverflowMenu() {
+    public void clickingAnOverflowedItemFailsFastByDefault() {
         MenuItemElement print = phoneSizedMenuBar().getMenuItemElement("Print");
-        print.click();
-        assertText("Print");
-        page.locator("#text").click();
-        print.click();
-        assertText("Print");
+
+        long start = System.nanoTime();
+        IllegalStateException e = assertThrows(IllegalStateException.class, print::click);
+        assertTrue(e.getMessage().contains("\"Print\" is collapsed into the overflow menu"), e.getMessage());
+        assertTrue(System.nanoTime() - start < 5_000_000_000L, "should not wait for the click timeout");
     }
 
     @Test
-    public void labelsStayReadableOnceTheOverflowMenuHasBeenOpened() {
+    public void openSubMenuOfAnOverflowedItemFailsFastByDefault() {
         MenuBarElement menuBar = phoneSizedMenuBar();
-        menuBar.getMenuItemElement("Print").click();
-        assertText("Print");
-
-        assertEquals(List.of("File", "Edit", "View", "Insert", "Format", "Share", "Print"),
-                menuBar.getItemLabels());
-        assertEquals(List.of("Share", "Print"), menuBar.getOverflowItemLabels());
+        assertThrows(IllegalStateException.class, () -> menuBar.openSubMenu("Share"));
     }
 
     @Test
@@ -118,11 +101,73 @@ public class MenuBarOverflowViewIT extends SpringPlaywrightIT implements HasTest
     }
 
     @Test
-    public void openSubMenuOfAnOverflowedItemGoesThroughTheOverflowMenu() {
-        MenuElement share = phoneSizedMenuBar().openSubMenu("Share");
+    public void openOverflowMenuListsAndClicksTheCollapsedItems() {
+        MenuBarElement menuBar = phoneSizedMenuBar();
+        MenuElement overflow = menuBar.openOverflowMenu();
+        assertEquals(List.of("Share", "Print"), overflow.getItemLabels());
+        overflow.getMenuItemElement("Print").click();
+        assertText("Print");
+    }
+
+    @Test
+    public void openOverflowMenuThenASubMenu() {
+        phoneSizedMenuBar().openOverflowMenu().openSubMenu("Share").getMenuItemElement("Get Link").click();
+        assertText("Get Link");
+    }
+
+    @Test
+    public void labelsStayReadableOnceTheOverflowMenuHasBeenOpened() {
+        MenuBarElement menuBar = phoneSizedMenuBar();
+        menuBar.openOverflowMenu().getMenuItemElement("Print").click();
+        assertText("Print");
+
+        assertEquals(List.of("File", "Edit", "View", "Insert", "Format", "Share", "Print"),
+                menuBar.getItemLabels());
+        assertEquals(List.of("Share", "Print"), menuBar.getOverflowItemLabels());
+        menuBar.getMenuItemElement("Print").assertOverflowed();
+    }
+
+    @Test
+    public void openOverflowMenuFailsWhenEverythingFits() {
+        MenuBarElement menuBar = menuBar();
+        menuBar.getMenuItemElement("Print").assertNotOverflowed();
+        assertThrows(AssertionError.class, menuBar::openOverflowMenu);
+    }
+
+    @Test
+    public void unfoldingClickGoesThroughTheOverflowMenu() {
+        MenuBarElement menuBar = phoneSizedMenuBar().unfoldingOverflow();
+        menuBar.getMenuItemElement("Print").click();
+        assertText("Print");
+        menuBar.getMenuItemElement("Edit").click();
+        assertText("Edit");
+    }
+
+    @Test
+    public void unfoldingItemHeldAcrossClicksStillWorks() {
+        MenuItemElement print = phoneSizedMenuBar().unfoldingOverflow().getMenuItemElement("Print");
+        print.click();
+        assertText("Print");
+        page.locator("#text").click();
+        print.click();
+        assertText("Print");
+    }
+
+    @Test
+    public void unfoldingOpenSubMenuGoesThroughTheOverflowMenu() {
+        MenuElement share = phoneSizedMenuBar().unfoldingOverflow().openSubMenu("Share");
         assertEquals(List.of("By email", "Get Link"), share.getItemLabels());
         share.getMenuItemElement("Get Link").click();
         assertText("Get Link");
+    }
+
+    @Test
+    public void unfoldingWorksTheSameOnAWideViewport() {
+        MenuBarElement menuBar = menuBar().unfoldingOverflow();
+        menuBar.getMenuItemElement("Print").click();
+        assertText("Print");
+        menuBar.openSubMenu("Share").getMenuItemElement("By email").click();
+        assertText("By email");
     }
 
     private void assertText(String text) {

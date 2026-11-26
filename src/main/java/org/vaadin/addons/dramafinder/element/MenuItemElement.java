@@ -65,21 +65,26 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
             """;
 
     /**
-     * The menu bar the item belongs to. Kept apart from the item's own locator,
-     * which is usually keyed on the item's text: while the overflow menu is
-     * open, the menu bar moves the text of an overflowed button into that menu.
+     * The menu bar of a top-level item found through {@link MenuBarElement}, or
+     * {@code null}. Kept apart from the item's own locator, which is usually
+     * keyed on the item's text: while the overflow menu is open, the menu bar
+     * moves the text of an overflowed button into that menu.
      */
     private final Locator menuBar;
 
+    /** Whether a click on this item, when it is overflowed, goes through "More options". */
+    private final boolean unfoldOverflow;
+
     /** Create a {@code MenuItemElement} from an existing locator. */
     public MenuItemElement(Locator locator) {
-        this(locator, locator.locator("xpath=.."));
+        this(locator, null, false);
     }
 
     /** Create a top-level item of the given menu bar. */
-    MenuItemElement(Locator locator, Locator menuBar) {
+    MenuItemElement(Locator locator, Locator menuBar, boolean unfoldOverflow) {
         super(locator);
         this.menuBar = menuBar;
+        this.unfoldOverflow = unfoldOverflow;
     }
 
     /**
@@ -108,22 +113,36 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
     }
 
     /**
-     * Click the item — through the menu bar's overflow menu when the item is
-     * collapsed there — then wait for the server round-trip it triggers.
+     * Click the item, then wait for the server round-trip it triggers; a
+     * top-level item collapsed into the overflow menu fails at once instead.
      * <p>
-     * A top-level item collapsed into the overflow menu (see
-     * {@link #isOverflowed()}) cannot be clicked in place: this opens "More
-     * options" and clicks the item there, as a user does, so the same test
-     * works at every viewport width.
+     * Such an item (see {@link #isOverflowed()}) is not clickable in place, as
+     * for a user: this throws an {@link IllegalStateException}, unless the item was found through
+     * {@link MenuBarElement#unfoldingOverflow()}, in which case it opens "More
+     * options" and clicks the item there, as a user does.
+     *
+     * @throws IllegalStateException if the item is collapsed into the overflow
+     *                               menu and was not found through
+     *                               {@code unfoldingOverflow()}
      */
     @Override
     public void click() {
-        if (isOverflowed()) {
+        if (menuBar != null && isOverflowed()) {
             String label = getLabel();
+            requireUnfolding(label);
             openOverflowMenu().getMenuItemElement(label).click();
             waitAfterAction();
         } else {
             super.click();
+        }
+    }
+
+    /** Fails unless this overflowed item may be reached through "More options". */
+    void requireUnfolding(String label) {
+        if (!unfoldOverflow) {
+            throw new IllegalStateException("\"" + label + "\" is collapsed into the overflow menu (\"More options\")"
+                    + " and is not visible: open it with MenuBarElement.openOverflowMenu(), or find the item"
+                    + " through MenuBarElement.unfoldingOverflow() to go through it automatically");
         }
     }
 
@@ -132,13 +151,9 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
         return labelsOf(getLocator()).getFirst();
     }
 
-    /** Open the menu bar's overflow menu ("More options") and wait until it is visible. */
+    /** Open the overflow menu of this item's menu bar; see {@link MenuBarElement#openOverflowMenu()}. */
     MenuElement openOverflowMenu() {
-        new MenuItemElement(overflowButton(menuBar)).click();
-        waitAfterAction();
-        MenuElement overflowMenu = new MenuElement(menuBar.locator(MenuElement.ROOT_LIST_BOX));
-        overflowMenu.assertVisible();
-        return overflowMenu;
+        return new MenuBarElement(menuBar).openOverflowMenu();
     }
 
     /**
@@ -209,7 +224,7 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
     }
 
     /** Like {@link #byLabel(Locator, String)}, for a top-level item of {@code menuBar}. */
-    static MenuItemElement topLevelByLabel(Locator menuBar, String label) {
+    static MenuItemElement topLevelByLabel(Locator menuBar, String label, boolean unfoldOverflow) {
         Locator items = topLevelItems(menuBar);
         Locator item = byLabelLocator(items, label);
         // Also pin the item by position when its label is already on the page: an
@@ -219,7 +234,7 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
         if (labels.indexOf(label) >= 0 && labels.indexOf(label) == labels.lastIndexOf(label)) {
             item = item.or(items.nth(labels.indexOf(label)));
         }
-        return new MenuItemElement(item, menuBar);
+        return new MenuItemElement(item, menuBar, unfoldOverflow);
     }
 
     private static Locator byLabelLocator(Locator items, String label) {
