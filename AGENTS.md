@@ -94,15 +94,20 @@ ButtonElement.getByText(page, "Save");
 ```
 
 #### 2. Shadow DOM Piercing
-- **Pitfall**: Using XPath or CSS selectors that don't pierce shadow DOM.
-- **Solution**: Playwright auto-pierces shadow DOM with CSS selectors. Use
-  `xpath=./*` prefix only for direct children to avoid piercing.
+- **Pitfall**: Playwright's default CSS engine pierces open shadow roots, and
+  for its child combinator a host's shadow-root children count as children of
+  the host: `:scope > :not([slot])` on `vaadin-app-layout` matches its `main`
+  content *and* six internal shadow `div`s.
+- **Solution**: For a component's own light-DOM children, use the
+  `css:light=` engine, which never enters a shadow root. Don't use XPath for
+  structure; keep it for what CSS cannot express — own-text predicates
+  (pitfall 11, `QueryText`) and the ancestor axis.
 ```java
 // Pierces shadow DOM (default)
 getLocator().locator("[slot='input']");
 
-// Does NOT pierce shadow DOM (explicit xpath)
-getLocator().locator("xpath=./*[not(@slot)][1]");
+// Direct light-DOM children only
+getLocator().locator("css:light=:scope > :not([slot])").first();
 ```
 
 #### 3. Input vs Component Locator

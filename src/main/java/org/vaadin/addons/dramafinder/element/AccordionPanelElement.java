@@ -64,7 +64,7 @@ public class AccordionPanelElement extends VaadinElement implements HasDisabledA
 
     /** Locator pointing to the first non-slotted content element. */
     public Locator getContentLocator() {
-        return getLocator().locator("xpath=./*[not(@slot)][1]");
+        return getLocator().locator("css:light=:scope > :not([slot])").first();
     }
 
     /** Assert that the content area is visible. */

@@ -191,7 +191,7 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
      * included, without the overflow button itself or sub-menu items.
      */
     static Locator topLevelItems(Locator menuBar) {
-        return menuBar.locator("xpath=./" + FIELD_TAG_NAME + "[not(@hidden)][not(@slot='overflow')]");
+        return menuBar.locator("css:light=:scope > " + FIELD_TAG_NAME + ":not([hidden]):not([slot='overflow'])");
     }
 
     /**
@@ -203,14 +203,35 @@ public class MenuItemElement extends VaadinElement implements HasThemeElement, H
         return topLevelItems(menuBar).filter(new Locator.FilterOptions().setVisible(false));
     }
 
+    /**
+     * Wait until the menu bar has stopped changing size, so that its own
+     * relayout (debounced on resize) has run. A menu bar inside a container
+     * that animates its width, e.g. {@code vaadin-app-layout} switching its
+     * drawer to overlay mode, lays its items out again on every frame of the
+     * animation; an overflow menu opened in between stays open but loses its
+     * items, and the overflowed items read meanwhile are stale. Gives up after
+     * about five seconds of constant resizing.
+     */
+    static void waitForLayoutToSettle(Locator menuBar) {
+        menuBar.evaluate("el => new Promise(resolve => {"
+                + " let last = null, stable = 0, frames = 0;"
+                + " const check = () => {"
+                + "  const r = el.getBoundingClientRect(), size = r.width + 'x' + r.height;"
+                + "  stable = size === last ? stable + 1 : 0; last = size;"
+                + "  if (stable >= 3 || ++frames > 300) resolve(); else requestAnimationFrame(check);"
+                + " };"
+                + " requestAnimationFrame(check);"
+                + "})");
+    }
+
     /** The menu bar's overflow button ("More options"), {@code hidden} while every item fits. */
     static Locator overflowButton(Locator menuBar) {
-        return menuBar.locator("xpath=./" + FIELD_TAG_NAME + "[@slot='overflow']");
+        return menuBar.locator("css:light=:scope > " + FIELD_TAG_NAME + "[slot='overflow']");
     }
 
     /** The items of one sub-menu list box, without those of nested sub-menus. */
     static Locator subMenuItems(Locator listBox) {
-        return listBox.locator("xpath=./" + SUB_MENU_ITEM_TAG_NAME);
+        return listBox.locator("css:light=:scope > " + SUB_MENU_ITEM_TAG_NAME);
     }
 
     /**

@@ -69,6 +69,14 @@ public class MenuBarViewIT extends SpringPlaywrightIT implements HasTestView {
     }
 
     @Test
+    public void menuFoundFromThePageRootOpensItsNestedSubMenu() {
+        mainMenuBar().openSubMenu("Share");
+        MenuElement share = find(page, MenuElement.class).single();
+        share.openSubMenu("On social media").getMenuItemElement("Facebook").click();
+        assertText("Facebook");
+    }
+
+    @Test
     public void nestedSubMenuWithAnotherMenuBarOnThePage() {
         MenuElement file = mainMenuBar().openSubMenu("File");
         MenuElement export = file.openSubMenu("Export");

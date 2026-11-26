@@ -85,8 +85,8 @@ public class DetailsElement extends VaadinElement implements HasStyleElement, Ha
      * @return the content locator
      */
     public Locator getContentLocator() {
-        // XPath, so the children of the shadow root are not matched as direct children
-        return getLocator().locator("xpath=./*[not(self::vaadin-details-summary)][not(@slot)]");
+        // css:light, so the children of the shadow root are not matched as direct children
+        return getLocator().locator("css:light=:scope > :not(vaadin-details-summary):not([slot])");
     }
 
     /**

@@ -144,8 +144,8 @@ public class DialogElement extends VaadinElement implements HasThemeElement, Has
 
     /** Locator for the dialog content (first non-slotted child). */
     public Locator getContentLocator() {
-        // using xpath to not pierce the shadow dom
-        return getLocator().locator("xpath=./*[not(@slot)][1]");
+        // css:light, to not pierce the shadow dom
+        return getLocator().locator("css:light=:scope > :not([slot])").first();
     }
 
     /** Locator for the footer slot. */

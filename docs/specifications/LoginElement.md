@@ -166,10 +166,10 @@ For the same reason the lookups do not go through the captions:
   and `PASSWORD_FIELD_ID` constants),
 * the submit and forgot-password buttons are found through their slots.
 
-The slot lookups use `xpath=./vaadin-button[@slot='...']` on purpose. A CSS
-`[slot='submit']` would also match the `<slot name="submit" slot="submit">`
-element inside the component's shadow root, because Playwright's CSS engine
-pierces open shadow roots; the relative XPath does not.
+The slot lookups use `css:light=:scope > vaadin-button[slot='...']` on purpose. A
+plain CSS `[slot='submit']` would also match the `<slot name="submit" slot="submit">`
+element inside the component's shadow root, because Playwright's default CSS
+engine pierces open shadow roots; the `css:light` engine does not.
 
 ## Forgot password
 

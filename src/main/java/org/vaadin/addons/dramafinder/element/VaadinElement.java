@@ -188,7 +188,7 @@ public abstract class VaadinElement implements HasLocatorElement {
      * @throws IllegalArgumentException if {@code tag} is not a valid tag name
      */
     public List<VaadinElement> getLightDomChildren(String tag) {
-        return lightDom("./", tag);
+        return lightDom(":scope > ", tag);
     }
 
     /**
@@ -209,12 +209,12 @@ public abstract class VaadinElement implements HasLocatorElement {
      * @throws IllegalArgumentException if {@code tag} is not a valid tag name
      */
     public List<VaadinElement> getLightDomDescendants(String tag) {
-        return lightDom(".//", tag);
+        return lightDom("", tag);
     }
 
-    private List<VaadinElement> lightDom(String axis, String tag) {
-        // XPath does not pierce shadow roots, unlike Playwright's CSS engine
-        Locator matches = locator.locator("xpath=" + axis + TagNames.normalize(tag));
+    private List<VaadinElement> lightDom(String combinator, String tag) {
+        // css:light does not pierce shadow roots, unlike Playwright's default CSS engine
+        Locator matches = locator.locator("css:light=" + combinator + TagNames.toCss(TagNames.normalize(tag)));
         List<VaadinElement> elements = new ArrayList<>();
         for (Locator match : matches.all()) {
             elements.add(new GenericElement(match));
