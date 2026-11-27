@@ -130,6 +130,12 @@ so the next read sees the new view rather than an empty page. A page without
 Flow is idle at once; a page that runs Flow but shows no Flow UI (a Hilla view)
 waits at most 3 seconds for it, once per page load.
 
+To see such a load, the page has to be listening for it before the action
+starts it. The first wait on a page sets that up for every document the page
+loads afterwards; the base classes wait right after opening each test's view.
+With your own setup, call `AutoWait.waitForVaadinIdle(page)` once after
+`page.navigate(..)`, as in [Getting started](getting-started.md).
+
 When an action's listener navigates on the server (`ui.navigate(..)`), Flow
 updates the address bar only after it has handled the response. The action's
 wait covers that too — in React mode, Vaadin's default — so a one-shot read of

@@ -1,7 +1,10 @@
 package org.vaadin.addons.dramafinder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
 import com.microsoft.playwright.Page;
@@ -57,6 +60,26 @@ public final class AutoWait {
     private static final int MAX_PAGE_REPLACEMENTS = 5;
 
     /**
+     * Records in {@code window.__dramafinderLeavingSince} when the document
+     * starts loading another one (not same-document, not a download), using
+     * the browser's Navigation API (Chromium). Installs itself once per
+     * document. Runs as a page init script, so a document listens from its
+     * first script on, and in the settle script, for the document that was
+     * already loaded when the page was first waited on.
+     */
+    private static final String LEAVING_LISTENER =
+            // @formatter:off
+            "if (window.navigation && !window.__dramafinderLeavingListener) {"
+            + "  window.__dramafinderLeavingListener = e => {"
+            + "    if (!e.destination.sameDocument && e.downloadRequest === null) {"
+            + "      window.__dramafinderLeavingSince = performance.now();"
+            + "    }"
+            + "  };"
+            + "  window.navigation.addEventListener('navigate', window.__dramafinderLeavingListener);"
+            + "}";
+    // @formatter:on
+
+    /**
      * Resolves once Flow is idle and no navigation is pending, in one browser
      * call. {@code window.Vaadin.Flow.navigation} is true while Flow hands a
      * server-side {@code ui.navigate(..)} to React Router; Flow deletes it once
@@ -78,14 +101,7 @@ public final class AutoWait {
     private static final String SETTLE_SCRIPT =
             // @formatter:off
             "async ([timeout, navigationTimeout, leavingTimeout]) => {"
-            + "if (window.navigation && !window.__dramafinderLeavingListener) {"
-            + "  window.__dramafinderLeavingListener = e => {"
-            + "    if (!e.destination.sameDocument && e.downloadRequest === null) {"
-            + "      window.__dramafinderLeavingSince = performance.now();"
-            + "    }"
-            + "  };"
-            + "  window.navigation.addEventListener('navigate', window.__dramafinderLeavingListener);"
-            + "}"
+            + LEAVING_LISTENER
             + "const leaving = () => {"
             + "  const since = window.__dramafinderLeavingSince;"
             + "  if (since === undefined) {"
@@ -126,6 +142,10 @@ public final class AutoWait {
     // @formatter:on
 
     private static final ThreadLocal<Integer> SUSPENDED = ThreadLocal.withInitial(() -> 0);
+
+    /** The pages whose documents already run {@link #LEAVING_LISTENER} as an init script. */
+    private static final Set<Page> LISTENING_PAGES = Collections.synchronizedSet(
+            Collections.newSetFromMap(new WeakHashMap<>()));
 
     private AutoWait() {
     }
@@ -201,10 +221,17 @@ public final class AutoWait {
      * new page, where it also waits for Flow to start its UI. A page with no
      * Flow is idle once loaded. This needs the browser's Navigation API
      * (Chromium); elsewhere a load the action started is only waited for when
-     * it replaces the page during the wait. Only loads that start after a
-     * first wait on the page are seen.
+     * it replaces the page during the wait.
      * <p>
-     * The wait is one browser call when nothing is pending. It runs in the
+     * The first wait on a page makes every document the page loads from then
+     * on listen for such loads from its first script, so a load that starts
+     * before the wait has run anything in the page is still seen. Loads that
+     * start in the document shown before that first wait are seen once the
+     * wait has started; wait once right after opening the page (the base
+     * classes do) to cover the first action too.
+     * <p>
+     * After the first wait on a page, the wait is one browser call when
+     * nothing is pending. It runs in the
      * page, so Playwright's default timeout does not apply: it has its own
      * limit of 30 seconds.
      *
@@ -212,6 +239,7 @@ public final class AutoWait {
      * @throws TimeoutError when Flow is still busy after 30 seconds
      */
     public static void waitForVaadinIdle(Page page) {
+        listenForLoads(page);
         for (int attempt = 1; ; attempt++) {
             try {
                 waitForIdleAndNavigation(page);
@@ -225,6 +253,12 @@ public final class AutoWait {
                 }
                 page.waitForLoadState();
             }
+        }
+    }
+
+    private static void listenForLoads(Page page) {
+        if (LISTENING_PAGES.add(page)) {
+            page.addInitScript(LEAVING_LISTENER);
         }
     }
 

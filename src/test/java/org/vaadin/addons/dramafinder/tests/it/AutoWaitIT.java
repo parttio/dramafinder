@@ -83,10 +83,14 @@ public class AutoWaitIT extends SpringPlaywrightIT {
         assertEquals("clicked", result());
     }
 
+    /** The first wait on a page also registers the load listener, once. */
     @Test
     public void waitingWhenNothingIsPendingTakesOneBrowserCall() {
         List<String> calls = new ArrayList<>();
-        AutoWait.waitForVaadinIdle(recordingCalls(page, calls));
+        Page recording = recordingCalls(page, calls);
+        AutoWait.waitForVaadinIdle(recording);
+        calls.clear();
+        AutoWait.waitForVaadinIdle(recording);
         assertEquals(1, calls.size(), calls.toString());
     }
 
@@ -117,6 +121,28 @@ public class AutoWaitIT extends SpringPlaywrightIT {
     public void clickWaitsForAPageLoadTheServerStarted() {
         ButtonElement.getByText(page, "Reload to greeting").click();
         assertEquals(1, page.getByText("Greeting", new Page.GetByTextOptions().setExact(true)).count());
+    }
+
+    /**
+     * A load the server starts can begin before the wait after the action has
+     * run any script in the page, so the page has to be listening for loads
+     * before the action. The browser starts the load before Playwright knows
+     * of it, so a wait in that gap would see the old page idle; the gap only
+     * opens under load, which is why these check the listener itself.
+     */
+    @Test
+    public void theTestsFirstPageListensForLoadsBeforeAnyAction() {
+        assertTrue(listensForLoads());
+    }
+
+    @Test
+    public void aPageLoadedAfterAWaitListensForLoadsFromItsFirstScript() {
+        page.reload();
+        assertTrue(listensForLoads());
+    }
+
+    private boolean listensForLoads() {
+        return (Boolean) page.evaluate("() => window.__dramafinderLeavingListener !== undefined");
     }
 
     /**
@@ -170,10 +196,20 @@ public class AutoWaitIT extends SpringPlaywrightIT {
         AutoWait.waitForVaadinIdle(page);
     }
 
-    /** The real page, recording the name of every method called on it. */
+    /**
+     * The real page, recording the name of every {@code Page} method called on
+     * it; {@code Object} methods such as {@code hashCode} never reach the browser.
+     */
     private static Page recordingCalls(Page page, List<String> calls) {
         return (Page) Proxy.newProxyInstance(Page.class.getClassLoader(), new Class<?>[] {Page.class},
                 (proxy, method, args) -> {
+                    if (method.getDeclaringClass() == Object.class) {
+                        return switch (method.getName()) {
+                            case "equals" -> proxy == args[0];
+                            case "hashCode" -> System.identityHashCode(proxy);
+                            default -> method.invoke(page, args);
+                        };
+                    }
                     calls.add(method.getName());
                     try {
                         return method.invoke(page, args);
