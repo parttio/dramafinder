@@ -83,7 +83,7 @@ public abstract class AbstractBasePlaywrightIT implements HasTestView, AgentRepo
         page = browser.get().newPage();
         prepareBrowserContext(page.context());
         page.navigate(getUrl() + getView());
-        page.waitForFunction(WAIT_FOR_VAADIN_SCRIPT);
+        AutoWait.waitForVaadinIdle(page);
         page.setDefaultNavigationTimeout(4000);
         page.setDefaultTimeout(15000);
     }
