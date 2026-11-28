@@ -101,8 +101,8 @@ public class MultiSelectComboBoxElement extends VaadinElement
 
     /**
      * Select an item by its visible label. Does nothing when the item is
-     * already selected; otherwise opens the overlay and clicks the item, an
-     * item the overlay has not rendered yet being scrolled into view first.
+     * already selected; otherwise clicks the item as {@link #toggleItem(String)}
+     * does, leaving the overlay open or closed as it was before the call.
      *
      * @param item label of the item to select
      */
@@ -114,8 +114,8 @@ public class MultiSelectComboBoxElement extends VaadinElement
 
     /**
      * Deselect an item by its visible label. Does nothing when the item is not
-     * selected; otherwise opens the overlay and clicks the item, an item the
-     * overlay has not rendered yet being scrolled into view first.
+     * selected; otherwise clicks the item as {@link #toggleItem(String)} does,
+     * leaving the overlay open or closed as it was before the call.
      *
      * @param item label of the item to deselect
      */
@@ -129,15 +129,21 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * Toggle an item by its visible label, as a user click does: a selected
      * item becomes deselected and an unselected one selected. Opens the
      * overlay; an item the overlay has not rendered yet is scrolled into view
-     * first. Use {@link #selectItem(String)} or {@link #deselectItem(String)}
+     * first. After the server round-trip the overlay is closed again if it was
+     * closed before the call, so it does not cover the next action; an overlay
+     * the test opened stays open. Use {@link #selectItem(String)} or {@link #deselectItem(String)}
      * to reach a given state whatever the current one.
      *
      * @param item label of the item to toggle
      */
     public void toggleItem(String item) {
+        boolean wasOpened = isOpened();
         open();
         revealItem(item).click();
         waitAfterAction();
+        if (!wasOpened) {
+            close();
+        }
     }
 
     /**
@@ -190,6 +196,8 @@ public class MultiSelectComboBoxElement extends VaadinElement
      * Type filter text into the input, then click the matching item, scrolling
      * the overlay to it when the filter leaves more items than it renders.
      * Does nothing, not even filtering, when the item is already selected.
+     * Like {@link #toggleItem(String)}, closes the overlay afterwards if it was
+     * closed before the call.
      *
      * @param filter text to type for filtering
      * @param item   label of the item to select
@@ -198,9 +206,13 @@ public class MultiSelectComboBoxElement extends VaadinElement
         if (isSelected(item)) {
             return;
         }
+        boolean wasOpened = isOpened();
         setFilter(filter);
         revealItem(item).click();
         waitAfterAction();
+        if (!wasOpened) {
+            close();
+        }
     }
 
     /**

@@ -54,13 +54,11 @@ comboBox.setLabel("Fruits");
 // Test
 MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Fruits").single();
 fruits.selectItems("Apple", "Cherry");
-fruits.close();
 fruits.assertSelectedItems("Cherry", "Apple");   // any order
 fruits.assertSelectedCount(2);
 fruits.assertValue("Apple, Cherry");
 
 fruits.deselectItem("Apple");
-fruits.close();
 fruits.assertSelectedItems("Cherry");
 ```
 
@@ -69,8 +67,9 @@ fruits.assertSelectedItems("Cherry");
   `deselectItem(label)` / `deselectItems(..)` leave each item unselected the
   same way. `toggleItem(label)` clicks the item whatever its state, as a user
   click does.
-- The overlay stays open after these calls (a user keeps picking): call
-  `close()` when the test needs it closed.
+- These calls leave the overlay as they found it: closed if it was closed,
+  so it does not cover the next action, and open if the test opened it
+  (`open()` first, to assert on the overlay between picks).
 - Items match on their whole label: `"Item 1"` does not pick `"Item 10"`.
 - `assertSelectedItems(..)` passes when the selection holds exactly these
   labels, in any order. `assertSelectedCount(n)` checks only the number.
@@ -86,7 +85,6 @@ does nothing, not even filter, when the item is already selected.
 ```java
 MultiSelectComboBoxElement fruits = find(page, MultiSelectComboBoxElement.class).withLabel("Filterable MultiSelect").single();
 fruits.filterAndSelectItem("Apr", "Apricot");
-fruits.close();
 fruits.assertSelectedItems("Apricot");
 
 fruits.setFilter("Ch");
@@ -279,10 +277,12 @@ The multi-select combo box also has `assertAllowedCharPattern(..)` and
   and `filterAndSelectItem` skip items already in the requested state (issue
   #321); before, each was a plain click. A test that relied on
   `selectItem` deselecting a selected item should call `toggleItem`.
-- **The overlay stays open** after `selectItem(s)`, `deselectItem(s)`,
-  `toggleItem` and `filterAndSelectItem` when they click. A call that skips
-  every item does not open it. Close it before asserting a closed field or
-  interacting with what it covers.
+- **The overlay is closed again after a selection** (issue #344). Since
+  2.2.5, `selectItem(s)`, `deselectItem(s)`, `toggleItem` and
+  `filterAndSelectItem` close the overlay they opened; before, it stayed open
+  and covered whatever lay below the field. Calling `close()` afterwards is
+  harmless. To keep it open between picks, call `open()` first: an overlay
+  that was open before the call stays open.
 - **`setValue(..)` does not select.** It is the generic text-field action. Use
   `selectItem(s)` to select and `clear()` to empty the selection.
 - **`getValue()` is not the input text.** Unlike the single combo box, it joins
